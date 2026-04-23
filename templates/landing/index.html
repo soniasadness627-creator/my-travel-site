@@ -1,0 +1,414 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TourConstructor - Створіть власний сайт турагента безкоштовно</title>
+    <meta name="description" content="Вперше в Україні ми даруємо професійні сайти турагентствам, які дійсно продають. Ми беремо техніку на себе — ви продаєте подорожі.">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'landing/css/style.css' %}">
+
+    <style>
+        /* Додаткові стилі */
+        :root {
+            --primary-color: #086745;
+            --primary-dark: #02432c;
+            --primary-light: #2a6b5c;
+            --primary-lighter: #cbf6ec;
+        }
+
+        .footer-section {
+            background-color: #0f172a !important;
+            padding: 1.5rem 0 1rem 0;
+        }
+        .footer-copyright {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+        .footer-links {
+            color: #94a3b8 !important;
+            text-decoration: none !important;
+            font-size: 0.85rem;
+            transition: color 0.2s ease;
+        }
+        .footer-links:hover {
+            color: #94a3b8 !important;
+            text-decoration: none !important;
+        }
+
+        /* Перевизначення кольорів - прибираємо синій */
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+        .border-primary {
+            border-color: var(--primary-color) !important;
+        }
+        .hover\:bg-primary:hover {
+            background-color: var(--primary-color) !important;
+        }
+        .hover\:text-primary:hover {
+            color: var(--primary-color) !important;
+        }
+        .bg-primary\/10 {
+            background-color: rgba(8, 103, 69, 0.1) !important;
+        }
+        .from-primary\/5 {
+            --tw-gradient-from: rgba(8, 103, 69, 0.05) !important;
+        }
+        .shadow-primary\/40 {
+            --tw-shadow-color: rgba(8, 103, 69, 0.4) !important;
+        }
+
+        /* Кнопки */
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+            padding: 0.75rem 1.75rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-dark) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(8, 103, 69, 0.3);
+        }
+        .btn-outline {
+            background-color: transparent;
+            color: #334155;
+            padding: 0.75rem 1.75rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            border: 2px solid #e2e8f0;
+        }
+        .btn-outline:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+    <!-- ========== НАВІГАЦІЙНА ПАНЕЛЬ (ЗАКРІПЛЕНА) ========== -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-md py-4">
+        <div class="container-wide mx-auto px-6 md:px-12 flex justify-between items-center">
+            <!-- Логотип зліва -->
+            <a href="/" class="flex items-center gap-2 cursor-pointer">
+                <img src="{% static 'images/HORIZONTAL.png' %}" alt="TourConstructor" class="h-10 w-auto">
+            </a>
+
+            <!-- Меню - права сторона -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features" class="nav-link">ПЕРЕВАГИ</a>
+                <a href="#how-it-works" class="nav-link">ЯК ПРАЦЮЄ</a>
+                <a href="#for-whom" class="nav-link">КОМУ ПІДІЙДЕ</a>
+                <a href="#contact" class="nav-link">КОНТАКТИ</a>
+                <a href="{% url 'constructor:register' %}" class="btn-primary">
+                    ХОЧУ САЙТ <i class="fa-solid fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+
+            <!-- Кнопка бургер-меню для мобільних -->
+            <button id="menuBtn" class="md:hidden text-slate-800">
+                <i class="fa-solid fa-bars text-2xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Мобільне меню -->
+    <div id="mobileMenu" class="fixed inset-0 z-40 bg-white flex flex-col p-8 gap-8 transform translate-x-full transition-transform duration-300 md:hidden">
+        <div class="flex justify-between items-center">
+            <img src="{% static 'images/HORIZONTAL.png' %}" alt="TourConstructor" class="h-8 w-auto">
+            <button id="closeMenuBtn" class="text-slate-800">
+                <i class="fa-solid fa-xmark text-2xl"></i>
+            </button>
+        </div>
+        <div class="flex flex-col gap-6 text-xl font-semibold text-slate-700">
+            <a href="#features" class="mobile-nav-link">ПЕРЕВАГИ</a>
+            <a href="#how-it-works" class="mobile-nav-link">ЯК ПРАЦЮЄ</a>
+            <a href="#for-whom" class="mobile-nav-link">КОМУ ПІДІЙДЕ</a>
+            <a href="#contact" class="mobile-nav-link">КОНТАКТИ</a>
+        </div>
+        <a href="{% url 'constructor:register' %}" class="btn-primary w-full text-center mt-auto">ХОЧУ САЙТ</a>
+    </div>
+
+    <!-- ========== HERO СЕКЦІЯ ========== -->
+    <section class="relative pt-40 pb-24 md:pt-56 md:pb-40 overflow-hidden bg-gradient-to-br from-primary/5 via-white to-white">
+        <div class="container-wide mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-16 items-center">
+            <div>
+                <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wider mb-6">
+                    <i class="fa-solid fa-rocket text-sm"></i> Твій прорив у туризмі
+                </div>
+                <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 leading-[1.1] mb-8">
+                    Отримай власний <br />
+                    <span class="text-primary">сайт турагента</span> <br />
+                    безкоштовно
+                </h1>
+                <p class="text-slate-500 text-lg md:text-xl leading-relaxed mb-10 max-w-lg">
+                    Вперше в Україні ми даруємо професійні сайти турагентствам, які дійсно продають.
+                    Ми беремо техніку на себе — ви продаєте подорожі.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="{% url 'constructor:register' %}" class="btn-primary flex items-center justify-center gap-2">
+                        ХОЧУ САЙТ <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                    <a href="#features" class="btn-outline flex items-center justify-center gap-2">
+                        Дізнатися більше <i class="fa-solid fa-arrow-down"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="relative">
+                <div class="relative z-10 bg-white p-4 rounded-3xl shadow-2xl shadow-slate-200 border border-slate-100">
+                    <img src="https://picsum.photos/seed/tourism/1000/700" alt="CMS Screenshot" class="rounded-2xl w-full" referrerPolicy="no-referrer">
+                </div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 blur-3xl -z-10 rounded-full"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ПЕРЕВАГИ ========== -->
+    <section id="features" class="py-24 bg-white">
+        <div class="container-wide mx-auto px-6 md:px-12">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-primary font-bold uppercase tracking-wider text-sm mb-4">ЧОМУ МИ?</h2>
+                <h3 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6">Все, що потрібно для онлайн-продажів</h3>
+                <p class="text-slate-500 text-lg">Ми зібрали кращі технології ринку в одному рішенні, щоб ваш бізнес був ефективним.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Картки переваг (без змін) -->
+                <div class="card-feature">
+                    <div class="mb-6 text-primary">
+                        <i class="fa-solid fa-magnifying-glass text-3xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-4">Власний пошуковик турів</h4>
+                    <p class="text-slate-500 leading-relaxed">Пряма інтеграція з базою турів. Клієнти купують у вас, а не в іншому місці.</p>
+                </div>
+                <div class="card-feature">
+                    <div class="mb-6 text-primary">
+                        <i class="fa-solid fa-mobile-screen-button text-3xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-4">На 100% адаптивний</h4>
+                    <p class="text-slate-500 leading-relaxed">Чудово виглядає на iPhone, Android та будь-яких комп'ютерах. Жодних викривлень.</p>
+                </div>
+                <div class="card-feature">
+                    <div class="mb-6 text-primary">
+                        <i class="fa-solid fa-bolt text-3xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-4">Миттєве завантаження</h4>
+                    <p class="text-slate-500 leading-relaxed">Ваші клієнти не чекають. Швидка робота сайту збільшує конверсію на 30%.</p>
+                </div>
+                <div class="card-feature">
+                    <div class="mb-6 text-primary">
+                        <i class="fa-solid fa-globe text-3xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-4">SEO-оптимізований</h4>
+                    <p class="text-slate-500 leading-relaxed">Сайт вже налаштований так, щоб Google любив ваше агентство з першого дня.</p>
+                </div>
+                <div class="card-feature">
+                    <div class="mb-6 text-primary">
+                        <i class="fa-solid fa-shield-halved text-3xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-4">Безпека та Хостинг</h4>
+                    <p class="text-slate-500 leading-relaxed">Ми беремо на себе всі технічні моменти, сервер та захист ваших даних.</p>
+                </div>
+                <div class="card-feature">
+                    <div class="mb-6 text-primary">
+                        <i class="fa-solid fa-palette text-3xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-4">Готові макети</h4>
+                    <p class="text-slate-500 leading-relaxed">Оберіть стиль, який вам подобається, і запустіться вже завтра.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ЯК ПРАЦЮЄ ========== -->
+    <section id="how-it-works" class="py-24 bg-slate-900 text-white">
+        <div class="container-wide mx-auto px-6 md:px-12">
+            <div class="text-center max-w-2xl mx-auto mb-20">
+                <h2 class="text-primary font-bold uppercase tracking-wider text-sm mb-4">ПРОЦЕС ЗАПУСКУ</h2>
+                <h3 class="text-3xl md:text-5xl font-extrabold mb-6">Лише 3 кроки до вашого професійного сайту</h3>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-16 relative">
+                <div class="hidden md:block absolute top-20 left-0 w-full h-[1px] bg-white/10"></div>
+                <div class="relative z-10 flex flex-col items-center text-center">
+                    <div class="w-16 h-16 bg-primary text-white text-2xl font-black rounded-full flex items-center justify-center shadow-lg shadow-primary/40 mb-8 border-4 border-slate-900">
+                        1
+                    </div>
+                    <h4 class="text-2xl font-bold mb-4">Реєстрація</h4>
+                    <p class="text-slate-400 max-w-xs">Створіть свій особистий кабінет у системі за 2 хвилини.</p>
+                </div>
+                <div class="relative z-10 flex flex-col items-center text-center">
+                    <div class="w-16 h-16 bg-primary text-white text-2xl font-black rounded-full flex items-center justify-center shadow-lg shadow-primary/40 mb-8 border-4 border-slate-900">
+                        2
+                    </div>
+                    <h4 class="text-2xl font-bold mb-4">Налаштування</h4>
+                    <p class="text-slate-400 max-w-xs">Ми додамо ваш логотип, контакти та обраний дизайн.</p>
+                </div>
+                <div class="relative z-10 flex flex-col items-center text-center">
+                    <div class="w-16 h-16 bg-primary text-white text-2xl font-black rounded-full flex items-center justify-center shadow-lg shadow-primary/40 mb-8 border-4 border-slate-900">
+                        3
+                    </div>
+                    <h4 class="text-2xl font-bold mb-4">Старт</h4>
+                    <p class="text-slate-400 max-w-xs">Сайт готовий! Ви отримуєте посилання та починаєте продавати.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== КОМУ ПІДІЙДЕ ========== -->
+    <section id="for-whom" class="py-24 bg-white">
+        <div class="container-wide mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-20 items-center">
+            <div>
+                <img src="https://picsum.photos/seed/happy/800/800" alt="Happy agent" class="rounded-3xl shadow-lg w-full" referrerPolicy="no-referrer">
+            </div>
+            <div>
+                <h2 class="text-primary font-bold uppercase tracking-wider text-sm mb-4">КОМУ ПІДІЙДЕ</h2>
+                <h3 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-8">Це рішення ідеально підійде, якщо ви:</h3>
+                <div class="space-y-6">
+                    <div class="flex gap-5">
+                        <div class="bg-primary/10 text-primary p-3 rounded-2xl h-fit">
+                            <i class="fa-solid fa-user text-xl"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-xl font-bold text-slate-900 mb-2">Турагент-фрілансер</h5>
+                            <p class="text-slate-500 leading-relaxed">Створіть свій особистий бренд та залучайте клієнтів системно.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-5">
+                        <div class="bg-primary/10 text-primary p-3 rounded-2xl h-fit">
+                            <i class="fa-solid fa-store text-xl"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-xl font-bold text-slate-900 mb-2">Власник мережі</h5>
+                            <p class="text-slate-500 leading-relaxed">Масштабуйте мережу офісів під єдиним цифровим стандартом.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-5">
+                        <div class="bg-primary/10 text-primary p-3 rounded-2xl h-fit">
+                            <i class="fa-solid fa-rocket text-xl"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-xl font-bold text-slate-900 mb-2">Нове турагентство</h5>
+                            <p class="text-slate-500 leading-relaxed">Заощаджуйте на розробці та запускайтеся за один день.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ФОРМА КОНТАКТІВ ========== -->
+    <section id="contact" class="py-24 bg-slate-50">
+        <div class="container-wide mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-20">
+            <div>
+                <h2 class="text-primary font-bold uppercase tracking-wider text-sm mb-4">КОНТАКТИ</h2>
+                <h3 class="text-4xl md:text-6xl font-extrabold text-slate-900 mb-8">Залиште заявку <br /> і отримайте сайт вже сьогодні</h3>
+                <p class="text-slate-500 text-lg mb-10">Наші менеджери зв'яжуться з вами, щоб безкоштовно проконсультувати та налаштувати ваш перший сайт.</p>
+
+                <div class="flex flex-col gap-6">
+                    <div>
+                        <div class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Напишіть нам</div>
+                        <div class="flex items-center gap-3 text-slate-900 font-bold text-lg">
+                            <i class="fa-regular fa-envelope text-primary"></i> info@tourconstructor.com
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Зателефонуйте</div>
+                        <div class="flex items-center gap-3 text-slate-900 font-bold text-lg">
+                            <i class="fa-solid fa-phone text-primary"></i> +38 099 000 00 00
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-12 flex gap-4">
+                    <a href="#" class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-slate-400 hover:bg-primary/10 hover:text-primary transition-all">
+                        <i class="fa-brands fa-facebook-f text-lg"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-slate-400 hover:bg-primary/10 hover:text-primary transition-all">
+                        <i class="fa-brands fa-instagram text-lg"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-slate-400 hover:bg-primary/10 hover:text-primary transition-all">
+                        <i class="fa-brands fa-telegram text-lg"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 md:p-12 rounded-3xl border border-slate-100 shadow-lg">
+                <form id="contactForm" class="space-y-6">
+                    <div class="grid sm:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Ваше ім'я</label>
+                            <input type="text" name="name" required placeholder="Віктор Коваль" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-6 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Телефон</label>
+                            <input type="tel" name="phone" required placeholder="+38 0XX XXX XX XX" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-6 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Назва агенства</label>
+                        <input type="text" name="agency" placeholder="Travel Pro Agency" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-6 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Коментар</label>
+                        <textarea name="message" rows="3" placeholder="Хочу дізнатися більше..." class="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-6 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary w-full py-5 text-lg flex items-center justify-center gap-3">
+                        ВІДПРАВИТИ ЗАПИТ <i class="fa-regular fa-paper-plane"></i>
+                    </button>
+                    <p class="text-center text-[10px] text-slate-400">
+                        Натискаючи кнопку, ви погоджуєтеся на обробку персональних даних
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ФУТЕР ========== -->
+    <footer class="footer-section">
+        <div class="container-wide mx-auto px-6 md:px-12">
+            <div class="border-t border-white/10 pt-4"></div>
+            <div class="text-center py-3">
+                <p class="text-slate-400 mb-2" style="font-size: 0.95rem;">© 2026 TourConstructor</p>
+                <div class="flex justify-center gap-5">
+                    <a href="{% url 'landing:privacy_policy' %}" class="text-slate-500 hover:text-slate-400 transition-colors" style="font-size: 0.9rem; text-decoration: none;">Політика конфіденційності</a>
+                    <a href="{% url 'landing:terms_of_service' %}" class="text-slate-500 hover:text-slate-400 transition-colors" style="font-size: 0.9rem; text-decoration: none;">Правила надання послуг</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="{% static 'landing/js/main.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow p-4" style="width: 100%; max-width: 500px; border-radius: 15px;">
+        
+        <h3 class="text-center mb-4">Створити акаунт</h3>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Ім'я користувача</label>
+                {{ form.username }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                {{ form.email }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Телефон</label>
+                {{ form.phone }}
+            </div>
+
+            <div class="form-check mb-3">
+                {{ form.is_agent }}
+                <label class="form-check-label">Я агент</label>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Пароль</label>
+                {{ form.password1 }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Підтвердження пароля</label>
+                {{ form.password2 }}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                Зареєструватися
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <small>
+                Вже є акаунт?
+                <a href="{% url 'login' %}">Увійти</a>
+            </small>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

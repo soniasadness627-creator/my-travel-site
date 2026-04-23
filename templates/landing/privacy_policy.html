@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Політика конфіденційності - TourConstructor</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'landing/css/style.css' %}">
+
+    <style>
+        .legal-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .legal-content h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1.5rem;
+        }
+        .legal-content h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .legal-content p {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .legal-content ul {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased bg-slate-50">
+    <div class="container-wide mx-auto px-6 md:px-12 py-12">
+        <a href="/" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Повернутися на головну
+        </a>
+
+        <div class="legal-content">
+            <h1>Політика конфіденційності</h1>
+
+            <p>Ця Політика конфіденційності описує, як TourConstructor збирає, використовує та захищає вашу особисту інформацію.</p>
+
+            <h2>1. Яку інформацію ми збираємо?</h2>
+            <p>Ми збираємо інформацію, яку ви надаєте нам безпосередньо, наприклад, коли ви реєструєтеся на сайті, заповнюєте форму зворотного зв'язку або зв'язуєтеся з нами. Це може включати ваше ім'я, електронну пошту, номер телефону та назву вашого агентства.</p>
+
+            <h2>2. Як ми використовуємо вашу інформацію?</h2>
+            <p>Ми використовуємо зібрану інформацію для:</p>
+            <ul>
+                <li>Надання та підтримки наших послуг</li>
+                <li>Зв'язку з вами щодо вашого сайту або консультацій</li>
+                <li>Покращення нашого сервісу та користувацького досвіду</li>
+                <li>Відправки важливих оновлень та сповіщень</li>
+            </ul>
+
+            <h2>3. Захист даних</h2>
+            <p>Ми вживаємо відповідних технічних та організаційних заходів для захисту вашої особистої інформації від несанкціонованого доступу, зміни, розголошення або знищення.</p>
+
+            <h2>4. Передача даних третім особам</h2>
+            <p>Ми не продаємо, не обмінюємо та не передаємо вашу особисту інформацію третім особам, за винятком випадків, передбачених законом.</p>
+
+            <h2>5. Файли cookie</h2>
+            <p>Ми використовуємо файли cookie для покращення роботи сайту та аналізу трафіку. Ви можете налаштувати свій браузер для блокування файлів cookie.</p>
+
+            <h2>6. Зміни до Політики конфіденційності</h2>
+            <p>Ми можемо час від часу оновлювати цю Політику конфіденційності. Про будь-які зміни ми повідомимо на цій сторінці.</p>
+
+            <h2>7. Контакти</h2>
+            <p>Якщо у вас виникли питання щодо цієї Політики конфіденційності, будь ласка, зв'яжіться з нами за адресою: info@tourconstructor.com</p>
+
+            <p class="text-sm text-slate-400 mt-8">Останнє оновлення: 20 квітня 2026 року</p>
+        </div>
+    </div>
+</body>
+</html>

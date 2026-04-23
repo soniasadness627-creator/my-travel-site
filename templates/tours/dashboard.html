@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+
+    <h1>Мой дашборд</h1>
+
+    <!-- Кнопка создать тур -->
+    <div class="text-end mb-4">
+        <a href="{% url 'tour_create' %}" class="btn btn-success">
+            + Створити тур
+        </a>
+    </div>
+
+    <!-- СПИСОК ТУРОВ -->
+    <h2>Мої тури</h2>
+    <div class="row mb-5">
+        {% for tour in my_tours %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ tour.image.url }}" class="card-img-top" alt="{{ tour.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ tour.title }}</h5>
+                    <p class="text-muted">{{ tour.start_date }} — {{ tour.end_date }}</p>
+                    <p class="card-text text-truncate">{{ tour.description }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="price-tag">{{ tour.price }} $</span>
+                        <div>
+                            <a href="{% url 'tour_edit' tour.pk %}" class="btn btn-outline-primary btn-sm">Редагувати</a>
+                            <a href="{% url 'tour_delete' tour.pk %}" class="btn btn-outline-danger btn-sm">Видалити</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p>У вас поки не має турів.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- СПИСОК БРОНИРОВАНИЙ -->
+    <h2>Бронювання</h2>
+    <div class="mb-5">
+        {% for booking in bookings %}
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <p><strong>Тур:</strong> {{ booking.tour.title }}</p>
+                    <p><strong>Ім'я:</strong> {{ booking.name }}</p>
+                    <p><strong>Телефон:</strong> {{ booking.phone }}</p>
+                    <p><strong>Email:</strong> {{ booking.email }}</p>
+                    {% if booking.message %}
+                        <p><strong>Сповіщення:</strong> {{ booking.message }}</p>
+                    {% endif %}
+                    <p class="text-muted small">Дата оформлення заявки: {{ booking.created_at }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p>Бронювань поки не має.</p>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5 pt-4">
+    <h1 class="mb-4">Новини</h1>
+    <div class="row">
+        {% for item in news %}
+        <div class="col-md-4 mb-4">
+            <div class="card news-card shadow-sm h-100 d-flex flex-column">
+                {% if item.image %}
+                <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}" style="height: 200px; width: 100%; object-fit: cover;">
+                {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="fa-solid fa-image fa-3x text-muted"></i>
+                </div>
+                {% endif %}
+                <div class="card-body d-flex flex-column flex-grow-1">
+                    <h5 class="card-title">{{ item.title }}</h5>
+                    <p class="card-text">{{ item.text|truncatechars:120 }}</p>
+                    <div class="mt-auto">
+                        <p class="text-muted small mb-2">{{ item.created_at|date:"d.m.Y" }}</p>
+                        <!-- ВАЖЛИВО: використовуємо agent_site для URL -->
+                        <a href="{% if agent_site %}{% url 'agent_news_detail' agent_site.slug item.pk %}{% else %}{% url 'news_detail' item.pk %}{% endif %}" class="btn btn-outline-primary btn-sm">
+                            Детальніше
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <h3>Поки що новин немає</h3>
+            <p>Слідкуйте за оновленнями.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

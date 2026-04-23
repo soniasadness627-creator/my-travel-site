@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Ви впевненні, що хочете видалити "{{ object.title }}"?</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Так, видалити.</button>
+</form>
+
+{% endblock %}
