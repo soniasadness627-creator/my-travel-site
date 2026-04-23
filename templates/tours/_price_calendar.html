@@ -1,0 +1,56 @@
+{% load static %}
+{% load tour_extras %}
+<div class="card shadow-sm mb-5" id="price-calendar">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Календар низьких цін</h4>
+    </div>
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div></div> <!-- Для вирівнювання (за потреби можна додати іконку) -->
+            <div>
+                <a href="?week_offset={{ week_offset|add:'-1' }}" class="btn btn-sm btn-outline-secondary me-2">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </a>
+                <span>{{ start_date|date:"d M, D" }} – {{ end_date|date:"d M, D" }}</span>
+                <a href="?week_offset={{ week_offset|add:'1' }}" class="btn btn-sm btn-outline-secondary ms-2">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>Тривалість</th>
+                        {% for date in dates %}
+                            <th>{{ date|date:"d.m" }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for duration in durations %}
+                    <tr>
+                        <th class="fw-bold">{{ duration }} ночей</th>
+                        {% for date in dates %}
+                            <td>
+                                {% with price=calendar_data|get_item:duration|get_item:date %}
+                                    {% if price %}
+                                        <strong>{{ price }} грн</strong>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-muted py-4">Немає даних про ціни на цей тиждень.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h2 class="mb-4">Всі відгуки про "{{ tour.title }}"</h2>
+
+            <div class="reviews-list">
+                {% for review in page_obj %}
+                <div class="card shadow-sm mb-3 review-item">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <!-- Аватар користувача -->
+                            <div class="flex-shrink-0 me-3">
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fa-regular fa-user text-white fa-xl"></i>
+                                </div>
+                            </div>
+                            <!-- Контент відгуку -->
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="fw-bold mb-1" style="color: var(--primary-color); text-decoration: underline;">{{ review.user.username }}</h6>
+                                        <small class="text-muted d-block mb-2">{{ review.created_at|date:"d.m.Y H:i" }}</small>
+                                    </div>
+                                    <div class="text-warning">
+                                        {% for i in "12345"|make_list %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="fa-solid fa-star"></i>
+                                            {% else %}
+                                                <i class="fa-regular fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <p class="card-text small">{{ review.comment|linebreaks }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">Ще немає відгуків.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Пагінація -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">‹</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">›</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+
+            <div class="text-center mt-3">
+<a href="{% if agent_site %}{% url 'agent_tour_detail' agent_site.slug tour.pk %}{% else %}{% url 'tour_detail' tour.pk %}{% endif %}" class="btn btn-outline-secondary">                    ← Назад до туру
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .review-item {
+        transition: all 0.3s ease;
+    }
+    .review-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+    }
+    .review-item h6 {
+        font-size: 1rem;
+        transition: color 0.2s;
+    }
+    .review-item h6:hover {
+        color: rgba(182, 31, 162, 0.5) !important;
+        text-decoration: none !important;
+    }
+    .review-item .small {
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+    .rounded-circle.bg-secondary {
+        background: linear-gradient(135deg, var(--primary-color), #0c7861) !important;
+    }
+</style>
+{% endblock %}

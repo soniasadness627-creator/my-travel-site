@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{% endblock %}
+
+{% block userlinks %}
+    {% if user.is_agent and user.agent_site.slug %}
+        <a href="/a/{{ user.agent_site.slug }}/">Дивитися сайт</a> /
+    {% endif %}
+    {{ block.super }}
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

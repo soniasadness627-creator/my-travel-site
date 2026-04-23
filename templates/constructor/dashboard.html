@@ -1,0 +1,725 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="max-w-4xl mx-auto">
+        <!-- Заголовок і кнопки дій -->
+        <div class="flex flex-wrap justify-between items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-extrabold" style="color: var(--primary-color);">Ваш сайт створено!</h1>
+                <p class="text-slate-500 text-base mt-1 opacity-80">Налаштуйте свій сайт за допомогою конструктора</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="/a/{{ agent_site.slug }}/" target="_blank" class="btn-outline-custom">
+                    <i class="fa-solid fa-globe mr-1"></i> Відкрити сайт
+                </a>
+                <button type="submit" form="site-form" class="btn-primary-custom">
+                    <i class="fa-solid fa-check mr-1"></i>
+                    Зберегти зміни
+                </button>
+            </div>
+        </div>
+
+        <!-- Таби навігації -->
+        <div class="tabs-container">
+            <div class="tabs-list">
+                <button type="button" class="tab-trigger active" data-tab="general">
+                    <i class="fas fa-gear mr-2"></i>
+                    Головне
+                </button>
+                <button type="button" class="tab-trigger" data-tab="design">
+                    <i class="fas fa-th-large mr-2"></i>
+                    Дизайн
+                </button>
+                <button type="button" class="tab-trigger" data-tab="menu">
+                    <i class="fas fa-images mr-2"></i>
+                    Меню
+                </button>
+            </div>
+
+            <!-- Форма -->
+            <form method="post" enctype="multipart/form-data" id="site-form">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <!-- Вкладка Головне -->
+                <div class="tab-pane active" id="tab-general">
+                    <div class="card-shadow">
+                        <div class="card-header">Основні налаштування</div>
+                        <div class="card-body space-y-4">
+                            <div>
+                                <label for="{{ form.slug.id_for_label }}" class="form-label fw-semibold">Адреса сайту (slug)</label>
+                                {{ form.slug }}
+                                <p class="text-xs text-slate-400 mt-1">Унікальна адреса вашого сайту: /a/ваш-slug/</p>
+                            </div>
+                            <div>
+                                <label for="{{ form.agency_name.id_for_label }}" class="form-label fw-semibold">Назва тур агенції</label>
+                                {{ form.agency_name }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка Дизайн -->
+                <div class="tab-pane" id="tab-design">
+                    <div class="card-shadow">
+                        <div class="card-header">Герой-секція та логотипи</div>
+                        <div class="card-body space-y-6">
+                            <div>
+                                <label for="{{ form.hero_title.id_for_label }}" class="form-label fw-semibold">Заголовок "Головна картинка"</label>
+                                {{ form.hero_title }}
+                            </div>
+                            <div>
+                                <label for="{{ form.hero_subtitle.id_for_label }}" class="form-label fw-semibold">Підтекст</label>
+                                {{ form.hero_subtitle }}
+                            </div>
+                            <!-- Кастомне поле для фону -->
+                            <div>
+                                <label class="form-label fw-semibold">Фонова картинка</label>
+                                <div class="hero-file-line">
+                                    <div class="custom-file-input hero-file-input" style="flex: 1; min-width: 0;">
+                                        <input type="file" name="hero_background" id="id_hero_background" accept="image/*">
+                                        <label for="id_hero_background">Обрати файл</label>
+                                        <span class="file-name-display" id="hero_file_name">
+                                            {% if agent_site.hero_background %}
+                                                {{ agent_site.hero_background.name|slice:"12:" }}
+                                            {% else %}
+                                                Файл не вибрано
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <button type="button" class="btn-generate-ai" id="generateAiBtn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                        </svg>
+                                        Згенерувати ШІ
+                                    </button>
+                                    <p class="text-xs text-slate-400 mt-1">Рекомендовано 1200×400px</p>
+                                </div>
+                                <!-- Прев'ю -->
+                                {% if agent_site.hero_background %}
+                                <div class="mt-3 relative" id="hero_preview_container">
+                                    <img src="{{ agent_site.hero_background.url }}" class="w-full h-32 object-cover rounded-md border" alt="Preview" id="hero_preview">
+                                    <button type="button" class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded" id="clearHeroBtn">Очистити</button>
+                                </div>
+                                {% else %}
+                                <div class="mt-3 relative hidden" id="hero_preview_container">
+                                    <img src="" class="w-full h-32 object-cover rounded-md border" alt="Preview" id="hero_preview">
+                                    <button type="button" class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded" id="clearHeroBtn">Очистити</button>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="pt-4 border-t">
+                                <label class="form-label fw-semibold">Логотипи</label>
+                                <div class="mt-2">
+                                    <label class="block text-sm font-semibold text-slate-700">Верхній логотип (250×250px)</label>
+                                    <div class="custom-file-input logo-file-wrapper">
+                                        <input type="file" name="top_logo" id="id_top_logo" accept="image/png,image/svg+xml">
+                                        <label for="id_top_logo">Обрати файл</label>
+                                        <span class="file-name-display" id="top_logo_display">
+                                            {% if agent_site.top_logo %}
+                                                {{ agent_site.top_logo.name }}
+                                            {% else %}
+                                                Файл не вибрано
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="mt-1">
+                                        <button type="button" class="clear-logo-btn" data-field="top_logo" style="display: {% if agent_site.top_logo %}inline-flex{% else %}none{% endif %};">
+                                            <i class="fa-solid fa-trash-can"></i> Очистити
+                                        </button>
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-1">Дозволені формати: PNG, SVG</p>
+                                </div>
+                                <div class="mt-3">
+                                    <label class="block text-sm font-semibold text-slate-700">Нижній логотип (150×150px або 150×50px)</label>
+                                    <div class="custom-file-input logo-file-wrapper">
+                                        <input type="file" name="bottom_logo" id="id_bottom_logo" accept="image/png,image/svg+xml">
+                                        <label for="id_bottom_logo">Обрати файл</label>
+                                        <span class="file-name-display" id="bottom_logo_display">
+                                            {% if agent_site.bottom_logo %}
+                                                {{ agent_site.bottom_logo.name }}
+                                            {% else %}
+                                                Файл не вибрано
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="mt-1">
+                                        <button type="button" class="clear-logo-btn" data-field="bottom_logo" style="display: {% if agent_site.bottom_logo %}inline-flex{% else %}none{% endif %};">
+                                            <i class="fa-solid fa-trash-can"></i> Очистити
+                                        </button>
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-1">Дозволені формати: PNG, SVG</p>
+                                </div>
+                                <div class="mt-3 flex items-center gap-2">
+                                    {{ form.enlarge_logo }}
+                                    <label for="{{ form.enlarge_logo.id_for_label }}" class="text-sm text-slate-700">Збільшити логотип на 25%</label>
+                                </div>
+                            </div>
+
+                            <!-- НОВИЙ БЛОК: Кольорова схема -->
+                            <div class="pt-4 border-t">
+                                <label class="form-label fw-semibold">Кольорова схема</label>
+                                <div class="mt-2">
+                                    <label for="{{ form.primary_color.id_for_label }}" class="block text-sm font-semibold text-slate-700">Головний колір</label>
+                                    <div class="flex items-center gap-3">
+                                        {{ form.primary_color }}
+                                        <span class="text-sm text-slate-500">Оберіть основний колір сайту</span>
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-1">Колір використовуватиметься для кнопок, посилань, заголовків та акцентів.</p>
+                                </div>
+                                <div class="mt-3">
+                                    <label for="{{ form.secondary_color.id_for_label }}" class="block text-sm font-semibold text-slate-700">Додатковий колір</label>
+                                    <div class="flex items-center gap-3">
+                                        {{ form.secondary_color }}
+                                        <span class="text-sm text-slate-500">Оберіть додатковий колір (для hover-ефектів тощо)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка Меню -->
+                <div class="tab-pane" id="tab-menu">
+                    <div class="card-shadow">
+                        <div class="card-header">Меню та налаштування турів</div>
+                        <div class="card-body space-y-6">
+                            <!-- Розділи для відображення -->
+                            <div>
+                                <label class="form-label fw-semibold">Оберіть розділи для відображення</label>
+                                <div class="mt-2 flex items-center gap-3">
+                                    {{ form.show_news }}
+                                    <label for="{{ form.show_news.id_for_label }}" class="text-sm text-slate-700">Новини</label>
+                                </div>
+                            </div>
+
+                            <!-- Новий блок: Для турів (спрощено) -->
+                            <div class="pt-2">
+                                <label class="form-label fw-semibold">Для турів</label>
+                                <div class="mt-2 space-y-3">
+                                    <div class="flex items-center gap-3">
+                                        {{ form.show_superadmin_tours }}
+                                        <label for="{{ form.show_superadmin_tours.id_for_label }}" class="text-sm text-slate-700">
+                                            Показувати тури суперадміна
+                                            <span class="text-xs text-slate-400 ml-1">(на вашому сайті відображатимуться тури, створені суперадміном; ви зможете додавати свої, але не редагувати чужі)</span>
+                                        </label>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-1">
+                                        <i class="fa-regular fa-circle-question"></i> <strong>Як це працює:</strong>
+                                        Якщо ввімкнено – на сайті показуються тури суперадміна разом із вашими власними (ваші тури ви можете редагувати).<br>
+                                        Якщо вимкнено – відображаються тільки ваші власні тури.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Блок Додатково -->
+                            <div class="pt-4 border-t">
+                                <label class="form-label fw-semibold">Додатково</label>
+                                <div class="mt-2 flex items-center gap-3">
+                                    {{ form.show_operator_logos }}
+                                    <label for="{{ form.show_operator_logos.id_for_label }}" class="text-sm text-slate-700">Відображати логотипи туроператорів на сайті при пошуку турів</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== БЛОК ДЛЯ ПЕРЕВІРКИ КОЛЬОРІВ ===== -->
+    <div class="mt-5 p-4 bg-light rounded" style="max-width: 80rem; margin: 2rem auto 0;">
+        <h5 class="fw-bold mb-3">🔧 Поточні кольори (діагностика)</h5>
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-2">
+                    <strong>Головний колір:</strong><br>
+                    <span style="display: inline-block; width: 60px; height: 30px; background-color: {{ agent_site.primary_color|default:'#086745' }}; border: 1px solid #ccc; border-radius: 4px; vertical-align: middle;"></span>
+                    <code class="ms-2">{{ agent_site.primary_color|default:'#086745' }}</code>
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p class="mb-2">
+                    <strong>Додатковий колір (hover):</strong><br>
+                    <span style="display: inline-block; width: 60px; height: 30px; background-color: {{ agent_site.secondary_color|default:'#02432c' }}; border: 1px solid #ccc; border-radius: 4px; vertical-align: middle;"></span>
+                    <code class="ms-2">{{ agent_site.secondary_color|default:'#02432c' }}</code>
+                </p>
+            </div>
+        </div>
+        <hr class="my-3">
+        <p class="text-muted small mb-0">
+            <i class="fa-regular fa-lightbulb"></i>
+            Після зміни кольорів натисніть <strong>"Зберегти зміни"</strong>, потім <strong>"Відкрити сайт"</strong>.
+
+        </p>
+    </div>
+    <!-- ===== КІНЕЦЬ БЛОКУ ДІАГНОСТИКИ ===== -->
+
+    <!-- DEBUG: agent_site = {{ agent_site }}, slug = {{ agent_site.slug }} -->
+</div>
+
+<style>
+    :root {
+        --primary-color: #086745;
+        --primary-dark: #02432c;
+        --primary-light: #2a6b5c;
+        --primary-lighter: #cbf6ec;
+        --accent-color: #e67e22;
+        --bg-light: #f8f9fa;
+    }
+
+    .max-w-4xl { max-width: 80rem; width: 100%; margin-left: auto; margin-right: auto; }
+
+    html {
+        overflow-y: scroll;
+    }
+    body {
+        overflow-x: hidden;
+    }
+
+    /* КНОПКИ (гарні, як було раніше) */
+    .btn-primary-custom, .btn-outline-custom {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.4rem 1rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: 1px solid transparent;
+        text-decoration: none;
+        background-color: white;
+    }
+    .btn-primary-custom {
+        background-color: var(--primary-color);
+        color: white;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .btn-primary-custom:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(8,103,69,0.2);
+    }
+    .btn-outline-custom {
+        border-color: #cbd5e1;
+        color: #1e293b;
+        background: white;
+    }
+    .btn-outline-custom:hover {
+        background-color: #f8fafc;
+        border-color: #94a3b8;
+        transform: translateY(-1px);
+    }
+    /* Кнопка "Згенерувати ШІ" – сіра, білий текст, без переносу */
+    .btn-generate-ai {
+        background-color: #64748b;
+        border: none;
+        color: white !important;
+        padding: 0.3rem 0.9rem;
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+    }
+    .btn-generate-ai:hover {
+        background-color: #475569;
+    }
+    .btn-generate-ai i, .btn-generate-ai svg {
+        margin-right: 0.25rem;
+    }
+
+    /* Кнопки "Очистити" – червоні, стильні */
+    .clear-logo-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        background-color: #fee2e2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        font-size: 0.7rem;
+        font-weight: 500;
+        padding: 0.2rem 0.6rem;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .clear-logo-btn:hover {
+        background-color: #dc2626;
+        border-color: #dc2626;
+        color: white;
+    }
+    .clear-logo-btn i {
+        font-size: 0.7rem;
+    }
+    /* Кнопка очищення фону (поверх прев'ю) */
+    #clearHeroBtn {
+        background-color: #dc2626 !important;
+        color: white !important;
+        border: none;
+        padding: 0.25rem 0.6rem;
+        border-radius: 0.375rem;
+        font-size: 0.7rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    #clearHeroBtn:hover {
+        background-color: #b91c1c !important;
+        transform: scale(1.02);
+    }
+
+    /* КОНТЕЙНЕР */
+    .tabs-container {
+        display: grid;
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        min-height: 500px;
+    }
+
+    /* HEADER */
+    .tabs-list {
+        display: flex;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem 0 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        background: #fafafa;
+        justify-content: center;
+    }
+
+    .tab-trigger {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.875rem;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        border-radius: 0.5rem 0.5rem 0 0;
+        transition: 0.2s;
+    }
+
+    .tab-trigger i {
+        margin-right: 0.25rem;
+    }
+
+    .tab-trigger.active {
+        background: white;
+        color: var(--primary-color);
+        box-shadow: 0 -2px 0 var(--primary-color) inset;
+    }
+
+    /* GRID OVERLAY для плавного перемикання без стрибків */
+    form {
+        display: grid;
+    }
+
+    .tab-pane {
+        grid-area: 1 / 1;
+        opacity: 0;
+        transform: translateY(6px);
+        pointer-events: none;
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        will-change: opacity, transform;
+    }
+
+    .tab-pane.active {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+        z-index: 1;
+    }
+
+    /* КАРТКИ */
+    .card-shadow {
+        background: white;
+        border-radius: 0.75rem;
+    }
+
+    .card-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        font-weight: 700;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* INPUTS */
+    input:not([type="checkbox"]):not([type="file"]), select, textarea {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(8,103,69,0.25);
+    }
+
+    /* FILE INPUT */
+    .custom-file-input {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .custom-file-input input[type="file"] {
+        display: none;
+    }
+
+    .custom-file-input label {
+        background: #f1f5f9;
+        padding: 0.4rem 0.8rem;
+        border-radius: 0.5rem;
+        border: 1px solid #cbd5e1;
+        font-size: 0.75rem;
+        cursor: pointer;
+    }
+
+    .file-name-display {
+        font-size: 0.75rem;
+        background: #f8fafc;
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.375rem;
+        border: 1px solid #e2e8f0;
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* HERO */
+    .hero-file-line {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    /* UTIL */
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .gap-3 { gap: 0.75rem; }
+    .mt-1 { margin-top: 0.25rem; }
+    .mt-2 { margin-top: 0.5rem; }
+    .mt-3 { margin-top: 0.75rem; }
+    .mt-5 { margin-top: 2rem; }
+    .pt-4 { padding-top: 1rem; }
+    .border-t { border-top: 1px solid #e2e8f0; }
+    .w-full { width: 100%; }
+    .h-32 { height: 8rem; }
+    .rounded-md { border-radius: 0.5rem; }
+    .text-xs { font-size: 0.75rem; }
+    .text-sm { font-size: 0.875rem; }
+    .text-base { font-size: 1rem; }
+    .relative { position: relative; }
+    .absolute { position: absolute; }
+    .top-2 { top: 0.5rem; }
+    .right-2 { right: 0.5rem; }
+    .hidden { display: none; }
+    .mr-1 { margin-right: 0.25rem; }
+    .space-y-4 > * + * { margin-top: 1rem; }
+    .space-y-6 > * + * { margin-top: 1.5rem; }
+    .bg-light { background-color: #f8f9fa; }
+    .p-4 { padding: 1.5rem; }
+    .rounded { border-radius: 0.5rem; }
+    .fw-bold { font-weight: 700; }
+    .mb-0 { margin-bottom: 0; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-3 { margin-bottom: 1rem; }
+    .my-3 { margin-top: 0.75rem; margin-bottom: 0.75rem; }
+    .ms-2 { margin-left: 0.5rem; }
+    .me-2 { margin-right: 0.5rem; }
+    .row { display: flex; flex-wrap: wrap; }
+    .col-md-6 { flex: 0 0 auto; width: 50%; }
+    @media (max-width: 768px) {
+        .col-md-6 { width: 100%; }
+    }
+</style>
+
+<script>
+    // Перемикання табів
+    document.querySelectorAll('.tab-trigger').forEach(trigger => {
+        trigger.addEventListener('click', () => {
+            const tabId = trigger.dataset.tab;
+            document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
+            trigger.classList.add('active');
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        });
+    });
+
+    // Функція для оновлення відображення імені файлу та прев'ю (для фону)
+    function setupFileInput(inputId, displaySpanId, previewImgId = null, clearBtnId = null) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        const displaySpan = document.getElementById(displaySpanId);
+        input.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                displaySpan.textContent = this.files[0].name;
+                if (previewImgId && previewImgId !== 'hero_preview') {
+                    // Для логотипів можна показувати прев'ю, але поки не робимо
+                }
+                if (clearBtnId) {
+                    document.getElementById(clearBtnId)?.classList.remove('hidden');
+                }
+            } else {
+                displaySpan.textContent = 'Файл не вибрано';
+            }
+        });
+    }
+
+    // Для hero фону
+    const heroInput = document.getElementById('id_hero_background');
+    const heroDisplay = document.getElementById('hero_file_name');
+    const heroPreviewContainer = document.getElementById('hero_preview_container');
+    const heroPreview = document.getElementById('hero_preview');
+    const clearHeroBtn = document.getElementById('clearHeroBtn');
+
+    if (heroInput) {
+        heroInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                heroDisplay.textContent = this.files[0].name;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    heroPreview.src = ev.target.result;
+                    heroPreviewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(this.files[0]);
+            } else {
+                heroDisplay.textContent = 'Файл не вибрано';
+                heroPreviewContainer.classList.add('hidden');
+            }
+        });
+    }
+
+    if (clearHeroBtn) {
+        clearHeroBtn.addEventListener('click', function() {
+            heroInput.value = '';
+            heroDisplay.textContent = 'Файл не вибрано';
+            heroPreviewContainer.classList.add('hidden');
+            let clearField = document.querySelector('input[name="hero_background-clear"]');
+            if (!clearField) {
+                clearField = document.createElement('input');
+                clearField.type = 'hidden';
+                clearField.name = 'hero_background-clear';
+                clearField.value = 'on';
+                heroInput.parentNode.appendChild(clearField);
+            } else {
+                clearField.value = 'on';
+            }
+            heroInput.value = '';
+        });
+    }
+
+    // Генерація ШІ (без підтвердження)
+    document.getElementById('generateAiBtn')?.addEventListener('click', function() {
+        const btn = this;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<svg class="animate-spin h-4 w-4 mr-1" ...></svg> Генерую...';
+        btn.disabled = true;
+
+        fetch('/constructor/generate-image/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                return response.json();
+            }
+        })
+        .then(data => {
+            if (data && data.error) {
+                alert('Помилка: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Помилка зв\'язку з сервером');
+        })
+        .finally(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+    });
+
+    // Обробка кнопок очищення для логотипів
+    document.querySelectorAll('.clear-logo-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const field = this.dataset.field;
+            const fileInput = document.getElementById(`id_${field}`);
+            const displaySpan = document.getElementById(`${field}_display`);
+            if (fileInput) {
+                fileInput.value = '';
+                displaySpan.textContent = 'Файл не вибрано';
+                this.style.display = 'none';
+                let clearField = document.querySelector(`input[name="${field}-clear"]`);
+                if (!clearField) {
+                    clearField = document.createElement('input');
+                    clearField.type = 'hidden';
+                    clearField.name = `${field}-clear`;
+                    clearField.value = 'on';
+                    fileInput.parentNode.parentNode.appendChild(clearField);
+                } else {
+                    clearField.value = 'on';
+                }
+            }
+        });
+    });
+
+    // Оновлюємо відображення кнопки очищення при виборі файлу для логотипів
+    function setupLogoFileInput(inputId, displayId, fieldName) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        const displaySpan = document.getElementById(displayId);
+        const clearBtn = document.querySelector(`.clear-logo-btn[data-field="${fieldName}"]`);
+        input.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                displaySpan.textContent = this.files[0].name;
+                if (clearBtn) clearBtn.style.display = 'inline-flex';
+                const clearField = document.querySelector(`input[name="${fieldName}-clear"]`);
+                if (clearField) clearField.remove();
+            } else {
+                displaySpan.textContent = 'Файл не вибрано';
+                if (clearBtn) clearBtn.style.display = 'none';
+            }
+        });
+    }
+
+    setupLogoFileInput('id_top_logo', 'top_logo_display', 'top_logo');
+    setupLogoFileInput('id_bottom_logo', 'bottom_logo_display', 'bottom_logo');
+
+    // Взаємовиключення галочок для турів
+    const useSuperadminCheckbox = document.querySelector('#id_use_superadmin_tours');
+    const createOwnCheckbox = document.querySelector('#id_create_own_tours');
+    if (useSuperadminCheckbox && createOwnCheckbox) {
+        useSuperadminCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                createOwnCheckbox.checked = false;
+            }
+        });
+        createOwnCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                useSuperadminCheckbox.checked = false;
+            }
+        });
+    }
+</script>
+{% endblock %}

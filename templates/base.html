@@ -1,0 +1,751 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>{% block title %}TourConstructor{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Bootstrap Select CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
+
+    <!-- Глобальні CSS-змінні та всі стилі в одному місці -->
+    <style>
+        /* ========== ГЛОБАЛЬНІ ЗМІННІ ========== */
+        :root {
+            --primary-color: {{ request.agent_colors.primary_color|default:'#086745' }};
+            --primary-dark: {{ request.agent_colors.primary_dark|default:'#02432c' }};
+            --primary-light: {{ request.agent_colors.primary_light|default:'#2a6b5c' }};
+            --primary-lighter: {{ request.agent_colors.primary_lighter|default:'#cbf6ec' }};
+            --accent-color: #e67e22;
+            --bg-light: #f8f9fa;
+            font-size: 15px;
+        }
+
+        /* ПРИМУСОВЕ ПЕРЕВИЗНАЧЕННЯ - ТИМЧАСОВО (ВАЖЛИВО ДЛЯ РОБОТИ) */
+        :root {
+            --primary-color: {{ request.agent_colors.primary_color|default:'#086745' }} !important;
+            --primary-dark: {{ request.agent_colors.primary_dark|default:'#02432c' }} !important;
+            --primary-light: {{ request.agent_colors.primary_light|default:'#2a6b5c' }} !important;
+            --primary-lighter: {{ request.agent_colors.primary_lighter|default:'#cbf6ec' }} !important;
+        }
+
+        /* ========== ЗАГАЛЬНІ СТИЛІ ========== */
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+        }
+        .btn-outline-primary {
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+        }
+        a:not(.btn):not(.nav-link) {
+            color: var(--primary-color);
+        }
+        a:not(.btn):not(.nav-link):hover {
+            color: var(--primary-dark);
+        }
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+        .border-primary {
+            border-color: var(--primary-color) !important;
+        }
+        .badge.bg-info {
+            background-color: var(--primary-lighter) !important;
+            color: var(--primary-color) !important;
+        }
+        .form-control:focus,
+        .form-select:focus,
+        .bootstrap-select .dropdown-toggle:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 0.25rem rgba(8, 103, 69, 0.25) !important;
+        }
+        .flatpickr-day.available-date {
+            background-color: var(--primary-color) !important;
+            color: #ffffff !important;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+        .flatpickr-day.available-date:hover {
+            background-color: var(--primary-light) !important;
+        }
+
+        /* ========== СТИЛІ ДЛЯ НАВІГАЦІЇ ========== */
+.navbar .nav-link {
+    color: rgb(5, 48, 31) !important;
+    transition: color 0.3s ease;
+    position: relative;
+    padding-bottom: 4px;
+}
+.navbar .nav-link:hover {
+    color: var(--primary-color) !important;
+}
+
+/* Плавне підкреслення справа наліво */
+.navbar .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    border-radius: 2px;
+    transition: width 0.3s ease-out;
+}
+
+.navbar .nav-link:hover::after {
+    width: 100%;
+    left: 0;
+    right: auto;
+}
+
+/* Для кнопки "Вихід" - чорний колір */
+.navbar .nav-link:last-child::after {
+    background: linear-gradient(90deg, #333333, #666666);
+}
+.navbar .nav-link:last-child:hover {
+    color: #333333 !important;
+}
+
+/* Для кнопки "Підібрати тур" - прибираємо підкреслення */
+.navbar .btn-primary::after {
+    display: none;
+}
+
+        /* ========== СТИЛІ ДЛЯ ВКЛАДОК ========== */
+        .nav-pills .nav-link {
+            color: #333 !important;
+            background-color: transparent !important;
+        }
+        .nav-pills .nav-link:hover {
+            color: var(--primary-color) !important;
+            background-color: var(--primary-lighter) !important;
+        }
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+        }
+
+        /* ========== СТИЛІ ДЛЯ ФУТЕРА ========== */
+        .hover-underline {
+            position: relative;
+            text-decoration: none;
+            display: inline-block;
+            padding-bottom: 2px;
+            transition: color 0.2s ease;
+        }
+        .hover-underline::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: white;
+            transition: width 0.3s ease-in-out;
+        }
+        .hover-underline:hover::after {
+            width: 100%;
+        }
+        .hover-underline:hover {
+            color: white !important;
+        }
+        .footer-links {
+            position: relative;
+            text-decoration: none !important;
+            display: inline-block;
+            padding-bottom: 2px;
+            transition: color 0.2s ease;
+        }
+        .footer-links::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #ffffff;
+            transition: width 0.3s ease-in-out;
+        }
+        .footer-links:hover::after {
+            width: 100%;
+        }
+        .footer-links:hover {
+            color: #ffffff !important;
+        }
+
+        /* ========== СТИЛІ ДЛЯ СПЛИВАЮЧИХ ПОВІДОМЛЕНЬ ========== */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            animation: slideIn 0.3s ease;
+        }
+        .alert-success {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            color: #166534;
+            border-left: 4px solid #22c55e;
+        }
+        .alert-error, .alert-danger {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+        .alert-info {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+        .alert-warning {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .alert.fade-out {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* ========== СТИЛІ ДЛЯ ЧАТ-БОТА ========== */
+        .chat-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 9999;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chat-button:hover { transform: scale(1.05); }
+        .chat-button i { font-size: 28px; color: white; }
+
+        .chat-window {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 380px;
+            height: 500px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 9998;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-window.open { display: flex; animation: slideUp 0.3s ease; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-header h4 { margin: 0; font-size: 16px; font-weight: 600; }
+        .chat-header .close-chat { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+        .message.user {
+            background: var(--primary-color);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .message.bot {
+            background: white;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 10px 14px;
+            background: white;
+            border-radius: 18px;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-10px); opacity: 1; }
+        }
+        .chat-input-container {
+            padding: 12px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+        }
+        .chat-input:focus { border-color: var(--primary-color); }
+        .chat-send {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chat-send:hover { background: var(--primary-light); }
+        .chat-send i { font-size: 18px; }
+
+        @media (max-width: 576px) {
+            .chat-window {
+                width: calc(100vw - 40px);
+                right: 20px;
+                left: 20px;
+                height: 60vh;
+                bottom: 90px;
+            }
+        }
+
+        /* ========== АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ ========== */
+        @media (max-width: 768px) {
+            .navbar .nav-link::after {
+                display: none;
+            }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+        <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% if agent_site and agent_site.slug %}{% url 'agent_home' agent_site.slug %}{% else %}{% url 'home' %}{% endif %}">
+                {% if agent_site and agent_site.top_logo %}
+                    <img src="{{ agent_site.top_logo.url }}" alt="Logo" style="height: 40px; width: auto; {% if agent_site.enlarge_logo %}transform: scale(1.25);{% endif %}">
+                {% else %}
+                    <img src="{% static 'images/HORIZONTAL.png' %}" alt="Logo" style="height: 40px; width: auto;">
+                {% endif %}
+                {% if agent_site and agent_site.agency_name %}
+                    <span class="ms-2 fw-bold text-dark">{{ agent_site.agency_name }}</span>
+                {% endif %}
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                {% if '/constructor/' not in request.path %}
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% if agent_site and agent_site.slug %}{% url 'agent_home' agent_site.slug %}{% else %}{% url 'home' %}{% endif %}">Головна</a>
+                    </li>
+
+                    {% if not agent_site or agent_site.show_news %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/news/{% else %}{% url 'news' %}{% endif %}">Новини</a>
+                    </li>
+                    {% endif %}
+
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold text-success" href="/home/">Головна адміністратора</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold text-primary" href="{% url 'admin:index' %}">Адмінка</a>
+                            </li>
+                        {% endif %}
+                        {% if user.is_agent and not user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold text-success" href="{% url 'admin:index' %}">Кабінет агента</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);" onclick="customLogout();">Вихід</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% if agent_site %}/a/{{ agent_site.slug }}/login/{% else %}/login/{% endif %}">Вхід</a>
+                        </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a class="btn btn-primary ms-lg-2 px-3" href="{% if agent_site %}{% url 'agent_consultation' agent_site.slug %}{% else %}{% url 'consultation' %}{% endif %}">
+                            Підібрати тур
+                        </a>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow-1 pt-5">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-dark text-white py-4 mt-auto">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="row">
+                        <div class="col-md-6 mb-4 mb-md-0 d-flex flex-column">
+                            <div class="mb-3 text-center text-md-start">
+                                {% if agent_site and agent_site.bottom_logo %}
+                                    <img src="{{ agent_site.bottom_logo.url }}" alt="Logo" style="height: 50px; width: auto; filter: brightness(0) invert(1);">
+                                {% else %}
+                                    <img src="{% static 'images/HORIZONTAL.png' %}" alt="Logo" style="height: 50px; width: auto; filter: brightness(0) invert(1);">
+                                {% endif %}
+                            </div>
+                            <p class="text-white-50" style="font-size: 0.9rem; max-width: 90%;">
+                                Обирайте тури від провідних туроператорів – бронюйте онлайн або в офісі.
+                                Найширший вибір, індивідуальний підхід та гарантія найкращої ціни.
+                            </p>
+                            <div class="mt-auto">
+                                <div class="d-flex gap-3 mt-3">
+                                    <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-telegram fa-lg"></i></a>
+                                    <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-instagram fa-lg"></i></a>
+                                    <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-facebook fa-lg"></i></a>
+                                    <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-youtube fa-lg"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="fw-bold mb-3 text-white">Популярні напрямки</h5>
+                            <div class="row">
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Єгипет{% else %}{% url 'search_results' %}?country=Єгипет{% endif %}" class="text-white-50 footer-links">Тури в Єгипет</a></li>
+                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Туреччина{% else %}{% url 'search_results' %}?country=Туреччина{% endif %}" class="text-white-50 footer-links">Тури в Туреччину</a></li>
+                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=ОАЕ{% else %}{% url 'search_results' %}?country=ОАЕ{% endif %}" class="text-white-50 footer-links">Тури в ОАЕ</a></li>
+                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Шрі-Ланка{% else %}{% url 'search_results' %}?country=Шрі-Ланка{% endif %}" class="text-white-50 footer-links">Тури в Шрі-Ланку</a></li>
+                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Іспанія{% else %}{% url 'search_results' %}?country=Іспанія{% endif %}" class="text-white-50 footer-links">Тури в Іспанію</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Танзанія{% else %}{% url 'search_results' %}?country=Танзанія{% endif %}" class="text-white-50 footer-links">Тури в Танзанію</a></li>
+                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Мальдіви{% else %}{% url 'search_results' %}?country=Мальдіви{% endif %}" class="text-white-50 footer-links">Тури в Мальдіви</a></li>
+                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=В&#x27;єтнам{% else %}{% url 'search_results' %}?country=В&#x27;єтнам{% endif %}" class="text-white-50 footer-links">Тури в В'єтнам</a></li>
+                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Албанія{% else %}{% url 'search_results' %}?country=Албанія{% endif %}" class="text-white-50 footer-links">Тури в Албанію</a></li>
+                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Італія{% else %}{% url 'search_results' %}?country=Італія{% endif %}" class="text-white-50 footer-links">Тури в Італію</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4 pt-3 border-top border-secondary">
+                <p class="mb-0">© 2026 TourConstructor</p>
+                <div class="mt-2">
+                    <a href="{% if agent_site %}/a/{{ agent_site.slug }}/privacy-policy/{% else %}{% url 'privacy_policy' %}{% endif %}" class="text-white-50 text-decoration-none me-3">Політика конфіденційності</a>
+                    <a href="{% if agent_site %}/a/{{ agent_site.slug }}/terms-of-service/{% else %}{% url 'terms_of_service' %}{% endif %}" class="text-white-50 text-decoration-none">Правила надання послуг</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/search.js' %}"></script>
+
+    <!-- jQuery (необхідний для Bootstrap Select) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/i18n/defaults-uk_UA.min.js"></script>
+
+    <!-- Flatpickr CSS та JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
+
+    {% block extra_js %}{% endblock %}
+
+    <!-- Скрипт для виходу -->
+    <script>
+    function customLogout() {
+    const currentUrl = window.location.href;
+    fetch('/logout/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+    }).then(() => {
+        // Перенаправляємо на поточну сторінку (вона оновиться і покаже "Вхід")
+        window.location.href = currentUrl;
+    }).catch(() => {
+        window.location.href = currentUrl;
+    });
+}
+
+    // Автоматичне зникнення повідомлень через 5 секунд
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.classList.add('fade-out');
+                setTimeout(() => {
+                    alert.remove();
+                }, 300);
+            }, 5000);
+        });
+    });
+    </script>
+
+    <!-- ========== ЧАТ-БОТ (ШІ-асистент) ========== -->
+    <div class="chat-button" id="chatButton">
+        <i class="fa-regular fa-message"></i>
+    </div>
+
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <h4><i class="fa-regular fa-comment-dots me-2"></i>Чат з {% if agent_site and agent_site.agency_name %}{{ agent_site.agency_name }}{% else %}ТурКонструктор{% endif %}</h4>
+            <button class="close-chat" id="closeChatBtn">✕</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">👋 Вітаю! Чим можу допомогти вам з підбором туру?</div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Ваше запитання...">
+            <button class="chat-send" id="chatSendBtn">
+                <i class="fa-regular fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+    const chatButton = document.getElementById('chatButton');
+    const chatWindow = document.getElementById('chatWindow');
+    const closeChatBtn = document.getElementById('closeChatBtn');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const chatSendBtn = document.getElementById('chatSendBtn');
+
+    chatButton.addEventListener('click', () => chatWindow.classList.add('open'));
+    closeChatBtn.addEventListener('click', () => chatWindow.classList.remove('open'));
+
+    document.addEventListener('click', (e) => {
+        if (!chatWindow.contains(e.target) && !chatButton.contains(e.target) && chatWindow.classList.contains('open')) {
+            chatWindow.classList.remove('open');
+        }
+    });
+
+    function addMessage(text, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+        if (!isUser) {
+            text = text.replace(/<a (?!.*?href="#consultationCard")/g, '<a target="_blank" rel="noopener noreferrer" ');
+        }
+        messageDiv.innerHTML = text;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'typing-indicator';
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = '<span></span><span></span><span></span>';
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function hideTypingIndicator() {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) indicator.remove();
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function checkAndOpenChat() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('chat_open') === '1') {
+            const chatWindow = document.getElementById('chatWindow');
+            if (chatWindow) {
+                chatWindow.classList.add('open');
+                const chatCountry = urlParams.get('chat_country');
+                if (chatCountry) {
+                    setTimeout(() => {
+                        addMessage(`🔍 Ви шукаєте тури в ${chatCountry}. Можу допомогти з підбором готелю, дат або бюджету?`, false);
+                    }, 500);
+                }
+            }
+            let newUrl = window.location.pathname + window.location.search;
+            newUrl = newUrl.replace(/[?&]chat_open=1/, '').replace(/[?&]chat_country=[^&]*/, '').replace(/^&/, '?').replace(/[?]$/, '');
+            window.history.replaceState({}, '', newUrl);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', checkAndOpenChat);
+
+    async function sendMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        addMessage(escapeHtml(message), true);
+        chatInput.value = '';
+        showTypingIndicator();
+
+        try {
+            const response = await fetch('/api/chat/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ message: message })
+            });
+
+            const data = await response.json();
+            hideTypingIndicator();
+
+            if (data.response) {
+                addMessage(data.response, false);
+                if (data.redirect) {
+                    let redirectUrl = data.redirect;
+                    const isAgentSite = window.location.pathname.startsWith('/a/');
+                    const agentSlug = isAgentSite ? window.location.pathname.split('/')[2] : null;
+
+                    if (isAgentSite && agentSlug && redirectUrl.startsWith('/search/')) {
+                        redirectUrl = `/a/${agentSlug}/search/` + redirectUrl.replace('/search/', '?');
+                    } else if (isAgentSite && agentSlug && redirectUrl.startsWith('/tour/')) {
+                        redirectUrl = `/a/${agentSlug}` + redirectUrl;
+                    } else if (isAgentSite && agentSlug && redirectUrl.startsWith('/city/')) {
+                        redirectUrl = `/a/${agentSlug}` + redirectUrl;
+                    }
+
+                    if (redirectUrl.indexOf('chat_open') === -1) {
+                        redirectUrl += (redirectUrl.indexOf('?') === -1 ? '?chat_open=1' : '&chat_open=1');
+                    }
+                    setTimeout(() => {
+                        window.location.href = redirectUrl;
+                    }, 1500);
+                }
+            } else {
+                addMessage('⚠️ Вибачте, сталася помилка. Спробуйте ще раз.', false);
+            }
+        } catch (error) {
+            console.error('Помилка чату:', error);
+            hideTypingIndicator();
+            addMessage('⚠️ Помилка зв\'язку. Будь ласка, спробуйте пізніше.', false);
+        }
+    }
+
+    chatSendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a[href="#consultationCard"]');
+        if (link) {
+            e.preventDefault();
+            const consultationCard = document.getElementById('consultationCard');
+            if (consultationCard) {
+                consultationCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => {
+                    consultationCard.style.transition = 'box-shadow 0.3s';
+                    consultationCard.style.boxShadow = `0 0 0 3px var(--primary-color)`;
+                    setTimeout(() => {
+                        consultationCard.style.boxShadow = '';
+                    }, 1500);
+                    const nameInput = consultationCard.querySelector('input[name="name"]');
+                    if (nameInput) nameInput.focus();
+                }, 500);
+            }
+        }
+    });
+    </script>
+</body>
+</html>

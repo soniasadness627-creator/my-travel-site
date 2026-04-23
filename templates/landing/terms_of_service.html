@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Правила надання послуг - TourConstructor</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'landing/css/style.css' %}">
+
+    <style>
+        .legal-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .legal-content h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1.5rem;
+        }
+        .legal-content h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .legal-content p {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .legal-content ul {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased bg-slate-50">
+    <div class="container-wide mx-auto px-6 md:px-12 py-12">
+        <a href="/" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Повернутися на головну
+        </a>
+
+        <div class="legal-content">
+            <h1>Правила надання послуг</h1>
+
+            <h2>1. Загальні положення</h2>
+            <p>Ці Правила надання послуг регулюють відносини між TourConstructor (далі - "Ми", "Наш", "Сервіс") та користувачем (далі - "Ви", "Клієнт", "Агентство") щодо використання сервісу створення сайтів для туристичних агентств.</p>
+
+            <h2>2. Реєстрація та створення сайту</h2>
+            <p>Для створення сайту вам необхідно зареєструватися на нашому сайті. Після реєстрації ви отримуєте доступ до конструктора сайтів, де можете налаштувати зовнішній вигляд, додати логотип, контакти та іншу інформацію про ваше агентство.</p>
+
+            <h2>3. Послуги, що надаються</h2>
+            <ul>
+                <li>Створення та хостинг професійного сайту для туристичного агентства</li>
+                <li>Інтеграція з пошуковою системою турів</li>
+                <li>Технічна підтримка та оновлення</li>
+                <li>Можливість самостійного редагування контенту через конструктор</li>
+            </ul>
+
+            <h2>4. Відповідальність сторін</h2>
+            <p>Ми не несемо відповідальності за точність інформації про тури, яка надається туроператорами. Вся відповідальність за контент, розміщений на вашому сайті, лежить на вас.</p>
+
+            <h2>5. Оплата послуг</h2>
+            <p>На даний момент послуга створення сайту є безкоштовною. У майбутньому можливе введення платних тарифів, про що ми повідомимо заздалегідь.</p>
+
+            <h2>6. Призупинення або припинення послуг</h2>
+            <p>Ми залишаємо за собою право призупинити або припинити надання послуг у разі порушення вами цих Правил або чинного законодавства України.</p>
+
+            <h2>7. Зміна умов</h2>
+            <p>Ми можемо час від часу змінювати ці Правила. Про будь-які зміни ми повідомимо на цій сторінці.</p>
+
+            <h2>8. Контакти</h2>
+            <p>Якщо у вас виникли питання щодо цих Правил, будь ласка, зв'яжіться з нами за адресою: info@tourconstructor.com</p>
+
+            <p class="text-sm text-slate-400 mt-8">Останнє оновлення: 20 квітня 2026 року</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1106 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row">
+        <!-- Ліва колонка: фільтри -->
+        <div class="col-lg-3">
+            <form method="get" action="{% if agent_site %}{% url 'agent_search' agent_site.slug %}{% else %}{% url 'search_results' %}{% endif %}" id="filterForm">
+                <h4>Фільтри</h4>
+
+                <!-- Рейтинг готелю -->
+<div class="mt-3">
+    <h6>Рейтинг готелю</h6>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="rating" value="1" id="rating1" {% if '1' in request.GET.rating %}checked{% endif %}>
+        <label class="form-check-label" for="rating1">1</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="rating" value="2" id="rating2" {% if '2' in request.GET.rating %}checked{% endif %}>
+        <label class="form-check-label" for="rating2">2</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="rating" value="3" id="rating3" {% if '3' in request.GET.rating %}checked{% endif %}>
+        <label class="form-check-label" for="rating3">3</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="rating" value="4" id="rating4" {% if '4' in request.GET.rating %}checked{% endif %}>
+        <label class="form-check-label" for="rating4">4</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="rating" value="5" id="rating5" {% if '5' in request.GET.rating %}checked{% endif %}>
+        <label class="form-check-label" for="rating5">5</label>
+    </div>
+</div>
+
+                <!-- Бюджет -->
+                <div class="mt-3">
+                    <h6>Бюджет</h6>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <input type="number" name="price_min" class="form-control" placeholder="0 грн" value="{{ request.GET.price_min }}">
+                        </div>
+                        <div class="col-6">
+                            <input type="number" name="price_max" class="form-control" placeholder="200 000 грн" value="{{ request.GET.price_max }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Категорія готелю (зірки) -->
+                <div class="mt-3">
+                    <h6>Категорія готелю</h6>
+                    {% for star in "2345" %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="stars" value="{{ star }}" id="star{{ star }}" {% if star in request.GET.stars %}checked{% endif %}>
+                            <label class="form-check-label" for="star{{ star }}">{{ star }}*</label>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Пошук готелю -->
+                <div class="mt-3">
+                    <h6>Пошук готелю</h6>
+                    <input type="text" name="hotel_search" class="form-control" placeholder="Введіть назву" value="{{ request.GET.hotel_search }}">
+                </div>
+
+                <!-- Тип харчування (з amenity) -->
+                <div class="mt-3">
+                    <h6>Тип харчування</h6>
+                    {% for meal in meal_options %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="meal" value="{{ meal.id }}" id="meal{{ meal.id }}" {% if meal.id|stringformat:"s" in request.GET.meal %}checked{% endif %}>
+                            <label class="form-check-label" for="meal{{ meal.id }}">{{ meal.name }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Лінія пляжу -->
+                <div class="mt-3">
+                    <h6>Лінія пляжу</h6>
+                    {% for beach in beach_lines %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="beach_line" value="{{ beach.id }}" id="beach{{ beach.id }}" {% if beach.id|stringformat:"s" in request.GET.beach_line %}checked{% endif %}>
+                            <label class="form-check-label" for="beach{{ beach.id }}">{{ beach.name }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Додаткові фільтри -->
+                <div class="mt-3">
+                    <h6>Особливості готелю</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="adults_only" value="1" id="adultsOnly" {% if request.GET.adults_only %}checked{% endif %}>
+                        <label class="form-check-label" for="adultsOnly">Готель для дорослих</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="large_area" value="1" id="largeArea" {% if request.GET.large_area %}checked{% endif %}>
+                        <label class="form-check-label" for="largeArea">Велика територія</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="waterpark" value="1" id="waterpark" {% if request.GET.waterpark %}checked{% endif %}>
+                        <label class="form-check-label" for="waterpark">Аквапарк або гірки</label>
+                    </div>
+                </div>
+
+<div class="filter-buttons mt-4">
+    <button type="submit" class="btn btn-primary w-100 mb-2">Застосувати</button>
+    <a href="{% url 'search_results' %}" class="btn btn-outline-secondary w-100">Скинути все</a>
+</div>
+            </form>
+        </div>
+
+        <!-- Права колонка: результати -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3>Знайдено {{ tours.paginator.count }} турів</h3>
+                <div class="sort-by">
+                    <select class="form-select" id="sortSelect">
+                        <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Ціна (зростання)</option>
+                        <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Ціна (спадання)</option>
+                        <option value="rating_desc" {% if request.GET.sort == 'rating_desc' %}selected{% endif %}>Рейтинг (високий)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="tour-list">
+                {% for tour in tours %}
+                    <div class="card mb-3 shadow-sm">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                {% if tour.image %}
+                                    <img src="{{ tour.image.url }}" class="img-fluid rounded-start" style="height: 180px; width: 100%; object-fit: cover;" alt="{{ tour.title }}">
+                                {% else %}
+                                    <div class="bg-light d-flex align-items-center justify-content-center h-100">
+                                        <i class="fa-solid fa-image fa-3x text-muted"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="card-title fw-bold">{{ tour.title }}</h5>
+                                        <span class="badge bg-warning text-dark">Рейтинг: {{ tour.avg_rating|floatformat:1|default:"Немає" }}</span>
+                                    </div>
+                                    <p class="card-text text-muted small">{{ tour.city|default:"" }}, {{ tour.country }}</p>
+                                    <div class="mt-2">
+                                        {% for amenity in tour.amenities.all|slice:":3" %}
+                                            <span class="badge me-1" style="background-color: var(--primary-lighter); color: var(--primary-color);">{{ amenity.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fa-regular fa-calendar"></i>
+                                        {% if tour.earliest_departure %}
+                                            {{ tour.earliest_departure|date:"d.m.Y" }}
+                                        {% else %}
+                                            дати уточнюються
+                                        {% endif %}
+                                        <span class="mx-2">|</span>
+                                        <i class="fa-regular fa-clock"></i>
+                                        {% if tour.duration %}
+                                            {{ tour.duration }} ночей
+                                        {% endif %}
+                                        <span class="mx-2">|</span>
+                                        <i class="fa-solid fa-plane-departure"></i>
+                                        {% if tour.departure_city %}
+                                            {% if tour.transport == 'bus' %}
+                                                Виїзд з {{ tour.departure_city }}
+                                            {% else %}
+                                                Виліт з {{ tour.departure_city }}
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                    <div class="mt-2">
+<span class="h5 text-danger fw-bold">{{ tour.effective_price|floatformat:"0" }} грн</span>                                        <span class="text-muted">
+                                            за
+                                            {% if adults == 1 %}
+                                                1 дорослого
+                                            {% else %}
+                                                {{ adults }} дорослих
+                                            {% endif %}
+                                            {% if children_ages %}
+                                                та
+                                                {% with children_count=children_ages|length %}
+                                                    {% if children_count == 1 %}
+                                                        1 дитину
+                                                    {% else %}
+                                                        {{ children_count }} дітей
+                                                    {% endif %}
+                                                {% endwith %}
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <a href="{% if agent_site %}{% url 'agent_tour_detail' agent_site.slug tour.pk %}{% else %}{% url 'tour_detail' tour.pk %}{% endif %}" class="btn btn-outline-primary btn-sm mt-2">Переглянути місця</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="alert alert-info">Нічого не знайдено. Спробуйте змінити параметри пошуку.</div>
+                {% endfor %}
+            </div>
+
+            {% if tours.has_other_pages %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if tours.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ tours.previous_page_number }}&{{ request.GET.urlencode }}">&laquo;</a></li>
+                        {% endif %}
+                        {% for num in tours.paginator.page_range %}
+                            {% if tours.number == num %}
+                                <li class="page-item active"><span class="page-link" style="background: var(--primary-color); border-color: var(--primary-color);">{{ num }}</span></li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ num }}&{{ request.GET.urlencode }}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if tours.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ tours.next_page_number }}&{{ request.GET.urlencode }}">&raquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- ========== ПОПУЛЯРНІ ГОТЕЛІ КРАЇНИ (КАРУСЕЛЬ) ========== -->
+{% if popular_tours_for_country %}
+<div class="popular-hotels-block my-5">
+    <div class="container">
+        <h3 class="mb-4">Популярні готелі {% if request.GET.country %}{{ request.GET.country }}{% endif %}</h3>
+        <div class="carousel-container">
+            <div class="carousel-track" id="popularCountryHotelsTrack">
+                {% for tour in popular_tours_for_country %}
+                <div class="carousel-card">
+                    <div class="card h-100 shadow-sm border-0 rounded-4">
+                        {% if tour.image %}
+                        <img src="{{ tour.image.url }}" class="card-img-top rounded-top-4" alt="{{ tour.title }}" style="height: 160px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-light rounded-top-4 d-flex align-items-center justify-content-center" style="height: 160px;">
+                            <i class="fa-solid fa-image fa-3x text-muted"></i>
+                        </div>
+                        {% endif %}
+
+                        <div class="rating-badge">
+                            {% with avg=tour.avg_rating|floatformat:1 %}
+                            <div class="rating-badge-container">
+                                <div class="rating-badge-left">
+                                    <div class="rating-label-text">
+                                        {% if avg|floatformat:0 >= "9" %}
+                                            <span class="rating-label very-good">ДУЖЕ ДОБРЕ</span>
+                                        {% elif avg|floatformat:0 >= "8" %}
+                                            <span class="rating-label good">ДОБРЕ</span>
+                                        {% else %}
+                                            <span class="rating-label average">СЕРЕДНЄ</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="rating-reviews-count">{{ tour.reviews_count|default:"0" }} відгуків</div>
+                                </div>
+                                <div class="rating-badge-right">
+                                    <div class="rating-number">{{ avg }}</div>
+                                </div>
+                            </div>
+                            {% endwith %}
+                        </div>
+
+                        <div class="card-body p-3">
+                            <h6 class="card-title fw-bold mb-2">{{ tour.title|truncatechars:35 }}</h6>
+                            <p class="card-text text-muted mb-3">
+                                <i class="fa-solid fa-location-dot me-1"></i>
+                                {% if tour.city %}{{ tour.city }}, {% endif %}{{ tour.country }}
+                            </p>
+                            <div class="text-center">
+                                <a href="{% if agent_site %}{% url 'agent_tour_detail' agent_site.slug tour.pk %}{% else %}{% url 'tour_detail' tour.pk %}{% endif %}" class="btn btn-outline-primary px-4 py-2">Переглянути деталі</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-btn prev" id="popularCountryPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="carousel-btn next" id="popularCountryNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ========== ІНФОРМАЦІЯ ПРО КРАЇНУ ========== -->
+{% if country_info %}
+<div class="country-info-block my-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="info-text-wrapper">
+                    <h2 class="mb-3 country-info-title">Основна інформація про {{ country_info.country }}</h2>
+                    <div class="info-text collapsed" id="fullCountryInfo">
+                        {% if country_info.main_text %}
+                            {{ country_info.main_text|linebreaks }}
+                        {% endif %}
+                        {% if country_info.why_text %}
+                            <h3>Чому варто вибрати?</h3>
+                            {{ country_info.why_text|linebreaks }}
+                        {% endif %}
+                        {% if country_info.popular_resorts %}
+                            <h3>Популярні курорти</h3>
+                            {{ country_info.popular_resorts|linebreaks }}
+                        {% endif %}
+                        {% if country_info.activities %}
+                            <h3>Доступні види відпочинку</h3>
+                            {{ country_info.activities|linebreaks }}
+                        {% endif %}
+                        {% if country_info.sights %}
+                            <h3>Основні визначні пам'ятки</h3>
+                            {{ country_info.sights|linebreaks }}
+                        {% endif %}
+                        {% if country_info.useful_facts %}
+                            <h3>Корисні факти</h3>
+                            {{ country_info.useful_facts|linebreaks }}
+                        {% endif %}
+                    </div>
+                    <button class="toggle-info-btn" id="toggleCountryInfoBtn">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ========== СХОЖІ КУРОРТИ (КАРУСЕЛЬ) ========== -->
+{% if similar_cities %}
+<div class="similar-cities-block my-5">
+    <div class="container">
+        <h3 class="mb-4">Схожі курорти</h3>
+        <div class="carousel-container">
+            <div class="carousel-track" id="similarCitiesTrack">
+                {% for city in similar_cities %}
+                <div class="carousel-card">
+                    <a href="{% if agent_site %}{% url 'agent_city_detail' agent_site.slug city.id %}{% else %}{% url 'city_detail' city.id %}{% endif %}" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 rounded-4">
+                            {% if city.image_url %}
+                            <img src="{{ city.image_url }}" class="card-img-top rounded-top-4" alt="{{ city.name }}" style="height: 120px; object-fit: cover;">
+                            {% else %}
+                            <div class="bg-light rounded-top-4 d-flex align-items-center justify-content-center" style="height: 120px;">
+                                <i class="fa-solid fa-city fa-2x text-muted"></i>
+                            </div>
+                            {% endif %}
+                            <div class="card-body p-2 text-center">
+                                <h6 class="card-title fw-bold mb-0">{{ city.name }}</h6>
+                                <small class="text-muted">{{ city.country }}</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-btn prev" id="similarCitiesPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="carousel-btn next" id="similarCitiesNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ========== БЛОК КОНСУЛЬТАЦІЇ (адаптивний) ========== -->
+<div class="row justify-content-center my-5">
+    <div class="col-12 col-md-10 col-lg-8">
+        <div class="card border-0 shadow-sm" id="consultationCard">
+            <div class="card-body p-4 p-md-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">
+                    Довірте вибір спеціалістам
+                </h5>
+                <p class="text-muted mb-0">
+                    Залишіть заявку, щоб отримати персональний підбір турів
+                </p>
+                <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
+                    <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
+                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
+                             style="width: 40px; height: 40px;">
+                            <i class="fa-regular fa-user text-secondary"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold" style="font-size: 0.95rem;">
+                                {% if agent_site %}
+                                    {{ agent_site.user.get_full_name|default:agent_site.user.username }}
+                                {% else %}
+                                    {{ random_agent.get_full_name|default:random_agent.username }}
+                                {% endif %}
+                            </div>
+                            <div class="text-muted" style="font-size: 0.8rem;">
+                                9 років досвіду в туризмі
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
+                        <form method="post" action="{% if agent_site %}{% url 'agent_home' agent_site.slug %}{% else %}{% url 'home' %}{% endif %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="consultation_submit" value="1">
+                            <div class="mb-3">
+                                <input type="text" name="name" class="form-control" placeholder="Ваше ім'я" required>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-4">
+                                    <select name="country_code" class="form-select" required>
+                                        <option value="+380" selected>🇺🇦 +380</option>
+                                        <option value="+48">🇵🇱 +48</option>
+                                        <option value="+1">🇺🇸 +1</option>
+                                        <option value="+44">🇬🇧 +44</option>
+                                        <option value="+49">🇩🇪 +49</option>
+                                        <option value="+33">🇫🇷 +33</option>
+                                    </select>
+                                </div>
+                                <div class="col-8">
+                                    <input type="tel" name="phone" class="form-control" placeholder="(XX) XXX-XX-XX" required>
+                                </div>
+                            </div>
+                            <button class="btn w-100" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='var(--primary-dark)'" onmouseout="this.style.background='var(--primary-color)'">
+                                Залишити запит
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-color: #086745;
+        --primary-dark: #02432c;
+        --primary-light: #2a6b5c;
+        --primary-lighter: #cbf6ec;
+        --accent-color: #e67e22;
+        --bg-light: #f8f9fa;
+    }
+
+    /* ===== КНОПКИ ===== */
+    .btn-primary {
+        background-color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+    }
+    .btn-primary:hover {
+        background-color: var(--primary-dark) !important;
+        border-color: var(--primary-dark) !important;
+    }
+    .btn-outline-primary {
+        color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+    }
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+    }
+
+    /* ===== ПОСИЛАННЯ ===== */
+    .btn-link {
+        color: var(--primary-color) !important;
+    }
+    .btn-link:hover {
+        color: var(--primary-dark) !important;
+    }
+
+    /* ===== BADGE СТИЛІ ===== */
+    .badge.bg-info {
+        background-color: var(--primary-lighter) !important;
+        color: var(--primary-color) !important;
+    }
+
+    /* ===== ПАГІНАЦІЯ ===== */
+    .page-link {
+        color: var(--primary-color);
+    }
+    .page-link:hover {
+        color: var(--primary-dark);
+    }
+    .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    /* ===== СТИЛІ ДЛЯ КАРУСЕЛІ ПОПУЛЯРНИХ ГОТЕЛІВ ===== */
+    .popular-hotels-block .carousel-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding: 0 5px;
+    }
+    .popular-hotels-block .carousel-track {
+        display: flex;
+        transition: transform 0.4s ease;
+        gap: 15px;
+    }
+    .popular-hotels-block .carousel-card {
+        flex: 0 0 calc(25% - 15px);
+        min-width: 0;
+        box-sizing: border-box;
+        display: flex;
+    }
+    .popular-hotels-block .card {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: #fff;
+        border: 1px solid rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+        border-radius: 16px !important;
+    }
+    .popular-hotels-block .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .popular-hotels-block .rating-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(4px);
+        border-radius: 10px;
+        padding: 6px 10px;
+        color: white;
+        z-index: 2;
+        min-width: 130px;
+    }
+    .popular-hotels-block .rating-badge-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+    }
+    .popular-hotels-block .rating-badge-left {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+    .popular-hotels-block .rating-label-text {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+    .popular-hotels-block .rating-label.very-good { color: #2ecc71; }
+    .popular-hotels-block .rating-label.good { color: #e67e22; }
+    .popular-hotels-block .rating-label.average { color: #f1c40f; }
+    .popular-hotels-block .rating-reviews-count {
+        font-size: 0.65rem;
+        color: #e0e0e0;
+        line-height: 1.2;
+        white-space: nowrap;
+    }
+    .popular-hotels-block .rating-badge-right {
+        display: flex;
+        align-items: center;
+    }
+    .popular-hotels-block .rating-number {
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+    .popular-hotels-block .btn {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.8rem;
+        border-radius: 10px !important;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .popular-hotels-block .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    .popular-hotels-block .card-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+    }
+    .popular-hotels-block .card-text {
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+        color: #6c757d;
+    }
+    .popular-hotels-block .card-body {
+        padding: 1rem 1rem 1.2rem !important;
+    }
+    @media (max-width: 992px) {
+        .popular-hotels-block .carousel-card { flex: 0 0 calc(33.33% - 15px); }
+    }
+    @media (max-width: 768px) {
+        .popular-hotels-block .carousel-card { flex: 0 0 calc(50% - 15px); }
+        .popular-hotels-block .carousel-btn { width: 35px; height: 35px; font-size: 16px; }
+        .popular-hotels-block .carousel-btn.prev { left: 5px; }
+        .popular-hotels-block .carousel-btn.next { right: 5px; }
+    }
+    @media (max-width: 576px) {
+        .popular-hotels-block .carousel-card { flex: 0 0 calc(100% - 15px); }
+        .popular-hotels-block .carousel-btn { width: 30px; height: 30px; background: rgba(0,0,0,0.5); }
+        .popular-hotels-block .carousel-btn.prev { left: 0px; }
+        .popular-hotels-block .carousel-btn.next { right: 0px; }
+    }
+    .popular-hotels-block .carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.6);
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+    .popular-hotels-block .carousel-btn:hover { background: rgba(0,0,0,0.9); }
+    .popular-hotels-block .carousel-btn.prev { left: 0px; }
+    .popular-hotels-block .carousel-btn.next { right: 0px; }
+
+    /* ===== БЛОК ІНФОРМАЦІЇ ПРО КРАЇНУ ===== */
+    .country-info-block {
+        background-color: #f8f9fa;
+        border-radius: 20px;
+        padding: 2rem 0;
+    }
+    .country-info-title {
+        color: #000000 !important;
+        font-weight: normal !important;
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+    .info-text {
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        max-height: 200px;
+        line-height: 1.6;
+        font-size: 1rem;
+        color: #6c757d;
+        position: relative;
+    }
+    .info-text.collapsed {
+        max-height: 200px;
+    }
+    .info-text.expanded {
+        max-height: none;
+    }
+    .info-text.collapsed::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 50px;
+        background: linear-gradient(to bottom, rgba(248,249,250,0), rgba(248,249,250,0.95));
+        pointer-events: none;
+    }
+    .info-text h3 {
+        font-size: 1.2rem;
+        color: var(--primary-color);
+        margin: 1rem 0 0.5rem;
+        font-weight: 600;
+    }
+    .info-text h3:first-of-type {
+        margin-top: 0;
+    }
+    .toggle-info-btn {
+        display: block;
+        margin: 15px auto 0;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: #6c757d;
+        border: none;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        transition: background 0.2s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .toggle-info-btn:hover {
+        background-color: #5a6268;
+    }
+    @media (max-width: 768px) {
+        .info-text {
+            max-height: 150px;
+        }
+        .toggle-info-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+    }
+
+    /* ===== СТИЛІ ДЛЯ КАРУСЕЛІ СХОЖИХ КУРОРТІВ ===== */
+    .similar-cities-block .carousel-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding: 0 5px;
+    }
+    .similar-cities-block .carousel-track {
+        display: flex;
+        transition: transform 0.4s ease;
+        gap: 15px;
+    }
+    .similar-cities-block .carousel-card {
+        flex: 0 0 calc(16.666% - 15px);
+        min-width: 0;
+        box-sizing: border-box;
+    }
+    @media (max-width: 992px) {
+        .similar-cities-block .carousel-card { flex: 0 0 calc(25% - 15px); }
+    }
+    @media (max-width: 768px) {
+        .similar-cities-block .carousel-card { flex: 0 0 calc(33.33% - 15px); }
+    }
+    @media (max-width: 576px) {
+        .similar-cities-block .carousel-card { flex: 0 0 calc(50% - 15px); }
+    }
+    .similar-cities-block .carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.6);
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+    .similar-cities-block .carousel-btn:hover { background: rgba(0,0,0,0.9); }
+    .similar-cities-block .carousel-btn.prev { left: 0px; }
+    .similar-cities-block .carousel-btn.next { right: 0px; }
+    @media (max-width: 768px) {
+        .similar-cities-block .carousel-btn { width: 35px; height: 35px; font-size: 16px; }
+        .similar-cities-block .carousel-btn.prev { left: 5px; }
+        .similar-cities-block .carousel-btn.next { right: 5px; }
+    }
+    @media (max-width: 576px) {
+        .similar-cities-block .carousel-btn { width: 30px; height: 30px; background: rgba(0,0,0,0.5); }
+        .similar-cities-block .carousel-btn.prev { left: 0px; }
+        .similar-cities-block .carousel-btn.next { right: 0px; }
+    }
+    .similar-cities-block .card {
+        transition: transform 0.2s;
+    }
+    .similar-cities-block .card:hover {
+        transform: translateY(-5px);
+    }
+
+    /* ===== БЛОК КОНСУЛЬТАЦІЇ ===== */
+    .agent-card {
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    @media (max-width: 768px) {
+        .consult-row {
+            flex-direction: column !important;
+            gap: 1.5rem !important;
+        }
+        .form-block {
+            order: 1;
+            width: 100%;
+        }
+        .agent-block {
+            order: 2;
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* ===== СТИЛЬНІ ФІЛЬТРИ (БЕЗ СТРИБАННЯ) ===== */
+    /* Загальний контейнер фільтрів */
+    .col-lg-3 {
+        position: sticky;
+        top: 80px;
+        height: fit-content;
+    }
+
+    #filterForm {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    #filterForm h4 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--primary-lighter);
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    #filterForm h4::before {
+        content: "🎯";
+        font-size: 1.2rem;
+    }
+
+    #filterForm h6 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #4a5568;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* Стилі для чекбоксів - БЕЗ ЗСУВУ */
+    .form-check {
+        margin-bottom: 0.5rem;
+    }
+
+    .form-check-input {
+        width: 1.1rem;
+        height: 1.1rem;
+        margin-top: 0.15rem;
+        cursor: pointer;
+        border: 2px solid #cbd5e1;
+        transition: all 0.2s ease;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .form-check-label {
+        font-size: 0.85rem;
+        color: #4a5568;
+        cursor: pointer;
+        transition: color 0.2s ease;
+        font-weight: 500;
+    }
+
+    /* Тільки зміна кольору при наведенні - БЕЗ ЗСУВУ */
+    .form-check:hover .form-check-label {
+        color: var(--primary-color);
+    }
+
+    .form-check:hover .form-check-input {
+        border-color: var(--primary-color);
+    }
+
+    /* Стилі для полів введення бюджету */
+    .form-control {
+        border-radius: 12px;
+        border: 1.5px solid #e2e8f0;
+        transition: all 0.2s ease;
+        font-size: 0.85rem;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(8, 103, 69, 0.1);
+    }
+
+    /* Група бюджету */
+    .row.g-2 .col-6 {
+        position: relative;
+    }
+
+    .row.g-2 .col-6:first-child input {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .row.g-2 .col-6:last-child input {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    /* Стилі для кнопок - БЕЗ ПІДЙОМУ */
+    .filter-buttons {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .filter-buttons .btn-primary {
+        border-radius: 12px;
+        padding: 0.6rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .filter-buttons .btn-primary:hover {
+        background-color: var(--primary-dark) !important;
+        box-shadow: 0 4px 12px rgba(8, 103, 69, 0.2);
+    }
+
+    .filter-buttons .btn-outline-secondary {
+        border-radius: 12px;
+        padding: 0.6rem;
+        font-weight: 500;
+        border: 1.5px solid #e2e8f0;
+        color: #64748b;
+        transition: all 0.2s ease;
+    }
+
+    .filter-buttons .btn-outline-secondary:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        background: rgba(8, 103, 69, 0.05);
+    }
+
+    /* Стилі для групи "Особливості готелю" */
+    .mt-3:last-child .form-check {
+        background: #f8fafc;
+        padding: 0.5rem 0.75rem;
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+    }
+
+    .mt-3:last-child .form-check:hover {
+        background: var(--primary-lighter);
+    }
+
+    /* Скрол для багатьох чекбоксів */
+    .scrollable-filters {
+        max-height: 200px;
+        overflow-y: auto;
+        padding-right: 5px;
+    }
+
+    .scrollable-filters::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .scrollable-filters::-webkit-scrollbar-track {
+        background: #e2e8f0;
+        border-radius: 4px;
+    }
+
+    .scrollable-filters::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 4px;
+    }
+
+    /* Адаптація для мобільних */
+    @media (max-width: 768px) {
+        .col-lg-3 {
+            position: static;
+            margin-bottom: 1rem;
+        }
+
+        #filterForm {
+            padding: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            const url = new URL(window.location.href);
+            url.searchParams.set('sort', this.value);
+            window.location.href = url.toString();
+        });
+    }
+
+    function initCarousel(trackId, prevBtnId, nextBtnId) {
+        const track = document.getElementById(trackId);
+        const prevBtn = document.getElementById(prevBtnId);
+        const nextBtn = document.getElementById(nextBtnId);
+        if (!track || !prevBtn || !nextBtn) return;
+
+        let currentIndex = 0;
+        const cards = track.children;
+        const totalCards = cards.length;
+
+        function getVisibleCards() {
+            if (window.innerWidth >= 992) return 4;
+            if (window.innerWidth >= 768) return 3;
+            if (window.innerWidth >= 576) return 2;
+            return 1;
+        }
+
+        function updateCarousel() {
+            const visibleCards = getVisibleCards();
+            const maxIndex = Math.max(0, totalCards - visibleCards);
+            currentIndex = Math.min(currentIndex, maxIndex);
+            if (cards[0]) {
+                const cardWidth = cards[0].offsetWidth + 15;
+                track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+            }
+        }
+
+        prevBtn.addEventListener('click', function() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        });
+
+        nextBtn.addEventListener('click', function() {
+            const visibleCards = getVisibleCards();
+            const maxIndex = totalCards - visibleCards;
+            if (currentIndex < maxIndex) {
+                currentIndex++;
+                updateCarousel();
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            updateCarousel();
+        });
+        updateCarousel();
+    }
+
+    initCarousel('popularCountryHotelsTrack', 'popularCountryPrevBtn', 'popularCountryNextBtn');
+    initCarousel('similarCitiesTrack', 'similarCitiesPrevBtn', 'similarCitiesNextBtn');
+
+    const toggleCountryBtn = document.getElementById('toggleCountryInfoBtn');
+    const countryInfoText = document.getElementById('fullCountryInfo');
+    if (toggleCountryBtn && countryInfoText) {
+        toggleCountryBtn.addEventListener('click', function() {
+            if (countryInfoText.classList.contains('collapsed')) {
+                countryInfoText.classList.remove('collapsed');
+                countryInfoText.classList.add('expanded');
+                this.innerHTML = '<i class="fa-solid fa-chevron-up"></i>';
+            } else {
+                countryInfoText.classList.remove('expanded');
+                countryInfoText.classList.add('collapsed');
+                this.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
+            }
+        });
+    }
+});
+
+const colors = ['#c4edd4', '#ccfbfb', '#FFC0CB'];
+const randomColor = colors[Math.floor(Math.random() * colors.length)];
+const consultationCard = document.getElementById('consultationCard');
+if (consultationCard) {
+    consultationCard.style.backgroundColor = randomColor;
+    consultationCard.style.color = '#434343';
+    const cardBody = consultationCard.querySelector('.card-body');
+    if (cardBody) cardBody.style.backgroundColor = 'transparent';
+}
+
+// ========== НОВИЙ КОД ДЛЯ СКИДАННЯ ФІЛЬТРІВ ==========
+document.addEventListener('DOMContentLoaded', function() {
+    // Знаходимо ВСІ кнопки скидання
+    const resetButtons = document.querySelectorAll('a[href*="reset=1"], a[href="{% url "search_results" %}"]');
+
+    resetButtons.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Очищаємо всі поля форми
+            const form = document.getElementById('filterForm');
+            if (form) {
+                // Очищаємо всі чекбокси
+                form.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+                // Очищаємо всі текстові поля
+                form.querySelectorAll('input[type="text"], input[type="search"], input[type="number"]').forEach(input => input.value = '');
+                // Очищаємо select
+                form.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+
+                // Відправляємо форму без параметрів
+                window.location.href = window.location.pathname;
+            } else {
+                // Якщо форми немає, просто переходимо на URL
+                window.location.href = window.location.pathname;
+            }
+        });
+    });
+
+    // Також обробляємо кнопку-посилання у верхній частині
+    const topResetBtn = document.querySelector('.btn-link');
+    if (topResetBtn && topResetBtn.textContent.includes('Скинути все')) {
+        topResetBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = window.location.pathname;
+        });
+    }
+});
+</script>
+{% endblock %}

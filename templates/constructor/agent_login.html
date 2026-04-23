@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5 py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-5">
+                    <h2 class="text-center fw-bold mb-4" style="color: var(--primary-color);">Вхід в кабінет</h2>
+                    <p class="text-center text-muted mb-4">Введіть email, на який було зареєстровано сайт</p>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if not code_sent %}
+                        <!-- Форма для введення email -->
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Email</label>
+                                <input type="email" name="email" class="form-control" placeholder="your@email.com" required>
+                            </div>
+                            <button type="submit" name="request_code" class="btn w-100 py-2" style="background: var(--primary-color); color: white; border: none;">
+                                Отримати код
+                            </button>
+                        </form>
+                    {% else %}
+                        <!-- Форма для введення коду -->
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Код з email</label>
+                                <input type="text" name="code" class="form-control" placeholder="Введіть 6-значний код" required autofocus>
+                                <div class="form-text text-muted mt-2">
+                                    <i class="fa-regular fa-envelope"></i> Код надіслано на вашу пошту
+                                </div>
+                            </div>
+                            <button type="submit" name="verify_code" class="btn w-100 py-2" style="background: var(--primary-color); color: white; border: none;">
+                                Увійти
+                            </button>
+                        </form>
+
+                        <div class="text-center mt-3">
+                            <form method="post">
+                                {% csrf_token %}
+                                <button type="submit" name="request_code" class="btn btn-link btn-sm" style="color: var(--primary-color);">Надіслати код ще раз</button>
+                            </form>
+                        </div>
+                    {% endif %}
+
+                    <div class="text-center mt-4 pt-2">
+                        <p class="text-muted small mb-0">
+                            Ще не маєте сайту?
+                            <a href="{% url 'constructor:register' %}" style="color: var(--primary-color); text-decoration: none;">
+                                Зареєструватися
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 1rem !important;
+        overflow: hidden;
+    }
+    .form-control {
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+    }
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(8, 103, 69, 0.1);
+    }
+    .btn {
+        transition: all 0.2s ease;
+        border-radius: 0.75rem;
+    }
+    .btn:hover {
+        background-color: var(--primary-dark) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(8, 103, 69, 0.2);
+    }
+    .btn-link {
+        background: none !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+    .btn-link:hover {
+        text-decoration: underline !important;
+    }
+    .alert {
+        border-radius: 0.75rem;
+        border: none;
+    }
+    .alert-success {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+    .alert-error {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+</style>
+{% endblock %}

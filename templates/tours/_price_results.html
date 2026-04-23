@@ -1,0 +1,43 @@
+{% if price_options %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Дата вильоту</th>
+                    <th>Тривалість</th>
+                    <th>Номер</th>
+                    <th>Харчування</th>
+                    <th>Вартість</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for option in price_options %}
+                <tr>
+                    <td class="departure-date">
+                        {{ option.departure_date|date:"d M, D" }}<br>
+                        <small class="text-muted">
+                            {% if search_form.departure_city.value %}
+                                {{ search_form.departure_city.value|slice:":-8" }}
+                            {% else %}
+                                з Кишинева
+                            {% endif %}
+                        </small>
+                    </td>
+                    <td>{{ option.duration }} ночей</td>
+                    <td>{{ option.room_type }}</td>
+                    <td>{{ option.get_meal_type_display }}</td>
+                    <td><strong>{{ option.price }} грн</strong></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        За вашим запитом нічого не знайдено
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p class="text-muted text-center py-3">Немає варіантів цін для цього туру.</p>
+{% endif %}

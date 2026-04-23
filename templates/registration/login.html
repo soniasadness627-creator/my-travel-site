@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5 py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-5">
+                    <h2 class="text-center fw-bold mb-4" style="color: var(--primary-color);">Вхід</h2>
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fa-solid fa-circle-exclamation me-2"></i> Невірний email або пароль
+                        </div>
+                    {% endif %}
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label fw-semibold">Email</label>
+                            <input type="text" name="username" id="username" class="form-control" placeholder="your@email.com" required autofocus>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label fw-semibold">Пароль</label>
+                            <input type="password" name="password" id="password" class="form-control" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="btn w-100 py-2 mt-3" style="background: var(--primary-color); color: white; border: none; font-weight: 500;">
+                            <i class="fa-solid fa-arrow-right-to-bracket me-2"></i> Увійти
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4 pt-2">
+                        <p class="text-muted small mb-0">
+                            Ще не маєте акаунту?
+                            <a href="{% url 'constructor:register' %}" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">
+                                Зареєструватися
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Додаткові стилі для форми входу */
+    .card {
+        border-radius: 1rem !important;
+        overflow: hidden;
+    }
+    .form-control {
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+    }
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(8, 103, 69, 0.1);
+    }
+    .form-label {
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+        color: #334155;
+    }
+    .alert {
+        border-radius: 0.75rem;
+        border: none;
+        font-size: 0.875rem;
+    }
+    .alert-danger {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+    .btn {
+        transition: all 0.2s ease;
+    }
+    .btn:hover {
+        background-color: var(--primary-dark) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(8, 103, 69, 0.2);
+    }
+    a:hover {
+        text-decoration: underline !important;
+    }
+</style>
+{% endblock %}
