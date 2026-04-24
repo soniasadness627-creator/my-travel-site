@@ -91,7 +91,10 @@ def agent_verify(request):
                     if 'reg_data' in request.session:
                         del request.session['reg_data']
 
-                    return redirect('constructor:dashboard')
+                    # ЗМІНІТЬ ЦЕЙ РЯДОК!
+                    # return redirect('constructor:dashboard')
+                    # НА ЦЕЙ:
+                    return redirect(f'/constructor/dashboard/')
                 else:
                     messages.error(request, 'Помилка сесії, спробуйте ще раз.')
                     return redirect('constructor:register')
@@ -102,7 +105,6 @@ def agent_verify(request):
     else:
         form = VerificationForm()
     return render(request, 'constructor/verify.html', {'form': form})
-
 
 @login_required
 def constructor_dashboard(request):

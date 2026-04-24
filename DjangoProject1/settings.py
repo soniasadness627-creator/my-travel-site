@@ -23,9 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-y6_u!mqip_&yv!q5-!on4!4!f4_*%q3z72nr(3n7l)@j_c-sj8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# 🔴 ЗМІНЕНО: False для продакшену на Render
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+# 🔴 ЗМІНЕНО: додано ваш Render URL
+ALLOWED_HOSTS = ['my-travel-site.onrender.com', 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -42,7 +44,10 @@ INSTALLED_APPS = [
     'constructor',
     'landing',
 ]
-SITE_URL = 'http://127.0.0.1:8000'
+
+# 🔴 ВЖЕ ПРАВИЛЬНО - SITE_URL вказано
+SITE_URL = 'https://my-travel-site.onrender.com'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -51,8 +56,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'constructor.middleware.AgentSiteMiddleware',  # Спочатку встановлюємо current_agent_site
-    'constructor.middleware.AgentColorsMiddleware',  # Потім додаємо кольори
+    'constructor.middleware.AgentSiteMiddleware',
+    'constructor.middleware.AgentColorsMiddleware',
 ]
 
 ROOT_URLCONF = 'DjangoProject1.urls'
@@ -124,8 +129,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 APPEND_SLASH = True
 
-# Email settings
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # для тестування
+# Email settings - реальна відправка через Gmail
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'soniasadness627@gmail.com'
+EMAIL_HOST_PASSWORD = 'evyiikohyqedvtsq'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Gemini API ключ для чат-бота
 GEMINI_API_KEY = "AIzaSyAlyvwC7SmSESF7YpCOUJRuYgTLIP7b7L4"
