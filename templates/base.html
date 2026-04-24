@@ -88,47 +88,44 @@
         }
 
         /* ========== СТИЛІ ДЛЯ НАВІГАЦІЇ ========== */
-.navbar .nav-link {
-    color: rgb(5, 48, 31) !important;
-    transition: color 0.3s ease;
-    position: relative;
-    padding-bottom: 4px;
-}
-.navbar .nav-link:hover {
-    color: var(--primary-color) !important;
-}
+        .navbar .nav-link {
+            color: rgb(5, 48, 31) !important;
+            transition: color 0.3s ease;
+            position: relative;
+            padding-bottom: 4px;
+        }
+        .navbar .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
 
-/* Плавне підкреслення справа наліво */
-.navbar .nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-    border-radius: 2px;
-    transition: width 0.3s ease-out;
-}
+        .navbar .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            border-radius: 2px;
+            transition: width 0.3s ease-out;
+        }
 
-.navbar .nav-link:hover::after {
-    width: 100%;
-    left: 0;
-    right: auto;
-}
+        .navbar .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+            right: auto;
+        }
 
-/* Для кнопки "Вихід" - чорний колір */
-.navbar .nav-link:last-child::after {
-    background: linear-gradient(90deg, #333333, #666666);
-}
-.navbar .nav-link:last-child:hover {
-    color: #333333 !important;
-}
+        .navbar .nav-link:last-child::after {
+            background: linear-gradient(90deg, #333333, #666666);
+        }
+        .navbar .nav-link:last-child:hover {
+            color: #333333 !important;
+        }
 
-/* Для кнопки "Підібрати тур" - прибираємо підкреслення */
-.navbar .btn-primary::after {
-    display: none;
-}
+        .navbar .btn-primary::after {
+            display: none;
+        }
 
         /* ========== СТИЛІ ДЛЯ ВКЛАДОК ========== */
         .nav-pills .nav-link {
@@ -378,7 +375,6 @@
             }
         }
 
-        /* ========== АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ ========== */
         @media (max-width: 768px) {
             .navbar .nav-link::after {
                 display: none;
@@ -389,7 +385,7 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-        <!-- NAVBAR -->
+    <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{% if agent_site and agent_site.slug %}{% url 'agent_home' agent_site.slug %}{% else %}{% url 'home' %}{% endif %}">
@@ -456,101 +452,108 @@
         {% block content %}{% endblock %}
     </main>
 
+    <!-- ========== ФУТЕР ========== -->
     <footer class="bg-dark text-white py-4 mt-auto">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-10">
-                    <div class="row">
-                        <div class="col-md-6 mb-4 mb-md-0 d-flex flex-column">
-                            <div class="mb-3 text-center text-md-start">
-                                {% if agent_site and agent_site.bottom_logo %}
-                                    <img src="{{ agent_site.bottom_logo.url }}" alt="Logo" style="height: 50px; width: auto; filter: brightness(0) invert(1);">
-                                {% else %}
-                                    <img src="{% static 'images/HORIZONTAL.png' %}" alt="Logo" style="height: 50px; width: auto; filter: brightness(0) invert(1);">
-                                {% endif %}
-                            </div>
-                            <p class="text-white-50" style="font-size: 0.9rem; max-width: 90%;">
-                                Обирайте тури від провідних туроператорів – бронюйте онлайн або в офісі.
-                                Найширший вибір, індивідуальний підхід та гарантія найкращої ціни.
-                            </p>
-                            <div class="mt-auto">
-                                <div class="d-flex gap-3 mt-3">
-                                    <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-telegram fa-lg"></i></a>
-                                    <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-instagram fa-lg"></i></a>
-                                    <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-facebook fa-lg"></i></a>
-                                    <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-youtube fa-lg"></i></a>
+            <!-- ПОВНИЙ ФУТЕР (для лендінгу та агентських сайтів, але НЕ для конструктора) -->
+            {% if not '/constructor/' in request.path %}
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <div class="row">
+                            <div class="col-md-6 mb-4 mb-md-0 d-flex flex-column">
+                                <div class="mb-3 text-center text-md-start">
+                                    {% if agent_site and agent_site.bottom_logo %}
+                                        <img src="{{ agent_site.bottom_logo.url }}" alt="Logo" style="height: 50px; width: auto; filter: brightness(0) invert(1);">
+                                    {% else %}
+                                        <img src="{% static 'images/HORIZONTAL.png' %}" alt="Logo" style="height: 50px; width: auto; filter: brightness(0) invert(1);">
+                                    {% endif %}
+                                </div>
+                                <p class="text-white-50" style="font-size: 0.9rem; max-width: 90%;">
+                                    Обирайте тури від провідних туроператорів – бронюйте онлайн або в офісі.
+                                    Найширший вибір, індивідуальний підхід та гарантія найкращої ціни.
+                                </p>
+                                <div class="mt-auto">
+                                    <div class="d-flex gap-3 mt-3">
+                                        <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-telegram fa-lg"></i></a>
+                                        <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-instagram fa-lg"></i></a>
+                                        <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-facebook fa-lg"></i></a>
+                                        <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-youtube fa-lg"></i></a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <h5 class="fw-bold mb-3 text-white">Популярні напрямки</h5>
-                            <div class="row">
-                                <div class="col-6">
-                                    <ul class="list-unstyled">
-                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Єгипет{% else %}{% url 'search_results' %}?country=Єгипет{% endif %}" class="text-white-50 footer-links">Тури в Єгипет</a></li>
-                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Туреччина{% else %}{% url 'search_results' %}?country=Туреччина{% endif %}" class="text-white-50 footer-links">Тури в Туреччину</a></li>
-                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=ОАЕ{% else %}{% url 'search_results' %}?country=ОАЕ{% endif %}" class="text-white-50 footer-links">Тури в ОАЕ</a></li>
-                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Шрі-Ланка{% else %}{% url 'search_results' %}?country=Шрі-Ланка{% endif %}" class="text-white-50 footer-links">Тури в Шрі-Ланку</a></li>
-                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Іспанія{% else %}{% url 'search_results' %}?country=Іспанія{% endif %}" class="text-white-50 footer-links">Тури в Іспанію</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-6">
-                                    <ul class="list-unstyled">
-                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Танзанія{% else %}{% url 'search_results' %}?country=Танзанія{% endif %}" class="text-white-50 footer-links">Тури в Танзанію</a></li>
-                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Мальдіви{% else %}{% url 'search_results' %}?country=Мальдіви{% endif %}" class="text-white-50 footer-links">Тури в Мальдіви</a></li>
-                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=В&#x27;єтнам{% else %}{% url 'search_results' %}?country=В&#x27;єтнам{% endif %}" class="text-white-50 footer-links">Тури в В'єтнам</a></li>
-                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Албанія{% else %}{% url 'search_results' %}?country=Албанія{% endif %}" class="text-white-50 footer-links">Тури в Албанію</a></li>
-                                        <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Італія{% else %}{% url 'search_results' %}?country=Італія{% endif %}" class="text-white-50 footer-links">Тури в Італію</a></li>
-                                    </ul>
+                            <div class="col-md-6">
+                                <h5 class="fw-bold mb-3 text-white">Популярні напрямки</h5>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <ul class="list-unstyled">
+                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Єгипет{% else %}{% url 'search_results' %}?country=Єгипет{% endif %}" class="text-white-50 footer-links">Тури в Єгипет</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Туреччина{% else %}{% url 'search_results' %}?country=Туреччина{% endif %}" class="text-white-50 footer-links">Тури в Туреччину</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=ОАЕ{% else %}{% url 'search_results' %}?country=ОАЕ{% endif %}" class="text-white-50 footer-links">Тури в ОАЕ</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Шрі-Ланка{% else %}{% url 'search_results' %}?country=Шрі-Ланка{% endif %}" class="text-white-50 footer-links">Тури в Шрі-Ланку</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Іспанія{% else %}{% url 'search_results' %}?country=Іспанія{% endif %}" class="text-white-50 footer-links">Тури в Іспанію</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-6">
+                                        <ul class="list-unstyled">
+                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Танзанія{% else %}{% url 'search_results' %}?country=Танзанія{% endif %}" class="text-white-50 footer-links">Тури в Танзанію</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Мальдіви{% else %}{% url 'search_results' %}?country=Мальдіви{% endif %}" class="text-white-50 footer-links">Тури в Мальдіви</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=В&#x27;єтнам{% else %}{% url 'search_results' %}?country=В&#x27;єтнам{% endif %}" class="text-white-50 footer-links">Тури в В'єтнам</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Албанія{% else %}{% url 'search_results' %}?country=Албанія{% endif %}" class="text-white-50 footer-links">Тури в Албанію</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Італія{% else %}{% url 'search_results' %}?country=Італія{% endif %}" class="text-white-50 footer-links">Тури в Італію</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="text-center mt-4 pt-3 border-top border-secondary">
-                <p class="mb-0">© 2026 TourConstructor</p>
-                <div class="mt-2">
-                    <a href="{% if agent_site %}/a/{{ agent_site.slug }}/privacy-policy/{% else %}{% url 'privacy_policy' %}{% endif %}" class="text-white-50 text-decoration-none me-3">Політика конфіденційності</a>
-                    <a href="{% if agent_site %}/a/{{ agent_site.slug }}/terms-of-service/{% else %}{% url 'terms_of_service' %}{% endif %}" class="text-white-50 text-decoration-none">Правила надання послуг</a>
+                <div class="text-center mt-4 pt-3 border-top border-secondary">
+                    <p class="mb-0">© 2026 TourConstructor</p>
+                    <div class="mt-2">
+                        <a href="{% if agent_site %}/a/{{ agent_site.slug }}/privacy-policy/{% else %}{% url 'privacy_policy' %}{% endif %}" class="text-white-50 text-decoration-none me-3">Політика конфіденційності</a>
+                        <a href="{% if agent_site %}/a/{{ agent_site.slug }}/terms-of-service/{% else %}{% url 'terms_of_service' %}{% endif %}" class="text-white-50 text-decoration-none">Правила надання послуг</a>
+                    </div>
                 </div>
-            </div>
+
+            <!-- ПРОСТИЙ ФУТЕР (тільки для сторінок конструктора) -->
+            {% else %}
+                <div class="text-center">
+                    <p class="mb-0">© 2026 TourConstructor</p>
+                    <div class="mt-2">
+                        <a href="{% url 'privacy_policy' %}" class="text-white-50 text-decoration-none me-3">Політика конфіденційності</a>
+                        <a href="{% url 'terms_of_service' %}" class="text-white-50 text-decoration-none">Правила надання послуг</a>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/search.js' %}"></script>
-
-    <!-- jQuery (необхідний для Bootstrap Select) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/i18n/defaults-uk_UA.min.js"></script>
-
-    <!-- Flatpickr CSS та JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
 
     {% block extra_js %}{% endblock %}
 
-    <!-- Скрипт для виходу -->
     <script>
     function customLogout() {
-    const currentUrl = window.location.href;
-    fetch('/logout/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        },
-    }).then(() => {
-        // Перенаправляємо на поточну сторінку (вона оновиться і покаже "Вхід")
-        window.location.href = currentUrl;
-    }).catch(() => {
-        window.location.href = currentUrl;
-    });
-}
+        const currentUrl = window.location.href;
+        fetch('/logout/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+        }).then(() => {
+            window.location.href = currentUrl;
+        }).catch(() => {
+            window.location.href = currentUrl;
+        });
+    }
 
-    // Автоматичне зникнення повідомлень через 5 секунд
     document.addEventListener('DOMContentLoaded', function() {
         const alerts = document.querySelectorAll('.alert');
         alerts.forEach(alert => {
