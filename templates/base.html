@@ -380,6 +380,22 @@
                 display: none;
             }
         }
+        /* Фікс для прилипання футера до низу */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+main {
+    flex: 1;
+}
+footer {
+    margin-top: auto;
+}
     </style>
 
     {% block extra_css %}{% endblock %}
