@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from .models import (
     Tour, Booking, News, TourImage, Review, Consultation,
     PriceOption, AmenityCategory, Amenity, City, DepartureCity, PopularDestination,
-    NewsImage, TourPriceByTourists, CountryInfo
+    NewsImage, TourPriceByTourists, CountryInfo, PriceCalendar, AmenityName  # Додано PriceCalendar, AmenityName
 )
 
 User = get_user_model()
@@ -105,7 +105,8 @@ class TourAdminForm(forms.ModelForm):
         return instance
 
 
-# ---------- РЕЄСТРАЦІЇ ----------
+# ========== АДМІНКИ З ПРАВИЛЬНИМИ ОБМЕЖЕННЯМИ ==========
+
 @admin.register(CountryInfo)
 class CountryInfoAdmin(admin.ModelAdmin):
     list_display = ('country',)
@@ -116,29 +117,17 @@ class CountryInfoAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         if request.user.is_agent:
-            return qs  # Агенти бачать всю інформацію про країни
+            return qs
         return qs.none()
 
     def has_change_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return True
-        return False
+        return request.user.is_superuser
 
     def has_delete_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть видаляти
-        return False
+        return request.user.is_superuser
 
     def has_add_permission(self, request):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть додавати
-        return False
+        return request.user.is_superuser
 
 
 @admin.register(Consultation)
@@ -352,7 +341,6 @@ class NewsAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-# ========== BOOKINGADMIN З ДОСТУПОМ ДЛЯ АГЕНТІВ ==========
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_tour_title', 'name', 'phone', 'email', 'created_at')
@@ -495,8 +483,6 @@ class ReviewAdmin(admin.ModelAdmin):
     )
 
 
-# ========== НОВІ АДМІНКИ ДЛЯ АГЕНТІВ ==========
-
 @admin.register(PriceOption)
 class PriceOptionAdmin(admin.ModelAdmin):
     list_display = ('tour', 'departure_date', 'duration', 'departure_city', 'room_type', 'meal_type', 'price',
@@ -606,29 +592,17 @@ class PopularDestinationAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         if request.user.is_agent:
-            return qs  # Агенти бачать популярні напрямки
+            return qs
         return qs.none()
 
     def has_change_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть змінювати
-        return False
+        return request.user.is_superuser
 
     def has_delete_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть видаляти
-        return False
+        return request.user.is_superuser
 
     def has_add_permission(self, request):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть додавати
-        return False
+        return request.user.is_superuser
 
 
 @admin.register(AmenityCategory)
@@ -642,29 +616,17 @@ class AmenityCategoryAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         if request.user.is_agent:
-            return qs  # Агенти бачать категорії послуг
+            return qs
         return qs.none()
 
     def has_change_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть змінювати
-        return False
+        return request.user.is_superuser
 
     def has_delete_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть видаляти
-        return False
+        return request.user.is_superuser
 
     def has_add_permission(self, request):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть додавати
-        return False
+        return request.user.is_superuser
 
 
 @admin.register(Amenity)
@@ -680,29 +642,17 @@ class AmenityAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         if request.user.is_agent:
-            return qs  # Агенти бачать послуги
+            return qs
         return qs.none()
 
     def has_change_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть змінювати
-        return False
+        return request.user.is_superuser
 
     def has_delete_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть видаляти
-        return False
+        return request.user.is_superuser
 
     def has_add_permission(self, request):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть додавати
-        return False
+        return request.user.is_superuser
 
 
 class AmenityInline(admin.TabularInline):
@@ -728,29 +678,17 @@ class CityAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         if request.user.is_agent:
-            return qs  # Агенти бачать міста
+            return qs
         return qs.none()
 
     def has_change_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть змінювати
-        return False
+        return request.user.is_superuser
 
     def has_delete_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть видаляти
-        return False
+        return request.user.is_superuser
 
     def has_add_permission(self, request):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть додавати
-        return False
+        return request.user.is_superuser
 
 
 @admin.register(DepartureCity)
@@ -770,26 +708,60 @@ class DepartureCityAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         if request.user.is_agent:
-            return qs  # Агенти бачать міста вильоту
+            return qs
         return qs.none()
 
     def has_change_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть змінювати
-        return False
+        return request.user.is_superuser
 
     def has_delete_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть видаляти
-        return False
+        return request.user.is_superuser
 
     def has_add_permission(self, request):
+        return request.user.is_superuser
+
+
+# ========== ДОДАТКОВІ МОДЕЛІ ДЛЯ СУПЕРАДМІНА ==========
+
+@admin.register(PriceCalendar)
+class PriceCalendarAdmin(admin.ModelAdmin):
+    list_display = ('tour', 'date', 'duration', 'price')
+    list_filter = ('tour', 'date')
+    search_fields = ('tour__title',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
         if request.user.is_superuser:
-            return True
-        if request.user.is_agent:
-            return False  # Агенти не можуть додавати
-        return False
+            return qs
+        return qs.none()
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+
+@admin.register(AmenityName)
+class AmenityNameAdmin(admin.ModelAdmin):
+    list_display = ('name', 'category', 'order', 'is_popular_default')
+    list_filter = ('category',)
+    search_fields = ('name',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.none()
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
