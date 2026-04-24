@@ -69,6 +69,13 @@ urlpatterns = [
     path('a/<slug:slug>/login/', constructor_views.agent_public_site, name='agent_login'),
 ]
 
-# статичні та медіа файли
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# ========== СТАТИЧНІ ТА МЕДІА ФАЙЛИ (оновлено) ==========
+# В режимі розробки (DEBUG=True) Django сам віддає статику та медіа
+# В продакшені (DEBUG=False) статику повинен віддавати сервер (Nginx/Render)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+else:
+    # Для продакшену - обробка медіа через окремий сервіс (наприклад, Cloudinary)
+    # Або через статичні файли, зібрані collectstatic
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
