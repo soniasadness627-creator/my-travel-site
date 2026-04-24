@@ -14,4 +14,205 @@
     {{ block.super }}
 {% endblock %}
 
+{% block extrastyle %}
+<style>
+    /* Темна тема для адмінки */
+    :root {
+        --primary-color: #086745;
+        --primary-dark: #02432c;
+        --primary-light: #2a6b5c;
+    }
+
+    /* Шапка */
+    #header {
+        background-color: var(--primary-color) !important;
+        border-bottom: 2px solid var(--primary-light) !important;
+    }
+
+    /* Заголовок сайту */
+    #branding h1, #branding h1 a:link, #branding h1 a:visited {
+        color: white !important;
+    }
+
+    /* Тіло сторінки */
+    body {
+        background-color: #1a1a2e !important;
+        color: #e0e0e0 !important;
+    }
+
+    /* Основний контент */
+    #content {
+        background-color: #16213e !important;
+    }
+
+    /* Картки модулів */
+    .module {
+        background-color: #1e2a47 !important;
+        border-radius: 8px !important;
+        border: 1px solid #2a3a5a !important;
+    }
+
+    .module caption, .module h2, .inline-group h2 {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+        border-radius: 8px 8px 0 0 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Таблиці */
+    th, td {
+        color: #e0e0e0 !important;
+        border-bottom: 1px solid #2a3a5a !important;
+    }
+
+    th {
+        background-color: #0f3460 !important;
+        font-weight: 600 !important;
+    }
+
+    tr:nth-child(even) {
+        background-color: #1a2a4a !important;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #16213e !important;
+    }
+
+    tr:hover {
+        background-color: #2a3a5a !important;
+    }
+
+    /* Посилання */
+    a:link, a:visited {
+        color: #4ade80 !important;
+        text-decoration: none !important;
+    }
+
+    a:hover {
+        color: #22c55e !important;
+        text-decoration: underline !important;
+    }
+
+    /* Кнопки */
+    .submit-row input, .button, input[type="submit"] {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 4px !important;
+        padding: 8px 16px !important;
+        cursor: pointer !important;
+    }
+
+    .submit-row input:hover, .button:hover, input[type="submit"]:hover {
+        background-color: var(--primary-dark) !important;
+    }
+
+    .default {
+        background-color: var(--primary-color) !important;
+    }
+
+    /* Бічна панель */
+    #content-related {
+        background-color: #16213e !important;
+    }
+
+    #content-related .module h2 {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+    }
+
+    /* Пошук */
+    #toolbar {
+        background-color: #1e2a47 !important;
+        border-radius: 8px !important;
+        padding: 10px !important;
+    }
+
+    /* Пагінація */
+    .paginator {
+        background-color: #1e2a47 !important;
+        color: #e0e0e0 !important;
+        border-radius: 8px !important;
+    }
+
+    .paginator a:link, .paginator a:visited {
+        color: #4ade80 !important;
+    }
+
+    /* Фільтри */
+    #changelist-filter {
+        background-color: #1e2a47 !important;
+        border-radius: 8px !important;
+    }
+
+    #changelist-filter h2 {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+        border-radius: 8px 8px 0 0 !important;
+    }
+
+    #changelist-filter a:focus, #changelist-filter a:hover {
+        color: #22c55e !important;
+    }
+
+    /* Повідомлення */
+    .messagelist li {
+        border-radius: 8px !important;
+        padding: 10px !important;
+    }
+
+    .success {
+        background-color: #166534 !important;
+        color: white !important;
+    }
+
+    .error {
+        background-color: #991b1b !important;
+        color: white !important;
+    }
+
+    .warning {
+        background-color: #92400e !important;
+        color: white !important;
+    }
+
+    /* Випадаючі списки */
+    select, textarea, input[type="text"], input[type="password"], input[type="email"] {
+        background-color: #0f3460 !important;
+        color: #e0e0e0 !important;
+        border: 1px solid #2a3a5a !important;
+        border-radius: 4px !important;
+    }
+
+    select option {
+        background-color: #16213e !important;
+        color: #e0e0e0 !important;
+    }
+
+    /* Календар */
+    .calendarbox, .clockbox {
+        background-color: #16213e !important;
+        border: 1px solid #2a3a5a !important;
+    }
+
+    .calendar td, .calendar th {
+        background-color: #1e2a47 !important;
+    }
+
+    /* Кнопки збереження */
+    .submit-row input.default {
+        background-color: #22c55e !important;
+    }
+
+    .submit-row input.default:hover {
+        background-color: #16a34a !important;
+    }
+
+    /* Бокова навігація */
+    .quiet, .description {
+        color: #a0aec0 !important;
+    }
+</style>
+{% endblock %}
+
 {% block nav-global %}{% endblock %}

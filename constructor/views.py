@@ -20,7 +20,7 @@ from .forms import AgentRegistrationForm, VerificationForm, AgentSiteForm
 from users.models import User
 from .models import AgentSite
 from tours.views import TourListView, tour_detail, search_results, city_detail, news_detail, ConsultationCreateView, \
-    NewsListView, get_agent_colors, tour_reviews  # Додайте tour_reviews
+    NewsListView, get_agent_colors, tour_reviews
 from tours.models import News
 
 
@@ -91,9 +91,6 @@ def agent_verify(request):
                     if 'reg_data' in request.session:
                         del request.session['reg_data']
 
-                    # ЗМІНІТЬ ЦЕЙ РЯДОК!
-                    # return redirect('constructor:dashboard')
-                    # НА ЦЕЙ:
                     return redirect(f'/constructor/dashboard/')
                 else:
                     messages.error(request, 'Помилка сесії, спробуйте ще раз.')
@@ -105,6 +102,7 @@ def agent_verify(request):
     else:
         form = VerificationForm()
     return render(request, 'constructor/verify.html', {'form': form})
+
 
 @login_required
 def constructor_dashboard(request):
@@ -163,17 +161,20 @@ def generate_image(request):
 
     agent_site = request.user.agent_site
 
-    image_url = "https://picsum.photos/1200/400?random=1"
+    # Використовуємо більш надійне джерело зображень
+    image_url = "https://picsum.photos/id/104/1200/400"  # статичне зображення пейзажу
 
     try:
-        response = requests.get(image_url, timeout=10)
+        response = requests.get(image_url, timeout=30)
         if response.status_code == 200:
-            ext = 'jpg'
-            filename = f"generated_{uuid.uuid4().hex[:10]}.{ext}"
+            from django.core.files.base import ContentFile
+            filename = f"generated_{uuid.uuid4().hex[:10]}.jpg"
             agent_site.hero_background.save(filename, ContentFile(response.content), save=True)
             messages.success(request, 'Фонове зображення згенеровано та збережено!')
         else:
             messages.error(request, 'Не вдалося завантажити зображення. Спробуйте пізніше.')
+    except requests.exceptions.Timeout:
+        messages.error(request, 'Час очікування вичерпано. Спробуйте ще раз.')
     except Exception as e:
         messages.error(request, f'Помилка: {str(e)}')
 
@@ -216,7 +217,6 @@ class AgentSiteUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 # Функції для сторінок політики конфіденційності та правил надання послуг для агента
 # -------------------------
 def agent_privacy_policy(request, slug):
-    """Сторінка політики конфіденційності для агента"""
     agent_site = getattr(request, 'current_agent_site', None)
     if not agent_site:
         return redirect('home')
@@ -231,7 +231,6 @@ def agent_privacy_policy(request, slug):
 
 
 def agent_terms_of_service(request, slug):
-    """Сторінка правил надання послуг для агента"""
     agent_site = getattr(request, 'current_agent_site', None)
     if not agent_site:
         return redirect('home')
@@ -249,10 +248,8 @@ def agent_terms_of_service(request, slug):
 # Функція для входу агента через код з пошти
 # -------------------------
 def agent_login(request, slug):
-    """Сторінка входу для агента через код з пошти"""
     agent_site = getattr(request, 'current_agent_site', None)
 
-    # Якщо користувач вже авторизований і це його сайт
     if request.user.is_authenticated and request.user == agent_site.user:
         return redirect('agent_home', slug=slug)
 
@@ -260,17 +257,14 @@ def agent_login(request, slug):
         email = request.POST.get('email')
 
         if 'request_code' in request.POST:
-            # Запит на відправку коду
             user = User.objects.filter(email=email, is_agent=True).first()
 
             if user and user == agent_site.user:
-                # Генеруємо код
                 code = str(random.randint(100000, 999999))
                 request.session['agent_login_code'] = code
                 request.session['agent_login_email'] = email
                 request.session['agent_login_slug'] = slug
 
-                # Відправляємо код на email
                 send_mail(
                     subject='Код для входу в кабінет',
                     message=f'Ваш код для входу: {code}\n\nКод дійсний 10 хвилин.',
@@ -284,7 +278,6 @@ def agent_login(request, slug):
                 messages.error(request, 'Користувача з таким email не знайдено')
 
         elif 'verify_code' in request.POST:
-            # Перевірка коду
             code = request.POST.get('code')
             saved_code = request.session.get('agent_login_code')
             saved_email = request.session.get('agent_login_email')
@@ -292,11 +285,9 @@ def agent_login(request, slug):
             if code == saved_code and saved_email:
                 user = User.objects.filter(email=saved_email, is_agent=True).first()
                 if user:
-                    # Вхід користувача
                     from django.contrib.auth import login as auth_login
                     auth_login(request, user)
 
-                    # Очищаємо сесію
                     if 'agent_login_code' in request.session:
                         del request.session['agent_login_code']
                     if 'agent_login_email' in request.session:
@@ -335,7 +326,7 @@ def agent_public_site(request, slug, **kwargs):
     elif view_name == 'agent_tour_detail':
         return tour_detail(request, pk=kwargs['pk'])
     elif view_name == 'agent_tour_reviews':
-        from tours.views import tour_reviews  # Додайте імпорт тут
+        from tours.views import tour_reviews
         return tour_reviews(request, pk=kwargs['pk'])
     elif view_name == 'agent_search':
         return search_results(request)
@@ -355,6 +346,7 @@ def agent_public_site(request, slug, **kwargs):
         return agent_login(request, slug=slug)
     else:
         raise Http404("Сторінку не знайдено")
+
 
 # -------------------------
 # Клас AgentHomeView для головної сторінки конструктора
