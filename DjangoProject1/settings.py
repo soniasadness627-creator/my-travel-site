@@ -12,21 +12,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-y6_u!mqip_&yv!q5-!on4!4!f4_*%q3z72nr(3n7l)@j_c-sj8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False  # ЗМІНЕНО НА False ДЛЯ RENDER
+DEBUG = False
 
 ALLOWED_HOSTS = [
     'my-travel-site.onrender.com',
     'localhost',
     '127.0.0.1',
-
-    # ⭐️⭐️⭐️ ДЛЯ МАЙБУТНЬОГО ДОМЕНУ ⭐️⭐️⭐️
-    # -----------------------------------------------------------------
-    # Після купівлі домену:
-    # 1. Замініть 'your-domain.com' на свій домен
-    # 2. Розкоментуйте (видаліть #) обидва рядки нижче
-    # 3. Зробіть git commit та git push
-    # 4. Налаштуйте домен у Render (Custom Domain)
-    # -----------------------------------------------------------------
+    # Додайте ваш майбутній домен сюди, наприклад:
     # 'your-domain.com',
     # 'www.your-domain.com',
 ]
@@ -44,9 +36,11 @@ INSTALLED_APPS = [
     'smart_selects',
     'constructor',
     'landing',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
-SITE_URL = 'https://my-travel-site.onrender.com'  # Змініть на ваш URL
+SITE_URL = 'https://my-travel-site.onrender.com'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -105,18 +99,28 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images) - ВИПРАВЛЕНО ДЛЯ RENDER
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # ← ДОДАНО
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-# Media files (для завантажених файлів) - ТИМЧАСОВО
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# ========== CLOUDINARY ДЛЯ ЗБЕРІГАННЯ МЕДІАФАЙЛІВ ==========
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'djvycubir',
+    'API_KEY': '649993464552661',
+    'API_SECRET': 'kwwtOaPRA4fv4-_QpL-0sxyRVZ0',
+}
+
+# Зберігання медіафайлів в Cloudinary
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# MEDIA_URL та MEDIA_ROOT більше не потрібні, видаляємо або коментуємо
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 APPEND_SLASH = True
 
-# Email settings - через Gmail (працює)
+# Email settings - реальна відправка через Gmail
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -125,5 +129,5 @@ EMAIL_HOST_USER = 'soniasadness627@gmail.com'
 EMAIL_HOST_PASSWORD = 'evyiikohyqedvtsq'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-# Gemini API
+# Gemini API ключ для чат-бота
 GEMINI_API_KEY = "AIzaSyAlyvwC7SmSESF7YpCOUJRuYgTLIP7b7L4"
