@@ -24,6 +24,7 @@ ALLOWED_HOSTS = [
     'my-travel-site.onrender.com',
     'localhost',
     '127.0.0.1',
+    '.onrender.com',  # Додано для всіх піддоменів Render
 ]
 
 # Application definition
@@ -80,15 +81,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'DjangoProject1.wsgi.application'
 
 # ========== БАЗА ДАНИХ ==========
-# Для collectstatic використовуємо SQLite, для всього іншого - PostgreSQL
-if 'collectstatic' in sys.argv:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-else:
+# Визначаємо, чи ми на Render
+IS_RENDER = os.getenv('RENDER', 'False') == 'True'
+
+if IS_RENDER or 'gunicorn' in sys.argv[0]:
+    # На Render - PostgreSQL
     DATABASE_URL = os.getenv('DATABASE_URL')
     if DATABASE_URL:
         DATABASES = {
@@ -105,6 +102,22 @@ else:
                 'NAME': BASE_DIR / 'db.sqlite3',
             }
         }
+elif 'collectstatic' in sys.argv:
+    # Для collectstatic - SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    # Локально - SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -162,14 +175,24 @@ else:
     EMAIL_HOST_PASSWORD = os.getenv('GMAIL_PASSWORD', 'evyiikohyqedvtsq')
     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-# ========== БЕЗПЕКА ДЛЯ ПРОДАКШЕНУ ==========
+# ========== НАЛАШТУВАННЯ ДЛЯ RENDER (уникнення циклу перенаправлень) ==========
+# Render вже забезпечує SSL, тому Django не потрібно перенаправляти
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
+# Тимчасово вимкнути перенаправлення на HTTPS, поки не налагодимо
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
+# ========== БЕЗПЕКА ДЛЯ ПРОДАКШЕНУ (оновлена) ==========
 if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    # SECURE_SSL_REDIRECT = True  # ТИМЧАСОВО ВИМКНУТО
+    # SESSION_COOKIE_SECURE = True  # ТИМЧАСОВО ВИМКНУТО
+    # CSRF_COOKIE_SECURE = True  # ТИМЧАСОВО ВИМКНУТО
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
