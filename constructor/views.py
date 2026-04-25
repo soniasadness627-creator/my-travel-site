@@ -156,28 +156,40 @@ def open_site(request):
 @require_POST
 @csrf_exempt
 def generate_image(request):
+    """
+    Генерує фонове зображення для агентського сайту.
+    Використовує кілька резервних джерел зображень.
+    """
     if not request.user.is_authenticated or not hasattr(request.user, 'agent_site'):
         return JsonResponse({'error': 'Not authorized'}, status=403)
 
     agent_site = request.user.agent_site
 
-    # Використовуємо більш надійне джерело зображень
-    image_url = "https://picsum.photos/id/104/1200/400"  # статичне зображення пейзажу
+    # Список резервних джерел зображень
+    image_urls = [
+        "https://picsum.photos/id/104/1200/400",  # пейзаж
+        "https://picsum.photos/id/15/1200/400",   # природа
+        "https://picsum.photos/id/22/1200/400",   # пейзаж
+        "https://picsum.photos/id/96/1200/400",   # гора
+        "https://picsum.photos/id/42/1200/400",   # музика
+    ]
 
-    try:
-        response = requests.get(image_url, timeout=30)
-        if response.status_code == 200:
-            from django.core.files.base import ContentFile
-            filename = f"generated_{uuid.uuid4().hex[:10]}.jpg"
-            agent_site.hero_background.save(filename, ContentFile(response.content), save=True)
-            messages.success(request, 'Фонове зображення згенеровано та збережено!')
-        else:
-            messages.error(request, 'Не вдалося завантажити зображення. Спробуйте пізніше.')
-    except requests.exceptions.Timeout:
-        messages.error(request, 'Час очікування вичерпано. Спробуйте ще раз.')
-    except Exception as e:
-        messages.error(request, f'Помилка: {str(e)}')
+    for image_url in image_urls:
+        try:
+            response = requests.get(image_url, timeout=30)
+            if response.status_code == 200:
+                filename = f"generated_{uuid.uuid4().hex[:10]}.jpg"
+                agent_site.hero_background.save(filename, ContentFile(response.content), save=True)
+                messages.success(request, 'Фонове зображення згенеровано та збережено!')
+                return redirect('constructor:dashboard')
+        except requests.exceptions.Timeout:
+            continue  # пробуємо наступне джерело
+        except Exception as e:
+            print(f"Помилка завантаження {image_url}: {e}")
+            continue  # пробуємо наступне джерело
 
+    # Якщо жодне джерело не спрацювало
+    messages.error(request, 'Не вдалося згенерувати зображення. Спробуйте завантажити вручну.')
     return redirect('constructor:dashboard')
 
 
