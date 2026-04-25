@@ -5,10 +5,13 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from tours import views as tours_views
 from constructor import views as constructor_views
+from constructor.agent_admin import agent_admin_site  # ← ДОДАТИ ЦЕ!
 from landing import views as landing_views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),  # Суперадмін
+    path('a/<slug:slug>/admin/', agent_admin_site.urls),  # Агент (нове!)
+
     path('chaining/', include('smart_selects.urls')),
 
     # ========== ЛЕНДИНГ (ГОЛОВНА СТОРІНКА) ==========
@@ -69,13 +72,9 @@ urlpatterns = [
     path('a/<slug:slug>/login/', constructor_views.agent_public_site, name='agent_login'),
 ]
 
-# ========== СТАТИЧНІ ТА МЕДІА ФАЙЛИ (оновлено) ==========
-# В режимі розробки (DEBUG=True) Django сам віддає статику та медіа
-# В продакшені (DEBUG=False) статику повинен віддавати сервер (Nginx/Render)
+# ========== СТАТИЧНІ ТА МЕДІА ФАЙЛИ ==========
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 else:
-    # Для продакшену - обробка медіа через окремий сервіс (наприклад, Cloudinary)
-    # Або через статичні файли, зібрані collectstatic
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
