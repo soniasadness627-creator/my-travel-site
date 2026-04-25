@@ -5,10 +5,11 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from tours import views as tours_views
 from constructor import views as constructor_views
-from constructor.agent_admin import agent_admin_site  # ← ДОДАТИ ЦЕ
+from constructor.agent_admin import agent_admin_site
 from landing import views as landing_views
 
 urlpatterns = [
+    # ========== АДМІН-ПАНЕЛІ ==========
     path('admin/', admin.site.urls),  # Суперадмін
     path('a/<slug:slug>/admin/', agent_admin_site.urls),  # Агентська адмінка
 
