@@ -5,12 +5,12 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from tours import views as tours_views
 from constructor import views as constructor_views
-from constructor.agent_admin import agent_admin_site  # ← ДОДАТИ ЦЕ!
+from constructor.agent_admin import agent_admin_site  # ← ДОДАТИ ЦЕ
 from landing import views as landing_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # Суперадмін
-    path('a/<slug:slug>/admin/', agent_admin_site.urls),  # Агент (нове!)
+    path('a/<slug:slug>/admin/', agent_admin_site.urls),  # Агентська адмінка
 
     path('chaining/', include('smart_selects.urls')),
 
@@ -58,7 +58,7 @@ urlpatterns = [
     # ========== КОНСТРУКТОР ==========
     path('constructor/', include('constructor.urls')),
 
-    # ========== АГЕНТСЬКІ САЙТИ (БЕЗ ПРЕФІКСА constructor/) ==========
+    # ========== АГЕНТСЬКІ САЙТИ ==========
     path('a/<slug:slug>/', constructor_views.agent_public_site, name='agent_home'),
     path('a/<slug:slug>/tour/<int:pk>/', constructor_views.agent_public_site, name='agent_tour_detail'),
     path('a/<slug:slug>/tour/<int:pk>/reviews/', constructor_views.agent_public_site, name='agent_tour_reviews'),
