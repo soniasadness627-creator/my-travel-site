@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from .models import (
     Tour, Booking, News, TourImage, Review, Consultation,
     PriceOption, AmenityCategory, Amenity, City, DepartureCity, PopularDestination,
-    NewsImage, TourPriceByTourists, CountryInfo, PriceCalendar, AmenityName  # Додано PriceCalendar, AmenityName
+    NewsImage, TourPriceByTourists, CountryInfo, PriceCalendar, AmenityName
 )
 
 User = get_user_model()
@@ -44,66 +44,78 @@ class BookingInline(admin.TabularInline):
         return False
 
 
-# ========== ТИМЧАСОВО ЗАКОМЕНТОВАНО ДЛЯ МІГРАЦІЙ ==========
-# class TourAdminForm(forms.ModelForm):
-#     country = forms.ChoiceField(
-#         choices=[('', '---------')] + [(c, c) for c in
-#                                        City.objects.values_list('country', flat=True).distinct().order_by('country')],
-#         label="Країна",
-#         required=True,
-#         help_text="Оберіть країну зі списку"
-#     )
-#
-#     stars = forms.ChoiceField(
-#         choices=[('', '---------'), ('1', '1*'), ('2', '2*'), ('3', '3*'), ('4', '4*'), ('5', '5*')],
-#         label="Категорія готелю (зірки)",
-#         required=False,
-#         help_text="Виберіть категорію готелю"
-#     )
-#
-#     class Meta:
-#         model = Tour
-#         fields = '__all__'
-#
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#
-#         if self.instance and self.instance.pk and self.instance.stars:
-#             self.fields['stars'].initial = str(self.instance.stars)
-#
-#         if self.instance and self.instance.pk:
-#             self.fields['country'].initial = self.instance.country
-#
-#         cities = DepartureCity.objects.all().order_by('country', 'name')
-#         choices = [('', '---------')] + [(city.name, f"{city.name} ({city.country}, {city.get_transport_display()})")
-#                                          for city in cities]
-#         self.fields['departure_city'] = forms.ChoiceField(
-#             choices=choices,
-#             required=False,
-#             label="Місто виїзду",
-#             help_text="Оберіть місто вильоту зі списку (або залиште порожнім)"
-#         )
-#
-#         if 'author' in self.fields:
-#             request = getattr(self, 'request', None)
-#             if request and request.user.is_authenticated and not request.user.is_superuser:
-#                 self.fields['author'].queryset = User.objects.filter(pk=request.user.pk)
-#                 if self.instance and self.instance.pk and self.instance.author != request.user:
-#                     self.fields['author'].disabled = True
-#
-#     def save(self, commit=True):
-#         instance = super().save(commit=False)
-#         instance.country = self.cleaned_data['country']
-#
-#         stars_value = self.cleaned_data.get('stars')
-#         if stars_value and stars_value != '':
-#             instance.stars = int(stars_value)
-#         else:
-#             instance.stars = None
-#
-#         if commit:
-#             instance.save()
-#         return instance
+# ========== ФОРМА ДЛЯ ТУРУ З КАСТОМНИМИ ПОЛЯМИ ==========
+class TourAdminForm(forms.ModelForm):
+    country = forms.ChoiceField(
+        choices=[('', '---------')] + [(c, c) for c in
+                                       City.objects.values_list('country', flat=True).distinct().order_by('country')],
+        label="Країна",
+        required=True,
+        help_text="Оберіть країну зі списку"
+    )
+
+    stars = forms.ChoiceField(
+        choices=[('', '---------'), ('1', '1*'), ('2', '2*'), ('3', '3*'), ('4', '4*'), ('5', '5*')],
+        label="Категорія готелю (зірки)",
+        required=False,
+        help_text="Виберіть категорію готелю"
+    )
+
+    class Meta:
+        model = Tour
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.instance and self.instance.pk and self.instance.stars:
+            self.fields['stars'].initial = str(self.instance.stars)
+
+        if self.instance and self.instance.pk:
+            self.fields['country'].initial = self.instance.country
+
+        # Міста вильоту
+        cities = DepartureCity.objects.all().order_by('country', 'name')
+        choices = [('', '---------')] + [(city.name, f"{city.name} ({city.country}, {city.get_transport_display()})")
+                                         for city in cities]
+        self.fields['departure_city'] = forms.ChoiceField(
+            choices=choices,
+            required=False,
+            label="Місто виїзду",
+            help_text="Оберіть місто вильоту зі списку (або залиште порожнім)"
+        )
+
+        # ВИПРАВЛЕННЯ: для агента показуємо тільки його в полі "Автор"
+        if 'author' in self.fields:
+            request = getattr(self, 'request', None)
+            if request and request.user.is_authenticated:
+                if request.user.is_superuser:
+                    # Суперадмін бачить усіх користувачів
+                    self.fields['author'].queryset = User.objects.all()
+                elif request.user.is_agent:
+                    # Агент бачить тільки себе
+                    self.fields['author'].queryset = User.objects.filter(pk=request.user.pk)
+                    self.fields['author'].initial = request.user.pk
+                    self.fields['author'].disabled = True  # Забороняємо змінювати автора
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.country = self.cleaned_data['country']
+
+        stars_value = self.cleaned_data.get('stars')
+        if stars_value and stars_value != '':
+            instance.stars = int(stars_value)
+        else:
+            instance.stars = None
+
+        # Якщо це агент, примусово встановлюємо автора
+        request = getattr(self, 'request', None)
+        if request and request.user.is_agent:
+            instance.author = request.user
+
+        if commit:
+            instance.save()
+        return instance
 
 
 # ========== АДМІНКИ З ПРАВИЛЬНИМИ ОБМЕЖЕННЯМИ ==========
@@ -210,8 +222,7 @@ class ReviewInline(admin.TabularInline):
 
 @admin.register(Tour)
 class TourAdmin(admin.ModelAdmin):
-    # ТИМЧАСОВО БЕЗ FORM (щоб уникнути помилок)
-    # form = TourAdminForm  # ЗАКОМЕНТОВАНО
+    form = TourAdminForm  # ← РОЗКОМЕНТОВАНО!
     list_display = ("title", "country", "city", "stars", "price", "is_popular", "duration", "room_type", "meal_type",
                     "start_date", "departure_city", "transport", "author")
     list_filter = ("country", "city", "stars", "start_date", "author", "transport", "meal_type", "is_popular")
@@ -255,7 +266,7 @@ class TourAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        form.request = request
+        form.request = request  # ← ПЕРЕДАЄМО REQUEST У ФОРМУ!
         return form
 
     def has_change_permission(self, request, obj=None):
