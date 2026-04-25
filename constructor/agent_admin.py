@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import AdminSite
 from tours.models import Tour, Booking, PriceOption, Review, Consultation, News, TourPriceByTourists
-from django.contrib.auth.models import User, Group
 
 class AgentAdminSite(AdminSite):
     site_header = "Панель керування агента"
@@ -9,11 +8,12 @@ class AgentAdminSite(AdminSite):
     index_title = "Ласкаво просимо до вашого кабінету"
 
     def has_permission(self, request):
+        # ТІЛЬКИ агенти можуть заходити сюди!
         return request.user.is_authenticated and request.user.is_agent
 
 agent_admin_site = AgentAdminSite(name='agent_admin')
 
-# Реєструємо тільки потрібні моделі для агента
+# Реєструємо ТІЛЬКИ ті моделі, які потрібні агенту
 agent_admin_site.register(Tour)
 agent_admin_site.register(Booking)
 agent_admin_site.register(PriceOption)
