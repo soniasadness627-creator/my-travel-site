@@ -3,27 +3,38 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+from django.shortcuts import redirect
 from tours import views as tours_views
 from constructor import views as constructor_views
 from constructor.agent_admin import agent_admin_site
 from landing import views as landing_views
 
+
+# ========== ФУНКЦІЯ ДЛЯ ПЕРЕНАПРАВЛЕННЯ ГОЛОВНОЇ СТОРІНКИ ==========
+def home_redirect(request):
+    """Перенаправляє суперадміна на сторінку турів, інших - на лендинг"""
+    if request.user.is_authenticated and request.user.is_superuser:
+        return redirect('/home/')  # сторінка турів для суперадміна
+    return redirect('/landing/')  # лендинг для всіх інших
+
+
 urlpatterns = [
+    # ========== ГОЛОВНА СТОРІНКА ==========
+    path('', home_redirect, name='home_redirect'),
+    path('landing/', include('landing.urls')),  # лендинг доступний за /landing/
+
     # ========== АДМІН-ПАНЕЛІ ==========
     path('admin/', admin.site.urls),  # Суперадмін
     path('a/<slug:slug>/admin/', agent_admin_site.urls),  # Агентська адмінка
 
     path('chaining/', include('smart_selects.urls')),
 
-    # ========== ЛЕНДИНГ (ГОЛОВНА СТОРІНКА) ==========
-    path('', include('landing.urls')),
-
     # ========== ОСНОВНІ МАРШРУТИ ТУРІВ ==========
     path('home/', tours_views.TourListView.as_view(), name='home'),
     path('search/', tours_views.search_results, name='search_results'),
     path('get-cities/', tours_views.get_cities, name='get_cities'),
     path('api/calendar-prices/', tours_views.calendar_prices, name='calendar_prices'),
-    path('tour/<int:pk>/', tours_views.tour_detail, name='tour_detail'),
+    path('tour/<int:pk>//', tours_views.tour_detail, name='tour_detail'),
     path('tour/<int:pk>/reviews/', tours_views.tour_reviews, name='tour_reviews'),
 
     # ========== КАБІНЕТ АГЕНТА ==========

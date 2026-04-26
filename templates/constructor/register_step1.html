@@ -7,5 +7,19 @@
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary w-100">Надіслати код</button>
     </form>
+
+    <!-- НОВІ ПОСИЛАННЯ -->
+    <div class="text-center mt-4">
+        <p class="mb-2">
+            <a href="{% url 'constructor:agent_login_redirect' %}" class="text-decoration-none">
+                🔑 Вже є сайт? Увійти в кабінет
+            </a>
+        </p>
+        <p>
+            <a href="/admin/" class="text-decoration-none">
+                👑 Увійти як суперадмін
+            </a>
+        </p>
+    </div>
 </div>
 {% endblock %}

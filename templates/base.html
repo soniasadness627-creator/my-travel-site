@@ -381,21 +381,21 @@
             }
         }
         /* Фікс для прилипання футера до низу */
-html, body {
-    height: 100%;
-    margin: 0;
-}
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-main {
-    flex: 1;
-}
-footer {
-    margin-top: auto;
-}
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1;
+        }
+        footer {
+            margin-top: auto;
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
@@ -430,11 +430,27 @@ footer {
                     </li>
                     {% endif %}
 
+                    <!-- ========== НОВІ ПУНКТИ ДЛЯ АГЕНТА ТА СУПЕРАДМІНА ========== -->
                     {% if user.is_authenticated %}
+                        {% if user.is_agent and user.agent_site.slug %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'constructor:dashboard' %}">
+                                    🛠️ Відкрити конструктор
+                                </a>
+                            </li>
+                        {% endif %}
                         {% if user.is_superuser %}
                             <li class="nav-item">
-                                <a class="nav-link fw-bold text-success" href="/home/">Головна адміністратора</a>
+                                <a class="nav-link" href="/home/">
+                                    🏠 Головна (пошук турів)
+                                </a>
                             </li>
+                        {% endif %}
+                    {% endif %}
+                    <!-- ========== КІНЕЦЬ НОВИХ ПУНКТІВ ========== -->
+
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser %}
                             <li class="nav-item">
                                 <a class="nav-link fw-bold text-primary" href="{% url 'admin:index' %}">Адмінка</a>
                             </li>

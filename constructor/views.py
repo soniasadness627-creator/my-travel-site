@@ -168,10 +168,10 @@ def generate_image(request):
     # Список резервних джерел зображень
     image_urls = [
         "https://picsum.photos/id/104/1200/400",  # пейзаж
-        "https://picsum.photos/id/15/1200/400",   # природа
-        "https://picsum.photos/id/22/1200/400",   # пейзаж
-        "https://picsum.photos/id/96/1200/400",   # гора
-        "https://picsum.photos/id/42/1200/400",   # музика
+        "https://picsum.photos/id/15/1200/400",  # природа
+        "https://picsum.photos/id/22/1200/400",  # пейзаж
+        "https://picsum.photos/id/96/1200/400",  # гора
+        "https://picsum.photos/id/42/1200/400",  # музика
     ]
 
     for image_url in image_urls:
@@ -322,6 +322,33 @@ def agent_login(request, slug):
     context.update(colors)
 
     return render(request, 'constructor/agent_login.html', context)
+
+
+# -------------------------
+# НОВА ФУНКЦІЯ: Перенаправлення агента на сторінку входу
+# -------------------------
+def agent_login_redirect(request):
+    """
+    Перенаправляє агента на сторінку входу його сайту.
+    Якщо користувач вже увійшов і має сайт - одразу на сторінку входу агента.
+    Якщо ні - показує форму для введення email.
+    """
+    # Якщо користувач вже авторизований і має агентський сайт
+    if request.user.is_authenticated and hasattr(request.user, 'agent_site'):
+        slug = request.user.agent_site.slug
+        return redirect(f'/a/{slug}/login/')
+
+    # Обробка POST запиту (форма з email)
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        agent_site = AgentSite.objects.filter(user__email=email).first()
+        if agent_site:
+            return redirect(f'/a/{agent_site.slug}/login/')
+        else:
+            messages.error(request, 'Сайт з таким email не знайдено. Перевірте email або зареєструйтесь.')
+
+    # GET запит - показуємо форму
+    return render(request, 'constructor/agent_login_redirect.html')
 
 
 # -------------------------
