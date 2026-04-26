@@ -214,3 +214,29 @@ if 'gunicorn' in sys.argv[0]:
     print(f"DATABASE_URL: {'Знайдено' if os.getenv('DATABASE_URL') else 'Не знайдено!'}")
     print(f"PORT: {os.getenv('PORT', 'Не знайдено!')}")
     print("===========================")
+
+# ========== ДІАГНОСТИКА АВТЕНТИФІКАЦІЇ ==========
+from django.contrib.auth import get_user_model, authenticate
+User = get_user_model()
+
+print("=" * 50)
+print("=== ДІАГНОСТИКА АВТЕНТИФІКАЦІЇ ===")
+
+# Перевіряємо, чи є користувач 'So' в БД
+user = User.objects.filter(username='So').first()
+if user:
+    print(f"Користувач 'So' знайдений в БД")
+    print(f"  - is_active: {user.is_active}")
+    print(f"  - is_superuser: {user.is_superuser}")
+    print(f"  - is_staff: {user.is_staff}")
+else:
+    print("❌ Користувач 'So' НЕ знайдений в БД")
+
+# Перевіряємо автентифікацію з паролем 'So12345'
+auth_user = authenticate(username='So', password='So12345')
+if auth_user:
+    print("✅ АВТЕНТИФІКАЦІЯ ПРАЦЮЄ! Пароль правильний")
+else:
+    print("❌ АВТЕНТИФІКАЦІЯ НЕ ПРАЦЮЄ! Пароль неправильний або інша проблема")
+
+print("=" * 50)
