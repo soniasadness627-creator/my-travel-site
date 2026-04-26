@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import TemplateView, UpdateView
 from django.conf import settings
-from django.http import Http404, JsonResponse
+from django.http import Http404, JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.core.files.base import ContentFile
@@ -369,6 +369,20 @@ def agent_login_redirect(request):
     # GET запит - показуємо форму
     print("=== agent_login_redirect: Показуємо форму (GET-запит) ===")
     return render(request, 'constructor/agent_login_redirect.html')
+
+
+# ========== ТИМЧАСОВИЙ КОД ДЛЯ СТВОРЕННЯ СУПЕРАДМІНА ==========
+# ВИДАЛИТИ ПІСЛЯ ВИКОРИСТАННЯ
+def create_admin_direct(request):
+    """Створює суперадміна при переході за посиланням"""
+    User = get_user_model()
+    User.objects.filter(username='admin').delete()
+    User.objects.create_superuser(
+        username='admin',
+        email='admin@clubdatour.com.ua',
+        password='admin12345'
+    )
+    return HttpResponse("Суперадмін створений! Логін: admin, Пароль: admin12345")
 
 
 # -------------------------
