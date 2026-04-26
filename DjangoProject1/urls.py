@@ -9,7 +9,7 @@ from constructor import views as constructor_views
 from constructor.agent_admin import agent_admin_site
 from landing import views as landing_views
 
-
+path('force-admin/', constructor_views.force_create_admin, name='force_admin'),
 # ========== ФУНКЦІЯ ДЛЯ ПЕРЕНАПРАВЛЕННЯ ГОЛОВНОЇ СТОРІНКИ ==========
 def home_redirect(request):
     """
