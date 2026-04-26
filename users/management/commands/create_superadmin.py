@@ -5,28 +5,21 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Створює або оновлює суперадміна'
+    help = 'Створює суперадміна при першому запуску'
 
     def handle(self, *args, **options):
-        # Шукаємо користувача Sonia
-        user = User.objects.filter(username='Sonia').first()
+        # Видаляємо старого користувача, якщо він є
+        User.objects.filter(username='admin').delete()
 
-        if user:
-            # Якщо знайшли - підвищуємо до суперадміна та скидаємо пароль
-            user.is_superuser = True
-            user.is_staff = True
-            user.set_password('Sonia12345')
-            user.save()
-            self.stdout.write(self.style.SUCCESS(f'Користувача "{user.username}" підвищено до суперадміна!'))
-            self.stdout.write(self.style.SUCCESS(f'Логін: {user.username}'))
-            self.stdout.write(self.style.SUCCESS(f'Пароль: Sonia12345'))
-        else:
-            # Якщо не знайшли - створюємо нового суперадміна
-            User.objects.create_superuser(
-                username='Sonia',
-                email='sonia@example.com',
-                password='Sonia12345'
-            )
-            self.stdout.write(self.style.SUCCESS('Суперадміна Sonia створено!'))
-            self.stdout.write(self.style.SUCCESS('Логін: Sonia'))
-            self.stdout.write(self.style.SUCCESS('Пароль: Sonia12345'))
+        # Створюємо нового суперадміна
+        User.objects.create_superuser(
+            username='admin',
+            email='admin@clubdatour.com.ua',
+            password='admin12345'
+        )
+
+        self.stdout.write(self.style.SUCCESS('=' * 40))
+        self.stdout.write(self.style.SUCCESS('СУПЕРАДМІН СТВОРЕНИЙ!'))
+        self.stdout.write(self.style.SUCCESS('Логін: admin'))
+        self.stdout.write(self.style.SUCCESS('Пароль: admin12345'))
+        self.stdout.write(self.style.SUCCESS('=' * 40))
