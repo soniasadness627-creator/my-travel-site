@@ -5,29 +5,19 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Створює суперадміна, якщо його ще немає'
+    help = 'Підвищує агента до суперадміна'
 
     def handle(self, *args, **options):
-        # Створюємо або оновлюємо суперадміна Artur
-        user, created = User.objects.get_or_create(
-            username='Artur',
-            defaults={
-                'email': 'artur@example.com',
-                'is_superuser': True,
-                'is_staff': True
-            }
-        )
+        # Знайдіть користувача Sonia (або іншого) в базі Render
+        user = User.objects.filter(username='Sonia').first()
 
-        # Встановлюємо пароль
-        user.set_password('ваш_пароль')  # ← ЗАМІНІТЬ на пароль, який ви хочете
-        user.is_superuser = True
-        user.is_staff = True
-        user.save()
-
-        if created:
-            self.stdout.write(self.style.SUCCESS(f'Суперадмін "{user.username}" створений!'))
+        if user:
+            user.is_superuser = True
+            user.is_staff = True
+            user.set_password('новий_пароль')  # ← встановіть новий пароль
+            user.save()
+            self.stdout.write(self.style.SUCCESS(f'Користувача "{user.username}" підвищено до суперадміна!'))
+            self.stdout.write(self.style.SUCCESS(f'Логін: {user.username}'))
+            self.stdout.write(self.style.SUCCESS(f'Пароль: (встановлений вами)'))
         else:
-            self.stdout.write(self.style.SUCCESS(f'Суперадмін "{user.username}" оновлений!'))
-
-        self.stdout.write(self.style.SUCCESS(f'Логін: Artur'))
-        self.stdout.write(self.style.SUCCESS(f'Пароль: (встановлений вами)'))
+            self.stdout.write(self.style.WARNING('Користувача Sonia не знайдено'))
