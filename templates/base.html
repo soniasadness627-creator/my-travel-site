@@ -420,18 +420,15 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 {% if '/constructor/' not in request.path %}
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <!-- ВИДАЛІТЬ або ЗАКОМЕНТУЙТЕ цей рядок:
-<li class="nav-item">
-    <a class="nav-link" href="{% if agent_site and agent_site.slug %}{% url 'agent_home' agent_site.slug %}{% else %}{% url 'home' %}{% endif %}">Головна</a>
-</li>
--->
+                    <!-- Пункт "Головна" ВИДАЛЕНО! -->
+
                     {% if not agent_site or agent_site.show_news %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/news/{% else %}{% url 'news' %}{% endif %}">Новини</a>
                     </li>
                     {% endif %}
 
-                    <!-- ========== НОВІ ПУНКТИ ДЛЯ АГЕНТА ТА СУПЕРАДМІНА ========== -->
+                    <!-- ========== ПУНКТИ ДЛЯ АГЕНТА ТА СУПЕРАДМІНА ========== -->
                     {% if user.is_authenticated %}
                         {% if user.is_agent and user.agent_site.slug %}
                             <li class="nav-item">
@@ -448,7 +445,7 @@
                             </li>
                         {% endif %}
                     {% endif %}
-                    <!-- ========== КІНЕЦЬ НОВИХ ПУНКТІВ ========== -->
+                    <!-- ========== КІНЕЦЬ ПУНКТІВ ========== -->
 
                     {% if user.is_authenticated %}
                         {% if user.is_superuser %}

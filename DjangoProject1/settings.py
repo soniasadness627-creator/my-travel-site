@@ -130,9 +130,10 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = 'users.User'
 
 # Internationalization
-LOGIN_REDIRECT_URL = 'home'
+# ========== НАЛАШТУВАННЯ ПЕРЕНАПРАВЛЕНЬ ==========
+LOGIN_REDIRECT_URL = '/home/'  # Після входу перенаправляти на /home/
 LOGIN_URL = '/admin/login/'
-LOGOUT_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = '/'
 LANGUAGE_CODE = 'uk-ua'
 TIME_ZONE = 'UTC'
 USE_I18N = True
