@@ -9,6 +9,7 @@ urlpatterns = [
     path('dashboard/', views.constructor_dashboard, name='dashboard'),
     path('open-site/', views.open_site, name='open_site'),
     path('generate-image/', views.generate_image, name='generate_image'),
+    path('agent-login-redirect/', views.agent_login_redirect, name='agent_login_redirect'),  # ← НОВИЙ МАРШРУТ
 ]
 
 # окремий конфіг для агентських сайтів
