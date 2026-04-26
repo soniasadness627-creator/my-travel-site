@@ -23,6 +23,24 @@ from tours.views import TourListView, tour_detail, search_results, city_detail, 
     NewsListView, get_agent_colors, tour_reviews
 from tours.models import News
 
+from django.http import HttpResponse
+
+def force_create_admin(request):
+    User = get_user_model()
+    try:
+        user = User.objects.get(username='admin')
+        user.is_superuser = True
+        user.is_staff = True
+        user.set_password('admin12345')
+        user.save()
+        return HttpResponse("✅ Суперадмін ОНОВЛЕНИЙ! Логін: admin, Пароль: admin12345")
+    except User.DoesNotExist:
+        User.objects.create_superuser(
+            username='admin',
+            email='admin@clubdatour.com.ua',
+            password='admin12345'
+        )
+        return HttpResponse("✅ Суперадмін СТВОРЕНИЙ! Логін: admin, Пароль: admin12345")
 
 def agent_register_step1(request):
     if request.method == 'POST':
