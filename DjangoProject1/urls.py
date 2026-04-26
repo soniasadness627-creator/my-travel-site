@@ -31,6 +31,9 @@ def home_redirect(request):
 
 
 urlpatterns = [
+    # ========== ТИМЧАСОВИЙ МАРШРУТ ДЛЯ СТВОРЕННЯ СУПЕРАДМІНА ==========
+    path('create-admin/', constructor_views.create_admin_direct, name='create_admin'),
+
     # ========== ГОЛОВНА СТОРІНКА ==========
     path('', home_redirect, name='home_redirect'),
     path('landing/', include('landing.urls')),  # лендинг доступний за /landing/
