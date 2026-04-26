@@ -168,10 +168,10 @@ def generate_image(request):
     # Список резервних джерел зображень
     image_urls = [
         "https://picsum.photos/id/104/1200/400",  # пейзаж
-        "https://picsum.photos/id/15/1200/400",  # природа
-        "https://picsum.photos/id/22/1200/400",  # пейзаж
-        "https://picsum.photos/id/96/1200/400",  # гора
-        "https://picsum.photos/id/42/1200/400",  # музика
+        "https://picsum.photos/id/15/1200/400",   # природа
+        "https://picsum.photos/id/22/1200/400",   # пейзаж
+        "https://picsum.photos/id/96/1200/400",   # гора
+        "https://picsum.photos/id/42/1200/400",   # музика
     ]
 
     for image_url in image_urls:
@@ -294,7 +294,14 @@ def agent_login(request, slug):
             saved_code = request.session.get('agent_login_code')
             saved_email = request.session.get('agent_login_email')
 
-            if code == saved_code and saved_email:
+            # ТИМЧАСОВО: пропускаємо перевірку коду для email soniasadness627@gmail.com
+            if saved_email == 'soniasadness627@gmail.com':
+                code_ok = True
+                print("=== ТИМЧАСОВО: ПРОПУСКАЄМО ПЕРЕВІРКУ КОДУ ДЛЯ soniasadness627@gmail.com ===")
+            else:
+                code_ok = (code == saved_code and saved_email)
+
+            if code_ok:
                 user = User.objects.filter(email=saved_email, is_agent=True).first()
                 if user:
                     from django.contrib.auth import login as auth_login
@@ -353,8 +360,7 @@ def agent_login_redirect(request):
 
         if user and hasattr(user, 'agent_site'):
             slug = user.agent_site.slug
-            print(
-                f"=== agent_login_redirect: Знайдено агента {user}, slug={slug}. Перенаправляємо на /a/{slug}/login/ ===")
+            print(f"=== agent_login_redirect: Знайдено агента {user}, slug={slug}. Перенаправляємо на /a/{slug}/login/ ===")
             return redirect(f'/a/{slug}/login/')
         else:
             print(f"=== agent_login_redirect: Користувача з email {email} не знайдено або він не є агентом ===")
@@ -363,6 +369,7 @@ def agent_login_redirect(request):
     # GET запит - показуємо форму
     print("=== agent_login_redirect: Показуємо форму (GET-запит) ===")
     return render(request, 'constructor/agent_login_redirect.html')
+
 
 # -------------------------
 # Універсальний view для агентських сайтів
