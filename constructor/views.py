@@ -339,7 +339,6 @@ def agent_login_redirect(request):
     # Обробка POST запиту (форма з email)
     if request.method == 'POST':
         email = request.POST.get('email')
-        # Шукаємо агента за email (він зберігається в username)
         from django.contrib.auth import get_user_model
         User = get_user_model()
         user = User.objects.filter(email=email, is_agent=True).first()
@@ -348,6 +347,7 @@ def agent_login_redirect(request):
 
         if user and hasattr(user, 'agent_site'):
             slug = user.agent_site.slug
+            # ПЕРЕХОДИМО ВІДРАЗУ НА СТОРІНКУ З КОДОМ
             return redirect(f'/a/{slug}/login/')
         else:
             messages.error(request, 'Сайт з таким email не знайдено. Перевірте email або зареєструйтесь.')

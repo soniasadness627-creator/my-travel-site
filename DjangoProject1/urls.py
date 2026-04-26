@@ -12,7 +12,19 @@ from landing import views as landing_views
 
 # ========== ФУНКЦІЯ ДЛЯ ПЕРЕНАПРАВЛЕННЯ ГОЛОВНОЇ СТОРІНКИ ==========
 def home_redirect(request):
-    """Перенаправляє суперадміна на сторінку турів, інших - на лендинг"""
+    """
+    Перенаправляє:
+    - Локально (127.0.0.1 або localhost) завжди на лендинг
+    - На Render: суперадміна на /home/, інших на /landing/
+    """
+    host = request.META.get('HTTP_HOST', '')
+
+    # Перевіряємо, чи це локальний запит
+    if host.startswith('127.0.0.1') or host.startswith('localhost'):
+        # Локально завжди показуємо лендинг
+        return redirect('/landing/')
+
+    # На Render (продакшен)
     if request.user.is_authenticated and request.user.is_superuser:
         return redirect('/home/')  # сторінка турів для суперадміна
     return redirect('/landing/')  # лендинг для всіх інших
@@ -34,7 +46,7 @@ urlpatterns = [
     path('search/', tours_views.search_results, name='search_results'),
     path('get-cities/', tours_views.get_cities, name='get_cities'),
     path('api/calendar-prices/', tours_views.calendar_prices, name='calendar_prices'),
-    path('tour/<int:pk>//', tours_views.tour_detail, name='tour_detail'),
+    path('tour/<int:pk>/', tours_views.tour_detail, name='tour_detail'),
     path('tour/<int:pk>/reviews/', tours_views.tour_reviews, name='tour_reviews'),
 
     # ========== КАБІНЕТ АГЕНТА ==========
