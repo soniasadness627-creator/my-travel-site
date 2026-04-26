@@ -5,19 +5,28 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Підвищує агента до суперадміна'
+    help = 'Створює або оновлює суперадміна'
 
     def handle(self, *args, **options):
-        # Знайдіть користувача Sonia (або іншого) в базі Render
+        # Шукаємо користувача Sonia
         user = User.objects.filter(username='Sonia').first()
 
         if user:
+            # Якщо знайшли - підвищуємо до суперадміна та скидаємо пароль
             user.is_superuser = True
             user.is_staff = True
-            user.set_password('новий_пароль')  # ← встановіть новий пароль
+            user.set_password('Sonia12345')
             user.save()
             self.stdout.write(self.style.SUCCESS(f'Користувача "{user.username}" підвищено до суперадміна!'))
             self.stdout.write(self.style.SUCCESS(f'Логін: {user.username}'))
-            self.stdout.write(self.style.SUCCESS(f'Пароль: (встановлений вами)'))
+            self.stdout.write(self.style.SUCCESS(f'Пароль: Sonia12345'))
         else:
-            self.stdout.write(self.style.WARNING('Користувача Sonia не знайдено'))
+            # Якщо не знайшли - створюємо нового суперадміна
+            User.objects.create_superuser(
+                username='Sonia',
+                email='sonia@example.com',
+                password='Sonia12345'
+            )
+            self.stdout.write(self.style.SUCCESS('Суперадміна Sonia створено!'))
+            self.stdout.write(self.style.SUCCESS('Логін: Sonia'))
+            self.stdout.write(self.style.SUCCESS('Пароль: Sonia12345'))
