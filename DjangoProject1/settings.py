@@ -201,3 +201,7 @@ if not DEBUG:
 
 # Gemini API ключ для чат-бота
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyAlyvwC7SmSESF7YpCOUJRuYgTLIP7b7L4')
+
+# ========== НАЛАШТУВАННЯ ПОРТУ ДЛЯ RENDER ==========
+# Отримуємо порт зі змінних оточення Render
+PORT = os.getenv('PORT', '10000')
