@@ -131,6 +131,7 @@ AUTH_USER_MODEL = 'users.User'
 
 # Internationalization
 LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = '/admin/login/'
 LOGOUT_REDIRECT_URL = 'home'
 LANGUAGE_CODE = 'uk-ua'
 TIME_ZONE = 'UTC'

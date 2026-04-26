@@ -24,15 +24,15 @@
                         {% endfor %}
                     {% endif %}
 
-                    <form method="post">
+                    <form method="post" autocomplete="off">
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="username" class="form-label fw-semibold">Email</label>
-                            <input type="text" name="username" id="username" class="form-control" placeholder="your@email.com" required autofocus>
+                            <input type="text" name="username" id="username" class="form-control" placeholder="your@email.com" required autofocus autocomplete="off">
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label fw-semibold">Пароль</label>
-                            <input type="password" name="password" id="password" class="form-control" placeholder="••••••••" required>
+                            <input type="password" name="password" id="password" class="form-control" placeholder="••••••••" required autocomplete="off">
                         </div>
                         <button type="submit" class="btn w-100 py-2 mt-3" style="background: var(--primary-color); color: white; border: none; font-weight: 500;">
                             <i class="fa-solid fa-arrow-right-to-bracket me-2"></i> Увійти
