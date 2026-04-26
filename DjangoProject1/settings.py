@@ -25,6 +25,8 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '.onrender.com',  # Додано для всіх піддоменів Render
+    'clubdatour.com.ua',           # ← ДОДАНО ВАШ ДОМЕН
+    'www.clubdatour.com.ua',       # ← ДОДАНО ВАШ ДОМЕН (з www)
 ]
 
 # Application definition
@@ -214,4 +216,3 @@ if 'gunicorn' in sys.argv[0]:
     print(f"DATABASE_URL: {'Знайдено' if os.getenv('DATABASE_URL') else 'Не знайдено!'}")
     print(f"PORT: {os.getenv('PORT', 'Не знайдено!')}")
     print("===========================")
-
