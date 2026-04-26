@@ -5,27 +5,29 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Створює суперадміна або скидає пароль'
+    help = 'Створює суперадміна, якщо його ще немає'
 
     def handle(self, *args, **options):
-        # Знаходимо суперадміна або створюємо
+        # Створюємо або оновлюємо суперадміна Artur
         user, created = User.objects.get_or_create(
-            username='So',
+            username='Artur',
             defaults={
-                'email': 'so@example.com',
+                'email': 'artur@example.com',
                 'is_superuser': True,
                 'is_staff': True
             }
         )
 
-        # Скидаємо пароль
-        user.set_password('So12345')
+        # Встановлюємо пароль
+        user.set_password('ваш_пароль')  # ← ЗАМІНІТЬ на пароль, який ви хочете
         user.is_superuser = True
         user.is_staff = True
         user.save()
 
-        self.stdout.write("=" * 50)
-        self.stdout.write(self.style.SUCCESS(f'Суперадмін "{user.username}" оновлений!'))
-        self.stdout.write(self.style.SUCCESS('Логін: So'))
-        self.stdout.write(self.style.SUCCESS('Пароль: So12345'))
-        self.stdout.write("=" * 50)
+        if created:
+            self.stdout.write(self.style.SUCCESS(f'Суперадмін "{user.username}" створений!'))
+        else:
+            self.stdout.write(self.style.SUCCESS(f'Суперадмін "{user.username}" оновлений!'))
+
+        self.stdout.write(self.style.SUCCESS(f'Логін: Artur'))
+        self.stdout.write(self.style.SUCCESS(f'Пароль: (встановлений вами)'))
