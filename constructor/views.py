@@ -341,13 +341,15 @@ def agent_login_redirect(request):
         email = request.POST.get('email')
         from django.contrib.auth import get_user_model
         User = get_user_model()
+
+        # Шукаємо користувача за email або username
         user = User.objects.filter(email=email, is_agent=True).first()
         if not user:
             user = User.objects.filter(username=email, is_agent=True).first()
 
         if user and hasattr(user, 'agent_site'):
             slug = user.agent_site.slug
-            # ПЕРЕХОДИМО ВІДРАЗУ НА СТОРІНКУ З КОДОМ
+            # ПЕРЕХОДИМО НА СТОРІНКУ ВХОДУ АГЕНТА (ДЕ БУДЕ ВІДПРАВЛЕНО КОД)
             return redirect(f'/a/{slug}/login/')
         else:
             messages.error(request, 'Сайт з таким email не знайдено. Перевірте email або зареєструйтесь.')
