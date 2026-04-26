@@ -205,3 +205,12 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyAlyvwC7SmSESF7YpCOUJRuYgTLIP
 # ========== НАЛАШТУВАННЯ ПОРТУ ДЛЯ RENDER ==========
 # Отримуємо порт зі змінних оточення Render
 PORT = os.getenv('PORT', '10000')
+
+# ========== ТИМЧАСОВА ДІАГНОСТИКА - ВИДАЛИТИ ПІСЛЯ ПЕРЕВІРКИ ==========
+if 'gunicorn' in sys.argv[0]:
+    print("=== ДІАГНОСТИКА GUNICORN ===")
+    print(f"GMAIL_USER: {os.getenv('GMAIL_USER', 'Не знайдено!')}")
+    print(f"GMAIL_PASSWORD: {'Знайдено (приховано)' if os.getenv('GMAIL_PASSWORD') else 'Не знайдено!'}")
+    print(f"DATABASE_URL: {'Знайдено' if os.getenv('DATABASE_URL') else 'Не знайдено!'}")
+    print(f"PORT: {os.getenv('PORT', 'Не знайдено!')}")
+    print("===========================")
