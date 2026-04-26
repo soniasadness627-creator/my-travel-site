@@ -331,29 +331,37 @@ def agent_login_redirect(request):
     """
     Перенаправляє агента на сторінку входу його сайту.
     """
+    print("=== agent_login_redirect: Початок ===")  # Діагностика
+
     # Якщо користувач вже авторизований і має агентський сайт
     if request.user.is_authenticated and hasattr(request.user, 'agent_site'):
         slug = request.user.agent_site.slug
+        print(f"=== agent_login_redirect: Користувач вже авторизований, перенаправляємо на /a/{slug}/login/ ===")
         return redirect(f'/a/{slug}/login/')
 
     # Обробка POST запиту (форма з email)
     if request.method == 'POST':
         email = request.POST.get('email')
+        print(f"=== agent_login_redirect: Отримано POST з email: {email} ===")
         from django.contrib.auth import get_user_model
         User = get_user_model()
 
-        # Шукаємо користувача за email або username
         user = User.objects.filter(email=email, is_agent=True).first()
         if not user:
             user = User.objects.filter(username=email, is_agent=True).first()
+            print(f"=== agent_login_redirect: Пошук за username, знайдено: {user} ===")
 
         if user and hasattr(user, 'agent_site'):
             slug = user.agent_site.slug
-            # ПЕРЕХОДИМО НА СТОРІНКУ ВХОДУ АГЕНТА (ДЕ БУДЕ ВІДПРАВЛЕНО КОД)
+            print(
+                f"=== agent_login_redirect: Знайдено агента {user}, slug={slug}. Перенаправляємо на /a/{slug}/login/ ===")
             return redirect(f'/a/{slug}/login/')
         else:
+            print(f"=== agent_login_redirect: Користувача з email {email} не знайдено або він не є агентом ===")
             messages.error(request, 'Сайт з таким email не знайдено. Перевірте email або зареєструйтесь.')
 
+    # GET запит - показуємо форму
+    print("=== agent_login_redirect: Показуємо форму (GET-запит) ===")
     return render(request, 'constructor/agent_login_redirect.html')
 
 # -------------------------
