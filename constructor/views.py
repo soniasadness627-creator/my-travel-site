@@ -330,8 +330,6 @@ def agent_login(request, slug):
 def agent_login_redirect(request):
     """
     Перенаправляє агента на сторінку входу його сайту.
-    Якщо користувач вже увійшов і має сайт - одразу на сторінку входу агента.
-    Якщо ні - показує форму для введення email.
     """
     # Якщо користувач вже авторизований і має агентський сайт
     if request.user.is_authenticated and hasattr(request.user, 'agent_site'):
@@ -341,15 +339,20 @@ def agent_login_redirect(request):
     # Обробка POST запиту (форма з email)
     if request.method == 'POST':
         email = request.POST.get('email')
-        agent_site = AgentSite.objects.filter(user__email=email).first()
-        if agent_site:
-            return redirect(f'/a/{agent_site.slug}/login/')
+        # Шукаємо агента за email (він зберігається в username)
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        user = User.objects.filter(email=email, is_agent=True).first()
+        if not user:
+            user = User.objects.filter(username=email, is_agent=True).first()
+
+        if user and hasattr(user, 'agent_site'):
+            slug = user.agent_site.slug
+            return redirect(f'/a/{slug}/login/')
         else:
             messages.error(request, 'Сайт з таким email не знайдено. Перевірте email або зареєструйтесь.')
 
-    # GET запит - показуємо форму
     return render(request, 'constructor/agent_login_redirect.html')
-
 
 # -------------------------
 # Універсальний view для агентських сайтів

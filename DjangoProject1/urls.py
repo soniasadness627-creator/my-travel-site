@@ -24,7 +24,7 @@ urlpatterns = [
     path('landing/', include('landing.urls')),  # лендинг доступний за /landing/
 
     # ========== АДМІН-ПАНЕЛІ ==========
-    path('admin/', admin.site.urls),  # Суперадмін
+    path('admin/', admin.site.urls, name='admin'),
     path('a/<slug:slug>/admin/', agent_admin_site.urls),  # Агентська адмінка
 
     path('chaining/', include('smart_selects.urls')),
