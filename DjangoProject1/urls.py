@@ -9,6 +9,8 @@ from constructor import views as constructor_views
 from constructor.agent_admin import agent_admin_site
 from landing import views as landing_views
 
+# ========== ДОДАТИ ЦЕ - ОБРОБНИК ПОМИЛКИ CSRF ==========
+from django.views.csrf import csrf_failure
 
 # ========== ФУНКЦІЯ ДЛЯ ПЕРЕНАПРАВЛЕННЯ ГОЛОВНОЇ СТОРІНКИ ==========
 def home_redirect(request):
@@ -30,6 +32,12 @@ def home_redirect(request):
     return redirect('/landing/')  # лендинг для всіх інших
 
 
+# ========== ДОДАЙТЕ ЦЕ - ОБРОБНИК ДЛЯ 403 ПОМИЛКИ ==========
+def custom_csrf_failure(request, reason=""):
+    return redirect('/')
+
+handler403 = custom_csrf_failure
+
 urlpatterns = [
     # ========== ТИМЧАСОВИЙ МАРШРУТ ДЛЯ СТВОРЕННЯ СУПЕРАДМІНА ==========
     path('create-admin/', constructor_views.create_admin_direct, name='create_admin'),
@@ -40,7 +48,7 @@ urlpatterns = [
 
     # ========== АДМІН-ПАНЕЛІ ==========
     path('admin/', admin.site.urls, name='admin'),
-    path('a/admin/', agent_admin_site.urls, name='agent_admin'),  # ← ДОДАНО name='agent_admin'!
+    path('a/admin/', agent_admin_site.urls, name='agent_admin'),
 
     path('chaining/', include('smart_selects.urls')),
 
