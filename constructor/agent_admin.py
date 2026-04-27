@@ -1,22 +1,16 @@
 from django.contrib import admin
-from django.contrib.admin import AdminSite
 from django.urls import path
 from tours.models import (
     Tour, Booking, PriceOption, Review, Consultation, News,
     TourPriceByTourists, CountryInfo, PriceCalendar, PopularDestination,
     City
 )
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
 
 
 # ========== АДМІН-КЛАСИ ДЛЯ АГЕНТІВ ==========
 
 class AgentTourAdmin(admin.ModelAdmin):
-    # ВИПРАВЛЕНО: прибрано 'is_active' якщо його немає в моделі
     list_display = ("title", "country", "city", "price", "start_date", "author")
-    # ВИПРАВЛЕНО: прибрано 'is_active' з list_filter
     list_filter = ("country", "city", "start_date")
     search_fields = ("title", "country", "city", "description")
 
@@ -41,6 +35,7 @@ class AgentBookingAdmin(admin.ModelAdmin):
 
     def get_tour_title(self, obj):
         return obj.tour.title
+
     get_tour_title.short_description = 'Тур'
 
 
@@ -66,17 +61,18 @@ class AgentReviewAdmin(admin.ModelAdmin):
 
     def get_tour_title(self, obj):
         return obj.tour.title
+
     get_tour_title.short_description = 'Тур'
 
     def get_author_name(self, obj):
         if obj.user:
             return obj.user.username
         return obj.guest_name or 'Гість'
+
     get_author_name.short_description = 'Автор'
 
 
 class AgentConsultationAdmin(admin.ModelAdmin):
-    # ВИПРАВЛЕНО: прибрано 'email' з list_display (його може не бути в моделі Consultation)
     list_display = ('name', 'phone', 'created_at', 'is_processed')
     list_filter = ('created_at', 'is_processed')
     search_fields = ('name', 'phone', 'comment')
@@ -151,9 +147,8 @@ class AgentCityAdmin(admin.ModelAdmin):
         return qs
 
 
-# ========== КАСТОМНИЙ САЙТ АДМІНКИ ==========
-
-class AgentAdminSite(AdminSite):
+# ========== СТВОРЕННЯ АГЕНТСЬКОЇ АДМІНКИ ==========
+class AgentAdminSite(admin.AdminSite):
     site_header = "Панель керування агента"
     site_title = "Агентська адмінка"
     index_title = "Ласкаво просимо до вашого кабінету"
@@ -161,20 +156,8 @@ class AgentAdminSite(AdminSite):
     def has_permission(self, request):
         return request.user.is_authenticated and request.user.is_agent
 
-    def get_urls(self):
-        urls = super().get_urls()
-        wrapper = self.admin_view
-        return [
-            path('', wrapper(self.index), name='index'),
-            path('login/', self.login, name='login'),
-            path('logout/', self.logout, name='logout'),
-            path('password_change/', self.password_change, name='password_change'),
-            path('password_change/done/', self.password_change_done, name='password_change_done'),
-            path('jsi18n/', self.i18n_javascript, name='jsi18n'),
-        ] + urls[4:]
 
-
-# Створюємо екземпляр агентської адмінки
+# Створюємо екземпляр
 agent_admin_site = AgentAdminSite(name='agent_admin')
 
 # ========== РЕЄСТРАЦІЯ ВСІХ МОДЕЛЕЙ ==========
@@ -190,22 +173,12 @@ agent_admin_site.register(PopularDestination, AgentPopularDestinationAdmin)
 agent_admin_site.register(TourPriceByTourists, AgentTourPriceByTouristsAdmin)
 agent_admin_site.register(City, AgentCityAdmin)
 
-# Додайте ці моделі, якщо вони існують:
-try:
-    from tours.models import Booking, Consultation, News, CountryInfo, PriceCalendar, PopularDestination, TourPriceByTourists, City
-    # Вони вже зареєстровані вище
-except ImportError:
-    pass
-
-# Додаткові моделі, які можуть бути корисні:
-try:
-    from users.models import User
-    agent_admin_site.register(User, admin.ModelAdmin)
-except ImportError:
-    pass
-
-try:
-    from constructor.models import AgentSite
-    agent_admin_site.register(AgentSite, admin.ModelAdmin)
-except ImportError:
-    pass
+print("=" * 50)
+print("АГЕНТСЬКА АДМІНКА - УСПІШНО ЗАРЕЄСТРОВАНО")
+print(f"Кількість зареєстрованих моделей: {len(agent_admin_site._registry)}")
+print("=" * 50)
+# Діагностика в консоль
+print("=== ЗАРЕЄСТРОВАНІ МОДЕЛІ В АГЕНТСЬКІЙ АДМІНЦІ ===")
+for model in agent_admin_site._registry.keys():
+    print(f"  - {model._meta.verbose_name_plural}")
+print("=" * 50)
