@@ -8,7 +8,17 @@ class AgentRegistrationForm(forms.Form):
 
 
 class VerificationForm(forms.Form):
-    code = forms.CharField(max_length=6, label="Код підтвердження", widget=forms.TextInput(attrs={'class': 'form-control'}))
+    code = forms.CharField(
+        label='Код верифікації',
+        max_length=6,
+        min_length=6,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control form-control-lg',
+            'placeholder': 'Введіть 6-значний код',
+            'pattern': '[0-9]{6}',
+            'autocomplete': 'off'
+        })
+    )
 
 
 class AgentSiteForm(forms.ModelForm):
@@ -95,11 +105,9 @@ class AgentSiteForm(forms.ModelForm):
     def clean_slug(self):
         slug = self.cleaned_data.get('slug')
         if slug:
-            # Перевіряємо, що slug містить тільки дозволені символи
             import re
             if not re.match(r'^[a-z0-9-]+$', slug):
                 raise forms.ValidationError('Slug може містити тільки малі латинські літери, цифри та дефіс.')
-            # Перевіряємо унікальність, ігноруючи поточний об'єкт
             instance = getattr(self, 'instance', None)
             if instance and instance.pk:
                 if AgentSite.objects.exclude(pk=instance.pk).filter(slug=slug).exists():
@@ -112,7 +120,6 @@ class AgentSiteForm(forms.ModelForm):
     def clean_primary_color(self):
         primary_color = self.cleaned_data.get('primary_color')
         if primary_color:
-            # Перевіряємо формат HEX кольору
             import re
             if not re.match(r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$', primary_color):
                 raise forms.ValidationError('Введіть коректний HEX код кольору (наприклад, #086745)')
@@ -121,7 +128,6 @@ class AgentSiteForm(forms.ModelForm):
     def clean_secondary_color(self):
         secondary_color = self.cleaned_data.get('secondary_color')
         if secondary_color:
-            # Перевіряємо формат HEX кольору
             import re
             if not re.match(r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$', secondary_color):
                 raise forms.ValidationError('Введіть коректний HEX код кольору (наприклад, #02432c)')
@@ -129,15 +135,12 @@ class AgentSiteForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        # Якщо вторинний колір не вказаний, використовуємо затемнену версію основного
         if not cleaned_data.get('secondary_color') and cleaned_data.get('primary_color'):
             primary = cleaned_data.get('primary_color')
-            # Затемнюємо основний колір для hover-ефекту
             try:
                 r = int(primary[1:3], 16)
                 g = int(primary[3:5], 16)
                 b = int(primary[5:7], 16)
-                # Затемнюємо на 20%
                 r = max(0, int(r * 0.8))
                 g = max(0, int(g * 0.8))
                 b = max(0, int(b * 0.8))
