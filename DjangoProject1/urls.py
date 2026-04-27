@@ -40,7 +40,7 @@ urlpatterns = [
 
     # ========== АДМІН-ПАНЕЛІ ==========
     path('admin/', admin.site.urls, name='admin'),
-    path('a/admin/', agent_admin_site.urls),  # Агентська адмінка (БЕЗ slug!)
+    path('a/admin/', agent_admin_site.urls, name='agent_admin'),  # ← ДОДАНО name='agent_admin'!
 
     path('chaining/', include('smart_selects.urls')),
 
