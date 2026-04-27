@@ -1,11 +1,7 @@
-from django.contrib import admin
 from django.contrib.admin import AdminSite
 from django.urls import path
-from tours.models import (
-    Tour, Booking, PriceOption, Review, Consultation, News,
-    TourPriceByTourists, CountryInfo, PriceCalendar, PopularDestination
-)
 from django.contrib.auth import get_user_model
+from .agent_admin_config import all_models
 
 User = get_user_model()
 
@@ -33,17 +29,6 @@ class AgentAdminSite(AdminSite):
 
 agent_admin_site = AgentAdminSite(name='agent_admin')
 
-
-# ========== БАЗОВА РЕЄСТРАЦІЯ ВСІХ МОДЕЛЕЙ (без кастомних класів для початку) ==========
-# Це гарантовано покаже всі моделі в адмінці
-
-agent_admin_site.register(Tour)
-agent_admin_site.register(Booking)
-agent_admin_site.register(PriceOption)
-agent_admin_site.register(Review)
-agent_admin_site.register(Consultation)
-agent_admin_site.register(News)
-agent_admin_site.register(CountryInfo)
-agent_admin_site.register(PriceCalendar)
-agent_admin_site.register(PopularDestination)
-agent_admin_site.register(TourPriceByTourists)
+# Реєструємо всі моделі з їх адмін-класами
+for model, admin_class in all_models:
+    agent_admin_site.register(model, admin_class)
