@@ -1,12 +1,84 @@
+<!-- constructor/templates/constructor/verify.html -->
 {% extends 'base.html' %}
+
 {% block content %}
-<div class="container mt-5" style="max-width: 500px;">
-    <h2 class="mb-4">Підтвердження</h2>
-    <p>Введіть код, який прийшов на вашу електронну пошту:</p>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary w-100">Перевірити</button>
-    </form>
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Верифікація email</h4>
+                </div>
+                <div class="card-body">
+                    <p>Код верифікації відправлено на <strong>{{ email }}</strong></p>
+
+                    <form method="POST" id="verifyForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="code" class="form-label">Код верифікації</label>
+                            <input type="text" name="code" id="code" class="form-control"
+                                   placeholder="Введіть 6-значний код" required>
+                        </div>
+                        <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+                        <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+                            Підтвердити
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+document.getElementById('verifyForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const code = document.getElementById('code').value;
+    const errorDiv = document.getElementById('errorMessage');
+    const submitBtn = document.getElementById('submitBtn');
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    if (!code || code.length < 6) {
+        errorDiv.textContent = 'Будь ласка, введіть 6-значний код';
+        errorDiv.style.display = 'block';
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Перевірка...';
+    errorDiv.style.display = 'none';
+
+    try {
+        const response = await fetch('/constructor/verify/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams({
+                'code': code
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            window.location.href = data.redirect_url;
+        } else {
+            errorDiv.textContent = data.error || 'Невірний код. Спробуйте ще раз.';
+            errorDiv.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Підтвердити';
+        }
+    } catch (error) {
+        console.error('Помилка:', error);
+        errorDiv.textContent = 'Помилка з\'єднання. Спробуйте ще раз.';
+        errorDiv.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Підтвердити';
+    }
+});
+</script>
 {% endblock %}
