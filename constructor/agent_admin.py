@@ -190,8 +190,22 @@ agent_admin_site.register(PopularDestination, AgentPopularDestinationAdmin)
 agent_admin_site.register(TourPriceByTourists, AgentTourPriceByTouristsAdmin)
 agent_admin_site.register(City, AgentCityAdmin)
 
-# ========== ПРОСТА ДІАГНОСТИКА ==========
-print("=" * 50)
-print("АГЕНТСЬКА АДМІНКА - УСПІШНО ЗАРЕЄСТРОВАНО")
-print(f"Кількість зареєстрованих моделей: {len(agent_admin_site._registry)}")
-print("=" * 50)
+# Додайте ці моделі, якщо вони існують:
+try:
+    from tours.models import Booking, Consultation, News, CountryInfo, PriceCalendar, PopularDestination, TourPriceByTourists, City
+    # Вони вже зареєстровані вище
+except ImportError:
+    pass
+
+# Додаткові моделі, які можуть бути корисні:
+try:
+    from users.models import User
+    agent_admin_site.register(User, admin.ModelAdmin)
+except ImportError:
+    pass
+
+try:
+    from constructor.models import AgentSite
+    agent_admin_site.register(AgentSite, admin.ModelAdmin)
+except ImportError:
+    pass
