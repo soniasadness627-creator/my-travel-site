@@ -4,7 +4,7 @@ from django.urls import path
 from tours.models import (
     Tour, Booking, PriceOption, Review, Consultation, News,
     TourPriceByTourists, CountryInfo, PriceCalendar, PopularDestination,
-    City, Country  # Додано відсутні моделі
+    City
 )
 from django.contrib.auth import get_user_model
 
@@ -142,17 +142,8 @@ class AgentTourPriceByTouristsAdmin(admin.ModelAdmin):
 
 class AgentCityAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'country')
-    search_fields = ('name', 'country__name')
+    search_fields = ('name', 'country')
     list_filter = ('country',)
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        return qs
-
-
-class AgentCountryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
-    search_fields = ('name',)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -197,9 +188,8 @@ agent_admin_site.register(PriceCalendar, AgentPriceCalendarAdmin)
 agent_admin_site.register(PopularDestination, AgentPopularDestinationAdmin)
 agent_admin_site.register(TourPriceByTourists, AgentTourPriceByTouristsAdmin)
 
-# Реєстрація додаткових моделей
+# Реєстрація додаткових моделей (тільки ті, які реально існують)
 agent_admin_site.register(City, AgentCityAdmin)
-agent_admin_site.register(Country, AgentCountryAdmin)
 
 # ========== ДІАГНОСТИКА ==========
 print("=" * 50)
