@@ -461,11 +461,11 @@
                                 <a class="nav-link fw-bold text-primary" href="{% url 'admin:index' %}">Адмінка</a>
                             </li>
                         {% endif %}
-                        {% if user.is_agent and not user.is_superuser and not agent_site %}
-                            <li class="nav-item">
-                                <a class="nav-link fw-bold text-success" href="/a/admin/">Кабінет агента</a>
-                            </li>
-                        {% endif %}
+                        {% if user.is_agent and not user.is_superuser %}
+    <li class="nav-item">
+        <a class="nav-link fw-bold text-success" href="/a/admin/">Кабінет агента</a>
+    </li>
+{% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" onclick="customLogout();">Вихід</a>
                         </li>
