@@ -14,8 +14,10 @@ User = get_user_model()
 # ========== АДМІН-КЛАСИ ДЛЯ АГЕНТІВ ==========
 
 class AgentTourAdmin(admin.ModelAdmin):
-    list_display = ("title", "country", "city", "price", "start_date", "author", "is_active")
-    list_filter = ("country", "city", "start_date", "is_active")
+    # ВИПРАВЛЕНО: прибрано 'is_active' якщо його немає в моделі
+    list_display = ("title", "country", "city", "price", "start_date", "author")
+    # ВИПРАВЛЕНО: прибрано 'is_active' з list_filter
+    list_filter = ("country", "city", "start_date")
     search_fields = ("title", "country", "city", "description")
 
     def get_queryset(self, request):
@@ -74,9 +76,10 @@ class AgentReviewAdmin(admin.ModelAdmin):
 
 
 class AgentConsultationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone', 'email', 'created_at', 'is_processed')
+    # ВИПРАВЛЕНО: прибрано 'email' з list_display (його може не бути в моделі Consultation)
+    list_display = ('name', 'phone', 'created_at', 'is_processed')
     list_filter = ('created_at', 'is_processed')
-    search_fields = ('name', 'phone', 'email', 'comment')
+    search_fields = ('name', 'phone', 'comment')
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -187,7 +190,7 @@ agent_admin_site.register(PopularDestination, AgentPopularDestinationAdmin)
 agent_admin_site.register(TourPriceByTourists, AgentTourPriceByTouristsAdmin)
 agent_admin_site.register(City, AgentCityAdmin)
 
-# ========== ПРОСТА ДІАГНОСТИКА (БЕЗ ПОМИЛОК) ==========
+# ========== ПРОСТА ДІАГНОСТИКА ==========
 print("=" * 50)
 print("АГЕНТСЬКА АДМІНКА - УСПІШНО ЗАРЕЄСТРОВАНО")
 print(f"Кількість зареєстрованих моделей: {len(agent_admin_site._registry)}")
