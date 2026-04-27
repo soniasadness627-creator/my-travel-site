@@ -1,5 +1,5 @@
-<!-- constructor/templates/constructor/verify.html -->
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="container mt-5 pt-5">
@@ -11,17 +11,27 @@
                 </div>
                 <div class="card-body">
                     <p>Код верифікації відправлено на <strong>{{ email }}</strong></p>
+                    <p class="text-muted small">Будь ласка, перевірте вашу пошту (включаючи папку Спам) та введіть код нижче.</p>
 
-                    <form method="POST" id="verifyForm">
+                    <form method="POST" action="{% url 'constructor:verify' %}">
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="code" class="form-label">Код верифікації</label>
-                            <input type="text" name="code" id="code" class="form-control"
-                                   placeholder="Введіть 6-значний код" required>
+                            <input type="text" name="code" id="code" class="form-control form-control-lg"
+                                   placeholder="Введіть 6-значний код" required autocomplete="off"
+                                   pattern="[0-9]{6}" maxlength="6" minlength="6">
                         </div>
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
                         <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
-                        <button type="submit" class="btn btn-primary w-100" id="submitBtn">
-                            Підтвердити
+                        <button type="submit" class="btn btn-primary w-100 py-2" id="submitBtn">
+                            <i class="fa-regular fa-paper-plane me-2"></i>Підтвердити
                         </button>
                     </form>
                 </div>
@@ -31,54 +41,22 @@
 </div>
 
 <script>
-document.getElementById('verifyForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const code = document.getElementById('code').value;
+document.querySelector('form').addEventListener('submit', function(e) {
+    const codeInput = document.getElementById('code');
+    const code = codeInput.value.trim();
     const errorDiv = document.getElementById('errorMessage');
+
+    if (!code || code.length !== 6 || !/^\d+$/.test(code)) {
+        e.preventDefault();
+        errorDiv.textContent = 'Будь ласка, введіть 6-значний числовий код';
+        errorDiv.style.display = 'block';
+        return false;
+    }
+
     const submitBtn = document.getElementById('submitBtn');
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-    if (!code || code.length < 6) {
-        errorDiv.textContent = 'Будь ласка, введіть 6-значний код';
-        errorDiv.style.display = 'block';
-        return;
-    }
-
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Перевірка...';
+    submitBtn.innerHTML = '<i class="fa-regular fa-spinner fa-spin me-2"></i>Перевірка...';
     errorDiv.style.display = 'none';
-
-    try {
-        const response = await fetch('/constructor/verify/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': csrfToken,
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: new URLSearchParams({
-                'code': code
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            window.location.href = data.redirect_url;
-        } else {
-            errorDiv.textContent = data.error || 'Невірний код. Спробуйте ще раз.';
-            errorDiv.style.display = 'block';
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Підтвердити';
-        }
-    } catch (error) {
-        console.error('Помилка:', error);
-        errorDiv.textContent = 'Помилка з\'єднання. Спробуйте ще раз.';
-        errorDiv.style.display = 'block';
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Підтвердити';
-    }
 });
 </script>
 {% endblock %}
