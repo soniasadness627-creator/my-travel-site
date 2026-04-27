@@ -196,5 +196,6 @@ print("=" * 50)
 print("АГЕНТСЬКА АДМІНКА - РЕЄСТРАЦІЯ МОДЕЛЕЙ")
 print(f"Зареєстровано моделей: {len(agent_admin_site._registry)}")
 for model, admin_class in agent_admin_site._registry.items():
+    # Виправлено: model.__name__ і admin_class.__name__ (admin_class це клас, а не об'єкт)
     print(f"  - {model.__name__}: {admin_class.__name__}")
 print("=" * 50)
