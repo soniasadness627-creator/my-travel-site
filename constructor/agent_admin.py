@@ -138,8 +138,6 @@ class AgentTourPriceByTouristsAdmin(admin.ModelAdmin):
         return qs.filter(tour__author=request.user)
 
 
-# ========== ДОДАТКОВІ АДМІН-КЛАСИ ДЛЯ НОВИХ МОДЕЛЕЙ ==========
-
 class AgentCityAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'country')
     search_fields = ('name', 'country')
@@ -187,15 +185,10 @@ agent_admin_site.register(CountryInfo, AgentCountryInfoAdmin)
 agent_admin_site.register(PriceCalendar, AgentPriceCalendarAdmin)
 agent_admin_site.register(PopularDestination, AgentPopularDestinationAdmin)
 agent_admin_site.register(TourPriceByTourists, AgentTourPriceByTouristsAdmin)
-
-# Реєстрація додаткових моделей (тільки ті, які реально існують)
 agent_admin_site.register(City, AgentCityAdmin)
 
-# ========== ДІАГНОСТИКА ==========
+# ========== ПРОСТА ДІАГНОСТИКА (БЕЗ ПОМИЛОК) ==========
 print("=" * 50)
-print("АГЕНТСЬКА АДМІНКА - РЕЄСТРАЦІЯ МОДЕЛЕЙ")
-print(f"Зареєстровано моделей: {len(agent_admin_site._registry)}")
-for model, admin_class in agent_admin_site._registry.items():
-    # Виправлено: model.__name__ і admin_class.__name__ (admin_class це клас, а не об'єкт)
-    print(f"  - {model.__name__}: {admin_class.__name__}")
+print("АГЕНТСЬКА АДМІНКА - УСПІШНО ЗАРЕЄСТРОВАНО")
+print(f"Кількість зареєстрованих моделей: {len(agent_admin_site._registry)}")
 print("=" * 50)
