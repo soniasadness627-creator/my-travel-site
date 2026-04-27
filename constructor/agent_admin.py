@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import AdminSite
+from django.urls import path
 from tours.models import Tour, Booking, PriceOption, Review, Consultation, News, TourPriceByTourists, CountryInfo, PriceCalendar, PopularDestination
 from django.contrib.auth import get_user_model
 
@@ -14,6 +15,19 @@ class AgentAdminSite(AdminSite):
     def has_permission(self, request):
         return request.user.is_authenticated and request.user.is_agent
 
+    def get_urls(self):
+        # Видаляємо параметр slug з URL для адмінки
+        urls = super().get_urls()
+        wrapper = self.admin_view
+        return [
+            path('', wrapper(self.index), name='index'),
+            path('login/', self.login, name='login'),
+            path('logout/', self.logout, name='logout'),
+            path('password_change/', self.password_change, name='password_change'),
+            path('password_change/done/', self.password_change_done, name='password_change_done'),
+            path('jsi18n/', self.i18n_javascript, name='jsi18n'),
+        ] + urls[4:]  # додаємо інші стандартні URLs
+
 
 agent_admin_site = AgentAdminSite(name='agent_admin')
 
@@ -27,7 +41,6 @@ class AgentTourAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        # ТІЛЬКИ тури, створені цим агентом
         return qs.filter(author=request.user)
 
     def save_model(self, request, obj, form, change):
@@ -43,7 +56,6 @@ class AgentBookingAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        # ТІЛЬКИ бронювання на тури цього агента
         return qs.filter(tour__author=request.user)
 
     def get_tour_title(self, obj):
@@ -89,7 +101,6 @@ class AgentConsultationAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        # ТІЛЬКИ заявки, які належать цьому агенту
         return qs.filter(agent=request.user)
 
 
@@ -114,7 +125,7 @@ class AgentCountryInfoAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs  # Інформація про країни спільна для всіх
+        return qs
 
 
 class AgentPriceCalendarAdmin(admin.ModelAdmin):
@@ -134,7 +145,7 @@ class AgentPopularDestinationAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs  # Популярні напрямки спільні для всіх
+        return qs
 
 
 class AgentTourPriceByTouristsAdmin(admin.ModelAdmin):
