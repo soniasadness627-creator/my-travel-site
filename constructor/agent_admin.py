@@ -3,7 +3,8 @@ from django.contrib.admin import AdminSite
 from django.urls import path
 from tours.models import (
     Tour, Booking, PriceOption, Review, Consultation, News,
-    TourPriceByTourists, CountryInfo, PriceCalendar, PopularDestination
+    TourPriceByTourists, CountryInfo, PriceCalendar, PopularDestination,
+    City, Country  # Додано відсутні моделі
 )
 from django.contrib.auth import get_user_model
 
@@ -13,9 +14,9 @@ User = get_user_model()
 # ========== АДМІН-КЛАСИ ДЛЯ АГЕНТІВ ==========
 
 class AgentTourAdmin(admin.ModelAdmin):
-    list_display = ("title", "country", "price", "start_date", "author")
-    list_filter = ("country", "start_date")
-    search_fields = ("title", "country")
+    list_display = ("title", "country", "city", "price", "start_date", "author", "is_active")
+    list_filter = ("country", "city", "start_date", "is_active")
+    search_fields = ("title", "country", "city", "description")
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -73,9 +74,9 @@ class AgentReviewAdmin(admin.ModelAdmin):
 
 
 class AgentConsultationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone', 'created_at', 'is_processed')
+    list_display = ('name', 'phone', 'email', 'created_at', 'is_processed')
     list_filter = ('created_at', 'is_processed')
-    search_fields = ('name', 'phone', 'comment')
+    search_fields = ('name', 'phone', 'email', 'comment')
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -137,6 +138,29 @@ class AgentTourPriceByTouristsAdmin(admin.ModelAdmin):
         return qs.filter(tour__author=request.user)
 
 
+# ========== ДОДАТКОВІ АДМІН-КЛАСИ ДЛЯ НОВИХ МОДЕЛЕЙ ==========
+
+class AgentCityAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'country')
+    search_fields = ('name', 'country__name')
+    list_filter = ('country',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs
+
+
+class AgentCountryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+    search_fields = ('name',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs
+
+
+# ========== КАСТОМНИЙ САЙТ АДМІНКИ ==========
+
 class AgentAdminSite(AdminSite):
     site_header = "Панель керування агента"
     site_title = "Агентська адмінка"
@@ -158,6 +182,7 @@ class AgentAdminSite(AdminSite):
         ] + urls[4:]
 
 
+# Створюємо екземпляр агентської адмінки
 agent_admin_site = AgentAdminSite(name='agent_admin')
 
 # ========== РЕЄСТРАЦІЯ ВСІХ МОДЕЛЕЙ ==========
@@ -171,3 +196,15 @@ agent_admin_site.register(CountryInfo, AgentCountryInfoAdmin)
 agent_admin_site.register(PriceCalendar, AgentPriceCalendarAdmin)
 agent_admin_site.register(PopularDestination, AgentPopularDestinationAdmin)
 agent_admin_site.register(TourPriceByTourists, AgentTourPriceByTouristsAdmin)
+
+# Реєстрація додаткових моделей
+agent_admin_site.register(City, AgentCityAdmin)
+agent_admin_site.register(Country, AgentCountryAdmin)
+
+# ========== ДІАГНОСТИКА ==========
+print("=" * 50)
+print("АГЕНТСЬКА АДМІНКА - РЕЄСТРАЦІЯ МОДЕЛЕЙ")
+print(f"Зареєстровано моделей: {len(agent_admin_site._registry)}")
+for model, admin_class in agent_admin_site._registry.items():
+    print(f"  - {model.__name__}: {admin_class.__name__}")
+print("=" * 50)
