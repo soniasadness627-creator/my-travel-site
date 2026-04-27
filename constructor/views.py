@@ -12,8 +12,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import TemplateView, UpdateView
 from django.conf import settings
 from django.http import Http404, JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
+from django.views.decorators.cache import never_cache
 from django.core.files.base import ContentFile
 from django.urls import reverse_lazy
 from .forms import AgentRegistrationForm, VerificationForm, AgentSiteForm
@@ -285,8 +286,10 @@ def agent_terms_of_service(request, slug):
 
 
 # -------------------------
-# Функція для входу агента через код з пошти
+# Функція для входу агента через код з пошти - ДОДАНО ДЕКОРАТОРИ
 # -------------------------
+@csrf_protect
+@never_cache
 def agent_login(request, slug):
     agent_site = getattr(request, 'current_agent_site', None)
 
