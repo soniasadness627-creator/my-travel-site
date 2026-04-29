@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'constructor',
     'landing',
     'cloudinary',
-    'cloudinary_storage',  # cloudinary_storage в кінці
+    'cloudinary_storage',
 ]
 
 SITE_URL = os.getenv('SITE_URL', 'https://my-travel-site.onrender.com')
@@ -177,31 +177,31 @@ MEDIA_URL = '/media/'
 
 APPEND_SLASH = True
 
-# ========== EMAIL НАЛАШТУВАННЯ ==========
-# ⬇️⬇️⬇️ КОНСОЛЬНИЙ РЕЖИМ - ЛИСТИ В ТЕРМІНАЛ (РОЗКОМЕНТОВАНО) ⬇️⬇️⬇️
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'test@localhost'
-USE_AWS_SES = False
+# ========== EMAIL НАЛАШТУВАННЯ (оновлено - використовуємо Gmail) ==========
 
-# ОРИГІНАЛЬНІ НАЛАШТУВАННЯ - ЗАКОМЕНТОВАНО (ДЛЯ ПОВЕРНЕННЯ)
-# USE_AWS_SES = os.getenv('USE_AWS_SES', 'False') == 'True'
-#
-# if USE_AWS_SES:
-#     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#     EMAIL_HOST = os.getenv('AWS_SES_HOST', 'email-smtp.eu-north-1.amazonaws.com')
-#     EMAIL_PORT = 587
-#     EMAIL_USE_TLS = True
-#     EMAIL_HOST_USER = os.getenv('AWS_SES_USERNAME', '')
-#     EMAIL_HOST_PASSWORD = os.getenv('AWS_SES_PASSWORD', '')
-#     DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'soniasadness627@gmail.com')
-# else:
-#     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#     EMAIL_HOST = 'smtp.gmail.com'
-#     EMAIL_PORT = 587
-#     EMAIL_USE_TLS = True
-#     EMAIL_HOST_USER = os.getenv('GMAIL_USER', 'soniasadness627@gmail.com')
-#     EMAIL_HOST_PASSWORD = os.getenv('GMAIL_PASSWORD', 'evyiikohyqedvtsq')
-#     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# Отримуємо налаштування з .env
+USE_AWS_SES = os.getenv('USE_AWS_SES', 'False') == 'True'
+
+if USE_AWS_SES:
+    # AWS SES для продакшену (коли Дмитро надасть ключі)
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.getenv('AWS_SES_HOST', 'email-smtp.eu-north-1.amazonaws.com')
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.getenv('AWS_SES_USERNAME', '')
+    EMAIL_HOST_PASSWORD = os.getenv('AWS_SES_PASSWORD', '')
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@clubdatour.com.ua')
+    print("✅ Використовується AWS SES для відправки email")
+else:
+    # Gmail для відправки (працює зараз)
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.getenv('GMAIL_USER', 'soniasadness627@gmail.com')
+    EMAIL_HOST_PASSWORD = os.getenv('GMAIL_PASSWORD', 'evyiikohyqedvtsq')
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+    print("✅ Використовується Gmail для відправки email")
 
 # ========== НАЛАШТУВАННЯ ДЛЯ RENDER ==========
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
