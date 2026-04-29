@@ -96,33 +96,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'DjangoProject1.wsgi.application'
 
-# ========== БАЗА ДАНИХ ==========
-IS_RENDER = os.getenv('RENDER', 'False') == 'True'
-
-if IS_RENDER or 'gunicorn' in sys.argv[0]:
-    DATABASE_URL = os.getenv('DATABASE_URL')
-    if DATABASE_URL:
-        DATABASES = {
-            'default': dj_database_url.config(
-                default=DATABASE_URL,
-                conn_max_age=600,
-                ssl_require=False
-            )
-        }
-    else:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
-elif 'collectstatic' in sys.argv:
+# ========== БАЗА ДАНИХ - ВИПРАВЛЕНО: ПРИМУСОВО PostgreSQL ==========
+# Перевіряємо DATABASE_URL в першу чергу
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=False
+        )
     }
+    print(f"✅ Використовується PostgreSQL: {DATABASES['default']['ENGINE']}")
 else:
     DATABASES = {
         'default': {
@@ -130,6 +115,7 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+    print("⚠️ Використовується SQLite (DATABASE_URL не знайдено)")
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -199,7 +185,7 @@ else:
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = os.getenv('GMAIL_USER', 'soniasadness627@gmail.com')
-    EMAIL_HOST_PASSWORD = os.getenv('GMAIL_PASSWORD', 'evyiikohyqedvtsq')
+    EMAIL_HOST_PASSWORD = os.getenv('GMAIL_PASSWORD', '')
     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
     print("✅ Використовується Gmail для відправки email")
 
