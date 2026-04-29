@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, RegexValidator
+from cloudinary.models import CloudinaryField
 
 User = get_user_model()
 
@@ -16,8 +17,15 @@ class AgentSite(models.Model):
     agency_name = models.CharField(max_length=200, blank=True, verbose_name="Назва турагенції")
     hero_title = models.CharField(max_length=200, default="Ваша подорож починається тут")
     hero_subtitle = models.CharField(max_length=200, default="Знайдіть ідеальний тур за лічені хвилини")
-    hero_background = models.ImageField(upload_to='agent_hero/', blank=True, null=True,
-                                        verbose_name="Фонова картинка (рекомендовано 1200x400px)")
+
+    # ВИПРАВЛЕНО: CloudinaryField без verbose_name в аргументах
+    hero_background = CloudinaryField(
+        'hero_background',
+        folder='agent_hero',
+        blank=True,
+        null=True
+    )
+
     top_logo = models.ImageField(upload_to='agent_logos/', blank=True, null=True,
                                  verbose_name="Верхній логотип (250x250px)")
     bottom_logo = models.ImageField(upload_to='agent_logos/', blank=True, null=True,
@@ -27,6 +35,24 @@ class AgentSite(models.Model):
     show_operator_logos = models.BooleanField(default=False,
                                               verbose_name="Відображати логотипи туроператорів на сайті при пошуку турів")
     show_superadmin_tours = models.BooleanField(default=False, verbose_name="Показувати тури суперадміна")
+
+    # ========== БЛОК "ПРО НАС" ==========
+    about_us_title = models.CharField(
+        max_length=200,
+        default="Про нас",
+        verbose_name="Заголовок блоку 'Про нас'"
+    )
+    about_us_text = models.TextField(
+        default="Ми – команда професіоналів, яка допомагає втілювати ваші мрії про подорожі в реальність. З понад 10-річним досвідом у туризмі, ми пропонуємо лише перевірені тури, найкращі ціни та індивідуальний підхід до кожного клієнта.",
+        verbose_name="Текст блоку 'Про нас'"
+    )
+    about_us_image = models.ImageField(
+        upload_to='about_us/',
+        blank=True,
+        null=True,
+        verbose_name="Фото для блоку 'Про нас'"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -48,22 +74,17 @@ class AgentSite(models.Model):
         return f"{self.user.get_full_name()} - {self.slug}"
 
     def get_primary_color(self):
-        """Повертає головний колір або значення за замовчуванням"""
         return self.primary_color or "#086745"
 
     def get_secondary_color(self):
-        """Повертає додатковий колір або значення за замовчуванням"""
         return self.secondary_color or "#02432c"
 
     def get_primary_light(self):
-        """Повертає світлішу версію головного кольору (для фонів)"""
         primary = self.get_primary_color()
-        # Конвертуємо HEX в RGB і робимо світлішим
         try:
             r = int(primary[1:3], 16)
             g = int(primary[3:5], 16)
             b = int(primary[5:7], 16)
-            # Робимо колір світлішим (додаємо 100 до кожного компонента, але не більше 255)
             r = min(r + 100, 255)
             g = min(g + 100, 255)
             b = min(b + 100, 255)
@@ -72,13 +93,11 @@ class AgentSite(models.Model):
             return "#cbf6ec"
 
     def get_primary_lighter(self):
-        """Повертає дуже світлу версію головного кольору (для фонів)"""
         primary = self.get_primary_color()
         try:
             r = int(primary[1:3], 16)
             g = int(primary[3:5], 16)
             b = int(primary[5:7], 16)
-            # Робимо колір дуже світлим (додаємо 180 до кожного компонента, але не більше 255)
             r = min(r + 180, 255)
             g = min(g + 180, 255)
             b = min(b + 180, 255)
@@ -87,13 +106,11 @@ class AgentSite(models.Model):
             return "#cbf6ec"
 
     def get_contrast_color(self):
-        """Повертає білий або чорний колір залежно від яскравості головного кольору"""
         primary = self.get_primary_color()
         try:
             r = int(primary[1:3], 16)
             g = int(primary[3:5], 16)
             b = int(primary[5:7], 16)
-            # Обчислюємо яскравість (формула Y = 0.299R + 0.587G + 0.114B)
             brightness = (r * 0.299 + g * 0.587 + b * 0.114)
             return "#ffffff" if brightness < 128 else "#000000"
         except:

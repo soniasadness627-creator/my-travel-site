@@ -54,110 +54,156 @@
     </div>
 
     <!-- ОСНОВНИЙ КОНТЕНТ (Галерея, Мапа, Форма бронювання) -->
-    <div class="row">
-        <!-- Ліва колонка -->
-        <div class="col-lg-8">
-            <!-- Секція ГАЛЕРЕЯ -->
-            <section id="gallery-section" class="mb-5 scroll-margin">
-                <h3 class="mb-3">Галерея</h3>
-                <div class="row">
-                    <div class="col-12 mb-3">
-                        {% if tour.image %}
-                            <img src="{{ tour.image.url }}" class="img-fluid rounded shadow" alt="{{ tour.title }}" style="width: 100%; max-height: 400px; object-fit: cover;">
-                        {% else %}
-                            <div class="bg-light d-flex align-items-center justify-content-center rounded shadow" style="height: 400px;">
-                                <span class="text-muted">Головне фото відсутнє</span>
-                            </div>
-                        {% endif %}
-                    </div>
-                    {% if gallery_images %}
-                        {% for image in gallery_images %}
-                        <div class="col-4 mb-3">
-                            <img src="{{ image.image.url }}" class="img-fluid rounded shadow-sm" alt="Gallery" style="height: 120px; width: 100%; object-fit: cover; cursor: pointer;" onclick="window.open(this.src, '_blank')">
+<div class="row">
+    <!-- Ліва колонка -->
+    <div class="col-lg-8">
+        <!-- Секція ГАЛЕРЕЯ -->
+        <section id="gallery-section" class="mb-5 scroll-margin">
+            <h3 class="mb-3">Галерея</h3>
+            <div class="row">
+                <div class="col-12 mb-3">
+                    {% if tour.image %}
+                        <img src="{{ tour.image.url }}" class="img-fluid rounded shadow" alt="{{ tour.title }}" style="width: 100%; max-height: 400px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center rounded shadow" style="height: 400px;">
+                            <span class="text-muted">Головне фото відсутнє</span>
                         </div>
-                        {% endfor %}
                     {% endif %}
                 </div>
-            </section>
+                {% if gallery_images %}
+                    {% for image in gallery_images %}
+                    <div class="col-4 mb-3">
+                        <img src="{{ image.image.url }}" class="img-fluid rounded shadow-sm" alt="Gallery" style="height: 120px; width: 100%; object-fit: cover; cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </section>
 
-            <!-- Секція МАПА -->
-            {% if tour.map_url %}
-            <section id="map-section" class="mb-5 scroll-margin">
-                <h3 class="mb-3">Місцезнаходження</h3>
-                <div class="ratio ratio-16x9">
-                    <iframe src="{{ tour.map_url }}" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
-                <p class="text-muted mt-2 small">Приблизне розташування туру на карті</p>
-            </section>
-            {% endif %}
+        <!-- ========== ОПИС ТУРУ (простий текст під галереєю) ========== -->
+        {% if tour.description %}
+        <div class="tour-description mb-5">
+            <h4 class="fw-bold mb-3" style="color: var(--primary-color);">Опис туру</h4>
+            <div class="tour-description-text" style="line-height: 1.6; color: #4a5568;">
+                {{ tour.description|linebreaks }}
+            </div>
         </div>
+        {% endif %}
 
-        <!-- Права колонка (тільки форма бронювання) -->
-        <div class="col-lg-4">
-            <div class="card shadow" id="booking-section">
-                <div class="card-body">
-                    <h4 class="card-title">Забронювати тур</h4>
-                    <h3 class="text-danger fw-bold mb-4">{{ tour.price }} грн</h3>
+        <!-- Секція МАПА -->
+        {% if tour.map_url %}
+        <section id="map-section" class="mb-5 scroll-margin">
+            <h3 class="mb-3">Місцезнаходження</h3>
+            <div class="ratio ratio-16x9">
+                <iframe src="{{ tour.map_url }}" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            <p class="text-muted mt-2 small">Приблизне розташування туру на карті</p>
+        </section>
+        {% endif %}
+    </div>
 
-                    <!-- ПОВІДОМЛЕННЯ ПРО УСПІХ (спочатку приховане) -->
-                    <div id="successMessage" style="display: none; background: linear-gradient(135deg, #dcfce7, #bbf7d0); border-left: 4px solid #22c55e; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
-                        <div class="d-flex align-items-center">
-                            <i class="fa-regular fa-circle-check me-2" style="font-size: 1.5rem; color: #22c55e;"></i>
-                            <div>
-                                <strong class="d-block" style="color: #166534;">Дякуємо за заявку!</strong>
-                                <span style="color: #166534; font-size: 0.9rem;">Наш менеджер зв'яжеться з вами найближчим часом для підтвердження бронювання.</span>
-                            </div>
+    <!-- Права колонка (тільки форма бронювання) -->
+    <div class="col-lg-4">
+        <div class="card shadow" id="booking-section">
+            <div class="card-body">
+                <h4 class="card-title">Забронювати тур</h4>
+                <h3 class="text-danger fw-bold mb-4">{{ tour.price }} грн</h3>
+
+                <!-- ПОВІДОМЛЕННЯ ПРО УСПІХ (спочатку приховане) -->
+                <div id="successMessage" style="display: none; background: linear-gradient(135deg, #dcfce7, #bbf7d0); border-left: 4px solid #22c55e; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-regular fa-circle-check me-2" style="font-size: 1.5rem; color: #22c55e;"></i>
+                        <div>
+                            <strong class="d-block" style="color: #166534;">Дякуємо за заявку!</strong>
+                            <span style="color: #166534; font-size: 0.9rem;">Наш менеджер зв'яжеться з вами найближчим часом для підтвердження бронювання.</span>
                         </div>
                     </div>
+                </div>
 
-                    <!-- ПОВІДОМЛЕННЯ ПРО ПОМИЛКУ -->
-                    <div id="errorMessage" style="display: none; background: linear-gradient(135deg, #fee2e2, #fecaca); border-left: 4px solid #ef4444; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
-                        <div class="d-flex align-items-center">
-                            <i class="fa-regular fa-circle-xmark me-2" style="font-size: 1.5rem; color: #ef4444;"></i>
-                            <div>
-                                <strong class="d-block" style="color: #991b1b;">Помилка!</strong>
-                                <span id="errorText" style="color: #991b1b; font-size: 0.9rem;">Сталася помилка. Спробуйте ще раз.</span>
-                            </div>
+                <!-- ПОВІДОМЛЕННЯ ПРО ПОМИЛКУ -->
+                <div id="errorMessage" style="display: none; background: linear-gradient(135deg, #fee2e2, #fecaca); border-left: 4px solid #ef4444; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-regular fa-circle-xmark me-2" style="font-size: 1.5rem; color: #ef4444;"></i>
+                        <div>
+                            <strong class="d-block" style="color: #991b1b;">Помилка!</strong>
+                            <span id="errorText" style="color: #991b1b; font-size: 0.9rem;">Сталася помилка. Спробуйте ще раз.</span>
                         </div>
                     </div>
+                </div>
 
-                    {% if tour.description %}
-                    <div class="tour-description mb-4">
-                        <h5 class="fw-bold">Опис туру</h5>
-                        <p class="text-muted">{{ tour.description|linebreaks }}</p>
+                <form method="post" id="bookingForm">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <input type="hidden" name="booking_submit" value="1">
+                    <div class="mb-2">
+                        <input class="form-control" type="text" name="name" placeholder="Ваше ім'я" required>
                     </div>
-                    {% endif %}
-
-                    <form method="post" id="bookingForm">
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <input type="hidden" name="booking_submit" value="1">
-                        <div class="mb-2">
-                            <input class="form-control" type="text" name="name" placeholder="Ваше ім'я" required>
-                        </div>
-                        <div class="mb-2">
-                            <input class="form-control" type="tel" name="phone" placeholder="Телефон" required>
-                        </div>
-                        <div class="mb-2">
-                            <input class="form-control" type="email" name="email" placeholder="Email" required>
-                        </div>
-                        <div class="mb-3">
-                            <textarea class="form-control" name="message" placeholder="Повідомлення (необов'язково)" rows="3"></textarea>
-                        </div>
-                        <button type="submit" class="btn w-100" id="submitBookingBtn" style="background: var(--primary-color); border-color: var(--primary-color); color: white;">
-                            <i class="fa-regular fa-calendar-check me-2"></i> Забронювати
-                        </button>
-                    </form>
-
-                    <div class="mt-3 text-center">
-                        <small class="text-muted">
-<i class="fa-solid fa-shield-halved me-1"></i> Ваші дані захищені
-                        </small>
+                    <div class="mb-2">
+                        <input class="form-control" type="tel" name="phone" placeholder="Телефон" required>
                     </div>
+                    <div class="mb-2">
+                        <input class="form-control" type="email" name="email" placeholder="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control" name="message" placeholder="Повідомлення (необов'язково)" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn w-100" id="submitBookingBtn" style="background: var(--primary-color); border-color: var(--primary-color); color: white;">
+                        <i class="fa-regular fa-calendar-check me-2"></i> Забронювати
+                    </button>
+                </form>
+
+                <div class="mt-3 text-center">
+                    <small class="text-muted">
+                        <i class="fa-solid fa-shield-halved me-1"></i> Ваші дані захищені
+                    </small>
                 </div>
             </div>
         </div>
-    </div> <!-- Кінець row основного контенту -->
+    </div>
+</div> <!-- Кінець row основного контенту -->
+<style>
+    /* Стилі для опису туру */
+    .tour-description {
+        padding: 0;
+    }
+    .tour-description h4 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+    .tour-description-text {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #4a5568;
+    }
+    .tour-description-text p {
+        margin-bottom: 0.75rem;
+    }
 
+    /* ВІДСТУП МІЖ ФОРМОЮ БРОНЮВАННЯ ТА БЛОКОМ ЦІН */
+    .price-search-block {
+        margin-top: 2.5rem !important;
+        clear: both;
+    }
+
+    /* Додатковий відступ для мобільних */
+    @media (max-width: 768px) {
+        .price-search-block {
+            margin-top: 1.5rem !important;
+        }
+        .tour-description h4 {
+            font-size: 1.2rem;
+        }
+        .tour-description-text {
+            font-size: 0.95rem;
+        }
+    }
+
+    /* Відступ для правої колонки на мобільних */
+    @media (max-width: 992px) {
+        #booking-section {
+            margin-top: 2rem;
+        }
+    }
+</style>
     <!-- БЛОК ПОШУКУ ЦІН -->
     <div class="price-search-block mb-5" id="price-section">
         <div class="card shadow-sm">

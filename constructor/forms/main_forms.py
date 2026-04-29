@@ -1,5 +1,6 @@
 from django import forms
-from .models import AgentSite
+from ..models.agent_site import AgentSite  # Змінено імпорт
+
 
 class AgentRegistrationForm(forms.Form):
     first_name = forms.CharField(max_length=30, label="Ім'я", widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -27,7 +28,8 @@ class AgentSiteForm(forms.ModelForm):
         fields = [
             'slug', 'agency_name', 'hero_title', 'hero_subtitle', 'hero_background',
             'top_logo', 'bottom_logo', 'enlarge_logo', 'show_news', 'show_operator_logos',
-            'show_superadmin_tours', 'primary_color', 'secondary_color'
+            'show_superadmin_tours', 'primary_color', 'secondary_color',
+            'about_us_title', 'about_us_text', 'about_us_image'
         ]
         widgets = {
             'slug': forms.TextInput(attrs={
@@ -77,6 +79,20 @@ class AgentSiteForm(forms.ModelForm):
                 'class': 'form-control form-control-color',
                 'style': 'width: 60px; height: 38px; padding: 0;'
             }),
+            # ДОДАНІ ВІДЖЕТИ ДЛЯ БЛОКУ "ПРО НАС"
+            'about_us_title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Введіть заголовок блоку'
+            }),
+            'about_us_text': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 6,
+                'placeholder': 'Розкажіть про вашу компанію...'
+            }),
+            'about_us_image': forms.ClearableFileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            }),
         }
         labels = {
             'slug': 'Адреса сайту (slug)',
@@ -92,6 +108,10 @@ class AgentSiteForm(forms.ModelForm):
             'show_superadmin_tours': 'Показувати тури суперадміна',
             'primary_color': 'Головний колір',
             'secondary_color': 'Додатковий колір (hover)',
+            # ДОДАНІ ЛЕЙБЛИ ДЛЯ БЛОКУ "ПРО НАС"
+            'about_us_title': 'Заголовок блоку "Про нас"',
+            'about_us_text': 'Текст блоку "Про нас"',
+            'about_us_image': 'Фото для блоку "Про нас"',
         }
         help_texts = {
             'slug': 'Унікальна адреса вашого сайту (тільки латиниця, дефіси)',
@@ -100,6 +120,9 @@ class AgentSiteForm(forms.ModelForm):
             'bottom_logo': 'Формати: PNG, SVG. Рекомендований розмір: 150×150px або 150×50px',
             'primary_color': 'Колір для кнопок, посилань та акцентів',
             'secondary_color': 'Колір для hover-ефектів',
+            # ДОДАНІ ПІДКАЗКИ ДЛЯ БЛОКУ "ПРО НАС"
+            'about_us_text': 'Розкажіть клієнтам про вашу компанію, ваш досвід та переваги',
+            'about_us_image': 'Рекомендований розмір: 800×600px. Формати: JPG, PNG',
         }
 
     def clean_slug(self):

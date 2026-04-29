@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from smart_selects.db_fields import ChainedForeignKey
 from django.contrib.auth import get_user_model
+from cloudinary.models import CloudinaryField
 
 User = get_user_model()
 
@@ -74,14 +75,14 @@ class Tour(models.Model):
     )
     start_date = models.DateField(verbose_name="Дата початку")
     end_date = models.DateField(verbose_name="Дата закінчення")
-    image = models.ImageField(upload_to='tours/', verbose_name="Фото туру")
+    # ЗМІНЕНО: ImageField на CloudinaryField
+    image = CloudinaryField(verbose_name="Фото туру", folder='tours', blank=True, null=True)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='tours'
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    stars = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name="Категорія (зірки)")
 
     map_url = models.URLField(
         max_length=500,
@@ -216,10 +217,10 @@ class Review(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        null=True,          # додано
-        blank=True          # додано
+        null=True,
+        blank=True
     )
-    guest_name = models.CharField(max_length=100, blank=True, verbose_name="Ваше ім'я")  # додано
+    guest_name = models.CharField(max_length=100, blank=True, verbose_name="Ваше ім'я")
     rating = models.PositiveSmallIntegerField(
         verbose_name="Оцінка",
         choices=[(i, i) for i in range(1, 6)],
@@ -271,7 +272,7 @@ class NewsImage(models.Model):
 
 class PriceOption(models.Model):
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='price_options', verbose_name="Тур")
-    departure_date = models.DateField(verbose_name="Дата вильоту", null=True, blank=True)  # додано null=True, blank=True
+    departure_date = models.DateField(verbose_name="Дата вильоту", null=True, blank=True)
     duration = models.PositiveSmallIntegerField(
         verbose_name="Тривалість (ночей)",
         help_text="Кількість ночей",
@@ -327,7 +328,6 @@ class PriceOption(models.Model):
                 f"C4-10{self.children_4_10}, C11-16{self.children_11_16})")
 
 
-
 class CountryInfo(models.Model):
     country = models.CharField(max_length=100, unique=True, verbose_name="Країна")
     main_text = models.TextField(verbose_name="Основна інформація", blank=True)
@@ -345,7 +345,6 @@ class CountryInfo(models.Model):
         return self.country
 
 
-# ВИДАЛИТИ ВЕСЬ КЛАС CountryImage
 class TourPriceByTourists(models.Model):
     tour = models.ForeignKey(
         Tour,
@@ -389,7 +388,7 @@ class PriceCalendar(models.Model):
     price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        verbose_name="Ціна (грн)",  # ЗМІНІТЬ З "Ціна" НА "Ціна (грн)"
+        verbose_name="Ціна (грн)",
         null=True,
         blank=True,
         help_text="Вкажіть ціну в гривнях (наприклад: 15000.00). Залиште порожнім, якщо немає пропозиції"

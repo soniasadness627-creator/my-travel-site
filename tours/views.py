@@ -138,6 +138,10 @@ class TourListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # ========== КЛЮЧОВИЙ РЯДОК - ДОДАЄМО user В КОНТЕКСТ ==========
+        context['user'] = self.request.user
+        # =============================================================
+
         colors = get_agent_colors(self.request)
         context.update(colors)
 
@@ -314,13 +318,35 @@ class TourListView(ListView):
 
         if agent_site:
             context['debug_show_superadmin'] = agent_site.show_superadmin_tours
-        else:
-            context['debug_show_superadmin'] = None
-
-        if agent_site:
             context['user_tours_exists'] = Tour.objects.filter(author=agent_site.user).exists()
         else:
+            context['debug_show_superadmin'] = None
             context['user_tours_exists'] = True
+
+        # ========== ДОДАЄМО НАЛАШТУВАННЯ БЛОКІВ ДЛЯ АГЕНТА ==========
+        from constructor.models.blocks import AgentBlockSettings
+
+        if agent_site:
+            block_settings = AgentBlockSettings.objects.filter(agent=agent_site.user).first()
+            if block_settings:
+                context['blocks_order'] = block_settings.blocks_order
+                context['banners'] = block_settings.banners
+                context['active_blocks'] = block_settings.active_blocks
+                context['custom_css'] = block_settings.custom_css
+                context['custom_js'] = block_settings.custom_js
+            else:
+                context['blocks_order'] = AgentBlockSettings().get_default_order()
+                context['banners'] = []
+                context['active_blocks'] = AgentBlockSettings().get_default_order()
+                context['custom_css'] = ''
+                context['custom_js'] = ''
+        else:
+            context['blocks_order'] = AgentBlockSettings().get_default_order()
+            context['banners'] = []
+            context['active_blocks'] = AgentBlockSettings().get_default_order()
+            context['custom_css'] = ''
+            context['custom_js'] = ''
+        # ==============================================================
 
         return context
 
@@ -332,24 +358,37 @@ class TourListView(ListView):
             full_phone = country_code + phone if phone else ''
 
             if name and full_phone:
-                agent_site = getattr(request, 'current_agent_site', None)
-                agent = agent_site.user if agent_site else None
-                try:
-                    Consultation.objects.create(
-                        name=name,
-                        phone=full_phone,
-                        comment="Заявка з головної сторінки",
-                        agent=agent
-                    )
-                except Exception as e:
-                    print(f"ПОМИЛКА створення консультації: {e}")
-                messages.success(request, 'Ваш запит прийнято. Ми зв\'яжемося з вами найближчим часом.')
-                referer = request.META.get('HTTP_REFERER', '/')
-                return redirect(referer)
+                # Перевірка на дублювання (останні 30 секунд)
+                from django.utils import timezone
+                from datetime import timedelta
+
+                last_consultation = Consultation.objects.filter(
+                    name=name,
+                    phone=full_phone,
+                    created_at__gte=timezone.now() - timedelta(seconds=30)
+                ).first()
+
+                if not last_consultation:
+                    agent_site = getattr(request, 'current_agent_site', None)
+                    agent = agent_site.user if agent_site else None
+                    try:
+                        Consultation.objects.create(
+                            name=name,
+                            phone=full_phone,
+                            comment="Заявка з головної сторінки",
+                            agent=agent
+                        )
+                        messages.success(request, 'Ваш запит прийнято. Ми зв\'яжемося з вами найближчим часом.')
+                    except Exception as e:
+                        print(f"ПОМИЛКА створення консультації: {e}")
+                        messages.error(request, 'Помилка при відправленні. Спробуйте ще раз.')
+                else:
+                    messages.info(request, 'Ваш запит вже відправлено. Ми зв\'яжемося з вами найближчим часом.')
             else:
                 messages.error(request, 'Будь ласка, заповніть ім\'я та телефон.')
-                referer = request.META.get('HTTP_REFERER', '/')
-                return redirect(referer)
+
+            referer = request.META.get('HTTP_REFERER', '/')
+            return redirect(referer)
 
         return self.get(request, *args, **kwargs)
 
@@ -619,6 +658,7 @@ def tour_detail(request, pk):
     context.update(colors)
 
     return render(request, 'tours/tour_detail.html', context)
+
 
 # -------------------------
 # ВСІ ВІДГУКИ

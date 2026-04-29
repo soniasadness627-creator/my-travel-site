@@ -1,19 +1,44 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<div class="container mt-5" style="max-width: 500px;">
-    <h2 class="mb-4">Вхід в кабінет агента</h2>
-    <p>Введіть email, на який зареєстровано ваш сайт</p>
-    <form method="post">
-        {% csrf_token %}
-        <div class="mb-3">
-            <input type="email" name="email" class="form-control" placeholder="your@email.com" required>
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Вхід в кабінет агента</h4>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <p>Введіть email, на який було зареєстровано ваш сайт</p>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" id="email" class="form-control" placeholder="your@email.com" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fa-regular fa-paper-plane me-2"></i>Надіслати код
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a href="{% url 'constructor:register' %}" class="text-decoration-none">
+                            Ще не маєте сайту? Зареєструватися
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary w-100">Відправити код</button>
-    </form>
-    <div class="text-center mt-3">
-        <a href="{% url 'constructor:register' %}" class="text-decoration-none">
-            Ще не маєте сайту? Створити
-        </a>
     </div>
 </div>
 {% endblock %}

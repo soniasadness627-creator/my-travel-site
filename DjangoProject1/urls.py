@@ -9,7 +9,7 @@ from constructor import views as constructor_views
 from constructor.agent_admin import agent_admin_site
 from landing import views as landing_views
 
-# ========== ДОДАТИ ЦЕ - ОБРОБНИК ПОМИЛКИ CSRF ==========
+# ========== ОБРОБНИК ПОМИЛКИ CSRF ==========
 from django.views.csrf import csrf_failure
 
 # ========== ФУНКЦІЯ ДЛЯ ПЕРЕНАПРАВЛЕННЯ ГОЛОВНОЇ СТОРІНКИ ==========
@@ -32,14 +32,14 @@ def home_redirect(request):
     return redirect('/landing/')  # лендинг для всіх інших
 
 
-# ========== ДОДАЙТЕ ЦЕ - ОБРОБНИК ДЛЯ 403 ПОМИЛКИ ==========
+# ========== ОБРОБНИК ДЛЯ 403 ПОМИЛКИ ==========
 def custom_csrf_failure(request, reason=""):
     return redirect('/')
 
 handler403 = custom_csrf_failure
 
 urlpatterns = [
-    # ========== ТИМЧАСОВИЙ МАРШРУТ ДЛЯ СТВОРЕННЯ СУПЕРАДМІНА ==========
+    # ==========  МАРШРУТ ДЛЯ СТВОРЕННЯ СУПЕРАДМІНА ==========
     path('create-admin/', constructor_views.create_admin_direct, name='create_admin'),
 
     # ========== ГОЛОВНА СТОРІНКА ==========
@@ -108,8 +108,11 @@ urlpatterns = [
 ]
 
 # ========== СТАТИЧНІ ТА МЕДІА ФАЙЛИ ==========
+# Цей блок відповідає за відображення картинок в продакшені
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 else:
+    # КЛЮЧОВИЙ МОМЕНТ ДЛЯ ПРОДАКШЕНУ - медіа файли мають віддаватися завжди
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

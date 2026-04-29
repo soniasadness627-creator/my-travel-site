@@ -51,6 +51,7 @@ class GuestReviewForm(forms.ModelForm):
             'comment': "Коментар",
         }
 
+
 class PriceSearchForm(forms.Form):
     """Форма для пошуку цін на тур з розширеним вибором міста вильоту"""
     departure_city = forms.ChoiceField(
