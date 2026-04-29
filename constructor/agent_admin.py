@@ -1,18 +1,145 @@
 from django.contrib import admin
+from django.contrib.admin import AdminSite
 from django.urls import path
+from django import forms
 from tours.models import (
     Tour, Booking, PriceOption, Review, Consultation, News,
     TourPriceByTourists, CountryInfo, PriceCalendar, PopularDestination,
-    City
+    City, DepartureCity
 )
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
+
+User = get_user_model()
+
+
+# ========== AJAX ДЛЯ ДИНАМІЧНОГО ЗАВАНТАЖЕННЯ МІСТ ==========
+@csrf_exempt
+@require_GET
+def get_cities_ajax(request):
+    """Повертає список міст для вибраної країни"""
+    country = request.GET.get('country', '')
+    if country:
+        cities = City.objects.filter(country=country).order_by('name').values('id', 'name')
+        return JsonResponse(list(cities), safe=False)
+    return JsonResponse([], safe=False)
+
+
+# ========== ФОРМА ДЛЯ ТУРУ З ВИПАДАЮЧИМИ СПИСКАМИ ==========
+class AgentTourForm(forms.ModelForm):
+    # Країна - випадаючий список
+    country = forms.ChoiceField(
+        choices=[],
+        label="Країна",
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_country'})
+    )
+
+    # Місто - буде ModelChoiceField з динамічним завантаженням
+    city = forms.ModelChoiceField(
+        queryset=City.objects.none(),
+        label="Курорт/місто",
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_city'})
+    )
+
+    # Місто вильоту - випадаючий список
+    departure_city = forms.ModelChoiceField(
+        queryset=DepartureCity.objects.all(),
+        label="Місто виїзду",
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+    # Зірки - випадаючий список
+    stars = forms.ChoiceField(
+        choices=[('', '---------'), ('1', '1*'), ('2', '2*'), ('3', '3*'), ('4', '4*'), ('5', '5*')],
+        label="Категорія (зірки)",
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+    class Meta:
+        model = Tour
+        fields = ['title', 'description', 'country', 'city', 'price',
+                  'start_date', 'end_date', 'image', 'map_url', 'departure_city',
+                  'transport', 'duration', 'room_type', 'meal_type', 'stars',
+                  'is_popular', 'amenities', 'author']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 100%;'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'map_url': forms.URLInput(attrs={'class': 'form-control'}),
+            'transport': forms.Select(attrs={'class': 'form-select'}),
+            'duration': forms.NumberInput(attrs={'class': 'form-control'}),
+            'room_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'meal_type': forms.Select(attrs={'class': 'form-select'}),
+            'is_popular': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'amenities': forms.SelectMultiple(attrs={'class': 'form-select', 'size': '10'}),
+            'author': forms.HiddenInput(),  # Ховаємо поле автор
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # ========== КРАЇНИ ==========
+        # Збираємо всі країни з турів та міст
+        countries_from_tours = Tour.objects.values_list('country', flat=True).distinct()
+        countries_from_cities = City.objects.values_list('country', flat=True).distinct()
+        all_countries = set(list(countries_from_tours) + list(countries_from_cities))
+
+        country_choices = [('', '---------')] + [(c, c) for c in sorted(all_countries) if c]
+        self.fields['country'].choices = country_choices
+
+        # ========== МІСТА ==========
+        # Якщо є значення країни - фільтруємо міста
+        country_value = None
+        if self.data and self.data.get('country'):
+            country_value = self.data.get('country')
+        elif self.instance and self.instance.pk and self.instance.country:
+            country_value = self.instance.country
+
+        if country_value:
+            self.fields['city'].queryset = City.objects.filter(country=country_value).order_by('name')
+            if self.instance and self.instance.pk and self.instance.city:
+                self.fields['city'].initial = self.instance.city
+        else:
+            self.fields['city'].queryset = City.objects.none()
+
+        # ========== МІСТО ВИЛЬОТУ ==========
+        self.fields['departure_city'].queryset = DepartureCity.objects.all().order_by('country', 'name')
+        if self.instance and self.instance.pk and self.instance.departure_city:
+            self.fields['departure_city'].initial = self.instance.departure_city
+
+        # ========== АВТОР ==========
+        if hasattr(self, 'request') and self.request.user:
+            self.fields['author'].initial = self.request.user
+            self.fields['author'].widget = forms.HiddenInput()
+
+    def clean_author(self):
+        """Встановлює автора як поточного користувача"""
+        if hasattr(self, 'request'):
+            return self.request.user
+        return self.cleaned_data.get('author')
 
 
 # ========== АДМІН-КЛАСИ ДЛЯ АГЕНТІВ ==========
 
 class AgentTourAdmin(admin.ModelAdmin):
+    form = AgentTourForm
     list_display = ("title", "country", "city", "price", "start_date", "author")
-    list_filter = ("country", "city", "start_date")
-    search_fields = ("title", "country", "city", "description")
+    list_filter = ("country", "start_date")
+    search_fields = ("title", "country", "description")
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        form.request = request
+        return form
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -22,6 +149,9 @@ class AgentTourAdmin(admin.ModelAdmin):
         if not obj.pk:
             obj.author = request.user
         super().save_model(request, obj, form, change)
+
+    class Media:
+        js = ('admin/js/dynamic_city.js',)
 
 
 class AgentBookingAdmin(admin.ModelAdmin):
@@ -38,6 +168,9 @@ class AgentBookingAdmin(admin.ModelAdmin):
 
     get_tour_title.short_description = 'Тур'
 
+    def has_add_permission(self, request):
+        return False
+
 
 class AgentPriceOptionAdmin(admin.ModelAdmin):
     list_display = ('tour', 'departure_date', 'duration', 'departure_city', 'price', 'is_available')
@@ -48,6 +181,11 @@ class AgentPriceOptionAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.filter(tour__author=request.user)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "tour":
+            kwargs["queryset"] = Tour.objects.filter(author=request.user)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 class AgentReviewAdmin(admin.ModelAdmin):
@@ -71,6 +209,9 @@ class AgentReviewAdmin(admin.ModelAdmin):
 
     get_author_name.short_description = 'Автор'
 
+    def has_add_permission(self, request):
+        return False
+
 
 class AgentConsultationAdmin(admin.ModelAdmin):
     list_display = ('name', 'phone', 'created_at', 'is_processed')
@@ -80,6 +221,9 @@ class AgentConsultationAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.filter(agent=request.user)
+
+    def has_add_permission(self, request):
+        return False
 
 
 class AgentNewsAdmin(admin.ModelAdmin):
@@ -105,6 +249,12 @@ class AgentCountryInfoAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         return qs
 
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
 
 class AgentPriceCalendarAdmin(admin.ModelAdmin):
     list_display = ('tour', 'date', 'duration', 'price')
@@ -115,6 +265,11 @@ class AgentPriceCalendarAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         return qs.filter(tour__author=request.user)
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "tour":
+            kwargs["queryset"] = Tour.objects.filter(author=request.user)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 class AgentPopularDestinationAdmin(admin.ModelAdmin):
     list_display = ('country', 'order')
@@ -124,6 +279,12 @@ class AgentPopularDestinationAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
 
 
 class AgentTourPriceByTouristsAdmin(admin.ModelAdmin):
@@ -136,6 +297,11 @@ class AgentTourPriceByTouristsAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         return qs.filter(tour__author=request.user)
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "tour":
+            kwargs["queryset"] = Tour.objects.filter(author=request.user)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 class AgentCityAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'country')
@@ -146,8 +312,15 @@ class AgentCityAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         return qs
 
+    def has_add_permission(self, request):
+        return False
 
-# ========== СТВОРЕННЯ АГЕНТСЬКОЇ АДМІНКИ ==========
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+# ========== КАСТОМНИЙ САЙТ АДМІНКИ ==========
+
 class AgentAdminSite(admin.AdminSite):
     site_header = "Панель керування агента"
     site_title = "Агентська адмінка"
@@ -156,8 +329,15 @@ class AgentAdminSite(admin.AdminSite):
     def has_permission(self, request):
         return request.user.is_authenticated and request.user.is_agent
 
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('get-cities/', self.admin_view(get_cities_ajax), name='get_cities'),
+        ]
+        return custom_urls + urls
 
-# Створюємо екземпляр
+
+# Створюємо екземпляр агентської адмінки
 agent_admin_site = AgentAdminSite(name='agent_admin')
 
 # ========== РЕЄСТРАЦІЯ ВСІХ МОДЕЛЕЙ ==========
@@ -173,12 +353,8 @@ agent_admin_site.register(PopularDestination, AgentPopularDestinationAdmin)
 agent_admin_site.register(TourPriceByTourists, AgentTourPriceByTouristsAdmin)
 agent_admin_site.register(City, AgentCityAdmin)
 
+# ========== ДІАГНОСТИКА ==========
 print("=" * 50)
 print("АГЕНТСЬКА АДМІНКА - УСПІШНО ЗАРЕЄСТРОВАНО")
 print(f"Кількість зареєстрованих моделей: {len(agent_admin_site._registry)}")
-print("=" * 50)
-# Діагностика в консоль
-print("=== ЗАРЕЄСТРОВАНІ МОДЕЛІ В АГЕНТСЬКІЙ АДМІНЦІ ===")
-for model in agent_admin_site._registry.keys():
-    print(f"  - {model._meta.verbose_name_plural}")
 print("=" * 50)

@@ -1,6 +1,10 @@
 import random
 import uuid
 import requests
+import json
+import cloudinary.uploader
+from PIL import Image
+import io
 from django.utils.text import slugify
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -16,17 +20,32 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
 from django.views.decorators.cache import never_cache
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.urls import reverse_lazy
-from .forms import AgentRegistrationForm, VerificationForm, AgentSiteForm
+from .forms.main_forms import AgentRegistrationForm, VerificationForm, AgentSiteForm
+from .forms.blocks import AgentBlocksForm
 from users.models import User
-from .models import AgentSite
+from .models.agent_site import AgentSite
+from .models.blocks import AgentBlockSettings
 from tours.views import TourListView, tour_detail, search_results, city_detail, news_detail, ConsultationCreateView, \
     NewsListView, get_agent_colors, tour_reviews
 from tours.models import News
 
 from django.http import HttpResponse
 
+# А потім в функції generate_image додайте:
+categories = {
+    'beach': ['id/20', 'id/21', 'id/30', 'id/33', 'id/37', 'id/38', 'id/81'],
+    'mountains': ['id/11', 'id/22', 'id/96', 'id/101', 'id/104', 'id/119'],
+    'city': ['id/24', 'id/26', 'id/27', 'id/28', 'id/32', 'id/44', 'id/47', 'id/50'],
+    'nature': ['id/10', 'id/12', 'id/15', 'id/31', 'id/55', 'id/66', 'id/99', 'id/100'],
+    'travel': ['id/18', 'id/23', 'id/34', 'id/35', 'id/36', 'id/43', 'id/52', 'id/60', 'id/62', 'id/69', 'id/70', 'id/71', 'id/72', 'id/73', 'id/74', 'id/75', 'id/76', 'id/78', 'id/79', 'id/80', 'id/81', 'id/82', 'id/83', 'id/84', 'id/85', 'id/86', 'id/87', 'id/88', 'id/89', 'id/90', 'id/91', 'id/92', 'id/93', 'id/94', 'id/95', 'id/96', 'id/97', 'id/98', 'id/99', 'id/100']
+}
 
+# Випадковий вибір категорії
+category = random.choice(list(categories.keys()))
+image_id = random.choice(categories[category])
+random_image_url = f"https://picsum.photos/{image_id}/1200/400"
 def force_create_admin(request):
     User = get_user_model()
     try:
@@ -68,64 +87,109 @@ def agent_register_step1(request):
 
 def agent_verify(request):
     """
-    Верифікація коду з email - ТИМЧАСОВО з автопідтвердженням
+    Верифікація коду з email - НОРМАЛЬНА РОБОТА
     """
     print("=== agent_verify: Початок ===")
 
-    # ТИМЧАСОВО: автоматичне підтвердження для тестування
-    # ПІСЛЯ ТЕСТУВАННЯ ВИДАЛИТИ РЯДОК "or True" НИЖЧЕ
-    if request.method == 'POST' or True:  # <--- ТУТ "or True" означає, що завжди спрацьовує
+    if request.method == 'POST':  # ← ВИДАЛЕНО "or True"
         data = request.session.get('reg_data')
         if data:
             email = data['email']
-            print(f"ТИМЧАСОВО: Автоматичне створення агента для {email}")
+            first_name = data.get('first_name', '')
+            last_name = data.get('last_name', '')
 
-            from users.models import User
-            from .models import AgentSite
-            from django.utils.text import slugify
-            from django.contrib.auth import login
+            print(f"Перевірка коду для {email}")
 
-            user = User.objects.filter(email=email).first()
-            if not user:
-                user = User.objects.create_user(
-                    username=email,
-                    email=email,
-                    first_name=data.get('first_name', ''),
-                    last_name=data.get('last_name', ''),
-                    is_agent=True
-                )
-                user.set_unusable_password()
-                user.save()
-                print(f"Створено нового користувача: {user.id}")
+            entered_code = request.POST.get('code')
+            expected_code = request.session.get('reg_code')
+
+            print(f"Entered code: {entered_code}")
+            print(f"Expected code: {expected_code}")
+
+            if not expected_code:
+                messages.error(request, 'Час сесії минув. Будь ласка, зареєструйтесь знову.')
+                return redirect('constructor:register')
+
+            if entered_code == expected_code:
+                from users.models import User
+                from .models.agent_site import AgentSite
+                from django.utils.text import slugify
+                from django.contrib.auth import login
+
+                # Створюємо username з імені та прізвища
+                base_username = f"{first_name}{last_name}".lower()
+                if not base_username:
+                    base_username = email.split('@')[0]
+
+                # Робимо username унікальним
+                username = base_username
+                counter = 1
+                while User.objects.filter(username=username).exists():
+                    username = f"{base_username}{counter}"
+                    counter += 1
+
+                # Шукаємо користувача за email
+                user = User.objects.filter(email=email).first()
+
+                if not user:
+                    # Створюємо нового користувача з username з імені
+                    user = User.objects.create_user(
+                        username=username,
+                        email=email,
+                        first_name=first_name,
+                        last_name=last_name,
+                        is_agent=True,
+                        is_staff=True  # Додаємо is_staff для доступу до адмінки
+                    )
+                    # Встановлюємо unusable password (не можна ввійти з паролем)
+                    user.set_unusable_password()
+                    user.save()
+                    print(f"Створено нового користувача: {user.username} (ID: {user.id})")
+                else:
+                    # Оновлюємо існуючого користувача
+                    user.first_name = first_name
+                    user.last_name = last_name
+                    user.is_agent = True
+                    user.is_staff = True
+                    user.save()
+                    print(f"Оновлено користувача: {user.username}")
+
+                # Створюємо або отримуємо агентський сайт
+                base_slug = slugify(f"{first_name}{last_name}".lower())
+                if not base_slug:
+                    base_slug = slugify(email.split('@')[0])
+
+                unique_slug = base_slug
+                counter = 1
+                while AgentSite.objects.filter(slug=unique_slug).exists():
+                    unique_slug = f"{base_slug}-{counter}"
+                    counter += 1
+
+                agent_site, created = AgentSite.objects.get_or_create(user=user, defaults={'slug': unique_slug})
+                if not created and not agent_site.slug:
+                    agent_site.slug = unique_slug
+                    agent_site.save()
+
+                print(f"Агентський сайт: {agent_site.slug}, створено: {created}")
+
+                login(request, user)
+
+                # Очищаємо сесію
+                if 'reg_code' in request.session:
+                    del request.session['reg_code']
+                if 'reg_data' in request.session:
+                    del request.session['reg_data']
+
+                return redirect('/constructor/dashboard/')
             else:
-                print(f"Користувач вже існує: {user.id}")
-
-            # Створюємо агентський сайт
-            base_slug = slugify(email.split('@')[0])
-            if not base_slug:
-                base_slug = f"user_{user.id}"
-            unique_slug = base_slug
-            counter = 1
-            while AgentSite.objects.filter(slug=unique_slug).exists():
-                unique_slug = f"{base_slug}-{counter}"
-                counter += 1
-
-            agent_site, created = AgentSite.objects.get_or_create(user=user, defaults={'slug': unique_slug})
-            print(f"Агентський сайт: {agent_site.slug}, створено: {created}")
-
-            login(request, user)
-
-            # Очищаємо сесію
-            if 'reg_code' in request.session:
-                del request.session['reg_code']
-            if 'reg_data' in request.session:
-                del request.session['reg_data']
-
-            return redirect('/constructor/dashboard/')
+                messages.error(request, 'Невірний код. Спробуйте ще раз.')
+                return redirect('constructor:verify')
         else:
             print("Немає даних в сесії reg_data")
+            messages.error(request, 'Помилка сесії, спробуйте ще раз.')
+            return redirect('constructor:register')
 
-    # Якщо щось пішло не так, показуємо форму
+    # GET-запит - показуємо форму
     form = VerificationForm()
     return render(request, 'constructor/verify.html', {
         'form': form,
@@ -149,12 +213,41 @@ def constructor_dashboard(request):
         agent_site.slug = unique_slug
         agent_site.save()
 
+    # Отримуємо налаштування блоків для агента
+    block_settings, _ = AgentBlockSettings.objects.get_or_create(
+        agent=request.user,
+        defaults={
+            'blocks_order': AgentBlockSettings().get_default_order(),
+            'active_blocks': AgentBlockSettings().get_default_order(),
+        }
+    )
+
     if request.method == 'POST':
+        # Обробляємо основну форму
         form = AgentSiteForm(request.POST, request.FILES, instance=agent_site)
+
+        # ========== ОБРОБКА НАЛАШТУВАНЬ БЛОКІВ ==========
+        blocks_order = request.POST.getlist('blocks_order')
+        active_blocks = request.POST.getlist('active_blocks')
+        custom_css = request.POST.get('custom_css', '')
+        custom_js = request.POST.get('custom_js', '')
+
+        print(f"=== ОТРИМАНО blocks_order: {blocks_order} ===")
+        print(f"=== ОТРИМАНО active_blocks: {active_blocks} ===")
+
+        if blocks_order:
+            block_settings.blocks_order = blocks_order
+        if active_blocks:
+            block_settings.active_blocks = active_blocks
+        block_settings.custom_css = custom_css
+        block_settings.custom_js = custom_js
+        block_settings.save()
+
+        print(f"=== ЗБЕРЕЖЕНО blocks_order: {block_settings.blocks_order} ===")
+
         if form.is_valid():
             saved_site = form.save()
             messages.success(request, 'Налаштування збережено!')
-            agent_site = saved_site
             return redirect('constructor:dashboard')
         else:
             for field, errors in form.errors.items():
@@ -168,6 +261,12 @@ def constructor_dashboard(request):
         'agent_site': agent_site,
         'primary_color': agent_site.primary_color or '#086745',
         'secondary_color': agent_site.secondary_color or '#02432c',
+        'all_blocks': dict(AgentBlockSettings.MOVABLE_BLOCK_CHOICES),
+        'active_blocks': block_settings.active_blocks,
+        'blocks_order': block_settings.blocks_order,
+        'banners': block_settings.banners,
+        'custom_css': block_settings.custom_css,
+        'custom_js': block_settings.custom_js,
     }
     return render(request, 'constructor/dashboard.html', context)
 
@@ -186,41 +285,167 @@ def open_site(request):
 @csrf_exempt
 def generate_image(request):
     """
-    Генерує фонове зображення для агентського сайту.
-    Використовує кілька резервних джерел зображень.
+    Генерує випадкове фонове зображення для агентського сайту та зберігає на Cloudinary.
     """
     if not request.user.is_authenticated or not hasattr(request.user, 'agent_site'):
         return JsonResponse({'error': 'Not authorized'}, status=403)
 
     agent_site = request.user.agent_site
 
-    # Список резервних джерел зображень
+    # Розширений список різноманітних зображень
     image_urls = [
-        "https://picsum.photos/id/104/1200/400",  # пейзаж
+        # Пейзажі та природа
+        "https://picsum.photos/id/10/1200/400",  # туманний ліс
+        "https://picsum.photos/id/11/1200/400",  # гора з озером
+        "https://picsum.photos/id/12/1200/400",  # річка в лісі
         "https://picsum.photos/id/15/1200/400",  # природа
-        "https://picsum.photos/id/22/1200/400",  # пейзаж
+        "https://picsum.photos/id/22/1200/400",  # птах
+        "https://picsum.photos/id/29/1200/400",  # місто
+        "https://picsum.photos/id/31/1200/400",  # велосипед
+        "https://picsum.photos/id/39/1200/400",  # телефон
+        "https://picsum.photos/id/42/1200/400",  # піаніно
+        "https://picsum.photos/id/55/1200/400",  # квіти
+        "https://picsum.photos/id/66/1200/400",  # гори
+        "https://picsum.photos/id/77/1200/400",  # місто ввечері
+        "https://picsum.photos/id/88/1200/400",  # вулиця
         "https://picsum.photos/id/96/1200/400",  # гора
-        "https://picsum.photos/id/42/1200/400",  # музика
+        "https://picsum.photos/id/99/1200/400",  # ліс
+        "https://picsum.photos/id/100/1200/400",  # камінь
+        "https://picsum.photos/id/101/1200/400",  # гора
+        "https://picsum.photos/id/104/1200/400",  # водоспад
+        "https://picsum.photos/id/106/1200/400",  # квіти
+        "https://picsum.photos/id/116/1200/400",  # озеро
+        "https://picsum.photos/id/119/1200/400",  # гора з хмарами
+
+        # Море та пляжі
+        "https://picsum.photos/id/20/1200/400",  # кава на пляжі
+        "https://picsum.photos/id/21/1200/400",  # будинки біля моря
+        "https://picsum.photos/id/30/1200/400",  # кав'ярня
+        "https://picsum.photos/id/33/1200/400",  # пляж
+        "https://picsum.photos/id/37/1200/400",  # океан
+        "https://picsum.photos/id/38/1200/400",  # хвилі
+
+        # Міста та архітектура
+        "https://picsum.photos/id/24/1200/400",  # вулиця
+        "https://picsum.photos/id/26/1200/400",  # міст
+        "https://picsum.photos/id/27/1200/400",  # місто
+        "https://picsum.photos/id/28/1200/400",  # архітектура
+        "https://picsum.photos/id/32/1200/400",  # будівля
+        "https://picsum.photos/id/44/1200/400",  # церква
+        "https://picsum.photos/id/47/1200/400",  # вежа
+        "https://picsum.photos/id/50/1200/400",  # місто з висоти
+        "https://picsum.photos/id/51/1200/400",  # вулиця ввечері
+
+        # Подорожі та туризм
+        "https://picsum.photos/id/18/1200/400",  # дорога
+        "https://picsum.photos/id/23/1200/400",  # гора
+        "https://picsum.photos/id/34/1200/400",  # ліс
+        "https://picsum.photos/id/35/1200/400",  # поле
+        "https://picsum.photos/id/36/1200/400",  # пшениця
+        "https://picsum.photos/id/40/1200/400",  # хмарочоси
+        "https://picsum.photos/id/41/1200/400",  # міст
+        "https://picsum.photos/id/43/1200/400",  # дорога в горах
+        "https://picsum.photos/id/45/1200/400",  # парк
+        "https://picsum.photos/id/48/1200/400",  # пам'ятник
+        "https://picsum.photos/id/52/1200/400",  # захід сонця
+        "https://picsum.photos/id/53/1200/400",  # місто вночі
+        "https://picsum.photos/id/54/1200/400",  # дім
+        "https://picsum.photos/id/56/1200/400",  # світло
+        "https://picsum.photos/id/57/1200/400",  # міст через річку
+        "https://picsum.photos/id/58/1200/400",  # пішохід
+        "https://picsum.photos/id/59/1200/400",  # дерево
+        "https://picsum.photos/id/60/1200/400",  # дорога
+        "https://picsum.photos/id/61/1200/400",  # багаття
+        "https://picsum.photos/id/62/1200/400",  # місто
+        "https://picsum.photos/id/63/1200/400",  # рибалка
+        "https://picsum.photos/id/64/1200/400",  # річка
+        "https://picsum.photos/id/65/1200/400",  # метро
+        "https://picsum.photos/id/67/1200/400",  # озеро
+        "https://picsum.photos/id/68/1200/400",  # міст
+        "https://picsum.photos/id/69/1200/400",  # дорога в лісі
+        "https://picsum.photos/id/70/1200/400",  # вулкан
+        "https://picsum.photos/id/71/1200/400",  # дерево
+        "https://picsum.photos/id/72/1200/400",  # міст
+        "https://picsum.photos/id/73/1200/400",  # місто
+        "https://picsum.photos/id/74/1200/400",  # гора
+        "https://picsum.photos/id/75/1200/400",  # озеро
+        "https://picsum.photos/id/76/1200/400",  # дорога
+        "https://picsum.photos/id/78/1200/400",  # місто
+        "https://picsum.photos/id/79/1200/400",  # будівля
+        "https://picsum.photos/id/80/1200/400",  # міст
+        "https://picsum.photos/id/81/1200/400",  # пляж
+        "https://picsum.photos/id/82/1200/400",  # місто
+        "https://picsum.photos/id/83/1200/400",  # поле
+        "https://picsum.photos/id/84/1200/400",  # міст
+        "https://picsum.photos/id/85/1200/400",  # місто
+        "https://picsum.photos/id/86/1200/400",  # гора
+        "https://picsum.photos/id/87/1200/400",  # місто
+        "https://picsum.photos/id/89/1200/400",  # дорога
+        "https://picsum.photos/id/90/1200/400",  # міст
+        "https://picsum.photos/id/91/1200/400",  # місто
+        "https://picsum.photos/id/92/1200/400",  # гори
+        "https://picsum.photos/id/93/1200/400",  # місто
+        "https://picsum.photos/id/94/1200/400",  # озеро
+        "https://picsum.photos/id/95/1200/400",  # гора
+        "https://picsum.photos/id/97/1200/400",  # місто
+        "https://picsum.photos/id/98/1200/400",  # дорога
     ]
 
-    for image_url in image_urls:
-        try:
-            response = requests.get(image_url, timeout=30)
-            if response.status_code == 200:
-                filename = f"generated_{uuid.uuid4().hex[:10]}.jpg"
-                agent_site.hero_background.save(filename, ContentFile(response.content), save=True)
-                messages.success(request, 'Фонове зображення згенеровано та збережено!')
-                return redirect('constructor:dashboard')
-        except requests.exceptions.Timeout:
-            continue  # пробуємо наступне джерело
-        except Exception as e:
-            print(f"Помилка завантаження {image_url}: {e}")
-            continue  # пробуємо наступне джерело
+    # ВИПАДКОВИЙ ВИБІР зображення
+    random_image_url = random.choice(image_urls)
 
-    # Якщо жодне джерело не спрацювало
-    messages.error(request, 'Не вдалося згенерувати зображення. Спробуйте завантажити вручну.')
+    try:
+        print(f"Генеруємо зображення з URL: {random_image_url}")
+        response = requests.get(random_image_url, timeout=30)
+
+        if response.status_code == 200:
+            # Відкриваємо зображення
+            img = Image.open(io.BytesIO(response.content))
+
+            # Конвертуємо в RGB якщо потрібно
+            if img.mode in ('RGBA', 'P'):
+                img = img.convert('RGB')
+
+            # Змінюємо розмір
+            max_width = 1200
+            if img.width > max_width:
+                ratio = max_width / img.width
+                new_height = int(img.height * ratio)
+                img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
+
+            # Зберігаємо в BytesIO
+            output = io.BytesIO()
+            img.save(output, format='JPEG', quality=85, optimize=True)
+            output.seek(0)
+
+            # Завантажуємо на Cloudinary
+            upload_result = cloudinary.uploader.upload(
+                output,
+                folder=f"agent_{request.user.id}_hero",
+                public_id=f"hero_generated_{uuid.uuid4().hex[:8]}",
+                transformation=[
+                    {'quality': 'auto', 'fetch_format': 'auto'},
+                    {'width': 1200, 'crop': 'limit'}
+                ]
+            )
+            image_url = upload_result['secure_url']
+
+            # Зберігаємо URL в поле hero_background
+            agent_site.hero_background = image_url
+            agent_site.save()
+
+            messages.success(request, 'Фонове зображення згенеровано та збережено на Cloudinary!')
+            return redirect('constructor:dashboard')
+        else:
+            messages.error(request, 'Не вдалося завантажити зображення. Спробуйте ще раз.')
+
+    except requests.exceptions.Timeout:
+        messages.error(request, 'Час очікування минув. Спробуйте ще раз.')
+    except Exception as e:
+        print(f"Помилка: {e}")
+        messages.error(request, f'Помилка: {str(e)[:100]}')
+
     return redirect('constructor:dashboard')
-
 
 class AgentSiteUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = AgentSite
@@ -369,7 +594,7 @@ def agent_login_redirect(request):
     """
     Перенаправляє агента на сторінку входу його сайту.
     """
-    print("=== agent_login_redirect: Початок ===")  # Діагностика
+    print("=== agent_login_redirect: Початок ===")
 
     # Якщо користувач вже авторизований і має агентський сайт
     if request.user.is_authenticated and hasattr(request.user, 'agent_site'):
@@ -381,11 +606,13 @@ def agent_login_redirect(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         print(f"=== agent_login_redirect: Отримано POST з email: {email} ===")
-        from django.contrib.auth import get_user_model
-        User = get_user_model()
 
+        from users.models import User
+
+        # Шукаємо користувача з таким email та is_agent=True
         user = User.objects.filter(email=email, is_agent=True).first()
         if not user:
+            # Якщо не знайшли за email, шукаємо за username
             user = User.objects.filter(username=email, is_agent=True).first()
             print(f"=== agent_login_redirect: Пошук за username, знайдено: {user} ===")
 
@@ -397,14 +624,15 @@ def agent_login_redirect(request):
         else:
             print(f"=== agent_login_redirect: Користувача з email {email} не знайдено або він не є агентом ===")
             messages.error(request, 'Сайт з таким email не знайдено. Перевірте email або зареєструйтесь.')
+            # Після помилки показуємо форму знову
+            return render(request, 'constructor/agent_login_redirect.html')
 
     # GET запит - показуємо форму
     print("=== agent_login_redirect: Показуємо форму (GET-запит) ===")
     return render(request, 'constructor/agent_login_redirect.html')
 
 
-# ========== ТИМЧАСОВИЙ КОД ДЛЯ СТВОРЕННЯ СУПЕРАДМІНА ==========
-# ВИДАЛИТИ ПІСЛЯ ВИКОРИСТАННЯ
+# ========== КОД ДЛЯ СТВОРЕННЯ СУПЕРАДМІНА ==========
 def create_admin_direct(request):
     """Створює суперадміна при переході за посиланням"""
     User = get_user_model()
@@ -423,6 +651,24 @@ def create_admin_direct(request):
 def agent_public_site(request, slug, **kwargs):
     if not hasattr(request, 'current_agent_site') or not request.current_agent_site:
         raise Http404("Сайт не знайдено")
+
+    # ========== ДОДАЄМО НАЛАШТУВАННЯ БЛОКІВ ДЛЯ АГЕНТА ==========
+    from .models.blocks import AgentBlockSettings
+    block_settings = AgentBlockSettings.objects.filter(agent=request.current_agent_site.user).first()
+
+    if block_settings:
+        request.blocks_order = block_settings.blocks_order
+        request.banners = block_settings.banners
+        request.active_blocks = block_settings.active_blocks
+        request.custom_css = block_settings.custom_css
+        request.custom_js = block_settings.custom_js
+    else:
+        request.blocks_order = AgentBlockSettings().get_default_order()
+        request.banners = []
+        request.active_blocks = AgentBlockSettings().get_default_order()
+        request.custom_css = ''
+        request.custom_js = ''
+    # ============================================================
 
     view_name = request.resolver_match.view_name
 
@@ -481,3 +727,223 @@ class AgentHomeView(TemplateView):
         context['show_operator_logos'] = agent_site.show_operator_logos
 
         return context
+
+
+# ==============================================
+# ========== НОВІ ФУНКЦІЇ ДЛЯ НАЛАШТУВАНЬ БЛОКІВ ==========
+# ==============================================
+
+def blocks_settings(request):
+    """Сторінка налаштувань блоків у конструкторі"""
+    if not request.user.is_authenticated or not request.user.is_agent:
+        return redirect('login')
+
+    settings, created = AgentBlockSettings.objects.get_or_create(
+        agent=request.user,
+        defaults={
+            'blocks_order': AgentBlockSettings().get_default_order(),
+            'active_blocks': AgentBlockSettings().get_default_order(),
+        }
+    )
+
+    if request.method == 'POST':
+        # Оновлюємо налаштування
+        blocks_order = request.POST.getlist('blocks_order')
+        active_blocks = request.POST.getlist('active_blocks')
+        custom_css = request.POST.get('custom_css', '')
+        custom_js = request.POST.get('custom_js', '')
+
+        settings.blocks_order = blocks_order if blocks_order else settings.get_default_order()
+        settings.active_blocks = active_blocks
+        settings.custom_css = custom_css
+        settings.custom_js = custom_js
+        settings.save()
+
+        messages.success(request, 'Налаштування збережено!')
+        return redirect('constructor:blocks_settings')
+
+    context = {
+        'agent_site': request.user.agent_site,
+        'all_blocks': dict(AgentBlockSettings.MOVABLE_BLOCK_CHOICES),
+        'active_blocks': settings.active_blocks,
+        'blocks_order': settings.blocks_order,
+        'banners': settings.banners,
+        'custom_css': settings.custom_css,
+        'custom_js': settings.custom_js,
+    }
+    return render(request, 'constructor/dashboard.html', context)
+
+
+def banner_create(request):
+    """Створення/редагування банера з текстовими блоками"""
+    if not request.user.is_authenticated or not request.user.is_agent:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+
+    if request.method == 'POST':
+        settings, _ = AgentBlockSettings.objects.get_or_create(agent=request.user)
+        banners = settings.banners or []
+
+        banner_id = request.POST.get('banner_id')
+        is_edit = banner_id and banner_id.isdigit() and int(banner_id) < len(banners)
+
+        # Обробка завантаженого файлу
+        image_file = request.FILES.get('image_file')
+        image_url = None
+
+        if image_file:
+            try:
+                from PIL import Image
+                import io
+                img = Image.open(image_file)
+                if img.mode in ('RGBA', 'P'):
+                    img = img.convert('RGB')
+                max_width = 1200
+                if img.width > max_width:
+                    ratio = max_width / img.width
+                    new_height = int(img.height * ratio)
+                    img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
+                output = io.BytesIO()
+                img.save(output, format='JPEG', quality=85, optimize=True)
+                output.seek(0)
+                upload_result = cloudinary.uploader.upload(
+                    output,
+                    folder=f"agent_{request.user.id}_banners",
+                    transformation=[{'quality': 'auto', 'fetch_format': 'auto'}, {'width': 1200, 'crop': 'limit'}]
+                )
+                image_url = upload_result['secure_url']
+            except Exception as e:
+                print(f"❌ Помилка: {e}")
+                return JsonResponse({'error': 'Помилка завантаження зображення'}, status=500)
+        elif is_edit:
+            image_url = banners[int(banner_id)].get('image')
+
+        if not image_url and not is_edit:
+            return JsonResponse({'error': 'Необхідно завантажити зображення'}, status=400)
+
+        # Збираємо текстові блоки
+        text_blocks = []
+        block_index = 1
+        while True:
+            heading = request.POST.get(f'heading_{block_index}')
+            if heading is None:
+                break
+            if heading or request.POST.get(f'text_{block_index}'):
+                text_block = {
+                    'id': str(block_index),
+                    'heading': heading,
+                    'text': request.POST.get(f'text_{block_index}', ''),
+                    'position': request.POST.get(f'position_{block_index}', 'center'),
+                    'heading_color': request.POST.get(f'heading_color_{block_index}', '#ffffff'),
+                    'text_color': request.POST.get(f'text_color_{block_index}', '#ffffff'),
+                    'button_text': request.POST.get(f'button_text_{block_index}', ''),
+                    'button_color': request.POST.get(f'button_color_{block_index}', '#086745'),
+                    'button_link': request.POST.get(f'button_link_{block_index}', ''),
+                }
+                text_blocks.append(text_block)
+            block_index += 1
+
+        if is_edit:
+            banner_index = int(banner_id)
+            new_banner = {
+                'image': image_url,
+                'link': request.POST.get('link', ''),
+                'position': request.POST.get('position', 'full'),
+                'title': request.POST.get('title', ''),
+                'order': banner_index + 1,
+                'active': True,
+                'overlay_opacity': float(request.POST.get('overlay_opacity', 0.4)),
+                'text_blocks': text_blocks,
+            }
+            banners[banner_index] = new_banner
+        else:
+            new_banner = {
+                'image': image_url,
+                'link': request.POST.get('link', ''),
+                'position': request.POST.get('position', 'full'),
+                'title': request.POST.get('title', ''),
+                'order': len(banners) + 1,
+                'active': True,
+                'overlay_opacity': float(request.POST.get('overlay_opacity', 0.4)),
+                'text_blocks': text_blocks,
+            }
+            banners.append(new_banner)
+
+        settings.banners = banners
+        settings.save()
+        return JsonResponse({'success': True, 'banner': new_banner})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def banner_get(request, banner_id):
+    """Отримання даних банера для редагування"""
+    if not request.user.is_authenticated or not request.user.is_agent:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+
+    settings, _ = AgentBlockSettings.objects.get_or_create(agent=request.user)
+    banners = settings.banners or []
+
+    try:
+        banner_index = int(banner_id)
+        if 0 <= banner_index < len(banners):
+            return JsonResponse({'success': True, 'banner': banners[banner_index]})
+    except:
+        pass
+
+    return JsonResponse({'error': 'Banner not found'}, status=404)
+
+def banner_delete(request, banner_id):
+    """Видалення банера"""
+    if not request.user.is_authenticated or not request.user.is_agent:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+
+    if request.method == 'POST':
+        settings, _ = AgentBlockSettings.objects.get_or_create(agent=request.user)
+        banners = settings.banners or []
+
+        if 0 <= banner_id < len(banners):
+            banners.pop(banner_id)
+            # Оновлюємо порядок
+            for i, banner in enumerate(banners):
+                banner['order'] = i + 1
+            settings.banners = banners
+            settings.save()
+            return JsonResponse({'success': True})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+def banner_reorder(request):
+    """Зміна порядку банерів"""
+    if not request.user.is_authenticated or not request.user.is_agent:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        new_order = data.get('order', [])
+        position = data.get('position', None)
+        banner_id = data.get('index', None)
+
+        settings, _ = AgentBlockSettings.objects.get_or_create(agent=request.user)
+        banners = settings.banners or []
+
+        if position is not None and banner_id is not None:
+            # Зміна позиції конкретного банера
+            if 0 <= banner_id < len(banners):
+                banners[banner_id]['position'] = position
+        elif new_order:
+            # Переупорядковуємо банери
+            reordered = []
+            for idx in new_order:
+                if 0 <= idx < len(banners):
+                    reordered.append(banners[idx])
+            for i, banner in enumerate(reordered):
+                banner['order'] = i + 1
+            settings.banners = reordered
+
+        settings.save()
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+# ========== КІНЕЦЬ НОВИХ ФУНКЦІЙ ==========

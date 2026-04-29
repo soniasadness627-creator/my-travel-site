@@ -9,7 +9,14 @@ urlpatterns = [
     path('dashboard/', views.constructor_dashboard, name='dashboard'),
     path('open-site/', views.open_site, name='open_site'),
     path('generate-image/', views.generate_image, name='generate_image'),
-    path('agent-login-redirect/', views.agent_login_redirect, name='agent_login_redirect'),  # ← НОВИЙ МАРШРУТ
+    path('agent-login-redirect/', views.agent_login_redirect, name='agent_login_redirect'),
+
+    # ========== НОВІ URL ДЛЯ НАЛАШТУВАНЬ БЛОКІВ ==========
+    path('blocks-settings/', views.blocks_settings, name='blocks_settings'),
+    path('banner/create/', views.banner_create, name='banner_create'),
+    path('banner/get/<int:banner_id>/', views.banner_get, name='banner_get'),  # ← ДОДАНО
+    path('banner/delete/<int:banner_id>/', views.banner_delete, name='banner_delete'),
+    path('banner/reorder/', views.banner_reorder, name='banner_reorder'),
 ]
 
 # окремий конфіг для агентських сайтів

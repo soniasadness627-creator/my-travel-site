@@ -24,21 +24,12 @@
         <!-- Таби навігації -->
         <div class="tabs-container">
             <div class="tabs-list">
-                <button type="button" class="tab-trigger active" data-tab="general">
-                    <i class="fas fa-gear mr-2"></i>
-                    Головне
-                </button>
-                <button type="button" class="tab-trigger" data-tab="design">
-                    <i class="fas fa-th-large mr-2"></i>
-                    Дизайн
-                </button>
-                <button type="button" class="tab-trigger" data-tab="menu">
-                    <i class="fas fa-images mr-2"></i>
-                    Меню
-                </button>
+                <button type="button" class="tab-trigger active" data-tab="general">Головне</button>
+                <button type="button" class="tab-trigger" data-tab="design">Дизайн</button>
+                <button type="button" class="tab-trigger" data-tab="menu">Меню</button>
+                <button type="button" class="tab-trigger" data-tab="additional">Додатково</button>
             </div>
 
-            <!-- Форма -->
             <form method="post" enctype="multipart/form-data" id="site-form">
                 {% csrf_token %}
                 {{ form.non_field_errors }}
@@ -49,12 +40,12 @@
                         <div class="card-header">Основні налаштування</div>
                         <div class="card-body space-y-4">
                             <div>
-                                <label for="{{ form.slug.id_for_label }}" class="form-label fw-semibold">Адреса сайту (slug)</label>
+                                <label for="{{ form.slug.id_for_label }}">Адреса сайту (slug)</label>
                                 {{ form.slug }}
                                 <p class="text-xs text-slate-400 mt-1">Унікальна адреса вашого сайту: /a/ваш-slug/</p>
                             </div>
                             <div>
-                                <label for="{{ form.agency_name.id_for_label }}" class="form-label fw-semibold">Назва тур агенції</label>
+                                <label for="{{ form.agency_name.id_for_label }}">Назва тур агенції</label>
                                 {{ form.agency_name }}
                             </div>
                         </div>
@@ -65,119 +56,66 @@
                 <div class="tab-pane" id="tab-design">
                     <div class="card-shadow">
                         <div class="card-header">Герой-секція та логотипи</div>
-                        <div class="card-body space-y-6">
-                            <div>
-                                <label for="{{ form.hero_title.id_for_label }}" class="form-label fw-semibold">Заголовок "Головна картинка"</label>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="{{ form.hero_title.id_for_label }}">Заголовок</label>
                                 {{ form.hero_title }}
                             </div>
-                            <div>
-                                <label for="{{ form.hero_subtitle.id_for_label }}" class="form-label fw-semibold">Підтекст</label>
+                            <div class="mb-3">
+                                <label for="{{ form.hero_subtitle.id_for_label }}">Підтекст</label>
                                 {{ form.hero_subtitle }}
                             </div>
-                            <!-- Кастомне поле для фону -->
-                            <div>
-                                <label class="form-label fw-semibold">Фонова картинка</label>
-                                <div class="hero-file-line">
-                                    <div class="custom-file-input hero-file-input" style="flex: 1; min-width: 0;">
-                                        <input type="file" name="hero_background" id="id_hero_background" accept="image/*">
-                                        <label for="id_hero_background">Обрати файл</label>
-                                        <span class="file-name-display" id="hero_file_name">
-                                            {% if agent_site.hero_background %}
-                                                {{ agent_site.hero_background.name|slice:"12:" }}
-                                            {% else %}
-                                                Файл не вибрано
-                                            {% endif %}
-                                        </span>
-                                    </div>
+                            <div class="mb-3">
+                                <label>Фонова картинка</label>
+                                <div class="custom-file-input">
+                                    <input type="file" name="hero_background" id="id_hero_background" accept="image/*">
+                                    <label for="id_hero_background">Обрати файл</label>
+                                    <span class="file-name-display" id="hero_file_name">
+                                        {% if agent_site.hero_background %}{{ agent_site.hero_background.name|slice:"12:" }}{% else %}Файл не вибрано{% endif %}
+                                    </span>
                                 </div>
-                                <div class="mt-2">
-                                    <button type="button" class="btn-generate-ai" id="generateAiBtn">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                                        </svg>
-                                        Згенерувати ШІ
-                                    </button>
-                                    <p class="text-xs text-slate-400 mt-1">Рекомендовано 1200×400px</p>
-                                </div>
-                                <!-- Прев'ю -->
+                                <button type="button" id="generateAiBtn" class="btn-generate-ai mt-2">Згенерувати ШІ</button>
                                 {% if agent_site.hero_background %}
-                                <div class="mt-3 relative" id="hero_preview_container">
-                                    <img src="{{ agent_site.hero_background.url }}" class="w-full h-32 object-cover rounded-md border" alt="Preview" id="hero_preview">
-                                    <button type="button" class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded" id="clearHeroBtn">Очистити</button>
-                                </div>
-                                {% else %}
-                                <div class="mt-3 relative hidden" id="hero_preview_container">
-                                    <img src="" class="w-full h-32 object-cover rounded-md border" alt="Preview" id="hero_preview">
-                                    <button type="button" class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded" id="clearHeroBtn">Очистити</button>
+                                <div class="mt-3" id="hero_preview_container">
+                                    <img src="{{ agent_site.hero_background.url }}" id="hero_preview" style="max-height: 100px;">
+                                    <button type="button" id="clearHeroBtn">Очистити</button>
                                 </div>
                                 {% endif %}
                             </div>
-
-                            <div class="pt-4 border-t">
-                                <label class="form-label fw-semibold">Логотипи</label>
+                            <div class="pt-3 border-top">
+                                <label>Логотипи</label>
                                 <div class="mt-2">
-                                    <label class="block text-sm font-semibold text-slate-700">Верхній логотип (250×250px)</label>
-                                    <div class="custom-file-input logo-file-wrapper">
+                                    <label>Верхній логотип</label>
+                                    <div class="custom-file-input">
                                         <input type="file" name="top_logo" id="id_top_logo" accept="image/png,image/svg+xml">
                                         <label for="id_top_logo">Обрати файл</label>
-                                        <span class="file-name-display" id="top_logo_display">
-                                            {% if agent_site.top_logo %}
-                                                {{ agent_site.top_logo.name }}
-                                            {% else %}
-                                                Файл не вибрано
-                                            {% endif %}
-                                        </span>
+                                        <span id="top_logo_display">{% if agent_site.top_logo %}{{ agent_site.top_logo.name }}{% else %}Файл не вибрано{% endif %}</span>
                                     </div>
-                                    <div class="mt-1">
-                                        <button type="button" class="clear-logo-btn" data-field="top_logo" style="display: {% if agent_site.top_logo %}inline-flex{% else %}none{% endif %};">
-                                            <i class="fa-solid fa-trash-can"></i> Очистити
-                                        </button>
-                                    </div>
-                                    <p class="text-xs text-slate-400 mt-1">Дозволені формати: PNG, SVG</p>
+                                    <button type="button" class="clear-logo-btn" data-field="top_logo">Очистити</button>
                                 </div>
-                                <div class="mt-3">
-                                    <label class="block text-sm font-semibold text-slate-700">Нижній логотип (150×150px або 150×50px)</label>
-                                    <div class="custom-file-input logo-file-wrapper">
+                                <div class="mt-2">
+                                    <label>Нижній логотип</label>
+                                    <div class="custom-file-input">
                                         <input type="file" name="bottom_logo" id="id_bottom_logo" accept="image/png,image/svg+xml">
                                         <label for="id_bottom_logo">Обрати файл</label>
-                                        <span class="file-name-display" id="bottom_logo_display">
-                                            {% if agent_site.bottom_logo %}
-                                                {{ agent_site.bottom_logo.name }}
-                                            {% else %}
-                                                Файл не вибрано
-                                            {% endif %}
-                                        </span>
+                                        <span id="bottom_logo_display">{% if agent_site.bottom_logo %}{{ agent_site.bottom_logo.name }}{% else %}Файл не вибрано{% endif %}</span>
                                     </div>
-                                    <div class="mt-1">
-                                        <button type="button" class="clear-logo-btn" data-field="bottom_logo" style="display: {% if agent_site.bottom_logo %}inline-flex{% else %}none{% endif %};">
-                                            <i class="fa-solid fa-trash-can"></i> Очистити
-                                        </button>
-                                    </div>
-                                    <p class="text-xs text-slate-400 mt-1">Дозволені формати: PNG, SVG</p>
+                                    <button type="button" class="clear-logo-btn" data-field="bottom_logo">Очистити</button>
                                 </div>
-                                <div class="mt-3 flex items-center gap-2">
+                                <div class="mt-2">
                                     {{ form.enlarge_logo }}
-                                    <label for="{{ form.enlarge_logo.id_for_label }}" class="text-sm text-slate-700">Збільшити логотип на 25%</label>
+                                    <label for="{{ form.enlarge_logo.id_for_label }}">Збільшити логотип на 25%</label>
                                 </div>
                             </div>
-
-                            <!-- НОВИЙ БЛОК: Кольорова схема -->
-                            <div class="pt-4 border-t">
-                                <label class="form-label fw-semibold">Кольорова схема</label>
+                            <div class="pt-3 border-top">
+                                <label>Кольорова схема</label>
                                 <div class="mt-2">
-                                    <label for="{{ form.primary_color.id_for_label }}" class="block text-sm font-semibold text-slate-700">Головний колір</label>
-                                    <div class="flex items-center gap-3">
-                                        {{ form.primary_color }}
-                                        <span class="text-sm text-slate-500">Оберіть основний колір сайту</span>
-                                    </div>
-                                    <p class="text-xs text-slate-400 mt-1">Колір використовуватиметься для кнопок, посилань, заголовків та акцентів.</p>
+                                    <label>Головний колір</label>
+                                    {{ form.primary_color }}
                                 </div>
-                                <div class="mt-3">
-                                    <label for="{{ form.secondary_color.id_for_label }}" class="block text-sm font-semibold text-slate-700">Додатковий колір</label>
-                                    <div class="flex items-center gap-3">
-                                        {{ form.secondary_color }}
-                                        <span class="text-sm text-slate-500">Оберіть додатковий колір (для hover-ефектів тощо)</span>
-                                    </div>
+                                <div class="mt-2">
+                                    <label>Додатковий колір</label>
+                                    {{ form.secondary_color }}
                                 </div>
                             </div>
                         </div>
@@ -188,79 +126,231 @@
                 <div class="tab-pane" id="tab-menu">
                     <div class="card-shadow">
                         <div class="card-header">Меню та налаштування турів</div>
-                        <div class="card-body space-y-6">
-                            <!-- Розділи для відображення -->
-                            <div>
-                                <label class="form-label fw-semibold">Оберіть розділи для відображення</label>
-                                <div class="mt-2 flex items-center gap-3">
-                                    {{ form.show_news }}
-                                    <label for="{{ form.show_news.id_for_label }}" class="text-sm text-slate-700">Новини</label>
-                                </div>
+                        <div class="card-body">
+                            <div class="mb-2">
+                                {{ form.show_news }}
+                                <label for="{{ form.show_news.id_for_label }}">Показувати новини</label>
                             </div>
-
-                            <!-- Новий блок: Для турів (спрощено) -->
-                            <div class="pt-2">
-                                <label class="form-label fw-semibold">Для турів</label>
-                                <div class="mt-2 space-y-3">
-                                    <div class="flex items-center gap-3">
-                                        {{ form.show_superadmin_tours }}
-                                        <label for="{{ form.show_superadmin_tours.id_for_label }}" class="text-sm text-slate-700">
-                                            Показувати тури суперадміна
-                                            <span class="text-xs text-slate-400 ml-1">(на вашому сайті відображатимуться тури, створені суперадміном; ви зможете додавати свої, але не редагувати чужі)</span>
-                                        </label>
-                                    </div>
-                                    <p class="text-xs text-slate-500 mt-1">
-                                        <i class="fa-regular fa-circle-question"></i> <strong>Як це працює:</strong>
-                                        Якщо ввімкнено – на сайті показуються тури суперадміна разом із вашими власними (ваші тури ви можете редагувати).<br>
-                                        Якщо вимкнено – відображаються тільки ваші власні тури.
-                                    </p>
-                                </div>
+                            <div class="mb-2">
+                                {{ form.show_superadmin_tours }}
+                                <label for="{{ form.show_superadmin_tours.id_for_label }}">Показувати тури суперадміна</label>
                             </div>
-
-                            <!-- Блок Додатково -->
-                            <div class="pt-4 border-t">
-                                <label class="form-label fw-semibold">Додатково</label>
-                                <div class="mt-2 flex items-center gap-3">
-                                    {{ form.show_operator_logos }}
-                                    <label for="{{ form.show_operator_logos.id_for_label }}" class="text-sm text-slate-700">Відображати логотипи туроператорів на сайті при пошуку турів</label>
-                                </div>
+                            <div class="mb-2">
+                                {{ form.show_operator_logos }}
+                                <label for="{{ form.show_operator_logos.id_for_label }}">Показувати логотипи туроператорів</label>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+               <!-- Вкладка Додатково -->
+<div class="tab-pane" id="tab-additional">
+    <div class="card-shadow">
+        <div class="card-header">
+            <i class="fas fa-layer-group me-2"></i>
+            Налаштування блоків та банерів
+        </div>
+        <div class="card-body">
+            <!-- 1. Активні блоки -->
+            <div class="border rounded p-3 mb-4">
+                <h6 class="fw-bold mb-3">
+                    <i class="fa-solid fa-check-square me-2"></i>
+                    Активні блоки:
+                </h6>
+                <div class="active-blocks-list" style="max-height: 300px; overflow-y: auto;">
+                    {% for block_id, block_name in all_blocks.items %}
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="active_blocks" value="{{ block_id }}" id="block_{{ block_id }}" {% if block_id in active_blocks %}checked{% endif %}>
+                            <label class="form-check-label" for="block_{{ block_id }}">{{ block_name }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <small class="text-muted mt-2 d-block">
+                    <i class="fa-solid fa-info-circle me-1"></i>
+                    Виберіть які блоки показувати на сайті
+                </small>
+            </div>
+
+            <!-- 2. Порядок блоків -->
+            <div class="border rounded p-3 mb-4">
+                <h6 class="fw-bold mb-3">
+                    <i class="fa-solid fa-arrow-up-wide-short me-2"></i>
+                    Порядок блоків:
+                </h6>
+                <div class="blocks-order-list" id="blocks-order-container">
+                    {% for block_id in blocks_order %}
+                        <div class="block-order-item mb-2 p-2 border rounded d-flex justify-content-between align-items-center" data-block="{{ block_id }}">
+                            <div class="d-flex align-items-center">
+                                <i class="
+                                    {% if block_id == 'price_calendar' %}fa-regular fa-calendar me-2
+                                    {% elif block_id == 'recommended_tours' %}fa-regular fa-star me-2
+                                    {% elif block_id == 'consultation' %}fa-regular fa-message me-2
+                                    {% elif block_id == 'popular_hotels' %}fa-regular fa-building me-2
+                                    {% elif block_id == 'about_us' %}fa-regular fa-circle-info me-2
+                                    {% elif block_id == 'popular_destinations' %}fa-regular fa-compass me-2
+                                    {% elif block_id == 'tours_from_city' %}fa-regular fa-city me-2
+                                    {% elif block_id == 'banners' %}fa-regular fa-image me-2
+                                    {% else %}fa-regular fa-square me-2
+                                    {% endif %}"></i>
+                                <strong>
+                                    {% if block_id == 'price_calendar' %} Календар низьких цін
+                                    {% elif block_id == 'recommended_tours' %} Рекомендовані тури
+                                    {% elif block_id == 'consultation' %} Консультація
+                                    {% elif block_id == 'popular_hotels' %} Популярні готелі
+                                    {% elif block_id == 'about_us' %} Про нас
+                                    {% elif block_id == 'popular_destinations' %} Популярні напрямки
+                                    {% elif block_id == 'tours_from_city' %} Тури з вашого міста
+                                    {% elif block_id == 'banners' %} Мої банери
+                                    {% else %}{{ block_id }}
+                                    {% endif %}
+                                </strong>
+                            </div>
+                            <div class="btn-group" style="gap: 5px;">
+                                <button type="button" class="move-up btn btn-sm btn-outline-secondary" style="width: 32px;" title="Перемістити вгору">
+                                    <i class="fa-solid fa-chevron-up"></i>
+                                </button>
+                                <button type="button" class="move-down btn btn-sm btn-outline-secondary" style="width: 32px;" title="Перемістити вниз">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <small class="text-muted mt-2 d-block">
+                    <i class="fa-solid fa-arrow-up me-1"></i> <i class="fa-solid fa-arrow-down me-1"></i>
+                    Використовуйте кнопки для зміни порядку відображення блоків на вашому сайті
+                </small>
+            </div>
+
+            <!-- 3. Мої банери -->
+            <div class="border rounded p-3 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0">
+                        <i class="fa-solid fa-images me-2"></i>
+                        Мої банери
+                    </h6>
+                    <button type="button" class="btn btn-sm btn-primary" id="openBannerModalBtn">
+                        <i class="fa-solid fa-plus me-1"></i> Додати банер
+                    </button>
+                </div>
+                <div class="banners-list" id="banners-list">
+                    {% for banner in banners %}
+                        <div class="banner-item mb-2 p-2 border rounded d-flex justify-content-between align-items-center" data-index="{{ forloop.counter0 }}">
+                            <div class="d-flex align-items-center gap-2">
+                                {% if banner.image %}
+                                    <img src="{{ banner.image }}" style="max-height: 40px; width: auto; border-radius: 4px;">
+                                {% else %}
+                                    <div style="width: 40px; height: 40px; background: #f0f0f0; border-radius: 4px;"></div>
+                                {% endif %}
+                                <span class="text-muted small">{{ banner.title|default:"Без назви"|truncatechars:30 }}</span>
+                            </div>
+                            <div>
+                                <button class="edit-banner btn btn-sm btn-outline-primary me-1" data-index="{{ forloop.counter0 }}" title="Редагувати">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button class="delete-banner btn btn-sm btn-danger" data-index="{{ forloop.counter0 }}" title="Видалити">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="text-center py-4 text-muted">
+                            <i class="fa-solid fa-images fa-2x mb-2"></i>
+                            <p class="mb-0">Немає банерів. Додайте перший банер!</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- 4. Блок "Про нас" -->
+            <div class="border rounded p-3">
+                <h6 class="fw-bold mb-3">
+                    <i class="fa-solid fa-building me-2"></i>
+                    Блок "Про нас"
+                </h6>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Заголовок</label>
+                    {{ form.about_us_title }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Текст</label>
+                    {{ form.about_us_text }}
+                </div>
+                <div>
+                    <label class="form-label small fw-bold">Фото</label>
+                    {{ form.about_us_image }}
+                    {% if agent_site.about_us_image %}
+                        <div class="mt-2">
+                            <img src="{{ agent_site.about_us_image.url }}" style="max-height: 100px;" class="rounded">
+                            <button type="button" class="btn btn-sm btn-danger mt-1" id="clearAboutUsImageBtn">Очистити фото</button>
+                        </div>
+                    {% endif %}
+                    <small class="text-muted">Рекомендований розмір: 800×600px. Формати: JPG, PNG</small>
+                </div>
+            </div>
+        </div>
+
                     </div>
                 </div>
             </form>
         </div>
     </div>
+</div>
 
-    <!-- ===== БЛОК ДЛЯ ПЕРЕВІРКИ КОЛЬОРІВ ===== -->
-    <div class="mt-5 p-4 bg-light rounded" style="max-width: 80rem; margin: 2rem auto 0;">
-        <h5 class="fw-bold mb-3">🔧 Поточні кольори (діагностика)</h5>
-        <div class="row">
-            <div class="col-md-6">
-                <p class="mb-2">
-                    <strong>Головний колір:</strong><br>
-                    <span style="display: inline-block; width: 60px; height: 30px; background-color: {{ agent_site.primary_color|default:'#086745' }}; border: 1px solid #ccc; border-radius: 4px; vertical-align: middle;"></span>
-                    <code class="ms-2">{{ agent_site.primary_color|default:'#086745' }}</code>
-                </p>
-            </div>
-            <div class="col-md-6">
-                <p class="mb-2">
-                    <strong>Додатковий колір (hover):</strong><br>
-                    <span style="display: inline-block; width: 60px; height: 30px; background-color: {{ agent_site.secondary_color|default:'#02432c' }}; border: 1px solid #ccc; border-radius: 4px; vertical-align: middle;"></span>
-                    <code class="ms-2">{{ agent_site.secondary_color|default:'#02432c' }}</code>
-                </p>
-            </div>
+<!-- Модальне вікно для банерів -->
+<div id="bannerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10000;">
+    <div style="background:white; max-width:700px; margin:50px auto; padding:20px; border-radius:10px;">
+        <div style="display:flex; justify-content:space-between;">
+            <h3 id="bannerModalTitle">Додати банер</h3>
+            <button class="close-banner-modal">&times;</button>
         </div>
-        <hr class="my-3">
-        <p class="text-muted small mb-0">
-            <i class="fa-regular fa-lightbulb"></i>
-            Після зміни кольорів натисніть <strong>"Зберегти зміни"</strong>, потім <strong>"Відкрити сайт"</strong>.
+        <form id="bannerForm" enctype="multipart/form-data">
+            <input type="hidden" name="banner_id" id="editBannerId">
 
-        </p>
+            <div class="mb-2">
+                <label>Зображення</label>
+                <input type="file" name="image_file" id="bannerImageInput" accept="image/*">
+                <div id="imagePreview" style="display:none;"><img id="previewImg" style="max-height:100px;"></div>
+            </div>
+
+            <div class="mb-2">
+                <label>Посилання</label>
+                <input type="url" name="link" id="bannerLink" class="form-control">
+            </div>
+
+            <div class="mb-2">
+                <label>Позиція</label>
+                <select name="position" id="bannerPosition" class="form-select">
+                    <option value="full">На всю ширину</option>
+                    <option value="left">Зліва</option>
+                    <option value="center">По центру</option>
+                    <option value="right">Справа</option>
+                </select>
+            </div>
+
+            <div class="mb-2">
+                <label>Затемнення: <span id="opacityValue">0.4</span></label>
+                <input type="range" name="overlay_opacity" min="0" max="0.8" step="0.05" value="0.4" id="overlayOpacity">
+            </div>
+
+            <hr>
+            <h5>Текстові блоки</h5>
+            <div id="textBlocksContainer"></div>
+            <button type="button" id="addTextBlockBtn" class="btn btn-sm btn-outline-primary mt-2">+ Додати текстовий блок</button>
+
+            <hr>
+            <h5>Попередній перегляд</h5>
+            <div id="bannerPreview" style="height:200px; background:#ccc; position:relative; border-radius:8px; background-size:cover;">
+                <div id="previewOverlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.4); border-radius:8px;"></div>
+                <div id="previewContent" style="position:relative; height:100%;"></div>
+            </div>
+
+            <div class="mt-3">
+                <button type="button" id="saveBannerBtn" class="btn btn-primary">Зберегти</button>
+                <button type="button" class="close-banner-modal btn btn-secondary">Скасувати</button>
+            </div>
+        </form>
     </div>
-    <!-- ===== КІНЕЦЬ БЛОКУ ДІАГНОСТИКИ ===== -->
-
-    <!-- DEBUG: agent_site = {{ agent_site }}, slug = {{ agent_site.slug }} -->
 </div>
 
 <style>
@@ -273,16 +363,23 @@
         --bg-light: #f8f9fa;
     }
 
-    .max-w-4xl { max-width: 80rem; width: 100%; margin-left: auto; margin-right: auto; }
+    /* ========== ЗАГАЛЬНІ СТИЛІ ========== */
+    .max-w-4xl {
+        max-width: 80rem;
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
     html {
         overflow-y: scroll;
     }
+
     body {
         overflow-x: hidden;
     }
 
-    /* КНОПКИ (гарні, як було раніше) */
+    /* ========== КНОПКИ ========== */
     .btn-primary-custom, .btn-outline-custom {
         display: inline-flex;
         align-items: center;
@@ -296,27 +393,31 @@
         text-decoration: none;
         background-color: white;
     }
+
     .btn-primary-custom {
         background-color: var(--primary-color);
         color: white;
         box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
+
     .btn-primary-custom:hover {
         background-color: var(--primary-dark);
         transform: translateY(-1px);
         box-shadow: 0 2px 6px rgba(8,103,69,0.2);
     }
+
     .btn-outline-custom {
         border-color: #cbd5e1;
         color: #1e293b;
         background: white;
     }
+
     .btn-outline-custom:hover {
         background-color: #f8fafc;
         border-color: #94a3b8;
         transform: translateY(-1px);
     }
-    /* Кнопка "Згенерувати ШІ" – сіра, білий текст, без переносу */
+
     .btn-generate-ai {
         background-color: #64748b;
         border: none;
@@ -331,14 +432,12 @@
         display: inline-flex;
         align-items: center;
     }
+
     .btn-generate-ai:hover {
         background-color: #475569;
     }
-    .btn-generate-ai i, .btn-generate-ai svg {
-        margin-right: 0.25rem;
-    }
 
-    /* Кнопки "Очистити" – червоні, стильні */
+    /* ========== КНОПКИ ОЧИЩЕННЯ ========== */
     .clear-logo-btn {
         display: inline-flex;
         align-items: center;
@@ -353,15 +452,13 @@
         cursor: pointer;
         transition: all 0.2s;
     }
+
     .clear-logo-btn:hover {
         background-color: #dc2626;
         border-color: #dc2626;
         color: white;
     }
-    .clear-logo-btn i {
-        font-size: 0.7rem;
-    }
-    /* Кнопка очищення фону (поверх прев'ю) */
+
     #clearHeroBtn {
         background-color: #dc2626 !important;
         color: white !important;
@@ -374,12 +471,13 @@
         transition: all 0.2s;
         box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
+
     #clearHeroBtn:hover {
         background-color: #b91c1c !important;
         transform: scale(1.02);
     }
 
-    /* КОНТЕЙНЕР */
+    /* ========== ТАБИ ========== */
     .tabs-container {
         display: grid;
         background: white;
@@ -388,7 +486,6 @@
         min-height: 500px;
     }
 
-    /* HEADER */
     .tabs-list {
         display: flex;
         gap: 0.5rem;
@@ -408,17 +505,12 @@
         transition: 0.2s;
     }
 
-    .tab-trigger i {
-        margin-right: 0.25rem;
-    }
-
     .tab-trigger.active {
         background: white;
         color: var(--primary-color);
         box-shadow: 0 -2px 0 var(--primary-color) inset;
     }
 
-    /* GRID OVERLAY для плавного перемикання без стрибків */
     form {
         display: grid;
     }
@@ -439,7 +531,7 @@
         z-index: 1;
     }
 
-    /* КАРТКИ */
+    /* ========== КАРТКИ ========== */
     .card-shadow {
         background: white;
         border-radius: 0.75rem;
@@ -455,7 +547,7 @@
         padding: 1.5rem;
     }
 
-    /* INPUTS */
+    /* ========== ПОЛЯ ФОРМИ ========== */
     input:not([type="checkbox"]):not([type="file"]), select, textarea {
         width: 100%;
         padding: 0.5rem 0.75rem;
@@ -470,7 +562,7 @@
         box-shadow: 0 0 0 2px rgba(8,103,69,0.25);
     }
 
-    /* FILE INPUT */
+    /* ========== ФАЙЛОВІ ПОЛЯ ========== */
     .custom-file-input {
         display: flex;
         gap: 0.5rem;
@@ -502,140 +594,924 @@
         text-overflow: ellipsis;
     }
 
-    /* HERO */
     .hero-file-line {
         display: flex;
         gap: 0.75rem;
         align-items: center;
     }
 
-    /* UTIL */
-    .flex { display: flex; }
-    .items-center { align-items: center; }
-    .gap-3 { gap: 0.75rem; }
+    /* ========== УТИЛІТИ ========== */
+    .flex {
+        display: flex;
+    }
+
+    .items-center {
+        align-items: center;
+    }
+
+    .gap-3 {
+        gap: 0.75rem;
+    }
+
     .mt-1 { margin-top: 0.25rem; }
     .mt-2 { margin-top: 0.5rem; }
     .mt-3 { margin-top: 0.75rem; }
+    .mt-4 { margin-top: 1rem; }
     .mt-5 { margin-top: 2rem; }
-    .pt-4 { padding-top: 1rem; }
-    .border-t { border-top: 1px solid #e2e8f0; }
-    .w-full { width: 100%; }
-    .h-32 { height: 8rem; }
-    .rounded-md { border-radius: 0.5rem; }
-    .text-xs { font-size: 0.75rem; }
-    .text-sm { font-size: 0.875rem; }
-    .text-base { font-size: 1rem; }
-    .relative { position: relative; }
-    .absolute { position: absolute; }
-    .top-2 { top: 0.5rem; }
-    .right-2 { right: 0.5rem; }
-    .hidden { display: none; }
-    .mr-1 { margin-right: 0.25rem; }
-    .space-y-4 > * + * { margin-top: 1rem; }
-    .space-y-6 > * + * { margin-top: 1.5rem; }
-    .bg-light { background-color: #f8f9fa; }
-    .p-4 { padding: 1.5rem; }
-    .rounded { border-radius: 0.5rem; }
-    .fw-bold { font-weight: 700; }
+
     .mb-0 { margin-bottom: 0; }
     .mb-2 { margin-bottom: 0.5rem; }
     .mb-3 { margin-bottom: 1rem; }
-    .my-3 { margin-top: 0.75rem; margin-bottom: 0.75rem; }
-    .ms-2 { margin-left: 0.5rem; }
-    .me-2 { margin-right: 0.5rem; }
-    .row { display: flex; flex-wrap: wrap; }
-    .col-md-6 { flex: 0 0 auto; width: 50%; }
+    .mb-4 { margin-bottom: 1.5rem; }
+
+    .pt-4 { padding-top: 1rem; }
+
+    .border-t {
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .w-full {
+        width: 100%;
+    }
+
+    .h-32 {
+        height: 8rem;
+    }
+
+    .rounded-md {
+        border-radius: 0.5rem;
+    }
+
+    .text-xs {
+        font-size: 0.75rem;
+    }
+
+    .text-sm {
+        font-size: 0.875rem;
+    }
+
+    .relative {
+        position: relative;
+    }
+
+    .absolute {
+        position: absolute;
+    }
+
+    .top-2 {
+        top: 0.5rem;
+    }
+
+    .right-2 {
+        right: 0.5rem;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .mr-1 {
+        margin-right: 0.25rem;
+    }
+
+    .space-y-4 > * + * {
+        margin-top: 1rem;
+    }
+
+    .space-y-6 > * + * {
+        margin-top: 1.5rem;
+    }
+
+    .bg-light {
+        background-color: #f8f9fa;
+    }
+
+    .p-4 {
+        padding: 1.5rem;
+    }
+
+    .rounded {
+        border-radius: 0.5rem;
+    }
+
+    .fw-bold {
+        font-weight: 700;
+    }
+
+    .ms-2 {
+        margin-left: 0.5rem;
+    }
+
+    .me-2 {
+        margin-right: 0.5rem;
+    }
+
+    .my-3 {
+        margin-top: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    /* ========== СІТКА ========== */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .col-md-6 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
     @media (max-width: 768px) {
-        .col-md-6 { width: 100%; }
+        .col-md-6 {
+            width: 100%;
+        }
+    }
+
+    /* ========== БЛОКИ ПОРЯДКУ ========== */
+    .block-order-item {
+        transition: all 0.2s ease;
+        background-color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .block-order-item:hover {
+        background-color: #f8f9fa;
+        border-color: var(--primary-color) !important;
+    }
+
+    .block-order-item .block-name {
+        font-size: 0.9rem;
+    }
+
+    .block-order-item .btn-group {
+        display: flex;
+        gap: 5px;
+        flex-shrink: 0;
+    }
+
+    .block-order-item .move-up,
+    .block-order-item .move-down {
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px !important;
+        width: 32px;
+        height: 32px;
+        border: 1px solid #ced4da;
+        background: white;
+        cursor: pointer;
+    }
+
+    .block-order-item .move-up:hover:not(:disabled),
+    .block-order-item .move-down:hover:not(:disabled) {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+        border-color: var(--primary-color) !important;
+        transform: translateY(-1px);
+    }
+
+    .block-order-item .move-up:disabled,
+    .block-order-item .move-down:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* ========== БАНЕРИ ========== */
+    .banner-item {
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        background: white;
+    }
+
+    .banner-item:hover {
+        border-color: var(--primary-color);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .banner-item .flex-grow-1 {
+        flex: 1;
+    }
+
+    .banner-item img {
+        max-height: 80px;
+        width: auto;
+        border-radius: 0.375rem;
+    }
+
+    .banner-item .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    /* ========== ТЕКСТОВІ БЛОКИ (МОДАЛЬНЕ ВІКНО) ========== */
+    .text-block-item {
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: #f8f9fa;
+    }
+
+    .text-block-item .row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .text-block-item .col-md-6 {
+        flex: 1;
+    }
+
+    .text-block-item .form-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        display: block;
+    }
+
+    .text-block-item .form-control {
+        font-size: 0.875rem;
+        padding: 0.375rem 0.5rem;
+    }
+
+    .remove-text-block {
+        background: none;
+        border: none;
+        color: #dc2626;
+        cursor: pointer;
+        font-size: 0.75rem;
+    }
+
+    .remove-text-block:hover {
+        text-decoration: underline;
+    }
+
+    /* ========== МОДАЛЬНЕ ВІКНО ========== */
+    #bannerModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        overflow-y: auto;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    #bannerModal .modal-dialog {
+        max-width: 800px;
+        width: 100%;
+        margin: 20px auto;
+    }
+
+    #bannerModal .modal-content {
+        background: white;
+        border-radius: 16px;
+        max-height: none;
+        overflow-y: visible;
+        position: relative;
+    }
+
+    #bannerModal .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+        border-radius: 16px 16px 0 0;
+    }
+
+    #bannerModal .modal-body {
+        padding: 20px;
+        max-height: calc(90vh - 130px);
+        overflow-y: auto;
+    }
+
+    #bannerModal .modal-footer {
+        padding: 20px;
+        border-top: 1px solid #dee2e6;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        position: sticky;
+        bottom: 0;
+        background: white;
+        z-index: 10;
+        border-radius: 0 0 16px 16px;
+    }
+
+    /* Стилі для скролбару */
+    #bannerModal .modal-body::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #bannerModal .modal-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    #bannerModal .modal-body::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 3px;
+    }
+
+    #bannerModal .modal-body::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+    }
+
+    /* ========== ПОПЕРЕДНІЙ ПЕРЕГЛЯД БАНЕРА ========== */
+    #bannerPreview {
+        position: relative;
+        background: #f0f0f0;
+        border-radius: 12px;
+        overflow: hidden;
+        min-height: 250px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    #previewOverlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 12px;
+    }
+
+    #previewContent {
+        position: relative;
+        padding: 20px;
+        width: 100%;
+        height: 100%;
+        min-height: 250px;
+        z-index: 2;
+    }
+
+    /* ========== ДІАПАЗОН (RANGE) ========== */
+    .form-range {
+        width: 100%;
+        height: 6px;
+        -webkit-appearance: none;
+        background: #e2e8f0;
+        border-radius: 3px;
+    }
+
+    .form-range::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        cursor: pointer;
+    }
+
+    /* ========== ПОЛЯ КОЛЬОРУ ========== */
+    .form-control-color {
+        width: 60px;
+        height: 38px;
+        padding: 0;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.5rem;
+    }
+
+    /* ========== HR ========== */
+    hr {
+        margin: 1.5rem 0;
+        border: 0;
+        border-top: 1px solid #e2e8f0;
     }
 </style>
 
 <script>
-    // Перемикання табів
-    document.querySelectorAll('.tab-trigger').forEach(trigger => {
-        trigger.addEventListener('click', () => {
-            const tabId = trigger.dataset.tab;
-            document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
-            trigger.classList.add('active');
-            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-        });
+// ========== ОСНОВНІ ЗМІННІ ==========
+let textBlockCount = 1;
+
+// ========== ПЕРЕМИКАННЯ ТАБІВ ==========
+document.querySelectorAll('.tab-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+        const tabId = trigger.dataset.tab;
+        document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
+        trigger.classList.add('active');
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+        document.getElementById(`tab-${tabId}`).classList.add('active');
+    });
+});
+
+// ========== HERO ФОН ==========
+const heroInput = document.getElementById('id_hero_background');
+const heroDisplay = document.getElementById('hero_file_name');
+const heroPreviewContainer = document.getElementById('hero_preview_container');
+const heroPreview = document.getElementById('hero_preview');
+const clearHeroBtn = document.getElementById('clearHeroBtn');
+
+if (heroInput) {
+    heroInput.addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            heroDisplay.textContent = this.files[0].name;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                if (heroPreview) heroPreview.src = ev.target.result;
+                if (heroPreviewContainer) heroPreviewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+}
+
+if (clearHeroBtn) {
+    clearHeroBtn.addEventListener('click', function() {
+        heroInput.value = '';
+        heroDisplay.textContent = 'Файл не вибрано';
+        if (heroPreviewContainer) heroPreviewContainer.style.display = 'none';
+        let cf = document.querySelector('input[name="hero_background-clear"]');
+        if (!cf) {
+            cf = document.createElement('input');
+            cf.type = 'hidden';
+            cf.name = 'hero_background-clear';
+            cf.value = 'on';
+            heroInput.parentNode.appendChild(cf);
+        } else {
+            cf.value = 'on';
+        }
+    });
+}
+
+// ========== ЛОГОТИПИ ==========
+document.querySelectorAll('.clear-logo-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const field = this.dataset.field;
+        const input = document.getElementById(`id_${field}`);
+        const span = document.getElementById(`${field}_display`);
+        if (input) {
+            input.value = '';
+            span.textContent = 'Файл не вибрано';
+            this.style.display = 'none';
+            let cf = document.querySelector(`input[name="${field}-clear"]`);
+            if (!cf) {
+                cf = document.createElement('input');
+                cf.type = 'hidden';
+                cf.name = `${field}-clear`;
+                cf.value = 'on';
+                input.parentNode.parentNode.appendChild(cf);
+            } else {
+                cf.value = 'on';
+            }
+        }
+    });
+});
+
+// ========== ПОРЯДОК БЛОКІВ ==========
+function updateBlocksOrder() {
+    const items = document.querySelectorAll('#blocks-order-container .block-order-item');
+    const form = document.getElementById('site-form');
+    form.querySelectorAll('input[name="blocks_order"]').forEach(el => el.remove());
+    items.forEach((item, idx) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'blocks_order';
+        input.value = item.dataset.block;
+        form.appendChild(input);
+    });
+}
+
+function updateActiveBlocks() {
+    const form = document.getElementById('site-form');
+    form.querySelectorAll('input[name="active_blocks"]').forEach(el => el.remove());
+    document.querySelectorAll('.active-blocks-list input[type="checkbox"]:checked').forEach(cb => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'active_blocks';
+        input.value = cb.value;
+        form.appendChild(input);
+    });
+}
+
+document.querySelectorAll('.move-up').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const item = this.closest('.block-order-item');
+        const prev = item.previousElementSibling;
+        if (prev) item.parentNode.insertBefore(item, prev);
+        updateBlocksOrder();
+    });
+});
+
+document.querySelectorAll('.move-down').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const item = this.closest('.block-order-item');
+        const next = item.nextElementSibling;
+        if (next) item.parentNode.insertBefore(next, item);
+        updateBlocksOrder();
+    });
+});
+
+document.getElementById('site-form')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    updateBlocksOrder();
+    updateActiveBlocks();
+    this.submit();
+});
+
+// ========== ФУНКЦІЇ ДЛЯ БАНЕРІВ ==========
+function updatePreview() {
+    const previewContent = document.getElementById('previewContent');
+    const overlayOpacity = document.getElementById('overlayOpacity')?.value || 0.4;
+    const previewOverlay = document.getElementById('previewOverlay');
+    if (previewOverlay) previewOverlay.style.backgroundColor = `rgba(0,0,0,${overlayOpacity})`;
+    document.getElementById('opacityValue')?.setAttribute('value', overlayOpacity);
+    if (!previewContent) return;
+    previewContent.innerHTML = '';
+
+    document.querySelectorAll('.text-block-item').forEach(block => {
+        const heading = block.querySelector('[name^="heading_"]')?.value || '';
+        const text = block.querySelector('[name^="text_"]')?.value || '';
+        const headingColor = block.querySelector('[name^="heading_color_"]')?.value || '#ffffff';
+        const textColor = block.querySelector('[name^="text_color_"]')?.value || '#ffffff';
+        const position = block.querySelector('[name^="position_"]')?.value || 'center';
+        const buttonText = block.querySelector('[name^="button_text_"]')?.value || '';
+        const buttonColor = block.querySelector('[name^="button_color_"]')?.value || '#086745';
+
+        const div = document.createElement('div');
+        div.style.position = 'absolute';
+        div.style.padding = '15px';
+        div.style.width = '100%';
+        div.style.display = 'flex';
+        div.style.flexDirection = 'column';
+
+        const posMap = {
+            'top-left': 'top:0;left:0;align-items:flex-start;text-align:left',
+            'top-center': 'top:0;left:0;align-items:center;text-align:center',
+            'top-right': 'top:0;right:0;align-items:flex-end;text-align:right',
+            'center-left': 'top:50%;left:0;transform:translateY(-50%);align-items:flex-start',
+            'center': 'top:50%;left:50%;transform:translate(-50%,-50%);align-items:center;text-align:center',
+            'center-right': 'top:50%;right:0;transform:translateY(-50%);align-items:flex-end;text-align:right',
+            'bottom-left': 'bottom:0;left:0;align-items:flex-start',
+            'bottom-center': 'bottom:0;left:0;align-items:center;text-align:center',
+            'bottom-right': 'bottom:0;right:0;align-items:flex-end;text-align:right'
+        };
+        div.style.cssText = posMap[position] || posMap['center'];
+
+        if (heading) {
+            const h = document.createElement('h3');
+            h.textContent = heading;
+            h.style.cssText = `color:${headingColor};margin:0;font-size:24px;font-weight:bold;text-shadow:1px 1px 2px rgba(0,0,0,0.3)`;
+            div.appendChild(h);
+        }
+        if (text) {
+            const p = document.createElement('p');
+            p.textContent = text;
+            p.style.cssText = `color:${textColor};margin:8px 0 0;font-size:14px;text-shadow:1px 1px 1px rgba(0,0,0,0.3)`;
+            div.appendChild(p);
+        }
+        if (buttonText) {
+            const btn = document.createElement('button');
+            btn.textContent = buttonText;
+            btn.style.cssText = `background:${buttonColor};color:white;border:none;padding:6px 16px;border-radius:20px;margin-top:10px;cursor:pointer`;
+            div.appendChild(btn);
+        }
+        previewContent.appendChild(div);
+    });
+}
+
+function addTextBlock() {
+    textBlockCount++;
+    const id = textBlockCount;
+    const html = `
+        <div class="text-block-item" data-block-id="${id}">
+            <div style="display:flex; justify-content:space-between;">
+                <strong>Блок #${id}</strong>
+                <button type="button" class="remove-text-block btn btn-sm btn-danger">Видалити</button>
+            </div>
+            <div class="row">
+                <div class="col-md-6"><label>Заголовок</label><input type="text" name="heading_${id}" class="form-control"></div>
+                <div class="col-md-6"><label>Колір заголовка</label><input type="color" name="heading_color_${id}" class="form-control" value="#ffffff"></div>
+            </div>
+            <div><label>Підтекст</label><textarea name="text_${id}" class="form-control" rows="2"></textarea></div>
+            <div class="row">
+                <div class="col-md-6"><label>Колір підтексту</label><input type="color" name="text_color_${id}" class="form-control" value="#ffffff"></div>
+                <div class="col-md-6">
+                    <label>Позиція</label>
+                    <select name="position_${id}" class="form-control">
+                        <option value="top-left">Вгорі зліва</option><option value="top-center">Вгорі по центру</option><option value="top-right">Вгорі справа</option>
+                        <option value="center-left">По центру зліва</option><option value="center">По центру</option><option value="center-right">По центру справа</option>
+                        <option value="bottom-left">Внизу зліва</option><option value="bottom-center">Внизу по центру</option><option value="bottom-right">Внизу справа</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6"><label>Текст кнопки</label><input type="text" name="button_text_${id}" class="form-control"></div>
+                <div class="col-md-6"><label>Колір кнопки</label><input type="color" name="button_color_${id}" class="form-control" value="#086745"></div>
+            </div>
+            <div><label>Посилання на кнопці</label><input type="url" name="button_link_${id}" class="form-control"></div>
+        </div>
+    `;
+    document.getElementById('textBlocksContainer').insertAdjacentHTML('beforeend', html);
+    updatePreview();
+}
+
+function addTextBlockWithData(data, id) {
+    const html = `
+        <div class="text-block-item" data-block-id="${id}">
+            <div style="display:flex; justify-content:space-between;">
+                <strong>Блок #${id}</strong>
+                <button type="button" class="remove-text-block btn btn-sm btn-danger">Видалити</button>
+            </div>
+            <div class="row">
+                <div class="col-md-6"><label>Заголовок</label><input type="text" name="heading_${id}" class="form-control" value="${(data.heading || '').replace(/"/g, '&quot;')}"></div>
+                <div class="col-md-6"><label>Колір заголовка</label><input type="color" name="heading_color_${id}" class="form-control" value="${data.heading_color || '#ffffff'}"></div>
+            </div>
+            <div><label>Підтекст</label><textarea name="text_${id}" class="form-control" rows="2">${(data.text || '').replace(/"/g, '&quot;')}</textarea></div>
+            <div class="row">
+                <div class="col-md-6"><label>Колір підтексту</label><input type="color" name="text_color_${id}" class="form-control" value="${data.text_color || '#ffffff'}"></div>
+                <div class="col-md-6">
+                    <label>Позиція</label>
+                    <select name="position_${id}" class="form-control">
+                        <option value="top-left" ${data.position === 'top-left' ? 'selected' : ''}>Вгорі зліва</option>
+                        <option value="top-center" ${data.position === 'top-center' ? 'selected' : ''}>Вгорі по центру</option>
+                        <option value="top-right" ${data.position === 'top-right' ? 'selected' : ''}>Вгорі справа</option>
+                        <option value="center-left" ${data.position === 'center-left' ? 'selected' : ''}>По центру зліва</option>
+                        <option value="center" ${data.position === 'center' ? 'selected' : ''}>По центру</option>
+                        <option value="center-right" ${data.position === 'center-right' ? 'selected' : ''}>По центру справа</option>
+                        <option value="bottom-left" ${data.position === 'bottom-left' ? 'selected' : ''}>Внизу зліва</option>
+                        <option value="bottom-center" ${data.position === 'bottom-center' ? 'selected' : ''}>Внизу по центру</option>
+                        <option value="bottom-right" ${data.position === 'bottom-right' ? 'selected' : ''}>Внизу справа</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6"><label>Текст кнопки</label><input type="text" name="button_text_${id}" class="form-control" value="${(data.button_text || '').replace(/"/g, '&quot;')}"></div>
+                <div class="col-md-6"><label>Колір кнопки</label><input type="color" name="button_color_${id}" class="form-control" value="${data.button_color || '#086745'}"></div>
+            </div>
+            <div><label>Посилання на кнопці</label><input type="url" name="button_link_${id}" class="form-control" value="${(data.button_link || '').replace(/"/g, '&quot;')}"></div>
+        </div>
+    `;
+    document.getElementById('textBlocksContainer').insertAdjacentHTML('beforeend', html);
+    updatePreview();
+}
+
+// ========== РЕДАГУВАННЯ БАНЕРА ==========
+function editBanner(index) {
+    console.log('Редагуємо банер індекс:', index);
+    fetch(`/constructor/banner/get/${index}/`, {
+        method: 'GET',
+        headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const b = data.banner;
+            document.getElementById('bannerModalTitle').innerHTML = 'Редагувати банер';
+            document.getElementById('editBannerId').value = index;
+            document.getElementById('bannerLink').value = b.link || '';
+            document.getElementById('bannerPosition').value = b.position || 'full';
+            document.getElementById('overlayOpacity').value = b.overlay_opacity || 0.4;
+
+            const container = document.getElementById('textBlocksContainer');
+            container.innerHTML = '';
+            textBlockCount = 0;
+
+            if (b.text_blocks && b.text_blocks.length) {
+                b.text_blocks.forEach(block => {
+                    textBlockCount++;
+                    addTextBlockWithData(block, textBlockCount);
+                });
+            } else {
+                addTextBlock();
+            }
+
+            if (b.image) {
+                document.getElementById('previewImg').src = b.image;
+                document.getElementById('imagePreview').style.display = 'block';
+                const bp = document.getElementById('bannerPreview');
+                bp.style.backgroundImage = `url(${b.image})`;
+                bp.style.backgroundSize = 'cover';
+                bp.style.backgroundPosition = 'center';
+            }
+
+            document.getElementById('bannerModal').style.display = 'block';
+            updatePreview();
+        }
+    })
+    .catch(error => console.error('Помилка:', error));
+}
+
+// ========== ЗБЕРЕЖЕННЯ БАНЕРА ==========
+function saveBanner() {
+    const form = document.getElementById('bannerForm');
+    const formData = new FormData(form);
+    const fileInput = form.querySelector('input[type="file"]');
+    const editId = document.getElementById('editBannerId').value;
+
+    if (!editId && fileInput && !fileInput.files.length) {
+        alert('Виберіть зображення');
+        return;
+    }
+
+    const saveBtn = document.getElementById('saveBannerBtn');
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = 'Збереження...';
+
+    fetch('/constructor/banner/create/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}' },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.error || 'Помилка');
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = 'Зберегти';
+        }
+    })
+    .catch(error => {
+        console.error('Помилка:', error);
+        alert('Помилка сервера');
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = 'Зберегти';
+    });
+}
+
+// ========== ІНІЦІАЛІЗАЦІЯ МОДАЛЬНОГО ВІКНА ТА ПОДІЙ ==========
+document.addEventListener('DOMContentLoaded', function() {
+    // Кнопка додавання текстового блоку
+    const addBtn = document.getElementById('addTextBlockBtn');
+    if (addBtn) addBtn.onclick = addTextBlock;
+
+    // Затемнення
+    const opacity = document.getElementById('overlayOpacity');
+    if (opacity) opacity.oninput = updatePreview;
+
+    // Збереження банера
+    const saveBtn = document.getElementById('saveBannerBtn');
+    if (saveBtn) saveBtn.onclick = saveBanner;
+
+    // Кнопки редагування банерів
+    document.querySelectorAll('.edit-banner').forEach(btn => {
+        btn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const index = this.getAttribute('data-index');
+            editBanner(index);
+        };
     });
 
-    // Функція для оновлення відображення імені файлу та прев'ю (для фону)
-    function setupFileInput(inputId, displaySpanId, previewImgId = null, clearBtnId = null) {
-        const input = document.getElementById(inputId);
-        if (!input) return;
-        const displaySpan = document.getElementById(displaySpanId);
-        input.addEventListener('change', function(e) {
-            if (this.files && this.files[0]) {
-                displaySpan.textContent = this.files[0].name;
-                if (previewImgId && previewImgId !== 'hero_preview') {
-                    // Для логотипів можна показувати прев'ю, але поки не робимо
-                }
-                if (clearBtnId) {
-                    document.getElementById(clearBtnId)?.classList.remove('hidden');
-                }
-            } else {
-                displaySpan.textContent = 'Файл не вибрано';
+    // Кнопки видалення банерів
+    document.querySelectorAll('.delete-banner').forEach(btn => {
+        btn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (confirm('Видалити банер?')) {
+                const index = this.getAttribute('data-index');
+                fetch(`/constructor/banner/delete/${index}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}' }
+                }).then(() => location.reload());
             }
-        });
+        };
+    });
+
+    // Відкриття модального вікна (Додати банер)
+    const openBtn = document.getElementById('openBannerModalBtn');
+    const modal = document.getElementById('bannerModal');
+    if (openBtn && modal) {
+        openBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('bannerModalTitle').innerHTML = 'Додати банер';
+            document.getElementById('editBannerId').value = '';
+            document.getElementById('bannerForm').reset();
+            document.getElementById('overlayOpacity').value = 0.4;
+            document.getElementById('textBlocksContainer').innerHTML = '';
+            textBlockCount = 0;
+            addTextBlock();
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('bannerPreview').style.backgroundImage = '';
+            modal.style.display = 'block';
+        };
     }
 
-    // Для hero фону
-    const heroInput = document.getElementById('id_hero_background');
-    const heroDisplay = document.getElementById('hero_file_name');
-    const heroPreviewContainer = document.getElementById('hero_preview_container');
-    const heroPreview = document.getElementById('hero_preview');
-    const clearHeroBtn = document.getElementById('clearHeroBtn');
+    // Закриття модального вікна
+    document.querySelectorAll('.close-banner-modal').forEach(btn => {
+        btn.onclick = function() {
+            if (modal) modal.style.display = 'none';
+        };
+    });
+    if (modal) {
+        modal.onclick = function(e) {
+            if (e.target === modal) modal.style.display = 'none';
+        };
+    }
 
-    if (heroInput) {
-        heroInput.addEventListener('change', function(e) {
+    // Прев'ю зображення
+    const imgInput = document.getElementById('bannerImageInput');
+    if (imgInput) {
+        imgInput.onchange = function() {
             if (this.files && this.files[0]) {
-                heroDisplay.textContent = this.files[0].name;
                 const reader = new FileReader();
                 reader.onload = function(ev) {
-                    heroPreview.src = ev.target.result;
-                    heroPreviewContainer.classList.remove('hidden');
+                    document.getElementById('previewImg').src = ev.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                    const bp = document.getElementById('bannerPreview');
+                    bp.style.backgroundImage = `url(${ev.target.result})`;
+                    bp.style.backgroundSize = 'cover';
+                    bp.style.backgroundPosition = 'center';
                 };
                 reader.readAsDataURL(this.files[0]);
-            } else {
-                heroDisplay.textContent = 'Файл не вибрано';
-                heroPreviewContainer.classList.add('hidden');
             }
-        });
+        };
     }
 
-    if (clearHeroBtn) {
-        clearHeroBtn.addEventListener('click', function() {
-            heroInput.value = '';
-            heroDisplay.textContent = 'Файл не вибрано';
-            heroPreviewContainer.classList.add('hidden');
-            let clearField = document.querySelector('input[name="hero_background-clear"]');
+    // Видалення текстових блоків (делегування)
+    const container = document.getElementById('textBlocksContainer');
+    if (container) {
+        container.addEventListener('click', function(e) {
+            const btn = e.target.closest('.remove-text-block');
+            if (btn) {
+                const block = btn.closest('.text-block-item');
+                if (block && document.querySelectorAll('.text-block-item').length > 1) {
+                    block.remove();
+                    updatePreview();
+                } else if (block) {
+                    alert('Повинен бути хоча б один текстовий блок');
+                }
+            }
+        });
+        container.addEventListener('input', updatePreview);
+        container.addEventListener('change', updatePreview);
+    }
+
+    // Очищення фото "Про нас"
+    const clearAboutUsBtn = document.getElementById('clearAboutUsImageBtn');
+    if (clearAboutUsBtn) {
+        clearAboutUsBtn.addEventListener('click', function() {
+            const input = document.querySelector('input[name="about_us_image"]');
+            if (input) input.value = '';
+            let clearField = document.querySelector('input[name="about_us_image-clear"]');
             if (!clearField) {
                 clearField = document.createElement('input');
                 clearField.type = 'hidden';
-                clearField.name = 'hero_background-clear';
+                clearField.name = 'about_us_image-clear';
                 clearField.value = 'on';
-                heroInput.parentNode.appendChild(clearField);
+                clearAboutUsBtn.parentNode.appendChild(clearField);
             } else {
                 clearField.value = 'on';
             }
-            heroInput.value = '';
+            const img = this.closest('.border').querySelector('img');
+            if (img) img.remove();
+            this.style.display = 'none';
         });
     }
 
-    // Генерація ШІ (без підтвердження)
-    document.getElementById('generateAiBtn')?.addEventListener('click', function() {
+    updatePreview();
+});
+
+    // ========== ГЕНЕРАЦІЯ ШІ (ВИПРАВЛЕНО) ==========
+const generateBtn = document.getElementById('generateAiBtn');
+if (generateBtn) {
+    generateBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+
         const btn = this;
         const originalText = btn.innerHTML;
-        btn.innerHTML = '<svg class="animate-spin h-4 w-4 mr-1" ...></svg> Генерую...';
+        btn.innerHTML = '🔄 Генерую...';
         btn.disabled = true;
+
+        // Отримуємо CSRF токен
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
         fetch('/constructor/generate-image/', {
             method: 'POST',
             headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
             },
         })
         .then(response => {
@@ -651,75 +1527,14 @@
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            alert('Помилка зв\'язку з сервером');
+            console.error('Помилка:', error);
+            alert('Помилка при генерації. Спробуйте ще раз.');
         })
         .finally(() => {
             btn.innerHTML = originalText;
             btn.disabled = false;
         });
     });
-
-    // Обробка кнопок очищення для логотипів
-    document.querySelectorAll('.clear-logo-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            const field = this.dataset.field;
-            const fileInput = document.getElementById(`id_${field}`);
-            const displaySpan = document.getElementById(`${field}_display`);
-            if (fileInput) {
-                fileInput.value = '';
-                displaySpan.textContent = 'Файл не вибрано';
-                this.style.display = 'none';
-                let clearField = document.querySelector(`input[name="${field}-clear"]`);
-                if (!clearField) {
-                    clearField = document.createElement('input');
-                    clearField.type = 'hidden';
-                    clearField.name = `${field}-clear`;
-                    clearField.value = 'on';
-                    fileInput.parentNode.parentNode.appendChild(clearField);
-                } else {
-                    clearField.value = 'on';
-                }
-            }
-        });
-    });
-
-    // Оновлюємо відображення кнопки очищення при виборі файлу для логотипів
-    function setupLogoFileInput(inputId, displayId, fieldName) {
-        const input = document.getElementById(inputId);
-        if (!input) return;
-        const displaySpan = document.getElementById(displayId);
-        const clearBtn = document.querySelector(`.clear-logo-btn[data-field="${fieldName}"]`);
-        input.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                displaySpan.textContent = this.files[0].name;
-                if (clearBtn) clearBtn.style.display = 'inline-flex';
-                const clearField = document.querySelector(`input[name="${fieldName}-clear"]`);
-                if (clearField) clearField.remove();
-            } else {
-                displaySpan.textContent = 'Файл не вибрано';
-                if (clearBtn) clearBtn.style.display = 'none';
-            }
-        });
-    }
-
-    setupLogoFileInput('id_top_logo', 'top_logo_display', 'top_logo');
-    setupLogoFileInput('id_bottom_logo', 'bottom_logo_display', 'bottom_logo');
-
-    // Взаємовиключення галочок для турів
-    const useSuperadminCheckbox = document.querySelector('#id_use_superadmin_tours');
-    const createOwnCheckbox = document.querySelector('#id_create_own_tours');
-    if (useSuperadminCheckbox && createOwnCheckbox) {
-        useSuperadminCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                createOwnCheckbox.checked = false;
-            }
-        });
-        createOwnCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                useSuperadminCheckbox.checked = false;
-            }
-        });
-    }
+}
 </script>
 {% endblock %}

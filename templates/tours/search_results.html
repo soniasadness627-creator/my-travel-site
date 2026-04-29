@@ -3,117 +3,132 @@
 
 {% block content %}
 <div class="container my-4">
+    <!-- КНОПКА ДЛЯ ВІДКРИТТЯ ФІЛЬТРІВ НА ТЕЛЕФОНІ -->
+    <div class="d-block d-lg-none mb-3">
+        <button class="btn btn-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#filtersCollapse" aria-expanded="false" aria-controls="filtersCollapse">
+            <i class="fa-solid fa-filter me-2"></i> Показати фільтри
+        </button>
+    </div>
+
     <div class="row">
         <!-- Ліва колонка: фільтри -->
         <div class="col-lg-3">
-            <form method="get" action="{% if agent_site %}{% url 'agent_search' agent_site.slug %}{% else %}{% url 'search_results' %}{% endif %}" id="filterForm">
-                <h4>Фільтри</h4>
-
-                <!-- Рейтинг готелю -->
-<div class="mt-3">
-    <h6>Рейтинг готелю</h6>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="rating" value="1" id="rating1" {% if '1' in request.GET.rating %}checked{% endif %}>
-        <label class="form-check-label" for="rating1">1</label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="rating" value="2" id="rating2" {% if '2' in request.GET.rating %}checked{% endif %}>
-        <label class="form-check-label" for="rating2">2</label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="rating" value="3" id="rating3" {% if '3' in request.GET.rating %}checked{% endif %}>
-        <label class="form-check-label" for="rating3">3</label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="rating" value="4" id="rating4" {% if '4' in request.GET.rating %}checked{% endif %}>
-        <label class="form-check-label" for="rating4">4</label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="rating" value="5" id="rating5" {% if '5' in request.GET.rating %}checked{% endif %}>
-        <label class="form-check-label" for="rating5">5</label>
-    </div>
-</div>
-
-                <!-- Бюджет -->
-                <div class="mt-3">
-                    <h6>Бюджет</h6>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <input type="number" name="price_min" class="form-control" placeholder="0 грн" value="{{ request.GET.price_min }}">
+            <div class="collapse d-lg-block" id="filtersCollapse">
+                <div class="filters-sidebar">
+                    <form method="get" action="{% if agent_site %}{% url 'agent_search' agent_site.slug %}{% else %}{% url 'search_results' %}{% endif %}" id="filterForm">
+                        <div class="d-flex justify-content-between align-items-center mb-3 d-lg-none">
+                            <h4 class="mb-0">Фільтри</h4>
+                            <button type="button" class="btn-close" data-bs-toggle="collapse" data-bs-target="#filtersCollapse"></button>
                         </div>
-                        <div class="col-6">
-                            <input type="number" name="price_max" class="form-control" placeholder="200 000 грн" value="{{ request.GET.price_max }}">
+                        <h4 class="mb-3 d-none d-lg-block">Фільтри</h4>
+
+                        <!-- Рейтинг готелю -->
+                        <div class="mt-3">
+                            <h6>Рейтинг готелю</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="rating" value="1" id="rating1" {% if '1' in request.GET.rating %}checked{% endif %}>
+                                <label class="form-check-label" for="rating1">1</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="rating" value="2" id="rating2" {% if '2' in request.GET.rating %}checked{% endif %}>
+                                <label class="form-check-label" for="rating2">2</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="rating" value="3" id="rating3" {% if '3' in request.GET.rating %}checked{% endif %}>
+                                <label class="form-check-label" for="rating3">3</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="rating" value="4" id="rating4" {% if '4' in request.GET.rating %}checked{% endif %}>
+                                <label class="form-check-label" for="rating4">4</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="rating" value="5" id="rating5" {% if '5' in request.GET.rating %}checked{% endif %}>
+                                <label class="form-check-label" for="rating5">5</label>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Категорія готелю (зірки) -->
-                <div class="mt-3">
-                    <h6>Категорія готелю</h6>
-                    {% for star in "2345" %}
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="stars" value="{{ star }}" id="star{{ star }}" {% if star in request.GET.stars %}checked{% endif %}>
-                            <label class="form-check-label" for="star{{ star }}">{{ star }}*</label>
+                        <!-- Бюджет -->
+                        <div class="mt-3">
+                            <h6>Бюджет</h6>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="number" name="price_min" class="form-control" placeholder="0 грн" value="{{ request.GET.price_min }}">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" name="price_max" class="form-control" placeholder="200 000 грн" value="{{ request.GET.price_max }}">
+                                </div>
+                            </div>
                         </div>
-                    {% endfor %}
-                </div>
 
-                <!-- Пошук готелю -->
-                <div class="mt-3">
-                    <h6>Пошук готелю</h6>
-                    <input type="text" name="hotel_search" class="form-control" placeholder="Введіть назву" value="{{ request.GET.hotel_search }}">
-                </div>
-
-                <!-- Тип харчування (з amenity) -->
-                <div class="mt-3">
-                    <h6>Тип харчування</h6>
-                    {% for meal in meal_options %}
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="meal" value="{{ meal.id }}" id="meal{{ meal.id }}" {% if meal.id|stringformat:"s" in request.GET.meal %}checked{% endif %}>
-                            <label class="form-check-label" for="meal{{ meal.id }}">{{ meal.name }}</label>
+                        <!-- Категорія готелю (зірки) -->
+                        <div class="mt-3">
+                            <h6>Категорія готелю</h6>
+                            {% for star in "2345" %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="stars" value="{{ star }}" id="star{{ star }}" {% if star in request.GET.stars %}checked{% endif %}>
+                                    <label class="form-check-label" for="star{{ star }}">{{ star }}*</label>
+                                </div>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
-                </div>
 
-                <!-- Лінія пляжу -->
-                <div class="mt-3">
-                    <h6>Лінія пляжу</h6>
-                    {% for beach in beach_lines %}
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="beach_line" value="{{ beach.id }}" id="beach{{ beach.id }}" {% if beach.id|stringformat:"s" in request.GET.beach_line %}checked{% endif %}>
-                            <label class="form-check-label" for="beach{{ beach.id }}">{{ beach.name }}</label>
+                        <!-- Пошук готелю -->
+                        <div class="mt-3">
+                            <h6>Пошук готелю</h6>
+                            <input type="text" name="hotel_search" class="form-control" placeholder="Введіть назву" value="{{ request.GET.hotel_search }}">
                         </div>
-                    {% endfor %}
-                </div>
 
-                <!-- Додаткові фільтри -->
-                <div class="mt-3">
-                    <h6>Особливості готелю</h6>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="adults_only" value="1" id="adultsOnly" {% if request.GET.adults_only %}checked{% endif %}>
-                        <label class="form-check-label" for="adultsOnly">Готель для дорослих</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="large_area" value="1" id="largeArea" {% if request.GET.large_area %}checked{% endif %}>
-                        <label class="form-check-label" for="largeArea">Велика територія</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="waterpark" value="1" id="waterpark" {% if request.GET.waterpark %}checked{% endif %}>
-                        <label class="form-check-label" for="waterpark">Аквапарк або гірки</label>
-                    </div>
-                </div>
+                        <!-- Тип харчування -->
+                        <div class="mt-3">
+                            <h6>Тип харчування</h6>
+                            {% for meal in meal_options %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="meal" value="{{ meal.id }}" id="meal{{ meal.id }}" {% if meal.id|stringformat:"s" in request.GET.meal %}checked{% endif %}>
+                                    <label class="form-check-label" for="meal{{ meal.id }}">{{ meal.name }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
 
-<div class="filter-buttons mt-4">
-    <button type="submit" class="btn btn-primary w-100 mb-2">Застосувати</button>
-    <a href="{% url 'search_results' %}" class="btn btn-outline-secondary w-100">Скинути все</a>
-</div>
-            </form>
+                        <!-- Лінія пляжу -->
+                        <div class="mt-3">
+                            <h6>Лінія пляжу</h6>
+                            {% for beach in beach_lines %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="beach_line" value="{{ beach.id }}" id="beach{{ beach.id }}" {% if beach.id|stringformat:"s" in request.GET.beach_line %}checked{% endif %}>
+                                    <label class="form-check-label" for="beach{{ beach.id }}">{{ beach.name }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Додаткові фільтри -->
+                        <div class="mt-3">
+                            <h6>Особливості готелю</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="adults_only" value="1" id="adultsOnly" {% if request.GET.adults_only %}checked{% endif %}>
+                                <label class="form-check-label" for="adultsOnly">Готель для дорослих</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="large_area" value="1" id="largeArea" {% if request.GET.large_area %}checked{% endif %}>
+                                <label class="form-check-label" for="largeArea">Велика територія</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="waterpark" value="1" id="waterpark" {% if request.GET.waterpark %}checked{% endif %}>
+                                <label class="form-check-label" for="waterpark">Аквапарк або гірки</label>
+                            </div>
+                        </div>
+
+                        <div class="filter-buttons mt-4">
+                            <button type="submit" class="btn btn-primary w-100 mb-2">Застосувати</button>
+                            <a href="{% url 'search_results' %}" class="btn btn-outline-secondary w-100">Скинути все</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <!-- Права колонка: результати -->
         <div class="col-lg-9">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3>Знайдено {{ tours.paginator.count }} турів</h3>
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h3 class="mb-0">Знайдено {{ tours.paginator.count }} турів</h3>
                 <div class="sort-by">
                     <select class="form-select" id="sortSelect">
                         <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Ціна (зростання)</option>
@@ -125,298 +140,299 @@
 
             <div class="tour-list">
                 {% for tour in tours %}
-                    <div class="card mb-3 shadow-sm">
-                        <div class="row g-0">
-                            <div class="col-md-4">
-                                {% if tour.image %}
-                                    <img src="{{ tour.image.url }}" class="img-fluid rounded-start" style="height: 180px; width: 100%; object-fit: cover;" alt="{{ tour.title }}">
-                                {% else %}
-                                    <div class="bg-light d-flex align-items-center justify-content-center h-100">
-                                        <i class="fa-solid fa-image fa-3x text-muted"></i>
-                                    </div>
-                                {% endif %}
+                <div class="card mb-3 shadow-sm">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            {% if tour.image %}
+                            <img src="{{ tour.image.url }}" class="img-fluid rounded-start" style="height: 180px; width: 100%; object-fit: cover;" alt="{{ tour.title }}">
+                            {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center h-100">
+                                <i class="fa-solid fa-image fa-3x text-muted"></i>
                             </div>
-                            <div class="col-md-8">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <h5 class="card-title fw-bold">{{ tour.title }}</h5>
-                                        <span class="badge bg-warning text-dark">Рейтинг: {{ tour.avg_rating|floatformat:1|default:"Немає" }}</span>
-                                    </div>
-                                    <p class="card-text text-muted small">{{ tour.city|default:"" }}, {{ tour.country }}</p>
-                                    <div class="mt-2">
-                                        {% for amenity in tour.amenities.all|slice:":3" %}
-                                            <span class="badge me-1" style="background-color: var(--primary-lighter); color: var(--primary-color);">{{ amenity.name }}</span>
-                                        {% endfor %}
-                                    </div>
-                                    <div class="mt-2">
-                                        <i class="fa-regular fa-calendar"></i>
-                                        {% if tour.earliest_departure %}
-                                            {{ tour.earliest_departure|date:"d.m.Y" }}
-                                        {% else %}
-                                            дати уточнюються
-                                        {% endif %}
-                                        <span class="mx-2">|</span>
-                                        <i class="fa-regular fa-clock"></i>
-                                        {% if tour.duration %}
-                                            {{ tour.duration }} ночей
-                                        {% endif %}
-                                        <span class="mx-2">|</span>
-                                        <i class="fa-solid fa-plane-departure"></i>
-                                        {% if tour.departure_city %}
-                                            {% if tour.transport == 'bus' %}
-                                                Виїзд з {{ tour.departure_city }}
-                                            {% else %}
-                                                Виліт з {{ tour.departure_city }}
-                                            {% endif %}
-                                        {% endif %}
-                                    </div>
-                                    <div class="mt-2">
-<span class="h5 text-danger fw-bold">{{ tour.effective_price|floatformat:"0" }} грн</span>                                        <span class="text-muted">
-                                            за
-                                            {% if adults == 1 %}
-                                                1 дорослого
-                                            {% else %}
-                                                {{ adults }} дорослих
-                                            {% endif %}
-                                            {% if children_ages %}
-                                                та
-                                                {% with children_count=children_ages|length %}
-                                                    {% if children_count == 1 %}
-                                                        1 дитину
-                                                    {% else %}
-                                                        {{ children_count }} дітей
-                                                    {% endif %}
-                                                {% endwith %}
-                                            {% endif %}
-                                        </span>
-                                    </div>
-                                    <a href="{% if agent_site %}{% url 'agent_tour_detail' agent_site.slug tour.pk %}{% else %}{% url 'tour_detail' tour.pk %}{% endif %}" class="btn btn-outline-primary btn-sm mt-2">Переглянути місця</a>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between flex-wrap gap-2">
+                                    <h5 class="card-title fw-bold">{{ tour.title }}</h5>
+                                    <span class="badge bg-warning text-dark">Рейтинг: {{ tour.avg_rating|floatformat:1|default:"Немає" }}</span>
                                 </div>
+                                <p class="card-text text-muted small">{{ tour.city|default:"" }}, {{ tour.country }}</p>
+                                <div class="mt-2">
+                                    {% for amenity in tour.amenities.all|slice:":3" %}
+                                    <span class="badge me-1" style="background-color: var(--primary-lighter); color: var(--primary-color);">{{ amenity.name }}</span>
+                                    {% endfor %}
+                                </div>
+                                <div class="mt-2">
+                                    <i class="fa-regular fa-calendar"></i>
+                                    {% if tour.earliest_departure %}
+                                    {{ tour.earliest_departure|date:"d.m.Y" }}
+                                    {% else %}
+                                    дати уточнюються
+                                    {% endif %}
+                                    <span class="mx-2">|</span>
+                                    <i class="fa-regular fa-clock"></i>
+                                    {% if tour.duration %}
+                                    {{ tour.duration }} ночей
+                                    {% endif %}
+                                    <span class="mx-2">|</span>
+                                    <i class="fa-solid fa-plane-departure"></i>
+                                    {% if tour.departure_city %}
+                                    {% if tour.transport == 'bus' %}
+                                    Виїзд з {{ tour.departure_city }}
+                                    {% else %}
+                                    Виліт з {{ tour.departure_city }}
+                                    {% endif %}
+                                    {% endif %}
+                                </div>
+                                <div class="mt-2">
+                                    <span class="h5 text-danger fw-bold">{{ tour.effective_price|floatformat:"0" }} грн</span>
+                                    <span class="text-muted">
+                                        за
+                                        {% if adults == 1 %}
+                                        1 дорослого
+                                        {% else %}
+                                        {{ adults }} дорослих
+                                        {% endif %}
+                                        {% if children_ages %}
+                                        та
+                                        {% with children_count=children_ages|length %}
+                                        {% if children_count == 1 %}
+                                        1 дитину
+                                        {% else %}
+                                        {{ children_count }} дітей
+                                        {% endif %}
+                                        {% endwith %}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <a href="{% if agent_site %}{% url 'agent_tour_detail' agent_site.slug tour.pk %}{% else %}{% url 'tour_detail' tour.pk %}{% endif %}" class="btn btn-outline-primary btn-sm mt-2">Переглянути місця</a>
                             </div>
                         </div>
                     </div>
+                </div>
                 {% empty %}
-                    <div class="alert alert-info">Нічого не знайдено. Спробуйте змінити параметри пошуку.</div>
+                <div class="alert alert-info">Нічого не знайдено. Спробуйте змінити параметри пошуку.</div>
                 {% endfor %}
             </div>
 
             {% if tours.has_other_pages %}
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        {% if tours.has_previous %}
-                            <li class="page-item"><a class="page-link" href="?page={{ tours.previous_page_number }}&{{ request.GET.urlencode }}">&laquo;</a></li>
-                        {% endif %}
-                        {% for num in tours.paginator.page_range %}
-                            {% if tours.number == num %}
-                                <li class="page-item active"><span class="page-link" style="background: var(--primary-color); border-color: var(--primary-color);">{{ num }}</span></li>
-                            {% else %}
-                                <li class="page-item"><a class="page-link" href="?page={{ num }}&{{ request.GET.urlencode }}">{{ num }}</a></li>
-                            {% endif %}
-                        {% endfor %}
-                        {% if tours.has_next %}
-                            <li class="page-item"><a class="page-link" href="?page={{ tours.next_page_number }}&{{ request.GET.urlencode }}">&raquo;</a></li>
-                        {% endif %}
-                    </ul>
-                </nav>
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if tours.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ tours.previous_page_number }}&{{ request.GET.urlencode }}">&laquo;</a></li>
+                    {% endif %}
+                    {% for num in tours.paginator.page_range %}
+                    {% if tours.number == num %}
+                    <li class="page-item active"><span class="page-link" style="background: var(--primary-color); border-color: var(--primary-color);">{{ num }}</span></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}&{{ request.GET.urlencode }}">{{ num }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if tours.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ tours.next_page_number }}&{{ request.GET.urlencode }}">&raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
             {% endif %}
         </div>
     </div>
-</div>
 
-<!-- ========== ПОПУЛЯРНІ ГОТЕЛІ КРАЇНИ (КАРУСЕЛЬ) ========== -->
-{% if popular_tours_for_country %}
-<div class="popular-hotels-block my-5">
-    <div class="container">
-        <h3 class="mb-4">Популярні готелі {% if request.GET.country %}{{ request.GET.country }}{% endif %}</h3>
-        <div class="carousel-container">
-            <div class="carousel-track" id="popularCountryHotelsTrack">
-                {% for tour in popular_tours_for_country %}
-                <div class="carousel-card">
-                    <div class="card h-100 shadow-sm border-0 rounded-4">
-                        {% if tour.image %}
-                        <img src="{{ tour.image.url }}" class="card-img-top rounded-top-4" alt="{{ tour.title }}" style="height: 160px; object-fit: cover;">
-                        {% else %}
-                        <div class="bg-light rounded-top-4 d-flex align-items-center justify-content-center" style="height: 160px;">
-                            <i class="fa-solid fa-image fa-3x text-muted"></i>
-                        </div>
-                        {% endif %}
-
-                        <div class="rating-badge">
-                            {% with avg=tour.avg_rating|floatformat:1 %}
-                            <div class="rating-badge-container">
-                                <div class="rating-badge-left">
-                                    <div class="rating-label-text">
-                                        {% if avg|floatformat:0 >= "9" %}
-                                            <span class="rating-label very-good">ДУЖЕ ДОБРЕ</span>
-                                        {% elif avg|floatformat:0 >= "8" %}
-                                            <span class="rating-label good">ДОБРЕ</span>
-                                        {% else %}
-                                            <span class="rating-label average">СЕРЕДНЄ</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="rating-reviews-count">{{ tour.reviews_count|default:"0" }} відгуків</div>
-                                </div>
-                                <div class="rating-badge-right">
-                                    <div class="rating-number">{{ avg }}</div>
-                                </div>
-                            </div>
-                            {% endwith %}
-                        </div>
-
-                        <div class="card-body p-3">
-                            <h6 class="card-title fw-bold mb-2">{{ tour.title|truncatechars:35 }}</h6>
-                            <p class="card-text text-muted mb-3">
-                                <i class="fa-solid fa-location-dot me-1"></i>
-                                {% if tour.city %}{{ tour.city }}, {% endif %}{{ tour.country }}
-                            </p>
-                            <div class="text-center">
-                                <a href="{% if agent_site %}{% url 'agent_tour_detail' agent_site.slug tour.pk %}{% else %}{% url 'tour_detail' tour.pk %}{% endif %}" class="btn btn-outline-primary px-4 py-2">Переглянути деталі</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            <button class="carousel-btn prev" id="popularCountryPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
-            <button class="carousel-btn next" id="popularCountryNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
-        </div>
-    </div>
-</div>
-{% endif %}
-
-<!-- ========== ІНФОРМАЦІЯ ПРО КРАЇНУ ========== -->
-{% if country_info %}
-<div class="country-info-block my-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="info-text-wrapper">
-                    <h2 class="mb-3 country-info-title">Основна інформація про {{ country_info.country }}</h2>
-                    <div class="info-text collapsed" id="fullCountryInfo">
-                        {% if country_info.main_text %}
-                            {{ country_info.main_text|linebreaks }}
-                        {% endif %}
-                        {% if country_info.why_text %}
-                            <h3>Чому варто вибрати?</h3>
-                            {{ country_info.why_text|linebreaks }}
-                        {% endif %}
-                        {% if country_info.popular_resorts %}
-                            <h3>Популярні курорти</h3>
-                            {{ country_info.popular_resorts|linebreaks }}
-                        {% endif %}
-                        {% if country_info.activities %}
-                            <h3>Доступні види відпочинку</h3>
-                            {{ country_info.activities|linebreaks }}
-                        {% endif %}
-                        {% if country_info.sights %}
-                            <h3>Основні визначні пам'ятки</h3>
-                            {{ country_info.sights|linebreaks }}
-                        {% endif %}
-                        {% if country_info.useful_facts %}
-                            <h3>Корисні факти</h3>
-                            {{ country_info.useful_facts|linebreaks }}
-                        {% endif %}
-                    </div>
-                    <button class="toggle-info-btn" id="toggleCountryInfoBtn">
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endif %}
-
-<!-- ========== СХОЖІ КУРОРТИ (КАРУСЕЛЬ) ========== -->
-{% if similar_cities %}
-<div class="similar-cities-block my-5">
-    <div class="container">
-        <h3 class="mb-4">Схожі курорти</h3>
-        <div class="carousel-container">
-            <div class="carousel-track" id="similarCitiesTrack">
-                {% for city in similar_cities %}
-                <div class="carousel-card">
-                    <a href="{% if agent_site %}{% url 'agent_city_detail' agent_site.slug city.id %}{% else %}{% url 'city_detail' city.id %}{% endif %}" class="text-decoration-none">
+    <!-- ========== ПОПУЛЯРНІ ГОТЕЛІ КРАЇНИ (КАРУСЕЛЬ) ========== -->
+    {% if popular_tours_for_country %}
+    <div class="popular-hotels-block my-5">
+        <div class="container">
+            <h3 class="mb-4">Популярні готелі {% if request.GET.country %}{{ request.GET.country }}{% endif %}</h3>
+            <div class="carousel-container">
+                <div class="carousel-track" id="popularCountryHotelsTrack">
+                    {% for tour in popular_tours_for_country %}
+                    <div class="carousel-card">
                         <div class="card h-100 shadow-sm border-0 rounded-4">
-                            {% if city.image_url %}
-                            <img src="{{ city.image_url }}" class="card-img-top rounded-top-4" alt="{{ city.name }}" style="height: 120px; object-fit: cover;">
+                            {% if tour.image %}
+                            <img src="{{ tour.image.url }}" class="card-img-top rounded-top-4" alt="{{ tour.title }}" style="height: 160px; object-fit: cover;">
                             {% else %}
-                            <div class="bg-light rounded-top-4 d-flex align-items-center justify-content-center" style="height: 120px;">
-                                <i class="fa-solid fa-city fa-2x text-muted"></i>
+                            <div class="bg-light rounded-top-4 d-flex align-items-center justify-content-center" style="height: 160px;">
+                                <i class="fa-solid fa-image fa-3x text-muted"></i>
                             </div>
                             {% endif %}
-                            <div class="card-body p-2 text-center">
-                                <h6 class="card-title fw-bold mb-0">{{ city.name }}</h6>
-                                <small class="text-muted">{{ city.country }}</small>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
-            <button class="carousel-btn prev" id="similarCitiesPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
-            <button class="carousel-btn next" id="similarCitiesNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
-        </div>
-    </div>
-</div>
-{% endif %}
 
-<!-- ========== БЛОК КОНСУЛЬТАЦІЇ (адаптивний) ========== -->
-<div class="row justify-content-center my-5">
-    <div class="col-12 col-md-10 col-lg-8">
-        <div class="card border-0 shadow-sm" id="consultationCard">
-            <div class="card-body p-4 p-md-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">
-                    Довірте вибір спеціалістам
-                </h5>
-                <p class="text-muted mb-0">
-                    Залишіть заявку, щоб отримати персональний підбір турів
-                </p>
-                <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
-                    <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
-                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
-                             style="width: 40px; height: 40px;">
-                            <i class="fa-regular fa-user text-secondary"></i>
-                        </div>
-                        <div>
-                            <div class="fw-bold" style="font-size: 0.95rem;">
-                                {% if agent_site %}
-                                    {{ agent_site.user.get_full_name|default:agent_site.user.username }}
-                                {% else %}
-                                    {{ random_agent.get_full_name|default:random_agent.username }}
-                                {% endif %}
+                            <div class="rating-badge">
+                                {% with avg=tour.avg_rating|floatformat:1 %}
+                                <div class="rating-badge-container">
+                                    <div class="rating-badge-left">
+                                        <div class="rating-label-text">
+                                            {% if avg|floatformat:0 >= "9" %}
+                                                <span class="rating-label very-good">ДУЖЕ ДОБРЕ</span>
+                                            {% elif avg|floatformat:0 >= "8" %}
+                                                <span class="rating-label good">ДОБРЕ</span>
+                                            {% else %}
+                                                <span class="rating-label average">СЕРЕДНЄ</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="rating-reviews-count">{{ tour.reviews_count|default:"0" }} відгуків</div>
+                                    </div>
+                                    <div class="rating-badge-right">
+                                        <div class="rating-number">{{ avg }}</div>
+                                    </div>
+                                </div>
+                                {% endwith %}
                             </div>
-                            <div class="text-muted" style="font-size: 0.8rem;">
-                                9 років досвіду в туризмі
+
+                            <div class="card-body p-3">
+                                <h6 class="card-title fw-bold mb-2">{{ tour.title|truncatechars:35 }}</h6>
+                                <p class="card-text text-muted mb-3">
+                                    <i class="fa-solid fa-location-dot me-1"></i>
+                                    {% if tour.city %}{{ tour.city }}, {% endif %}{{ tour.country }}
+                                </p>
+                                <div class="text-center">
+                                    <a href="{% if agent_site %}{% url 'agent_tour_detail' agent_site.slug tour.pk %}{% else %}{% url 'tour_detail' tour.pk %}{% endif %}" class="btn btn-outline-primary px-4 py-2">Переглянути деталі</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
-                        <form method="post" action="{% if agent_site %}{% url 'agent_home' agent_site.slug %}{% else %}{% url 'home' %}{% endif %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="consultation_submit" value="1">
-                            <div class="mb-3">
-                                <input type="text" name="name" class="form-control" placeholder="Ваше ім'я" required>
-                            </div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-4">
-                                    <select name="country_code" class="form-select" required>
-                                        <option value="+380" selected>🇺🇦 +380</option>
-                                        <option value="+48">🇵🇱 +48</option>
-                                        <option value="+1">🇺🇸 +1</option>
-                                        <option value="+44">🇬🇧 +44</option>
-                                        <option value="+49">🇩🇪 +49</option>
-                                        <option value="+33">🇫🇷 +33</option>
-                                    </select>
+                    {% endfor %}
+                </div>
+                <button class="carousel-btn prev" id="popularCountryPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="carousel-btn next" id="popularCountryNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ========== ІНФОРМАЦІЯ ПРО КРАЇНУ ========== -->
+    {% if country_info %}
+    <div class="country-info-block my-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="info-text-wrapper">
+                        <h2 class="mb-3 country-info-title">Основна інформація про {{ country_info.country }}</h2>
+                        <div class="info-text collapsed" id="fullCountryInfo">
+                            {% if country_info.main_text %}
+                                {{ country_info.main_text|linebreaks }}
+                            {% endif %}
+                            {% if country_info.why_text %}
+                                <h3>Чому варто вибрати?</h3>
+                                {{ country_info.why_text|linebreaks }}
+                            {% endif %}
+                            {% if country_info.popular_resorts %}
+                                <h3>Популярні курорти</h3>
+                                {{ country_info.popular_resorts|linebreaks }}
+                            {% endif %}
+                            {% if country_info.activities %}
+                                <h3>Доступні види відпочинку</h3>
+                                {{ country_info.activities|linebreaks }}
+                            {% endif %}
+                            {% if country_info.sights %}
+                                <h3>Основні визначні пам'ятки</h3>
+                                {{ country_info.sights|linebreaks }}
+                            {% endif %}
+                            {% if country_info.useful_facts %}
+                                <h3>Корисні факти</h3>
+                                {{ country_info.useful_facts|linebreaks }}
+                            {% endif %}
+                        </div>
+                        <button class="toggle-info-btn" id="toggleCountryInfoBtn">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ========== СХОЖІ КУРОРТИ (КАРУСЕЛЬ) ========== -->
+    {% if similar_cities %}
+    <div class="similar-cities-block my-5">
+        <div class="container">
+            <h3 class="mb-4">Схожі курорти</h3>
+            <div class="carousel-container">
+                <div class="carousel-track" id="similarCitiesTrack">
+                    {% for city in similar_cities %}
+                    <div class="carousel-card">
+                        <a href="{% if agent_site %}{% url 'agent_city_detail' agent_site.slug city.id %}{% else %}{% url 'city_detail' city.id %}{% endif %}" class="text-decoration-none">
+                            <div class="card h-100 shadow-sm border-0 rounded-4">
+                                {% if city.image_url %}
+                                <img src="{{ city.image_url }}" class="card-img-top rounded-top-4" alt="{{ city.name }}" style="height: 120px; object-fit: cover;">
+                                {% else %}
+                                <div class="bg-light rounded-top-4 d-flex align-items-center justify-content-center" style="height: 120px;">
+                                    <i class="fa-solid fa-city fa-2x text-muted"></i>
                                 </div>
-                                <div class="col-8">
-                                    <input type="tel" name="phone" class="form-control" placeholder="(XX) XXX-XX-XX" required>
+                                {% endif %}
+                                <div class="card-body p-2 text-center">
+                                    <h6 class="card-title fw-bold mb-0">{{ city.name }}</h6>
+                                    <small class="text-muted">{{ city.country }}</small>
                                 </div>
                             </div>
-                            <button class="btn w-100" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='var(--primary-dark)'" onmouseout="this.style.background='var(--primary-color)'">
-                                Залишити запит
-                            </button>
-                        </form>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-btn prev" id="similarCitiesPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="carousel-btn next" id="similarCitiesNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ========== БЛОК КОНСУЛЬТАЦІЇ ========== -->
+    <div class="row justify-content-center my-5">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card border-0 shadow-sm" id="consultationCard">
+                <div class="card-body p-4 p-md-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">
+                        Довірте вибір спеціалістам
+                    </h5>
+                    <p class="text-muted mb-0">
+                        Залишіть заявку, щоб отримати персональний підбір турів
+                    </p>
+                    <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
+                        <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
+                            <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
+                                 style="width: 40px; height: 40px;">
+                                <i class="fa-regular fa-user text-secondary"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold" style="font-size: 0.95rem;">
+                                    {% if agent_site %}
+                                        {{ agent_site.user.get_full_name|default:agent_site.user.username }}
+                                    {% else %}
+                                        {{ random_agent.get_full_name|default:random_agent.username }}
+                                    {% endif %}
+                                </div>
+                                <div class="text-muted" style="font-size: 0.8rem;">
+                                    9 років досвіду в туризмі
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
+                            <form method="post" action="{% if agent_site %}{% url 'agent_home' agent_site.slug %}{% else %}{% url 'home' %}{% endif %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="consultation_submit" value="1">
+                                <div class="mb-3">
+                                    <input type="text" name="name" class="form-control" placeholder="Ваше ім'я" required>
+                                </div>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-4">
+                                        <select name="country_code" class="form-select" required>
+                                            <option value="+380" selected>🇺🇦 +380</option>
+                                            <option value="+48">🇵🇱 +48</option>
+                                            <option value="+1">🇺🇸 +1</option>
+                                            <option value="+44">🇬🇧 +44</option>
+                                            <option value="+49">🇩🇪 +49</option>
+                                            <option value="+33">🇫🇷 +33</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-8">
+                                        <input type="tel" name="phone" class="form-control" placeholder="(XX) XXX-XX-XX" required>
+                                    </div>
+                                </div>
+                                <button class="btn w-100" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='var(--primary-dark)'" onmouseout="this.style.background='var(--primary-color)'">
+                                    Залишити запит
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -432,6 +448,47 @@
         --primary-lighter: #cbf6ec;
         --accent-color: #e67e22;
         --bg-light: #f8f9fa;
+    }
+
+    /* ===== ВІДСТУП ВІД ЗАКРІПЛЕНОГО МЕНЮ ===== */
+    body {
+        padding-top: 30px !important;
+    }
+
+    @media (max-width: 768px) {
+        body {
+            padding-top: 60px !important;
+        }
+    }
+
+    /* ===== ФІКСАЦІЯ ФІЛЬТРІВ ===== */
+    .col-lg-3 {
+        position: sticky !important;
+        top: 100px !important;
+        align-self: flex-start !important;
+        height: fit-content !important;
+    }
+
+    #filterForm {
+        position: sticky !important;
+        top: 100px !important;
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    @media (max-width: 991px) {
+        .col-lg-3 {
+            position: relative !important;
+            top: auto !important;
+            margin-bottom: 1rem;
+        }
+        #filterForm {
+            position: relative !important;
+            top: auto !important;
+        }
     }
 
     /* ===== КНОПКИ ===== */
@@ -621,10 +678,10 @@
     .popular-hotels-block .carousel-btn.prev { left: 0px; }
     .popular-hotels-block .carousel-btn.next { right: 0px; }
 
-    /* ===== БЛОК ІНФОРМАЦІЇ ПРО КРАЇНУ ===== */
+    /* ===== БЛОК ІНФОРМАЦІЇ ПРО КРАЇНУ (БЕЗ ФОНУ ТА ПЛАВНА АНІМАЦІЯ) ===== */
     .country-info-block {
-        background-color: #f8f9fa;
-        border-radius: 20px;
+        background-color: transparent !important;
+        border-radius: 0;
         padding: 2rem 0;
     }
     .country-info-title {
@@ -635,18 +692,19 @@
     }
     .info-text {
         overflow: hidden;
-        transition: max-height 0.3s ease;
+        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
         max-height: 200px;
         line-height: 1.6;
         font-size: 1rem;
-        color: #6c757d;
+        color: #4a5568;
         position: relative;
     }
     .info-text.collapsed {
         max-height: 200px;
     }
     .info-text.expanded {
-        max-height: none;
+        max-height: 2000px !important;
+        transition: max-height 0.6s ease-in-out !important;
     }
     .info-text.collapsed::after {
         content: '';
@@ -654,8 +712,8 @@
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 50px;
-        background: linear-gradient(to bottom, rgba(248,249,250,0), rgba(248,249,250,0.95));
+        height: 60px;
+        background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
         pointer-events: none;
     }
     .info-text h3 {
@@ -673,7 +731,7 @@
         width: 48px;
         height: 48px;
         border-radius: 50%;
-        background-color: #6c757d;
+        background-color: var(--primary-color) !important;
         border: none;
         color: white;
         cursor: pointer;
@@ -681,11 +739,16 @@
         align-items: center;
         justify-content: center;
         font-size: 1.2rem;
-        transition: background 0.2s;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
     .toggle-info-btn:hover {
-        background-color: #5a6268;
+        background-color: var(--primary-dark) !important;
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .toggle-info-btn i {
+        transition: transform 0.3s ease !important;
     }
     @media (max-width: 768px) {
         .info-text {
@@ -785,22 +848,7 @@
         }
     }
 
-    /* ===== СТИЛЬНІ ФІЛЬТРИ (БЕЗ СТРИБАННЯ) ===== */
-    /* Загальний контейнер фільтрів */
-    .col-lg-3 {
-        position: sticky;
-        top: 80px;
-        height: fit-content;
-    }
-
-    #filterForm {
-        background: white;
-        border-radius: 20px;
-        padding: 1.5rem;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
+    /* ===== СТИЛЬНІ ФІЛЬТРИ ===== */
     #filterForm h4 {
         font-size: 1.4rem;
         font-weight: 700;
@@ -830,7 +878,6 @@
         gap: 6px;
     }
 
-    /* Стилі для чекбоксів - БЕЗ ЗСУВУ */
     .form-check {
         margin-bottom: 0.5rem;
     }
@@ -857,7 +904,6 @@
         font-weight: 500;
     }
 
-    /* Тільки зміна кольору при наведенні - БЕЗ ЗСУВУ */
     .form-check:hover .form-check-label {
         color: var(--primary-color);
     }
@@ -866,7 +912,6 @@
         border-color: var(--primary-color);
     }
 
-    /* Стилі для полів введення бюджету */
     .form-control {
         border-radius: 12px;
         border: 1.5px solid #e2e8f0;
@@ -879,7 +924,6 @@
         box-shadow: 0 0 0 3px rgba(8, 103, 69, 0.1);
     }
 
-    /* Група бюджету */
     .row.g-2 .col-6 {
         position: relative;
     }
@@ -894,7 +938,6 @@
         border-bottom-left-radius: 0;
     }
 
-    /* Стилі для кнопок - БЕЗ ПІДЙОМУ */
     .filter-buttons {
         margin-top: 1.5rem;
         padding-top: 1rem;
@@ -928,7 +971,6 @@
         background: rgba(8, 103, 69, 0.05);
     }
 
-    /* Стилі для групи "Особливості готелю" */
     .mt-3:last-child .form-check {
         background: #f8fafc;
         padding: 0.5rem 0.75rem;
@@ -940,7 +982,6 @@
         background: var(--primary-lighter);
     }
 
-    /* Скрол для багатьох чекбоксів */
     .scrollable-filters {
         max-height: 200px;
         overflow-y: auto;
@@ -961,15 +1002,47 @@
         border-radius: 4px;
     }
 
-    /* Адаптація для мобільних */
-    @media (max-width: 768px) {
-        .col-lg-3 {
-            position: static;
-            margin-bottom: 1rem;
+    /* ===== АДАПТИВНІ ФІЛЬТРИ ===== */
+    @media (min-width: 992px) {
+        .filters-sidebar {
+            position: sticky !important;
+            top: 120px !important;
+            align-self: flex-start !important;
+            max-height: calc(100vh - 140px) !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            background: white !important;
+            border-radius: 12px !important;
+            padding: 15px !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+            z-index: 100 !important;
         }
 
-        #filterForm {
-            padding: 1rem;
+        .filters-sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .filters-sidebar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .filters-sidebar::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+    }
+
+    @media (max-width: 991px) {
+        .filters-sidebar {
+            position: relative !important;
+            top: auto !important;
+            max-height: none !important;
+            margin-bottom: 20px !important;
+            background: white !important;
+            border-radius: 12px !important;
+            padding: 15px !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
         }
     }
 </style>
@@ -1039,67 +1112,40 @@ document.addEventListener('DOMContentLoaded', function() {
     initCarousel('popularCountryHotelsTrack', 'popularCountryPrevBtn', 'popularCountryNextBtn');
     initCarousel('similarCitiesTrack', 'similarCitiesPrevBtn', 'similarCitiesNextBtn');
 
+    // Розгортання тексту про країну
     const toggleCountryBtn = document.getElementById('toggleCountryInfoBtn');
     const countryInfoText = document.getElementById('fullCountryInfo');
+
     if (toggleCountryBtn && countryInfoText) {
         toggleCountryBtn.addEventListener('click', function() {
             if (countryInfoText.classList.contains('collapsed')) {
                 countryInfoText.classList.remove('collapsed');
                 countryInfoText.classList.add('expanded');
                 this.innerHTML = '<i class="fa-solid fa-chevron-up"></i>';
+                setTimeout(() => {
+                    this.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 300);
             } else {
                 countryInfoText.classList.remove('expanded');
                 countryInfoText.classList.add('collapsed');
                 this.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
+                const titleElement = document.querySelector('.country-info-title');
+                if (titleElement) {
+                    titleElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             }
         });
     }
-});
 
-const colors = ['#c4edd4', '#ccfbfb', '#FFC0CB'];
-const randomColor = colors[Math.floor(Math.random() * colors.length)];
-const consultationCard = document.getElementById('consultationCard');
-if (consultationCard) {
-    consultationCard.style.backgroundColor = randomColor;
-    consultationCard.style.color = '#434343';
-    const cardBody = consultationCard.querySelector('.card-body');
-    if (cardBody) cardBody.style.backgroundColor = 'transparent';
-}
-
-// ========== НОВИЙ КОД ДЛЯ СКИДАННЯ ФІЛЬТРІВ ==========
-document.addEventListener('DOMContentLoaded', function() {
-    // Знаходимо ВСІ кнопки скидання
-    const resetButtons = document.querySelectorAll('a[href*="reset=1"], a[href="{% url "search_results" %}"]');
-
-    resetButtons.forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Очищаємо всі поля форми
-            const form = document.getElementById('filterForm');
-            if (form) {
-                // Очищаємо всі чекбокси
-                form.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-                // Очищаємо всі текстові поля
-                form.querySelectorAll('input[type="text"], input[type="search"], input[type="number"]').forEach(input => input.value = '');
-                // Очищаємо select
-                form.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
-
-                // Відправляємо форму без параметрів
-                window.location.href = window.location.pathname;
-            } else {
-                // Якщо форми немає, просто переходимо на URL
-                window.location.href = window.location.pathname;
-            }
-        });
-    });
-
-    // Також обробляємо кнопку-посилання у верхній частині
-    const topResetBtn = document.querySelector('.btn-link');
-    if (topResetBtn && topResetBtn.textContent.includes('Скинути все')) {
-        topResetBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            window.location.href = window.location.pathname;
-        });
+    // Випадковий фон для блоку консультації
+    const colors = ['#c4edd4', '#ccfbfb', '#FFC0CB'];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const consultationCard = document.getElementById('consultationCard');
+    if (consultationCard) {
+        consultationCard.style.backgroundColor = randomColor;
+        consultationCard.style.color = '#434343';
+        const cardBody = consultationCard.querySelector('.card-body');
+        if (cardBody) cardBody.style.backgroundColor = 'transparent';
     }
 });
 </script>

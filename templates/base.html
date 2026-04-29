@@ -420,7 +420,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 {% if '/constructor/' not in request.path %}
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <!-- Пункт "Головна" ВИДАЛЕНО! -->
+
+                    <!-- ========== ГОЛОВНА ДЛЯ ВСІХ ========== -->
+<li class="nav-item">
+    <a class="nav-link" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/{% else %}/{% endif %}">
+        Головна
+    </a>
+</li>
 
                     {% if not agent_site or agent_site.show_news %}
                     <li class="nav-item">
@@ -433,14 +439,14 @@
                         {% if user.is_agent and user.agent_site.slug %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'constructor:dashboard' %}">
-                                    🛠️ Відкрити конструктор
+                                    Відкрити конструктор
                                 </a>
                             </li>
                         {% endif %}
                         {% if user.is_superuser %}
                             <li class="nav-item">
                                 <a class="nav-link" href="/home/">
-                                    🏠 Головна (пошук турів)
+                                    Головна (адмін)
                                 </a>
                             </li>
                         {% endif %}
@@ -448,24 +454,16 @@
                     <!-- ========== КІНЕЦЬ ПУНКТІВ ========== -->
 
                     {% if user.is_authenticated %}
-                        <!-- ДІАГНОСТИКА - видалити після перевірки -->
-                        <li class="nav-item">
-                            <span class="nav-link text-muted" style="font-size: 12px;">
-                                🔍 DEBUG: is_agent={{ user.is_agent }}, is_superuser={{ user.is_superuser }}, agent_site={{ agent_site|yesno:"так,ні" }}
-                            </span>
-                        </li>
-                        <!-- КІНЕЦЬ ДІАГНОСТИКИ -->
-
                         {% if user.is_superuser %}
                             <li class="nav-item">
                                 <a class="nav-link fw-bold text-primary" href="{% url 'admin:index' %}">Адмінка</a>
                             </li>
                         {% endif %}
                         {% if user.is_agent and not user.is_superuser %}
-    <li class="nav-item">
-        <a class="nav-link fw-bold text-success" href="/a/admin/">Кабінет агента</a>
-    </li>
-{% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold text-success" href="/a/admin/">Кабінет агента</a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" onclick="customLogout();">Вихід</a>
                         </li>
@@ -512,11 +510,19 @@
                                 </p>
                                 <div class="mt-auto">
                                     <div class="d-flex gap-3 mt-3">
-                                        <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-telegram fa-lg"></i></a>
-                                        <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-instagram fa-lg"></i></a>
-                                        <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-facebook fa-lg"></i></a>
-                                        <a href="#" target="_blank" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-brands fa-youtube fa-lg"></i></a>
-                                    </div>
+    <a href="https://www.youtube.com/@Enjoy-World" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+        <i class="fa-brands fa-youtube fa-lg"></i>
+    </a>
+    <a href="https://www.tiktok.com/@kozlovskyi_official" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+        <i class="fa-brands fa-tiktok fa-lg"></i>
+    </a>
+    <a href="https://www.instagram.com/kozlovsky_official/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+        <i class="fa-brands fa-instagram fa-lg"></i>
+    </a>
+    <a href="https://www.facebook.com/Kozlovskyi/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+        <i class="fa-brands fa-facebook fa-lg"></i>
+    </a>
+</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -574,6 +580,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
+
+    <!-- ========== ПІДКЛЮЧЕННЯ STICKY-FILTERS.JS ========== -->
+    <script src="{% static 'js/sticky-filters.js' %}"></script>
 
     {% block extra_js %}{% endblock %}
 

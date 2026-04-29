@@ -10,11 +10,18 @@
                 </div>
                 <div class="card-body">
                     <p class="text-muted">Залиште свої контакти, і наш менеджер зв'яжеться з вами для підбору туру.</p>
-                    <form method="post">
+
+                    <div id="phoneErrorGlobal" class="alert alert-warning d-none" style="font-size: 0.85rem; padding: 0.5rem 0.75rem; margin-bottom: 1rem;">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i> Будь ласка, введіть тільки цифри в номер телефону (9-15 цифр)
+                    </div>
+
+                    <form method="post" id="consultationForm">
                         {% csrf_token %}
                         {{ form.as_p }}
                         <input type="hidden" name="next" value="{{ request.GET.next|default:request.META.HTTP_REFERER|default:'/' }}">
-                        <button type="submit" class="btn w-100" style="background: var(--primary-color); color: white; border: none;">Надіслати</button>
+                        <button type="submit" class="btn w-100" id="submitBtn" style="background: var(--primary-color); color: white; border: none;">
+                            Надіслати
+                        </button>
                     </form>
                 </div>
             </div>
@@ -84,6 +91,13 @@
         color: #dc3545;
         font-size: 0.8rem;
     }
+
+    /* Стиль для помилки валідації */
+    input.is-invalid {
+        border-color: #ffc107 !important;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25) !important;
+    }
+
     .btn {
         transition: all 0.2s ease;
         padding: 0.5rem 1rem;
@@ -96,4 +110,99 @@
         box-shadow: 0 2px 6px rgba(8, 103, 69, 0.2);
     }
 </style>
+
+<script>
+// Захист для поля телефону на сторінці консультації
+(function() {
+    // Знаходимо поле телефону (воно створюється Django Form)
+    const phoneInput = document.querySelector('input[name="phone"], input[type="tel"]');
+    const submitBtn = document.getElementById('submitBtn');
+    const errorDiv = document.getElementById('phoneErrorGlobal');
+    const form = document.getElementById('consultationForm');
+
+    if (!phoneInput) {
+        console.log('Поле телефону не знайдено');
+        return;
+    }
+
+    // Додаємо ID для простого доступу
+    phoneInput.id = 'consultationPhoneField';
+
+    // Функція для перевірки валідності телефону
+    function isValidPhone(value) {
+        return /^[0-9]{9,15}$/.test(value);
+    }
+
+    // Функція для оновлення стилю поля
+    function updatePhoneStyle() {
+        const value = phoneInput.value;
+        if (value.length > 0 && !isValidPhone(value)) {
+            phoneInput.classList.add('is-invalid');
+            if (errorDiv) errorDiv.classList.remove('d-none');
+        } else {
+            phoneInput.classList.remove('is-invalid');
+            if (errorDiv) errorDiv.classList.add('d-none');
+        }
+    }
+
+    // Блокуємо введення букв
+    phoneInput.addEventListener('keypress', function(e) {
+        const charCode = e.which ? e.which : e.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            e.preventDefault();
+            phoneInput.classList.add('is-invalid');
+            if (errorDiv) errorDiv.classList.remove('d-none');
+            return false;
+        }
+    });
+
+    // Очищаємо вставлені значення
+    phoneInput.addEventListener('input', function(e) {
+        const numbers = this.value.replace(/[^0-9]/g, '');
+        if (this.value !== numbers) {
+            this.value = numbers;
+        }
+        updatePhoneStyle();
+    });
+
+    // Блокуємо вставку з буквами
+    phoneInput.addEventListener('paste', function(e) {
+        e.preventDefault();
+        const pasted = (e.clipboardData || window.clipboardData).getData('text');
+        const numbers = pasted.replace(/[^0-9]/g, '');
+        this.value = numbers;
+        updatePhoneStyle();
+    });
+
+    // При втраті фокусу перевіряємо
+    phoneInput.addEventListener('blur', function() {
+        updatePhoneStyle();
+    });
+
+    // При фокусі прибираємо помилку
+    phoneInput.addEventListener('focus', function() {
+        if (isValidPhone(this.value)) {
+            if (errorDiv) errorDiv.classList.add('d-none');
+            phoneInput.classList.remove('is-invalid');
+        }
+    });
+
+    // Перевірка перед відправленням форми
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const phoneValue = phoneInput.value;
+
+            if (!isValidPhone(phoneValue)) {
+                e.preventDefault();
+                if (errorDiv) errorDiv.classList.remove('d-none');
+                phoneInput.classList.add('is-invalid');
+
+                // Прокручуємо до помилки
+                errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false;
+            }
+        });
+    }
+})();
+</script>
 {% endblock %}
