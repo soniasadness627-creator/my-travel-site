@@ -1,0 +1,12 @@
+СПИСОК URL ВІДЕО НА CLOUDINARY:
+==================================================
+
+hero_video_1:
+https://res.cloudinary.com/djvycubir/video/upload/v1777460250/landing_videos/hero_video_1.mp4
+
+hero_video_2:
+https://res.cloudinary.com/djvycubir/video/upload/v1777460262/landing_videos/hero_video_2.mp4
+
+hero_video_3:
+https://res.cloudinary.com/djvycubir/video/upload/v1777460373/landing_videos/hero_video_3.mp4
+

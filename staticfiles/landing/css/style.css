@@ -1,0 +1,667 @@
+/* ===== ГЛОБАЛЬНІ ЗМІННІ ===== */
+/* ВИДАЛІТЬ АБО ЗАКОМЕНТУЙТЕ ЦЮ СЕКЦІЮ - вона перезаписує динамічні кольори!
+:root {
+    --primary-color: #086745;
+    --primary-dark: #02432c;
+    --primary-light: #2a6b5c;
+    --primary-lighter: #cbf6ec;
+    --accent-color: #e67e22;
+    --bg-light: #f8f9fa;
+    font-size: 15px;
+}
+*/
+
+/* ===== ОСНОВНІ СТИЛІ ===== */
+html, body {
+    font-size: 16px;
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+/* Забороняємо Chrome збільшувати дрібний текст */
+* {
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+}
+
+/* Явно задаємо розміри для всіх елементів, які можуть мати свої стилі */
+p, span, a, li, div, label, input, button, .small-label, .form-label, .form-control, .btn {
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+}
+
+/* Для мобільних пристроїв трохи зменшуємо */
+@media (max-width: 768px) {
+    html {
+        font-size: 14px !important;
+    }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    /* Тільки для Chrome, Safari, Edge (на основі Chromium) */
+    html {
+        font-size: 15px !important;
+    }
+    body {
+        font-size: 1rem !important;
+    }
+}
+
+/* ===== НАВІГАЦІЙНА ПАНЕЛЬ ===== */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: white;
+}
+
+.navbar .nav-link {
+    color: rgb(5, 48, 31) !important;
+    transition: color 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+    color: var(--primary-color) !important;
+}
+
+.navbar .btn-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.navbar .btn-primary:hover {
+    background-color: var(--primary-light) !important;
+}
+
+.navbar .btn {
+    height: 38px;
+}
+
+/* ===== КНОПКИ ===== */
+.btn {
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+}
+
+button.btn {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.btn-accent {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.btn-accent:hover {
+    background-color: #d35400;
+}
+
+.btn-link.text-danger {
+    color: var(--primary-color) !important;
+}
+
+.btn-link.text-danger:hover {
+    color: var(--primary-dark) !important;
+}
+
+/* ===== ВКЛАДКИ (ГАЛЕРЕЯ, МІСЦЕЗНАХОДЖЕННЯ, ЦІНИ, ВІДГУКИ) ===== */
+.nav-pills .nav-link {
+    color: #333 !important;
+    background-color: transparent !important;
+}
+
+.nav-pills .nav-link:hover {
+    color: var(--primary-color) !important;
+    background-color: var(--primary-lighter) !important;
+}
+
+.nav-pills .nav-link.active {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* ===== КАРТКИ ТУРІВ ===== */
+.tour-card {
+    transition: transform 0.3s ease;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.tour-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.tour-card img {
+    height: 250px;
+    object-fit: cover;
+}
+
+.price-tag {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* ===== СТОРІНКА ТУРУ ===== */
+.tour-detail-img {
+    height: 400px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* ===== КНОПКА "ДОДАТИ В ОБРАНЕ" ===== */
+.favorite-btn {
+    transition: all 0.2s ease;
+}
+
+.favorite-btn:hover {
+    transform: scale(1.08);
+}
+
+/* ===== ЗАГОЛОВОК БЛОКУ ЦІН ТА КАЛЕНДАРЯ ===== */
+.card-header.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+/* ===== КНОПКА "ЗАСТОСУВАТИ" ===== */
+button[type="submit"].btn-primary {
+    background-color: var(--primary-color) !important;
+    border: none !important;
+}
+
+button[type="submit"].btn-primary:hover {
+    background-color: var(--primary-dark) !important;
+}
+
+/* ===== КНОПКА "ПЕРЕГЛЯНУТИ МІСЦЯ" ===== */
+a.btn-outline-primary {
+    transition: all 0.25s ease;
+}
+
+a.btn-outline-primary:hover {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* ===== ПАГІНАЦІЯ ===== */
+.pagination {
+    margin-top: 30px;
+}
+
+.pagination .page-link {
+    color: var(--primary-color);
+    border: none;
+    margin: 0 3px;
+    border-radius: 5px;
+}
+
+.pagination .page-link:hover {
+    background-color: var(--primary-lighter);
+    color: var(--primary-color);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* ===== ЖИВИЙ ПОШУК ===== */
+.position-relative {
+    position: relative !important;
+}
+
+#searchResults {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    background: white !important;
+    border: 1px solid #ddd !important;
+    border-radius: 0 0 8px 8px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    max-height: 400px !important;
+    overflow-y: auto !important;
+    margin-top: 2px !important;
+    display: none;
+}
+
+#searchResults.show,
+#searchResults[style*="display: block"] {
+    display: block !important;
+}
+
+#searchResults .list-group-item {
+    display: block !important;
+    padding: 12px 15px !important;
+    text-decoration: none !important;
+    color: #333 !important;
+    border: none !important;
+    border-bottom: 1px solid #eee !important;
+    background: white !important;
+    transition: background-color 0.2s !important;
+}
+
+#searchResults .list-group-item:last-child {
+    border-bottom: none !important;
+}
+
+#searchResults .list-group-item:hover {
+    background-color: var(--primary-lighter) !important;
+    transform: translateX(5px);
+}
+
+#searchResults .list-group-item strong {
+    color: var(--primary-color) !important;
+}
+
+#searchResults .list-group-item small {
+    color: #666 !important;
+}
+
+#searchResults .list-group-item .price-tag {
+    color: var(--accent-color) !important;
+    font-weight: bold !important;
+}
+
+/* ===== HERO СЕКЦІЯ ===== */
+.hero-section {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 450px;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Затемнення поверх фото */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+
+/* Контент поверх затемнення */
+.hero-section .container {
+    position: relative;
+    z-index: 2;
+    color: white;
+    text-align: center;
+}
+
+/* ===== ЗАГАЛЬНІ СТИЛІ ДЛЯ ПОЛІВ ФОРМИ ===== */
+.form-control,
+.input-group-text,
+.btn {
+    height: 38px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 0.25rem rgba(6, 57, 47, 0.25) !important;
+}
+
+/* ===== НОВИНИ ===== */
+.news-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.news-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.news-card img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 15px 15px 0 0;
+}
+
+/* ===== ФІЛЬТРИ В БІЧНІЙ ПАНЕЛІ ===== */
+.form-check-input:checked {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.form-check-input:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 0.25rem rgba(6, 57, 47, 0.25) !important;
+}
+
+.form-check-label {
+    color: #212529;
+}
+
+.filter-sidebar h6 {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* ===== ДОДАТКОВІ ПРАВИЛА ДЛЯ ЕЛЕМЕНТІВ ===== */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+a:not(.btn):not(.nav-link) {
+    color: var(--primary-color);
+}
+
+a:not(.btn):not(.nav-link):hover {
+    color: var(--primary-dark);
+}
+
+.badge.bg-info {
+    background-color: var(--primary-lighter) !important;
+    color: var(--primary-color) !important;
+}
+
+/* ===== FLATPICKR КАЛЕНДАР ===== */
+.flatpickr-day.available-date {
+    background-color: var(--primary-color) !important;
+}
+
+.flatpickr-day.available-date:hover {
+    background-color: var(--primary-light) !important;
+}
+
+/* ===== ВІДГУКИ ===== */
+.review-item h6:hover {
+    color: var(--primary-color) !important;
+}
+
+/* ===== БЛОК ПЕРЕВАГ ===== */
+.advantage-icon .rounded-circle .fa-3x {
+    color: var(--primary-color);
+}
+
+/* ===== БЛОК ЦІН ===== */
+.price-similar-hotels-block {
+    background-color: var(--primary-lighter) !important;
+}
+
+/* ===== SELECT2 HOVER ===== */
+.select2-container--default .select2-results__option--highlighted {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* ===== BOOTSTRAP SELECT (КУРОРТИ) HOVER ===== */
+.bootstrap-select .dropdown-menu .dropdown-item:hover,
+.bootstrap-select .dropdown-menu .dropdown-item:focus {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* ===== CAROUSEL КНОПКИ ===== */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    padding: 1rem;
+}
+
+/* ===== ПОСИЛЕНА АДАПТАЦІЯ БЛОКУ КОНСУЛЬТАЦІЇ ДЛЯ МОБІЛЬНИХ ===== */
+@media (max-width: 767px) {
+    /* Контейнер – вся ширина, без зайвих відступів */
+    .row.justify-content-center.my-5 {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    .row.justify-content-center.my-5 > [class*="col-"] {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+    /* Картка – вся ширина, без переповнення */
+    #consultationCard {
+        width: 100% !important;
+        margin: 0 !important;
+        overflow-x: hidden !important;
+    }
+    /* Тіло картки – зменшені відступи */
+    #consultationCard .card-body {
+        padding: 1.25rem !important;
+    }
+    /* Рядок консультації – вертикальний */
+    .consult-row {
+        flex-direction: column !important;
+        gap: 1.25rem !important;
+    }
+    /* Блок агента – центруємо, вертикально */
+    .agent-block {
+        width: 100% !important;
+        justify-content: center !important;
+        text-align: center !important;
+        flex-direction: column !important;
+        padding: 0.75rem !important;
+    }
+    .agent-block .rounded-circle {
+        margin-right: 0 !important;
+        margin-bottom: 0.5rem !important;
+    }
+    /* Форма – прибираємо мінімальну ширину */
+    .form-block {
+        width: 100% !important;
+        min-width: auto !important;
+        flex: none !important;
+    }
+    /* Всі поля форми – на всю ширину */
+    #consultationCard .form-control,
+    #consultationCard .form-select,
+    #consultationCard .btn {
+        width: 100% !important;
+        font-size: 0.9rem !important;
+        padding: 0.6rem 0.75rem !important;
+        height: auto !important;
+    }
+    /* Рядок з вибором коду та телефону */
+    #consultationCard .row.g-2 {
+        --bs-gutter-x: 0.5rem;
+        margin-left: -0.25rem !important;
+        margin-right: -0.25rem !important;
+    }
+    #consultationCard .col-4,
+    #consultationCard .col-8 {
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+    }
+    /* Заголовок та текст */
+    #consultationCard h5 {
+        font-size: 1.3rem !important;
+        word-break: break-word;
+    }
+    #consultationCard p {
+        font-size: 0.9rem !important;
+    }
+}
+
+/* ============================================= */
+/* ===== ФІКСАЦІЯ ФІЛЬТРІВ ПРИ ПРОКРУТЦІ ===== */
+/* ============================================= */
+
+/* ПРЯМА ФІКСАЦІЯ ДЛЯ КОЛОНКИ ФІЛЬТРІВ */
+.col-lg-3 {
+    position: sticky !important;
+    top: 100px !important;
+    align-self: flex-start !important;
+    height: fit-content !important;
+    max-height: calc(100vh - 120px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+/* ПРЯМА ФІКСАЦІЯ ДЛЯ ФОРМИ ФІЛЬТРІВ */
+#filterForm {
+    position: sticky !important;
+    top: 100px !important;
+    background: linear-gradient(135deg, #f5f5f5, #e8e8e8) !important;
+    z-index: 99 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+}
+
+/* Основні контейнери фільтрів - робимо липкими */
+.filter-sidebar,
+.sidebar-filters,
+.filters-sidebar,
+.search-filters,
+.filters-panel,
+.filter-group,
+.filters-column,
+aside:has(form),
+[class*="filter-sidebar"],
+[class*="filters-sidebar"] {
+    position: sticky !important;
+    top: 100px !important;
+    z-index: 100 !important;
+    align-self: flex-start !important;
+    max-height: calc(100vh - 120px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+/* Для контейнера з фільтрами в Bootstrap колонці */
+.col-md-3:has(.filters),
+.col-lg-3:has(.filters),
+.col-md-4:has(.filters),
+.col-lg-4:has(.filters) {
+    position: sticky !important;
+    top: 100px !important;
+    align-self: flex-start !important;
+    height: fit-content !important;
+}
+
+/* Стилі для прокрутки всередині фільтрів */
+.filter-sidebar::-webkit-scrollbar,
+.sidebar-filters::-webkit-scrollbar,
+.col-lg-3::-webkit-scrollbar {
+    width: 6px;
+}
+
+.filter-sidebar::-webkit-scrollbar-track,
+.sidebar-filters::-webkit-scrollbar-track,
+.col-lg-3::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.filter-sidebar::-webkit-scrollbar-thumb,
+.sidebar-filters::-webkit-scrollbar-thumb,
+.col-lg-3::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+.filter-sidebar::-webkit-scrollbar-thumb:hover,
+.sidebar-filters::-webkit-scrollbar-thumb:hover,
+.col-lg-3::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+}
+
+/* Результати пошуку - забезпечуємо, щоб не накладалися */
+.results-list,
+.tours-grid,
+.tours-container,
+.search-results {
+    overflow: visible !important;
+}
+
+/* Додаткова фіксація для форм фільтрів */
+form.filter-form,
+form.search-form,
+form[class*="filter"] {
+    position: sticky !important;
+    top: 100px !important;
+    background: white !important;
+    padding: 15px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+    z-index: 99 !important;
+}
+
+/* Для мобільних пристроїв - прибираємо sticky */
+@media (max-width: 768px) {
+    .col-lg-3,
+    .filter-sidebar,
+    .sidebar-filters,
+    .filters-sidebar,
+    .search-filters,
+    .filters-panel,
+    .filter-group,
+    .filters-column,
+    .col-md-3:has(.filters),
+    .col-lg-3:has(.filters),
+    .col-md-4:has(.filters),
+    .col-lg-4:has(.filters) {
+        position: relative !important;
+        top: auto !important;
+        max-height: none !important;
+        overflow-y: visible !important;
+    }
+
+    #filterForm,
+    form.filter-form,
+    form.search-form,
+    form[class*="filter"] {
+        position: relative !important;
+        top: auto !important;
+    }
+}
+
+/* Для темної теми (якщо використовується) */
+@media (prefers-color-scheme: dark) {
+    #filterForm,
+    form.filter-form,
+    form.search-form,
+    form[class*="filter"] {
+        background: #1a1a1a !important;
+    }
+}
