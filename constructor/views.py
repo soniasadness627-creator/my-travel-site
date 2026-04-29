@@ -22,6 +22,7 @@ from django.views.decorators.cache import never_cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.urls import reverse_lazy
+from django.contrib.auth import get_user_model  # ДОДАНО: імпорт для create_admin_direct
 from .forms.main_forms import AgentRegistrationForm, VerificationForm, AgentSiteForm
 from .forms.blocks import AgentBlocksForm
 from users.models import User
@@ -46,6 +47,8 @@ categories = {
 category = random.choice(list(categories.keys()))
 image_id = random.choice(categories[category])
 random_image_url = f"https://picsum.photos/{image_id}/1200/400"
+
+
 def force_create_admin(request):
     User = get_user_model()
     try:
@@ -91,7 +94,7 @@ def agent_verify(request):
     """
     print("=== agent_verify: Початок ===")
 
-    if request.method == 'POST':  # ← ВИДАЛЕНО "or True"
+    if request.method == 'POST':
         data = request.session.get('reg_data')
         if data:
             email = data['email']
@@ -139,9 +142,8 @@ def agent_verify(request):
                         first_name=first_name,
                         last_name=last_name,
                         is_agent=True,
-                        is_staff=True  # Додаємо is_staff для доступу до адмінки
+                        is_staff=True
                     )
-                    # Встановлюємо unusable password (не можна ввійти з паролем)
                     user.set_unusable_password()
                     user.save()
                     print(f"Створено нового користувача: {user.username} (ID: {user.id})")
@@ -294,104 +296,96 @@ def generate_image(request):
 
     # Розширений список різноманітних зображень
     image_urls = [
-        # Пейзажі та природа
-        "https://picsum.photos/id/10/1200/400",  # туманний ліс
-        "https://picsum.photos/id/11/1200/400",  # гора з озером
-        "https://picsum.photos/id/12/1200/400",  # річка в лісі
-        "https://picsum.photos/id/15/1200/400",  # природа
-        "https://picsum.photos/id/22/1200/400",  # птах
-        "https://picsum.photos/id/29/1200/400",  # місто
-        "https://picsum.photos/id/31/1200/400",  # велосипед
-        "https://picsum.photos/id/39/1200/400",  # телефон
-        "https://picsum.photos/id/42/1200/400",  # піаніно
-        "https://picsum.photos/id/55/1200/400",  # квіти
-        "https://picsum.photos/id/66/1200/400",  # гори
-        "https://picsum.photos/id/77/1200/400",  # місто ввечері
-        "https://picsum.photos/id/88/1200/400",  # вулиця
-        "https://picsum.photos/id/96/1200/400",  # гора
-        "https://picsum.photos/id/99/1200/400",  # ліс
-        "https://picsum.photos/id/100/1200/400",  # камінь
-        "https://picsum.photos/id/101/1200/400",  # гора
-        "https://picsum.photos/id/104/1200/400",  # водоспад
-        "https://picsum.photos/id/106/1200/400",  # квіти
-        "https://picsum.photos/id/116/1200/400",  # озеро
-        "https://picsum.photos/id/119/1200/400",  # гора з хмарами
-
-        # Море та пляжі
-        "https://picsum.photos/id/20/1200/400",  # кава на пляжі
-        "https://picsum.photos/id/21/1200/400",  # будинки біля моря
-        "https://picsum.photos/id/30/1200/400",  # кав'ярня
-        "https://picsum.photos/id/33/1200/400",  # пляж
-        "https://picsum.photos/id/37/1200/400",  # океан
-        "https://picsum.photos/id/38/1200/400",  # хвилі
-
-        # Міста та архітектура
-        "https://picsum.photos/id/24/1200/400",  # вулиця
-        "https://picsum.photos/id/26/1200/400",  # міст
-        "https://picsum.photos/id/27/1200/400",  # місто
-        "https://picsum.photos/id/28/1200/400",  # архітектура
-        "https://picsum.photos/id/32/1200/400",  # будівля
-        "https://picsum.photos/id/44/1200/400",  # церква
-        "https://picsum.photos/id/47/1200/400",  # вежа
-        "https://picsum.photos/id/50/1200/400",  # місто з висоти
-        "https://picsum.photos/id/51/1200/400",  # вулиця ввечері
-
-        # Подорожі та туризм
-        "https://picsum.photos/id/18/1200/400",  # дорога
-        "https://picsum.photos/id/23/1200/400",  # гора
-        "https://picsum.photos/id/34/1200/400",  # ліс
-        "https://picsum.photos/id/35/1200/400",  # поле
-        "https://picsum.photos/id/36/1200/400",  # пшениця
-        "https://picsum.photos/id/40/1200/400",  # хмарочоси
-        "https://picsum.photos/id/41/1200/400",  # міст
-        "https://picsum.photos/id/43/1200/400",  # дорога в горах
-        "https://picsum.photos/id/45/1200/400",  # парк
-        "https://picsum.photos/id/48/1200/400",  # пам'ятник
-        "https://picsum.photos/id/52/1200/400",  # захід сонця
-        "https://picsum.photos/id/53/1200/400",  # місто вночі
-        "https://picsum.photos/id/54/1200/400",  # дім
-        "https://picsum.photos/id/56/1200/400",  # світло
-        "https://picsum.photos/id/57/1200/400",  # міст через річку
-        "https://picsum.photos/id/58/1200/400",  # пішохід
-        "https://picsum.photos/id/59/1200/400",  # дерево
-        "https://picsum.photos/id/60/1200/400",  # дорога
-        "https://picsum.photos/id/61/1200/400",  # багаття
-        "https://picsum.photos/id/62/1200/400",  # місто
-        "https://picsum.photos/id/63/1200/400",  # рибалка
-        "https://picsum.photos/id/64/1200/400",  # річка
-        "https://picsum.photos/id/65/1200/400",  # метро
-        "https://picsum.photos/id/67/1200/400",  # озеро
-        "https://picsum.photos/id/68/1200/400",  # міст
-        "https://picsum.photos/id/69/1200/400",  # дорога в лісі
-        "https://picsum.photos/id/70/1200/400",  # вулкан
-        "https://picsum.photos/id/71/1200/400",  # дерево
-        "https://picsum.photos/id/72/1200/400",  # міст
-        "https://picsum.photos/id/73/1200/400",  # місто
-        "https://picsum.photos/id/74/1200/400",  # гора
-        "https://picsum.photos/id/75/1200/400",  # озеро
-        "https://picsum.photos/id/76/1200/400",  # дорога
-        "https://picsum.photos/id/78/1200/400",  # місто
-        "https://picsum.photos/id/79/1200/400",  # будівля
-        "https://picsum.photos/id/80/1200/400",  # міст
-        "https://picsum.photos/id/81/1200/400",  # пляж
-        "https://picsum.photos/id/82/1200/400",  # місто
-        "https://picsum.photos/id/83/1200/400",  # поле
-        "https://picsum.photos/id/84/1200/400",  # міст
-        "https://picsum.photos/id/85/1200/400",  # місто
-        "https://picsum.photos/id/86/1200/400",  # гора
-        "https://picsum.photos/id/87/1200/400",  # місто
-        "https://picsum.photos/id/89/1200/400",  # дорога
-        "https://picsum.photos/id/90/1200/400",  # міст
-        "https://picsum.photos/id/91/1200/400",  # місто
-        "https://picsum.photos/id/92/1200/400",  # гори
-        "https://picsum.photos/id/93/1200/400",  # місто
-        "https://picsum.photos/id/94/1200/400",  # озеро
-        "https://picsum.photos/id/95/1200/400",  # гора
-        "https://picsum.photos/id/97/1200/400",  # місто
-        "https://picsum.photos/id/98/1200/400",  # дорога
+        "https://picsum.photos/id/10/1200/400",
+        "https://picsum.photos/id/11/1200/400",
+        "https://picsum.photos/id/12/1200/400",
+        "https://picsum.photos/id/15/1200/400",
+        "https://picsum.photos/id/22/1200/400",
+        "https://picsum.photos/id/29/1200/400",
+        "https://picsum.photos/id/31/1200/400",
+        "https://picsum.photos/id/39/1200/400",
+        "https://picsum.photos/id/42/1200/400",
+        "https://picsum.photos/id/55/1200/400",
+        "https://picsum.photos/id/66/1200/400",
+        "https://picsum.photos/id/77/1200/400",
+        "https://picsum.photos/id/88/1200/400",
+        "https://picsum.photos/id/96/1200/400",
+        "https://picsum.photos/id/99/1200/400",
+        "https://picsum.photos/id/100/1200/400",
+        "https://picsum.photos/id/101/1200/400",
+        "https://picsum.photos/id/104/1200/400",
+        "https://picsum.photos/id/106/1200/400",
+        "https://picsum.photos/id/116/1200/400",
+        "https://picsum.photos/id/119/1200/400",
+        "https://picsum.photos/id/20/1200/400",
+        "https://picsum.photos/id/21/1200/400",
+        "https://picsum.photos/id/30/1200/400",
+        "https://picsum.photos/id/33/1200/400",
+        "https://picsum.photos/id/37/1200/400",
+        "https://picsum.photos/id/38/1200/400",
+        "https://picsum.photos/id/24/1200/400",
+        "https://picsum.photos/id/26/1200/400",
+        "https://picsum.photos/id/27/1200/400",
+        "https://picsum.photos/id/28/1200/400",
+        "https://picsum.photos/id/32/1200/400",
+        "https://picsum.photos/id/44/1200/400",
+        "https://picsum.photos/id/47/1200/400",
+        "https://picsum.photos/id/50/1200/400",
+        "https://picsum.photos/id/51/1200/400",
+        "https://picsum.photos/id/18/1200/400",
+        "https://picsum.photos/id/23/1200/400",
+        "https://picsum.photos/id/34/1200/400",
+        "https://picsum.photos/id/35/1200/400",
+        "https://picsum.photos/id/36/1200/400",
+        "https://picsum.photos/id/40/1200/400",
+        "https://picsum.photos/id/41/1200/400",
+        "https://picsum.photos/id/43/1200/400",
+        "https://picsum.photos/id/45/1200/400",
+        "https://picsum.photos/id/48/1200/400",
+        "https://picsum.photos/id/52/1200/400",
+        "https://picsum.photos/id/53/1200/400",
+        "https://picsum.photos/id/54/1200/400",
+        "https://picsum.photos/id/56/1200/400",
+        "https://picsum.photos/id/57/1200/400",
+        "https://picsum.photos/id/58/1200/400",
+        "https://picsum.photos/id/59/1200/400",
+        "https://picsum.photos/id/60/1200/400",
+        "https://picsum.photos/id/61/1200/400",
+        "https://picsum.photos/id/62/1200/400",
+        "https://picsum.photos/id/63/1200/400",
+        "https://picsum.photos/id/64/1200/400",
+        "https://picsum.photos/id/65/1200/400",
+        "https://picsum.photos/id/67/1200/400",
+        "https://picsum.photos/id/68/1200/400",
+        "https://picsum.photos/id/69/1200/400",
+        "https://picsum.photos/id/70/1200/400",
+        "https://picsum.photos/id/71/1200/400",
+        "https://picsum.photos/id/72/1200/400",
+        "https://picsum.photos/id/73/1200/400",
+        "https://picsum.photos/id/74/1200/400",
+        "https://picsum.photos/id/75/1200/400",
+        "https://picsum.photos/id/76/1200/400",
+        "https://picsum.photos/id/78/1200/400",
+        "https://picsum.photos/id/79/1200/400",
+        "https://picsum.photos/id/80/1200/400",
+        "https://picsum.photos/id/81/1200/400",
+        "https://picsum.photos/id/82/1200/400",
+        "https://picsum.photos/id/83/1200/400",
+        "https://picsum.photos/id/84/1200/400",
+        "https://picsum.photos/id/85/1200/400",
+        "https://picsum.photos/id/86/1200/400",
+        "https://picsum.photos/id/87/1200/400",
+        "https://picsum.photos/id/89/1200/400",
+        "https://picsum.photos/id/90/1200/400",
+        "https://picsum.photos/id/91/1200/400",
+        "https://picsum.photos/id/92/1200/400",
+        "https://picsum.photos/id/93/1200/400",
+        "https://picsum.photos/id/94/1200/400",
+        "https://picsum.photos/id/95/1200/400",
+        "https://picsum.photos/id/97/1200/400",
+        "https://picsum.photos/id/98/1200/400",
     ]
 
-    # ВИПАДКОВИЙ ВИБІР зображення
     random_image_url = random.choice(image_urls)
 
     try:
@@ -399,26 +393,21 @@ def generate_image(request):
         response = requests.get(random_image_url, timeout=30)
 
         if response.status_code == 200:
-            # Відкриваємо зображення
             img = Image.open(io.BytesIO(response.content))
 
-            # Конвертуємо в RGB якщо потрібно
             if img.mode in ('RGBA', 'P'):
                 img = img.convert('RGB')
 
-            # Змінюємо розмір
             max_width = 1200
             if img.width > max_width:
                 ratio = max_width / img.width
                 new_height = int(img.height * ratio)
                 img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
 
-            # Зберігаємо в BytesIO
             output = io.BytesIO()
             img.save(output, format='JPEG', quality=85, optimize=True)
             output.seek(0)
 
-            # Завантажуємо на Cloudinary
             upload_result = cloudinary.uploader.upload(
                 output,
                 folder=f"agent_{request.user.id}_hero",
@@ -430,7 +419,6 @@ def generate_image(request):
             )
             image_url = upload_result['secure_url']
 
-            # Зберігаємо URL в поле hero_background
             agent_site.hero_background = image_url
             agent_site.save()
 
@@ -446,6 +434,7 @@ def generate_image(request):
         messages.error(request, f'Помилка: {str(e)[:100]}')
 
     return redirect('constructor:dashboard')
+
 
 class AgentSiteUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = AgentSite
@@ -511,7 +500,7 @@ def agent_terms_of_service(request, slug):
 
 
 # -------------------------
-# Функція для входу агента через код з пошти - ДОДАНО ДЕКОРАТОРИ
+# Функція для входу агента через код з пошти
 # -------------------------
 @csrf_protect
 @never_cache
@@ -596,38 +585,31 @@ def agent_login_redirect(request):
     """
     print("=== agent_login_redirect: Початок ===")
 
-    # Якщо користувач вже авторизований і має агентський сайт
     if request.user.is_authenticated and hasattr(request.user, 'agent_site'):
         slug = request.user.agent_site.slug
         print(f"=== agent_login_redirect: Користувач вже авторизований, перенаправляємо на /a/{slug}/login/ ===")
         return redirect(f'/a/{slug}/login/')
 
-    # Обробка POST запиту (форма з email)
     if request.method == 'POST':
         email = request.POST.get('email')
         print(f"=== agent_login_redirect: Отримано POST з email: {email} ===")
 
         from users.models import User
 
-        # Шукаємо користувача з таким email та is_agent=True
         user = User.objects.filter(email=email, is_agent=True).first()
         if not user:
-            # Якщо не знайшли за email, шукаємо за username
             user = User.objects.filter(username=email, is_agent=True).first()
             print(f"=== agent_login_redirect: Пошук за username, знайдено: {user} ===")
 
         if user and hasattr(user, 'agent_site'):
             slug = user.agent_site.slug
-            print(
-                f"=== agent_login_redirect: Знайдено агента {user}, slug={slug}. Перенаправляємо на /a/{slug}/login/ ===")
+            print(f"=== agent_login_redirect: Знайдено агента {user}, slug={slug}. Перенаправляємо на /a/{slug}/login/ ===")
             return redirect(f'/a/{slug}/login/')
         else:
             print(f"=== agent_login_redirect: Користувача з email {email} не знайдено або він не є агентом ===")
             messages.error(request, 'Сайт з таким email не знайдено. Перевірте email або зареєструйтесь.')
-            # Після помилки показуємо форму знову
             return render(request, 'constructor/agent_login_redirect.html')
 
-    # GET запит - показуємо форму
     print("=== agent_login_redirect: Показуємо форму (GET-запит) ===")
     return render(request, 'constructor/agent_login_redirect.html')
 
@@ -652,7 +634,6 @@ def agent_public_site(request, slug, **kwargs):
     if not hasattr(request, 'current_agent_site') or not request.current_agent_site:
         raise Http404("Сайт не знайдено")
 
-    # ========== ДОДАЄМО НАЛАШТУВАННЯ БЛОКІВ ДЛЯ АГЕНТА ==========
     from .models.blocks import AgentBlockSettings
     block_settings = AgentBlockSettings.objects.filter(agent=request.current_agent_site.user).first()
 
@@ -668,7 +649,6 @@ def agent_public_site(request, slug, **kwargs):
         request.active_blocks = AgentBlockSettings().get_default_order()
         request.custom_css = ''
         request.custom_js = ''
-    # ============================================================
 
     view_name = request.resolver_match.view_name
 
@@ -747,7 +727,6 @@ def blocks_settings(request):
     )
 
     if request.method == 'POST':
-        # Оновлюємо налаштування
         blocks_order = request.POST.getlist('blocks_order')
         active_blocks = request.POST.getlist('active_blocks')
         custom_css = request.POST.get('custom_css', '')
@@ -786,7 +765,6 @@ def banner_create(request):
         banner_id = request.POST.get('banner_id')
         is_edit = banner_id and banner_id.isdigit() and int(banner_id) < len(banners)
 
-        # Обробка завантаженого файлу
         image_file = request.FILES.get('image_file')
         image_url = None
 
@@ -820,7 +798,6 @@ def banner_create(request):
         if not image_url and not is_edit:
             return JsonResponse({'error': 'Необхідно завантажити зображення'}, status=400)
 
-        # Збираємо текстові блоки
         text_blocks = []
         block_index = 1
         while True:
@@ -874,6 +851,7 @@ def banner_create(request):
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+
 def banner_get(request, banner_id):
     """Отримання даних банера для редагування"""
     if not request.user.is_authenticated or not request.user.is_agent:
@@ -891,6 +869,7 @@ def banner_get(request, banner_id):
 
     return JsonResponse({'error': 'Banner not found'}, status=404)
 
+
 def banner_delete(request, banner_id):
     """Видалення банера"""
     if not request.user.is_authenticated or not request.user.is_agent:
@@ -902,7 +881,6 @@ def banner_delete(request, banner_id):
 
         if 0 <= banner_id < len(banners):
             banners.pop(banner_id)
-            # Оновлюємо порядок
             for i, banner in enumerate(banners):
                 banner['order'] = i + 1
             settings.banners = banners
@@ -927,11 +905,9 @@ def banner_reorder(request):
         banners = settings.banners or []
 
         if position is not None and banner_id is not None:
-            # Зміна позиції конкретного банера
             if 0 <= banner_id < len(banners):
                 banners[banner_id]['position'] = position
         elif new_order:
-            # Переупорядковуємо банери
             reordered = []
             for idx in new_order:
                 if 0 <= idx < len(banners):
