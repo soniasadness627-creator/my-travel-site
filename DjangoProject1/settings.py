@@ -208,6 +208,7 @@ if not DEBUG:
 
 # Gemini API ключ
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyAlyvwC7SmSESF7YpCOUJRuYgTLIP7b7L4')
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', '')
 
 # ========== НАЛАШТУВАННЯ ПОРТУ ==========
 PORT = os.getenv('PORT', '10000')
