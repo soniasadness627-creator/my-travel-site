@@ -240,32 +240,37 @@ span.new_r-filter-value,
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* ========== РЕЙТИНГ - ЕЛЕМЕНТИ БЛИЖЧЕ ========== */
+/* ========== РЕЙТИНГ - КІЛЬКІСТЬ ЗЛІВА, ОЦІНКА СПРАВА, ВСЕ ПО ВЕРТИКАЛЬНОМУ ЦЕНТРУ ========== */
 
 /* Основний контейнер рейтингу */
 .new_r-item-rating-container,
 .new_r-p8 {
-    width: 85px !important;
+    width: 90px !important;
     height: 46px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 4px 6px !important;
+    padding: 0 8px !important;
     background: white !important;
     border-radius: 8px !important;
     border-width: 2px !important;
     border-style: solid !important;
+    box-sizing: border-box !important;
 }
 
-/* Ліва частина - кількість оцінок - ЗЛІВА */
+/* Ліва частина - кількість оцінок - ЗЛІВА ПО ЦЕНТРУ */
 .new_r-item-rating-rev {
     display: flex !important;
     flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
     font-size: 0.55rem !important;
     color: #888 !important;
-    text-align: left !important;
+    text-align: center !important;
     margin: 0 !important;
     padding: 0 !important;
+    line-height: 1.2 !important;
+    height: 100% !important;
 }
 
 /* Кількість оцінок (цифра) */
@@ -273,15 +278,22 @@ span.new_r-filter-value,
     font-weight: 700 !important;
     font-size: 0.75rem !important;
     color: #555 !important;
+    display: block !important;
+    line-height: 1.2 !important;
 }
 
-/* Права частина - оцінка - СПРАВА */
+/* Права частина - оцінка - СПРАВА ПО ЦЕНТРУ */
 .new_r-item-rating-value {
     font-weight: 800 !important;
     font-size: 1rem !important;
     margin: 0 !important;
     padding: 0 !important;
-    text-align: right !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    line-height: 1 !important;
 }
 
 /* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ */
