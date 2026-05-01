@@ -19,34 +19,32 @@
 </div>
 
 <!-- МОДУЛЬ ПОШУКУ ТУРІВ (Otpusk.com) -->
-<div class="container my-5">
-<div id="otpusk-search-module" class="container my-5"></div>            <script>
-                var osGeo = '';
-                var osDefaultDeparture = '';
-                var osDefaultDuration = '';
-                var osDateFrom = '';
-                var osDateTo = '';
-                var osHotelCategory = '';
-                var osFood = '';
-                var osTransport = '';
-                var osTarget = '';
-                var osContainer = null;
-                var osTourContainer = null;
-                var osLang = 'ua';
-                var osTourTargetBlank = false;
-                var osOrderUrl = null;
-                var osCurrency = 'converted';
-                var osAutoStart = false;
-            </script>
-            <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
-            <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
-            <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
-            <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
-            <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
-            <script src="https://export.otpusk.com/js/onsite/"></script>
-            <script src="https://export.otpusk.com/js/order"></script>
-        </div>
-    </div>
+<div id="otpusk-search-module">
+    <script>
+        var osGeo = '';
+        var osDefaultDeparture = '';
+        var osDefaultDuration = '';
+        var osDateFrom = '';
+        var osDateTo = '';
+        var osHotelCategory = '';
+        var osFood = '';
+        var osTransport = '';
+        var osTarget = '';
+        var osContainer = null;
+        var osTourContainer = null;
+        var osLang = 'ua';
+        var osTourTargetBlank = false;
+        var osOrderUrl = null;
+        var osCurrency = 'converted';
+        var osAutoStart = false;
+    </script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+    <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+    <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+    <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+    <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+    <script src="https://export.otpusk.com/js/onsite/"></script>
+    <script src="https://export.otpusk.com/js/order"></script>
 </div>
 
 <!-- ========== ПЕРЕСТАВНІ БЛОКИ (ЗГІДНО З ПОРЯДКОМ) ========== -->
@@ -1860,33 +1858,164 @@
     }
 }
 
-   /* ========== ПРОСТІ СТИЛІ ДЛЯ МОДУЛЯ ПОШУКУ ========== */
+   /* ========== СТИЛІ ДЛЯ МОДУЛЯ ПОШУКУ OTPUSK.COM ========== */
 
-/* Фон модуля - білий */
+/* Основний контейнер - вужчий, з рамкою */
 #otpusk-search-module {
+    background: white !important;
+    border-radius: 24px !important;
+    border: 2px solid var(--primary-color) !important;    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+    padding: 20px 24px !important;
+    max-width: 1500px !important;
+    margin: -40px auto 0 auto !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+/* Заголовок "Пошук туру" - чорний */
+.new_f-title {
+    color: #1a202c !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 20px !important;
+    display: block !important;
+}
+
+/* Внутрішні контейнери */
+.new_os,
+.new_f-container,
+.new_f-wrapper,
+.new_f-form {
     background: white !important;
 }
 
-/* Кнопка "Знайти" - зелений колір */
+
+
+/* Розширений пошук - чорний */
+.new_f-ext-btn-text {
+    color: #1a202c !important;
+    font-weight: 500 !important;
+}
+
+/* Кнопка "Знайти" - колір агента */
 .new_f-form-submit {
-    background: #086745 !important;
-    border-color: #086745 !important;
+    background: var(--primary-color) !important;
     color: white !important;
+    border-radius: 10px !important;
+    border: none !important;
+    font-weight: 600 !important;
+    padding: 12px 28px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
 }
 
 .new_f-form-submit:hover {
-    background: #02432c !important;
+    background: var(--primary-dark) !important;
+    box-shadow: 0 4px 12px rgba(8, 103, 69, 0.2) !important;
 }
 
-/* Поля вводу - білі з сірою рамкою */
+/* Поля вводу */
 .new_f-dropdown-btn {
-    background: white !important;
-    border: 1px solid #ccc !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    transition: all 0.3s ease !important;
+    font-size: 14px !important;
 }
 
-/* Фон результатів - білий */
+.new_f-dropdown-btn:hover {
+    border-color: var(--primary-color) !important;
+}
+
+/* Випадаючі списки */
+.new_f-dropdown-body {
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+/* Активні елементи */
+.new_f-dropdown-item.selected {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Результати пошуку */
 .new_r-container {
     background: white !important;
+    margin-top: 30px !important;
+}
+
+.new_r-item {
+    background: white !important;
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    transition: all 0.3s ease !important;
+}
+
+.new_r-item:hover {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Мобільна версія */
+@media (max-width: 768px) {
+    #otpusk-search-module {
+        padding: 15px !important;
+        margin: -20px 15px 0 15px !important;
+        max-width: none !important;
+    }
+
+    .new_f-dropdown-btn {
+        width: 100% !important;
+        padding: 10px 14px !important;
+    }
+
+    .new_f-form-submit {
+        width: 100% !important;
+        padding: 12px !important;
+        margin-top: 10px !important;
+    }
+}
+    /* Кнопка в розширеному пошуку */
+.new_f-ext-clear-btn,
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-radius: 40px !important;
+    border: none !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.new_f-ext-clear-btn:hover,
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
+    background: var(--primary-dark) !important;
+}
+    /* Кнопка "Очистити фільтри" - сіра */
+.new_f-ext-clear-btn {
+    background: #e2e8f0 !important;
+    color: #1a202c !important;
+    border-radius: 40px !important;
+    border: none !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.new_f-ext-clear-btn:hover {
+    background: #cbd5e1 !important;
+}
+
+/* Кнопка "Застосувати" в розширеному пошуку - залишається зеленою */
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-radius: 40px !important;
+    border: none !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
+    background: var(--primary-dark) !important;
 }
 </style>
 {% endblock %}
