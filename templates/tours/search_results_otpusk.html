@@ -240,39 +240,32 @@ span.new_r-filter-value,
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* ========== РЕЙТИНГ - КІЛЬКІСТЬ ЗЛІВА, ОЦІНКА СПРАВА, ВЕРТИКАЛЬНИЙ ЦЕНТР ========== */
+/* ========== РЕЙТИНГ - ПРОСТО ЗЛІВА І СПРАВА ========== */
 
 /* Основний контейнер рейтингу */
 .new_r-item-rating-container,
 .new_r-p8 {
-    width: 115px !important;
-    min-width: 105px !important;
-    height: 48px !important;
+    width: 110px !important;
+    height: 46px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 4px 12px !important;
-    box-sizing: border-box !important;
+    padding: 4px 10px !important;
     background: white !important;
     border-radius: 8px !important;
     border-width: 2px !important;
     border-style: solid !important;
 }
 
-/* Ліва частина - кількість оцінок - ЗЛІВА ПО ВЕРТИКАЛЬНОМУ ЦЕНТРУ */
+/* Ліва частина - кількість оцінок - ЗЛІВА */
 .new_r-item-rating-rev {
     display: flex !important;
     flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 2px !important;
     font-size: 0.55rem !important;
     color: #888 !important;
-    background: transparent !important;
-    text-align: center !important;
+    text-align: left !important;
     margin: 0 !important;
     padding: 0 !important;
-    line-height: 1.2 !important;
 }
 
 /* Кількість оцінок (цифра) */
@@ -280,36 +273,23 @@ span.new_r-filter-value,
     font-weight: 700 !important;
     font-size: 0.8rem !important;
     color: #555 !important;
-    display: block !important;
-    line-height: 1.2 !important;
 }
 
-/* Права частина - оцінка - СПРАВА ПО ВЕРТИКАЛЬНОМУ ЦЕНТРУ */
+/* Права частина - оцінка - СПРАВА */
 .new_r-item-rating-value {
     font-weight: 800 !important;
     font-size: 1.15rem !important;
-    background: transparent !important;
     margin: 0 !important;
     padding: 0 !important;
-    line-height: 1 !important;
-    text-align: center !important;
-    flex-shrink: 0 !important;
+    text-align: right !important;
 }
 
-/* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ ТА СМУГИ */
-.new_r-item-rating-container::before {
-    display: none !important;
-}
-
+/* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ */
+.new_r-item-rating-container::before,
 .new_r-item-rating-container .slice,
 .new_r-item-rating-container .bar,
 .new_r-item-rating-container .fill,
 .new_r-item-rating-container svg,
-.new_r-item-rating-container circle,
-.new_r-item-rating-container path {
-    display: none !important;
-}
-
 .new_r-item-rating-container::after {
     display: none !important;
 }
