@@ -86,19 +86,19 @@ span.new_r-item-price,
     font-size: 1.25rem !important;
 }
 
-/* ========== ВАЛЮТА (грн/$) В ЦІНІ ========== */
+/* ========== ВАЛЮТА (грн/$) В ЦІНІ - БЕЗ ФОНУ ========== */
 
-/* Валюта біля ціни */
+/* Валюта біля ціни - ПРИБРАЛИ ФОН, ТІЛЬКИ ЧОРНИЙ ТЕКСТ */
 .currency,
 .new_r-item-price .currency,
 span.currency {
-    background: var(--primary-color) !important;
-    color: white !important;
-    padding: 2px 8px !important;
-    border-radius: 20px !important;
-    display: inline-block !important;
+    background: transparent !important;
+    color: #1a202c !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    display: inline !important;
     font-weight: 600 !important;
-    font-size: 0.85rem !important;
+    font-size: 1.25rem !important;
 }
 
 /* ========== КНОПКИ ПЕРЕМИКАННЯ ВАЛЮТИ - ЦІЛІСНИЙ БЛОК В РЯД ========== */
@@ -106,20 +106,20 @@ span.currency {
 /* Контейнер кнопок валюти */
 .new_r-currency-switch {
     display: flex !important;
-    flex-direction: row !important;  /* ПРИМУСОВО В РЯД */
+    flex-direction: row !important;
     gap: 0 !important;
     background: var(--primary-color) !important;
     border-radius: 24px !important;
     overflow: hidden !important;
     width: fit-content !important;
-    flex-wrap: nowrap !important;     /* ЗАБОРОНЯЄМО ПЕРЕНОС */
+    flex-wrap: nowrap !important;
 }
 
 /* Стиль для обгортки label */
 .new_r-currency-switch label {
     margin: 0 !important;
     display: inline-block !important;
-    flex-shrink: 0 !important;        /* ЗАБОРОНЯЄМО СТИСКАННЯ */
+    flex-shrink: 0 !important;
 }
 
 /* Ховаємо радіо кнопки */
@@ -127,7 +127,7 @@ span.currency {
     display: none !important;
 }
 
-/* Стиль для span (грн та $) - вони будуть як єдині кнопки в блоці */
+/* Стиль для span (грн та $) - кольоровий блок ТІЛЬКИ В ПЕРЕМИКАЧІ */
 .new_r-currency-switch span {
     background: transparent !important;
     color: white !important;
@@ -139,7 +139,7 @@ span.currency {
     transition: all 0.2s ease !important;
     margin: 0 !important;
     border-radius: 0 !important;
-    white-space: nowrap !important;    /* ТЕКСТ В ОДИН РЯДОК */
+    white-space: nowrap !important;
 }
 
 /* Активна валюта (вибрана) */
@@ -153,6 +153,7 @@ span.currency {
 .new_r-currency-switch span:hover {
     background: rgba(255, 255, 255, 0.15) !important;
 }
+
 /* ========== ЗІРКИ - ЖОВТІ ========== */
 .new_r-item-star {
     fill: #FFD700 !important;
@@ -248,15 +249,6 @@ span.new_r-filter-value,
         width: 100% !important;
         margin-top: 10px !important;
     }
-}
-    /* ФІНАЛЬНИЙ ФІКС - ПРИМУСОВИЙ РЯДОК */
-.new_r-currency-switch {
-    display: flex !important;
-    flex-direction: row !important;
-}
-
-.new_r-currency-switch label {
-    display: inline !important;
 }
 </style>
 
