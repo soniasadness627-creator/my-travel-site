@@ -18,9 +18,11 @@
             min-height: 100vh;
             padding: 40px 20px;
         }
-        .instruction-card {
-            max-width: 1000px;
+        .instruction-wrapper {
+            max-width: 1200px;
             margin: 0 auto;
+        }
+        .instruction-card {
             background: white;
             border-radius: 24px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
@@ -42,6 +44,32 @@
         }
         .content {
             padding: 30px;
+        }
+        /* Ліве меню */
+        .side-menu {
+            position: sticky;
+            top: 30px;
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 15px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .side-menu .nav-link {
+            color: #333;
+            padding: 10px 20px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .side-menu .nav-link:hover {
+            background-color: var(--primary-lighter);
+            border-left-color: var(--primary-color);
+            color: var(--primary-dark);
+        }
+        .side-menu .nav-link.active {
+            background-color: var(--primary-lighter);
+            border-left-color: var(--primary-color);
+            color: var(--primary-dark);
+            font-weight: 500;
         }
         .step-card {
             background: #f8f9fa;
@@ -82,18 +110,6 @@
             border-radius: 12px;
             color: #1e40af;
         }
-        .btn-custom {
-            background: var(--primary-color);
-            color: white;
-            border-radius: 30px;
-            padding: 10px 25px;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn-custom:hover {
-            background: var(--primary-dark);
-            color: white;
-        }
         .footer-note {
             text-align: center;
             padding: 20px;
@@ -104,6 +120,11 @@
             body {
                 padding: 20px 10px;
             }
+            .side-menu {
+                position: relative;
+                top: 0;
+                margin-bottom: 20px;
+            }
             .step-card {
                 padding: 15px;
             }
@@ -111,116 +132,154 @@
     </style>
 </head>
 <body>
-    <div class="instruction-card">
-        <div class="header">
-            <h1><i class="fas fa-book-open me-2"></i>Інструкція для агента</h1>
-            <p>Як користуватися конструктором сайтів TourConstructor</p>
-        </div>
+    <div class="instruction-wrapper">
+        <div class="instruction-card">
+            <div class="header">
+                <h1><i class="fas fa-book-open me-2"></i>Інструкція для агента</h1>
+                <p>Як користуватися конструктором сайтів TourConstructor</p>
+            </div>
 
-        <div class="content">
-            <!-- КРОК 1 -->
-            <div class="step-card">
-                <div class="step-title">
-                    <i class="fas fa-user-plus"></i> 1. Реєстрація
-                </div>
-                <p>Щоб створити власний сайт, потрібно зареєструватися:</p>
-                <ol>
-                    <li>Перейдіть на головну сторінку сайту</li>
-                    <li>Натисніть кнопку <strong>"Створити сайт безкоштовно"</strong></li>
-                    <li>Заповніть форму: ім'я, прізвище, email</li>
-                    <li>Натисніть <strong>"Надіслати код"</strong></li>
-                    <li>Введіть код, який прийшов на вашу пошту</li>
-                    <li>Після підтвердження ви потрапите в особистий кабінет</li>
-                </ol>
-                <div class="alert alert-info mt-2" style="background: #e0f2fe; border: none; border-radius: 10px;">
-                    💡 <strong>Порада:</strong> Перевірте папку "Спам", якщо лист з кодом не прийшов.
+            <div class="content">
+                <div class="row">
+                    <!-- ЛІВЕ МЕНЮ -->
+                    <div class="col-md-3">
+                        <div class="side-menu">
+                            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                <a class="nav-link active" href="#step1">1. Реєстрація</a>
+                                <a class="nav-link" href="#step2">2. Вхід в кабінет</a>
+                                <a class="nav-link" href="#step3">3. Налаштування сайту</a>
+                                <a class="nav-link" href="#step4">4. Пошук турів</a>
+                                <a class="nav-link" href="#step5">5. Робота з заявками</a>
+                                <a class="nav-link" href="#step6">6. Просування сайту</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ПРАВИЙ КОНТЕНТ -->
+                    <div class="col-md-9">
+                        <!-- КРОК 1 -->
+                        <div id="step1" class="step-card">
+                            <div class="step-title">
+                                <i class="fas fa-user-plus"></i> 1. Реєстрація
+                            </div>
+                            <p>Щоб створити власний сайт, потрібно зареєструватися:</p>
+                            <ol>
+                                <li>Перейдіть на головну сторінку сайту</li>
+                                <li>Натисніть кнопку <strong>"Створити сайт безкоштовно"</strong></li>
+                                <li>Заповніть форму: ім'я, прізвище, email</li>
+                                <li>Натисніть <strong>"Надіслати код"</strong></li>
+                                <li>Введіть код, який прийшов на вашу пошту</li>
+                                <li>Після підтвердження ви потрапите в особистий кабінет</li>
+                            </ol>
+                            <div class="alert alert-info mt-2" style="background: #e0f2fe; border: none; border-radius: 10px;">
+                                💡 <strong>Порада:</strong> Перевірте папку "Спам", якщо лист з кодом не прийшов.
+                            </div>
+                        </div>
+
+                        <!-- КРОК 2 -->
+                        <div id="step2" class="step-card">
+                            <div class="step-title">
+                                <i class="fas fa-sign-in-alt"></i> 2. Вхід в кабінет
+                            </div>
+                            <p>Якщо ви вже зареєстровані:</p>
+                            <ol>
+                                <li>Натисніть <strong>"Вже є сайт? Увійти в кабінет"</strong></li>
+                                <li>Введіть ваш email</li>
+                                <li>Отримайте код на пошту</li>
+                                <li>Введіть код і увійдіть</li>
+                            </ol>
+                        </div>
+
+                        <!-- КРОК 3 -->
+                        <div id="step3" class="step-card">
+                            <div class="step-title">
+                                <i class="fas fa-palette"></i> 3. Налаштування сайту
+                            </div>
+                            <p>У вашому кабінеті ви можете налаштувати:</p>
+                            <ul>
+                                <li><strong>Кольори сайту</strong> — основний та додатковий</li>
+                                <li><strong>Логотип</strong> — завантажте своє зображення</li>
+                                <li><strong>Блок "Про нас"</strong> — текст та фото вашої агенції</li>
+                                <li><strong>Банери</strong> — додайте до 3 банерів з текстом та кнопками</li>
+                            </ul>
+                            <div class="alert alert-warning mt-2" style="background: #fef3c7; border: none; border-radius: 10px;">
+                                ⚠️ <strong>Важливо:</strong> Після змін не забудьте натиснути "Зберегти"!
+                            </div>
+                        </div>
+
+                        <!-- КРОК 4 -->
+                        <div id="step4" class="step-card">
+                            <div class="step-title">
+                                <i class="fas fa-search"></i> 4. Пошук турів
+                            </div>
+                            <p>На вашому сайті встановлено модуль пошуку турів:</p>
+                            <ul>
+                                <li>✅ Пошук понад <strong>100 туроператорам</strong></li>
+                                <li>✅ Актуальні ціни в реальному часі</li>
+                                <li>✅ Фільтрація за країнами, курортами, готелями</li>
+                                <li>✅ Відображення на карті Google Maps</li>
+                            </ul>
+                        </div>
+
+                        <!-- КРОК 5 -->
+                        <div id="step5" class="step-card">
+                            <div class="step-title">
+                                <i class="fas fa-envelope"></i> 5. Робота з заявками
+                            </div>
+                            <p>Коли клієнт залишає заявку на тур:</p>
+                            <ul>
+                                <li>Ви отримуєте <strong>сповіщення в Telegram</strong></li>
+                                <li>Заявка зберігається в адмін-панелі</li>
+                                <li>Ви можете зв'язатися з клієнтом за вказаним телефоном</li>
+                                <li>Підтвердіть бронювання туроператору</li>
+                            </ul>
+                        </div>
+
+                        <!-- КРОК 6 -->
+                        <div id="step6" class="step-card">
+                            <div class="step-title">
+                                <i class="fas fa-chart-line"></i> 6. Просування сайту
+                            </div>
+                            <p>Щоб ваш сайт знаходили клієнти:</p>
+                            <ul>
+                                <li>📱 Додайте посилання на сайт в Instagram, Facebook, TikTok</li>
+                                <li>📧 Додайте адресу сайту в підпис email-листів</li>
+                                <li>🗣️ Розкажіть клієнтам про можливість онлайн-бронювання</li>
+                            </ul>
+                        </div>
+
+                        <div class="alert alert-custom text-center mt-3" style="border-radius: 12px;">
+                            <i class="fas fa-rocket fa-2x mb-2 d-block"></i>
+                            <h5 class="mb-2">✨ Ваш сайт готовий до роботи!</h5>
+                            <p>Посилання на ваш сайт: <a href="https://clubdatour.com.ua" target="_blank" style="color: #086745; font-weight: bold;">clubdatour.com.ua</a></p>
+                            <p>Залишилися питання? Зв'яжіться з підтримкою: <strong>info@tourconstructor.com</strong></p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- КРОК 2 -->
-            <div class="step-card">
-                <div class="step-title">
-                    <i class="fas fa-sign-in-alt"></i> 2. Вхід в кабінет
-                </div>
-                <p>Якщо ви вже зареєстровані:</p>
-                <ol>
-                    <li>Натисніть <strong>"Вже є сайт? Увійти в кабінет"</strong></li>
-                    <li>Введіть ваш email</li>
-                    <li>Отримайте код на пошту</li>
-                    <li>Введіть код і увійдіть</li>
-                </ol>
+            <div class="footer-note">
+                <p class="mb-0">© 2026 TourConstructor</p>
+                <small>Створіть свій сайт для продажу турів за 5 хвилин</small>
             </div>
-
-            <!-- КРОК 3 -->
-            <div class="step-card">
-                <div class="step-title">
-                    <i class="fas fa-palette"></i> 3. Налаштування сайту
-                </div>
-                <p>У вашому кабінеті ви можете налаштувати:</p>
-                <ul>
-                    <li><strong>Кольори сайту</strong> — основний та додатковий</li>
-                    <li><strong>Логотип</strong> — завантажте своє зображення</li>
-                    <li><strong>Блок "Про нас"</strong> — текст та фото вашої агенції</li>
-                    <li><strong>Банери</strong> — додайте до 3 банерів з текстом та кнопками</li>
-                </ul>
-                <div class="alert alert-warning mt-2" style="background: #fef3c7; border: none; border-radius: 10px;">
-                    ⚠️ <strong>Важливо:</strong> Після змін не забудьте натиснути "Зберегти"!
-                </div>
-            </div>
-
-            <!-- КРОК 4 -->
-            <div class="step-card">
-                <div class="step-title">
-                    <i class="fas fa-search"></i> 4. Пошук турів
-                </div>
-                <p>На вашому сайті встановлено модуль пошуку турів:</p>
-                <ul>
-                    <li>✅ Пошук понад <strong>100 туроператорам</strong></li>
-                    <li>✅ Актуальні ціни в реальному часі</li>
-                    <li>✅ Фільтрація за країнами, курортами, готелями</li>
-                    <li>✅ Відображення на карті Google Maps</li>
-                </ul>
-            </div>
-
-            <!-- КРОК 5 -->
-            <div class="step-card">
-                <div class="step-title">
-                    <i class="fas fa-envelope"></i> 5. Робота з заявками
-                </div>
-                <p>Коли клієнт залишає заявку на тур:</p>
-                <ul>
-                    <li>Ви отримуєте <strong>сповіщення в Telegram</strong></li>
-                    <li>Заявка зберігається в адмін-панелі</li>
-                    <li>Ви можете зв'язатися з клієнтом за вказаним телефоном</li>
-                    <li>Підтвердіть бронювання туроператору</li>
-                </ul>
-            </div>
-
-            <!-- КРОК 6 -->
-            <div class="step-card">
-                <div class="step-title">
-                    <i class="fas fa-chart-line"></i> 6. Просування сайту
-                </div>
-                <p>Щоб ваш сайт знаходили клієнти:</p>
-                <ul>
-                    <li>📱 Додайте посилання на сайт в Instagram, Facebook, TikTok</li>
-                    <li>📧 Додайте адресу сайту в підпис email-листів</li>
-                    <li>🗣️ Розкажіть клієнтам про можливість онлайн-бронювання</li>
-                </ul>
-            </div>
-
-            <div class="alert alert-custom text-center mt-3" style="border-radius: 12px;">
-                <i class="fas fa-rocket fa-2x mb-2 d-block"></i>
-                <h5 class="mb-2">✨ Ваш сайт готовий до роботи!</h5>
-                <p>Посилання на ваш сайт: <a href="https://clubdatour.com.ua" target="_blank" style="color: #086745; font-weight: bold;">clubdatour.com.ua</a></p>
-                <p>Залишилися питання? Зв'яжіться з підтримкою: <strong>info@tourconstructor.com</strong></p>
-            </div>
-        </div>
-
-        <div class="footer-note">
-            <p class="mb-0">© 2026 TourConstructor</p>
-            <small>Створіть свій сайт для продажу турів за 5 хвилин</small>
         </div>
     </div>
+
+    <!-- Плавний скролінг для меню -->
+    <script>
+        document.querySelectorAll('.side-menu .nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                // Активний клас
+                document.querySelectorAll('.side-menu .nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>
