@@ -101,22 +101,25 @@ span.currency {
     font-size: 0.85rem !important;
 }
 
-/* ========== КНОПКИ ПЕРЕМИКАННЯ ВАЛЮТИ - ЦІЛІСНИЙ БЛОК ========== */
+/* ========== КНОПКИ ПЕРЕМИКАННЯ ВАЛЮТИ - ЦІЛІСНИЙ БЛОК В РЯД ========== */
 
 /* Контейнер кнопок валюти */
 .new_r-currency-switch {
     display: flex !important;
+    flex-direction: row !important;  /* ПРИМУСОВО В РЯД */
     gap: 0 !important;
     background: var(--primary-color) !important;
     border-radius: 24px !important;
     overflow: hidden !important;
     width: fit-content !important;
+    flex-wrap: nowrap !important;     /* ЗАБОРОНЯЄМО ПЕРЕНОС */
 }
 
 /* Стиль для обгортки label */
 .new_r-currency-switch label {
     margin: 0 !important;
     display: inline-block !important;
+    flex-shrink: 0 !important;        /* ЗАБОРОНЯЄМО СТИСКАННЯ */
 }
 
 /* Ховаємо радіо кнопки */
@@ -136,6 +139,7 @@ span.currency {
     transition: all 0.2s ease !important;
     margin: 0 !important;
     border-radius: 0 !important;
+    white-space: nowrap !important;    /* ТЕКСТ В ОДИН РЯДОК */
 }
 
 /* Активна валюта (вибрана) */
@@ -149,12 +153,6 @@ span.currency {
 .new_r-currency-switch span:hover {
     background: rgba(255, 255, 255, 0.15) !important;
 }
-
-/* Видаляємо старі конфліктуючі стилі */
-.new_r-currency-switch a {
-    all: unset !important;
-}
-
 /* ========== ЗІРКИ - ЖОВТІ ========== */
 .new_r-item-star {
     fill: #FFD700 !important;
