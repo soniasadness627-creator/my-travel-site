@@ -86,7 +86,7 @@ span.new_r-item-price,
     font-size: 1.25rem !important;
 }
 
-/* Валюта (грн/$) - білий текст на фоні кольору агента */
+/* Валюта в ціні (грн/$) - білий текст на фоні кольору агента */
 .currency,
 .new_r-item-price .currency,
 span.currency {
@@ -98,12 +98,22 @@ span.currency {
     font-weight: 600 !important;
     font-size: 0.85rem !important;
 }
+
+/* ========== КНОПКИ ПЕРЕМИКАННЯ ВАЛЮТИ (грн/$) ========== */
+
+/* Основний стиль для кнопок валюти - ОБ'ЄДНАНИЙ */
 .new_r-currency-switch span {
     background: var(--primary-color) !important;
     color: white !important;
     padding: 4px 12px !important;
     border-radius: 20px !important;
+    display: inline-block !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
 }
+
 /* ========== ЗІРКИ - ЖОВТІ ========== */
 
 /* Зірки готелю - жовті */
