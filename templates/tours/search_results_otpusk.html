@@ -240,7 +240,7 @@ span.new_r-filter-value,
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* ========== РЕЙТИНГ - КВАДРАТНИЙ БЛОК, ОЦІНКА ЗВЕРХУ, КІЛЬКІСТЬ ЗНИЗУ ========== */
+/* ========== РЕЙТИНГ - КВАДРАТНИЙ БЛОК ========== */
 
 /* Основний контейнер рейтингу - КВАДРАТНИЙ */
 .new_r-item-rating-container,
@@ -251,8 +251,8 @@ span.new_r-filter-value,
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 6px !important;
-    padding: 8px 4px !important;
+    gap: 8px !important;
+    padding: 6px 4px !important;
     background: white !important;
     border-radius: 8px !important;
     border-width: 2px !important;
@@ -260,10 +260,10 @@ span.new_r-filter-value,
     box-sizing: border-box !important;
 }
 
-/* Оцінка (8.5) - ЗВЕРХУ, велика */
+/* Оцінка (8.5) - ЗВЕРХУ, трохи менший шрифт */
 .new_r-item-rating-value {
     font-weight: 800 !important;
-    font-size: 1.2rem !important;
+    font-size: 1.05rem !important;
     margin: 0 !important;
     padding: 0 !important;
     text-align: center !important;
@@ -276,13 +276,10 @@ span.new_r-filter-value,
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 0.5rem !important;
-    color: #888 !important;
     text-align: center !important;
     margin: 0 !important;
     padding: 0 !important;
-    line-height: 1.2 !important;
-    gap: 2px !important;
+    gap: 0 !important;
 }
 
 /* Кількість оцінок (цифра) */
@@ -291,6 +288,14 @@ span.new_r-filter-value,
     font-size: 0.7rem !important;
     color: #555 !important;
     display: block !important;
+    line-height: 1.2 !important;
+    margin-bottom: 1px !important;
+}
+
+/* Текст "оцінок" */
+.new_r-item-rating-rev {
+    font-size: 0.5rem !important;
+    color: #888 !important;
     line-height: 1.2 !important;
 }
 
