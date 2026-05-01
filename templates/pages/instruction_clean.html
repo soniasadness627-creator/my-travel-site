@@ -45,20 +45,21 @@
         .content {
             padding: 30px;
         }
-        /* Ліве меню */
+        /* Ліве меню - ЗАКРІПЛЕНЕ */
         .side-menu {
             position: sticky;
             top: 30px;
             background: #f8f9fa;
             border-radius: 16px;
             padding: 15px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
         .side-menu .nav-link {
             color: #333;
             padding: 10px 20px;
             border-left: 3px solid transparent;
             transition: all 0.2s;
+            font-size: 14px;
         }
         .side-menu .nav-link:hover {
             background-color: var(--primary-lighter);
@@ -69,7 +70,7 @@
             background-color: var(--primary-lighter);
             border-left-color: var(--primary-color);
             color: var(--primary-dark);
-            font-weight: 500;
+            font-weight: 600;
         }
         .step-card {
             background: #f8f9fa;
@@ -77,22 +78,12 @@
             padding: 20px;
             margin-bottom: 20px;
             border-left: 4px solid var(--primary-color);
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            scroll-margin-top: 80px;
         }
         .step-card:hover {
             transform: translateX(5px);
-        }
-        .step-number {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 30px;
-            font-weight: bold;
-            margin-right: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .step-title {
             font-size: 1.3rem;
@@ -141,11 +132,11 @@
 
             <div class="content">
                 <div class="row">
-                    <!-- ЛІВЕ МЕНЮ -->
+                    <!-- ЛІВЕ МЕНЮ (ЗАКРІПЛЕНЕ) -->
                     <div class="col-md-3">
                         <div class="side-menu">
                             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                                <a class="nav-link active" href="#step1">1. Реєстрація</a>
+                                <a class="nav-link" href="#step1">1. Реєстрація</a>
                                 <a class="nav-link" href="#step2">2. Вхід в кабінет</a>
                                 <a class="nav-link" href="#step3">3. Налаштування сайту</a>
                                 <a class="nav-link" href="#step4">4. Пошук турів</a>
@@ -265,8 +256,9 @@
         </div>
     </div>
 
-    <!-- Плавний скролінг для меню -->
+    <!-- Плавний скролінг та підсвічування активного пункту -->
     <script>
+        // Плавний скролінг при кліку
         document.querySelectorAll('.side-menu .nav-link').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -278,6 +270,29 @@
                 // Активний клас
                 document.querySelectorAll('.side-menu .nav-link').forEach(l => l.classList.remove('active'));
                 this.classList.add('active');
+            });
+        });
+
+        // Підсвічування активного пункту при скролі сторінки
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.step-card');
+            const navLinks = document.querySelectorAll('.side-menu .nav-link');
+            let current = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionBottom = sectionTop + section.offsetHeight;
+                if (window.scrollY >= sectionTop && window.scrollY < sectionBottom) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                const href = link.getAttribute('href').substring(1);
+                if (href === current) {
+                    link.classList.add('active');
+                }
             });
         });
     </script>
