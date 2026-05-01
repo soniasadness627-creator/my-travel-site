@@ -17,6 +17,7 @@
             background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
             min-height: 100vh;
             padding: 40px 20px;
+            margin: 0;
         }
         .instruction-wrapper {
             max-width: 1200px;
@@ -46,19 +47,17 @@
             padding: 30px;
         }
 
-        /* ========== ОСНОВНЕ ВИПРАВЛЕННЯ ДЛЯ STICKY МЕНЮ ========== */
-        .menu-column {
-            position: relative;
+        /* ========== STICKY МЕНЮ ========== */
+        .sticky-sidebar {
+            position: sticky;
+            top: 20px;
+            align-self: flex-start;
         }
         .side-menu {
-            position: sticky;
-            top: 30px;  /* Відступ від верху екрану */
             background: #f8f9fa;
             border-radius: 16px;
             padding: 15px 0;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            max-height: calc(100vh - 60px); /* Щоб меню не виходило за межі екрану */
-            overflow-y: auto; /* Якщо пунктів багато - з'явиться скрол */
         }
         .side-menu .nav-link {
             color: #333;
@@ -79,9 +78,9 @@
             font-weight: 600;
         }
 
-        /* ХОВАЄМО БІЧНЕ МЕНЮ НА ТЕЛЕФОНІ */
+        /* ХОВАЄМО МЕНЮ НА ТЕЛЕФОНІ */
         @media (max-width: 768px) {
-            .menu-column {
+            .sticky-sidebar {
                 display: none;
             }
             .content-column {
@@ -143,9 +142,9 @@
             <div class="content">
                 <div class="row">
                     <!-- ЛІВЕ МЕНЮ (sticky) -->
-                    <div class="col-md-3 menu-column">
+                    <div class="col-md-3 sticky-sidebar">
                         <div class="side-menu">
-                            <div class="nav flex-column nav-pills">
+                            <div class="nav flex-column">
                                 <a class="nav-link" href="#step1">1. Реєстрація</a>
                                 <a class="nav-link" href="#step2">2. Вхід в кабінет</a>
                                 <a class="nav-link" href="#step3">3. Налаштування сайту</a>
@@ -266,7 +265,6 @@
         </div>
     </div>
 
-    <!-- Плавний скролінг та підсвічування активного пункту -->
     <script>
         // Плавний скролінг при кліку
         document.querySelectorAll('.side-menu .nav-link').forEach(link => {
@@ -277,13 +275,12 @@
                 if (targetElement) {
                     targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
-                // Активний клас
                 document.querySelectorAll('.side-menu .nav-link').forEach(l => l.classList.remove('active'));
                 this.classList.add('active');
             });
         });
 
-        // Підсвічування активного пункту ПРИ СКРОЛІ
+        // Підсвічування активного пункту при скролі
         window.addEventListener('scroll', function() {
             const sections = document.querySelectorAll('.step-card');
             const navLinks = document.querySelectorAll('.side-menu .nav-link');
@@ -306,13 +303,10 @@
             });
         });
 
-        // АКТИВУЄМО ПЕРШИЙ ПУНКТ ПРИ ЗАВАНТАЖЕННІ
-        document.addEventListener('DOMContentLoaded', function() {
-            const firstLink = document.querySelector('.side-menu .nav-link');
-            if (firstLink) {
-                firstLink.classList.add('active');
-            }
-        });
+        // Активація першого пункту
+        if (document.querySelector('.side-menu .nav-link')) {
+            document.querySelector('.side-menu .nav-link').classList.add('active');
+        }
     </script>
 </body>
 </html>
