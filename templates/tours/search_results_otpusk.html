@@ -226,13 +226,17 @@ span.new_r-filter-value,
     color: white !important;
 }
 
-/* ========== КАРТКА ТУРУ ========== */
+/* ========== КАРТКА ТУРУ - НОВА СТИЛІСТИКА ========== */
+
+/* Картка туру */
 .new_r-item {
     background: white !important;
     border-radius: 16px !important;
     border: 1px solid #e2e8f0 !important;
     margin-bottom: 20px !important;
     overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 .new_r-item:hover {
@@ -240,13 +244,123 @@ span.new_r-filter-value,
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* ========== РЕЙТИНГ - КВАДРАТНИЙ БЛОК ========== */
+/* Контейнер посилання */
+.new_r-item {
+    display: flex !important;
+    flex-direction: column !important;
+}
 
-/* Основний контейнер рейтингу - КВАДРАТНИЙ */
+/* Фото - зверху */
+.new_r-item-img {
+    width: 100% !important;
+    height: 200px !important;
+    object-fit: cover !important;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+/* Рейтинг поверх фото */
+.new_r-item-rating-container {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    z-index: 2 !important;
+}
+
+/* Тіло картки - вся інформація під фото */
+.new_r-item-body {
+    padding: 15px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+}
+
+/* Назва готелю */
+.new_r-item-hotel {
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    color: #1a202c !important;
+    margin-bottom: 5px !important;
+    display: block !important;
+}
+
+/* Зірки */
+.new_r-item-stars {
+    display: inline-flex !important;
+    gap: 3px !important;
+    margin-left: 8px !important;
+}
+
+/* Місцезнаходження */
+.new_r-item-geo {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    font-size: 0.85rem !important;
+    color: #666 !important;
+    margin-bottom: 5px !important;
+}
+
+/* Харчування (все включено) */
+.new_r-item-food {
+    display: inline-block !important;
+    background: #e2e8f0 !important;
+    padding: 4px 10px !important;
+    border-radius: 20px !important;
+    font-size: 0.75rem !important;
+    color: #1a202c !important;
+    width: fit-content !important;
+}
+
+/* Деталі вильоту */
+.new_r-item-table {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+    margin-top: 5px !important;
+}
+
+.new_r-item-from,
+.new_r-item-date {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    font-size: 0.85rem !important;
+    color: #555 !important;
+}
+
+/* Ціна - знизу справа */
+.new_r-item-price {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: baseline !important;
+    margin-top: 10px !important;
+    padding-top: 10px !important;
+    border-top: 1px solid #e2e8f0 !important;
+}
+
+/* Ховаємо старі непотрібні елементи */
+.new_r-item-col {
+    display: block !important;
+    width: 100% !important;
+}
+
+.new_r-item-table .new_r-item-col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+}
+
+/* Прибираємо стару структуру */
+.new_r-item-body .new_r-item-table {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Рейтинг квадратний */
 .new_r-item-rating-container,
 .new_r-p8 {
-    width: 65px !important;
-    height: 65px !important;
+    width: 60px !important;
+    height: 60px !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -256,64 +370,46 @@ span.new_r-filter-value,
     border-width: 2px !important;
     border-style: solid !important;
     box-sizing: border-box !important;
+    position: relative !important;
+    z-index: 10 !important;
 }
 
-/* Оцінка (8.5) - ЗВЕРХУ */
 .new_r-item-rating-value {
     font-weight: 800 !important;
-    font-size: 1.1rem !important;
-    margin: 0 0 4px 0 !important;
-    padding: 0 !important;
-    text-align: center !important;
-    line-height: 1 !important;
-    display: block !important;
+    font-size: 1rem !important;
+    margin: 0 0 2px 0 !important;
 }
 
-/* Контейнер для кількості оцінок - ЗНИЗУ */
 .new_r-item-rating-rev {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    line-height: 1 !important;
-}
-
-/* Кількість оцінок (цифра 4811) */
-.new_r-item-rating-rev span {
-    font-weight: 700 !important;
-    font-size: 0.7rem !important;
-    color: #555 !important;
-    display: block !important;
-    line-height: 1 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-/* Текст "оцінок" - мінімальний відступ 0px */
-.new_r-item-rating-rev {
-    font-size: 0.5rem !important;
+    font-size: 0.45rem !important;
     color: #888 !important;
     line-height: 1 !important;
-    margin-top: 0px !important;
 }
 
-/* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ */
+.new_r-item-rating-rev span {
+    font-weight: 700 !important;
+    font-size: 0.65rem !important;
+    color: #555 !important;
+}
+
+/* Ховаємо круглі елементи */
 .new_r-item-rating-container::before,
 .new_r-item-rating-container .slice,
 .new_r-item-rating-container .bar,
 .new_r-item-rating-container .fill,
 .new_r-item-rating-container svg,
-.new_r-item-rating-container circle,
-.new_r-item-rating-container path,
 .new_r-item-rating-container::after {
     display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    width: 0 !important;
-    height: 0 !important;
+}
+
+/* Іконки */
+.new_r-item-icon {
+    width: 14px !important;
+    height: 14px !important;
+    fill: #888 !important;
 }
 
 /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
@@ -333,9 +429,13 @@ span.new_r-filter-value,
         width: 100% !important;
         margin-top: 10px !important;
     }
+
+    .new_r-item-img {
+        height: 180px !important;
+    }
 }
 
-/* Додатковий фікс - текст "за двох" залишається чорним */
+/* Додатковий фікс */
 .new_price-desc {
     color: #1a202c !important;
     font-weight: normal !important;
@@ -374,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Функція для зміни кольору рамки рейтингу в залежності від оцінки
+// Функція для зміни кольору рамки рейтингу
 document.addEventListener('DOMContentLoaded', function() {
     function updateRatingBorderColor() {
         const ratingContainers = document.querySelectorAll('.new_r-item-rating-container');
