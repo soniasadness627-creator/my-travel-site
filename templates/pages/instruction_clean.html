@@ -148,9 +148,9 @@
                                 <a class="nav-link" href="#step1">1. Реєстрація</a>
                                 <a class="nav-link" href="#step2">2. Вхід в кабінет</a>
                                 <a class="nav-link" href="#step3">3. Налаштування сайту</a>
-                                <a class="nav-link" href="#step4">4. Пошук турів</a>
+                                <a class="nav-link" href="#step4">4. Додавання турів</a>
                                 <a class="nav-link" href="#step5">5. Робота з заявками</a>
-                                <a class="nav-link" href="#step6">6. Просування сайту</a>
+                                <a class="nav-link" href="#step6">6. Пошук турів</a>
                             </div>
                         </div>
                     </div>
@@ -201,6 +201,7 @@
                                 <li><strong>Логотип</strong> — завантажте своє зображення</li>
                                 <li><strong>Блок "Про нас"</strong> — текст та фото вашої агенції</li>
                                 <li><strong>Банери</strong> — додайте до 3 банерів з текстом та кнопками</li>
+                                <li><strong>Приховати блок "Новини"</strong> — якщо не потрібен</li>
                             </ul>
                             <div class="alert alert-warning mt-2" style="background: #fef3c7; border: none; border-radius: 10px;">
                                 ⚠️ <strong>Важливо:</strong> Після змін не забудьте натиснути "Зберегти"!
@@ -210,15 +211,21 @@
                         <!-- КРОК 4 -->
                         <div id="step4" class="step-card">
                             <div class="step-title">
-                                <i class="fas fa-search"></i> 4. Пошук турів
+                                <i class="fas fa-edit"></i> 4. Додавання турів
                             </div>
-                            <p>На вашому сайті встановлено модуль пошуку турів:</p>
-                            <ul>
-                                <li>✅ Пошук понад <strong>100 туроператорам</strong></li>
-                                <li>✅ Актуальні ціни в реальному часі</li>
-                                <li>✅ Фільтрація за країнами, курортами, готелями</li>
-                                <li>✅ Відображення на карті Google Maps</li>
-                            </ul>
+                            <p>Тури додаються через модуль пошуку від Otpusk.com:</p>
+                            <ol>
+                                <li>Перейдіть на головну сторінку вашого сайту</li>
+                                <li>Введіть параметри пошуку (країна, дати, туристи)</li>
+                                <li>Натисніть <strong>"Знайти"</strong></li>
+                                <li>Оберіть тур з результатів пошуку</li>
+                                <li>Заповніть форму замовлення</li>
+                                <li>Надішліть заявку</li>
+                            </ol>
+                            <div class="alert alert-success mt-2" style="background: #dcfce7; border: none; border-radius: 10px;">
+                                🚀 <strong>Швидкий доступ:</strong> Ваш сайт доступний за посиланням:
+                                <a href="https://clubdatour.com.ua" target="_blank" style="color: #086745;">clubdatour.com.ua</a>
+                            </div>
                         </div>
 
                         <!-- КРОК 5 -->
@@ -238,13 +245,14 @@
                         <!-- КРОК 6 -->
                         <div id="step6" class="step-card">
                             <div class="step-title">
-                                <i class="fas fa-chart-line"></i> 6. Просування сайту
+                                <i class="fas fa-search"></i> 6. Пошук турів
                             </div>
-                            <p>Щоб ваш сайт знаходили клієнти:</p>
+                            <p>На вашому сайті встановлено модуль пошуку турів від Otpusk.com:</p>
                             <ul>
-                                <li>📱 Додайте посилання на сайт в Instagram, Facebook, TikTok</li>
-                                <li>📧 Додайте адресу сайту в підпис email-листів</li>
-                                <li>🗣️ Розкажіть клієнтам про можливість онлайн-бронювання</li>
+                                <li>✅ Пошук понад <strong>100 туроператорам</strong></li>
+                                <li>✅ Актуальні ціни в реальному часі</li>
+                                <li>✅ Фільтрація за країнами, курортами, готелями</li>
+                                <li>✅ Відображення на карті Google Maps</li>
                             </ul>
                         </div>
 
@@ -265,48 +273,6 @@
         </div>
     </div>
 
-    <script>
-        // Плавний скролінг при кліку
-        document.querySelectorAll('.side-menu .nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-                document.querySelectorAll('.side-menu .nav-link').forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
 
-        // Підсвічування активного пункту при скролі
-        window.addEventListener('scroll', function() {
-            const sections = document.querySelectorAll('.step-card');
-            const navLinks = document.querySelectorAll('.side-menu .nav-link');
-            let current = '';
-
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop - 100;
-                const sectionBottom = sectionTop + section.offsetHeight;
-                if (window.scrollY >= sectionTop && window.scrollY < sectionBottom) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                const href = link.getAttribute('href').substring(1);
-                if (href === current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // Активація першого пункту
-        if (document.querySelector('.side-menu .nav-link')) {
-            document.querySelector('.side-menu .nav-link').classList.add('active');
-        }
-    </script>
 </body>
 </html>
