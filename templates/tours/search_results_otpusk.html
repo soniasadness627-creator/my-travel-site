@@ -71,17 +71,17 @@
     background: var(--primary-dark) !important;
 }
 
-/* ========== ЦІНА - ЧЕРВОНИЙ КОЛІР, БЕЗ ФОНУ ========== */
+/* ========== ЦІНА - ПРИБИРАЄМО КОЛІР ТА РАМКУ ========== */
 
-/* Ціна туру - червоний колір, без фону, без рамки */
+/* Блок ціни - прибираємо фон, рамку, робимо чорним */
+span.new_r-item-price,
+.new_r-item-price,
 .new_price-value,
-.new_r-item-price .new_price-value,
-span.new_price-value,
-div.new_price-value {
+.new_r-item-price .new_price-value {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    color: #dc2626 !important;  /* Червоний колір */
+    color: #1a202c !important;  /* Чорний колір */
     font-weight: 700 !important;
     font-size: 1.25rem !important;
 }
@@ -89,8 +89,7 @@ div.new_price-value {
 /* Валюта (грн/$) - білий текст на фоні кольору агента */
 .currency,
 .new_r-item-price .currency,
-span.currency,
-.new_price-value .currency {
+span.currency {
     background: var(--primary-color) !important;
     color: white !important;
     padding: 2px 8px !important;
@@ -98,55 +97,6 @@ span.currency,
     display: inline-block !important;
     font-weight: 600 !important;
     font-size: 0.85rem !important;
-}
-
-/* ========== ПЕРЕМИКАЧ ВАЛЮТИ (грн/$) ========== */
-
-/* Контейнер перемикача валюти */
-.new_r-currency-switch {
-    display: flex !important;
-    gap: 10px !important;
-    background: transparent !important;
-}
-
-/* Стиль для label (обгортка) */
-.new_r-currency-switch label {
-    display: inline-flex !important;
-    align-items: center !important;
-    cursor: pointer !important;
-    margin: 0 !important;
-}
-
-/* Ховаємо радіо-кнопку */
-.new_r-currency-switch input[type="radio"] {
-    display: none !important;
-}
-
-/* Стиль для span (грн/$) */
-.new_r-currency-switch span {
-    background: var(--primary-color) !important;
-    color: white !important;
-    padding: 4px 12px !important;
-    border-radius: 20px !important;
-    font-size: 0.9rem !important;
-    font-weight: 600 !important;
-    transition: all 0.3s ease !important;
-    cursor: pointer !important;
-    display: inline-block !important;
-}
-
-/* Активний стан (вибрана валюта) */
-.new_r-currency-switch input[type="radio"]:checked + span,
-.new_r-currency-switch label.active span {
-    background: var(--primary-dark) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
-    transform: scale(1.02) !important;
-}
-
-/* Ховер ефект */
-.new_r-currency-switch span:hover {
-    transform: scale(1.02) !important;
-    opacity: 0.9 !important;
 }
 
 /* ========== ЗІРКИ - ЖОВТІ ========== */
@@ -165,7 +115,24 @@ span.new_r-filter-value,
     font-weight: 500 !important;
 }
 
-/* ========== ІНШІ ЕЛЕМЕНТИ ========== */
+/* Інші оранжеві елементи транспорту */
+.new_r-item-transport,
+.transport-value {
+    color: var(--primary-color) !important;
+}
+
+/* ========== КНОПКИ ТА ЕЛЕМЕНТИ КЕРУВАННЯ ========== */
+
+/* Кнопки перемикання валюти (грн/$) */
+.new_r-currency-switch a,
+.new_r-currency-switch span {
+    color: var(--primary-color) !important;
+}
+
+.new_r-currency-switch a.active {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
 
 /* Кнопка детальніше */
 .new_r-detail-btn {
@@ -225,6 +192,12 @@ span.new_r-filter-value,
     color: white !important;
 }
 
+/* Посилання */
+a {
+    color: var(--primary-color) !important;
+    text-decoration: none !important;
+}
+
 /* ========== КАРТКА ТУРУ ========== */
 
 .new_r-item {
@@ -257,51 +230,6 @@ span.new_r-filter-value,
         width: 100% !important;
         margin-top: 10px !important;
     }
-
-    .new_price-value {
-        font-size: 1.1rem !important;
-    }
-
-    .currency {
-        font-size: 0.75rem !important;
-        padding: 2px 6px !important;
-    }
 }
 </style>
-
-<script>
-// Змінюємо текст валюти з євро на долар
-document.addEventListener('DOMContentLoaded', function() {
-    // Функція для заміни євро на долар
-    function replaceEuroToDollar() {
-        // Знаходимо всі елементи з євро
-        const euroElements = document.querySelectorAll('[data-cur="€"], span[data-cur="€"]');
-        euroElements.forEach(function(el) {
-            el.setAttribute('data-cur', '$');
-            el.textContent = '$';
-        });
-
-        // Також шукаємо звичайні елементи з текстом €
-        const textElements = document.querySelectorAll('.new_r-currency-switch span');
-        textElements.forEach(function(el) {
-            if (el.textContent === '€') {
-                el.textContent = '$';
-            }
-        });
-    }
-
-    // Викликаємо функцію одразу
-    replaceEuroToDollar();
-
-    // Спостерігаємо за змінами в DOM (для динамічно підвантажених елементів)
-    const observer = new MutationObserver(function(mutations) {
-        replaceEuroToDollar();
-    });
-
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-});
-</script>
 {% endblock %}
