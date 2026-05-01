@@ -251,7 +251,7 @@ span.new_r-filter-value,
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 8px !important;
+    gap: 6px !important;
     padding: 6px 4px !important;
     background: white !important;
     border-radius: 8px !important;
@@ -260,7 +260,7 @@ span.new_r-filter-value,
     box-sizing: border-box !important;
 }
 
-/* Оцінка (8.5) - ЗВЕРХУ, трохи менший шрифт */
+/* Оцінка (8.5) - ЗВЕРХУ */
 .new_r-item-rating-value {
     font-weight: 800 !important;
     font-size: 1.05rem !important;
@@ -268,6 +268,7 @@ span.new_r-filter-value,
     padding: 0 !important;
     text-align: center !important;
     line-height: 1 !important;
+    display: block !important;
 }
 
 /* Контейнер для кількості оцінок - ЗНИЗУ */
@@ -275,28 +276,30 @@ span.new_r-filter-value,
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
     text-align: center !important;
     margin: 0 !important;
     padding: 0 !important;
-    gap: 0 !important;
+    line-height: 1 !important;
 }
 
-/* Кількість оцінок (цифра) */
+/* Кількість оцінок (цифра 4811) */
 .new_r-item-rating-rev span {
     font-weight: 700 !important;
     font-size: 0.7rem !important;
     color: #555 !important;
     display: block !important;
-    line-height: 1.2 !important;
-    margin-bottom: 1px !important;
+    line-height: 1.1 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
 }
 
-/* Текст "оцінок" */
+/* Текст "оцінок" - мінімальний відступ зверху */
 .new_r-item-rating-rev {
     font-size: 0.5rem !important;
     color: #888 !important;
-    line-height: 1.2 !important;
+    line-height: 1 !important;
+    margin-top: 1px !important;
 }
 
 /* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ */
