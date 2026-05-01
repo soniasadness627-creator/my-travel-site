@@ -113,7 +113,7 @@
             transform: translateY(-2px);
         }
 
-                /* ========== ФІКСОВАНЕ МЕНЮ (ЗАКРІПЛЕНЕ ЗВЕРХУ) ========== */
+        /* ========== ФІКСОВАНЕ МЕНЮ (ЗАКРІПЛЕНЕ ЗВЕРХУ) ========== */
         #navbar {
             position: fixed !important;
             top: 0 !important;
@@ -160,15 +160,15 @@
             z-index: 1;
         }
 
-       .hero-video-section .gradient-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.4) 40%, rgba(255,255,255,0) 100%);
-    z-index: 2;
-}
+        .hero-video-section .gradient-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.4) 40%, rgba(255,255,255,0) 100%);
+            z-index: 2;
+        }
 
         .hero-video-section .content {
             position: relative;
@@ -184,6 +184,14 @@
                 background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
             }
         }
+
+        /* ========== СТИЛІ ДЛЯ МОДУЛЯ ПОШУКУ ========== */
+        .search-module-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        #otpusk-search-module {
+            min-height: 600px;
+        }
     </style>
 </head>
 <body class="font-sans antialiased">
@@ -198,6 +206,7 @@
                 <a href="#features" class="nav-link">ПЕРЕВАГИ</a>
                 <a href="#how-it-works" class="nav-link">ЯК ПРАЦЮЄ</a>
                 <a href="#for-whom" class="nav-link">КОМУ ПІДІЙДЕ</a>
+                <a href="#search" class="nav-link">ПОШУК ТУРІВ</a>
                 <a href="#contact" class="nav-link">КОНТАКТИ</a>
                 <a href="{% url 'constructor:register' %}" class="btn-primary">
                     ХОЧУ САЙТ <i class="fa-solid fa-arrow-right ml-2"></i>
@@ -222,6 +231,7 @@
             <a href="#features" class="mobile-nav-link">ПЕРЕВАГИ</a>
             <a href="#how-it-works" class="mobile-nav-link">ЯК ПРАЦЮЄ</a>
             <a href="#for-whom" class="mobile-nav-link">КОМУ ПІДІЙДЕ</a>
+            <a href="#search" class="mobile-nav-link">ПОШУК ТУРІВ</a>
             <a href="#contact" class="mobile-nav-link">КОНТАКТИ</a>
         </div>
         <a href="{% url 'constructor:register' %}" class="btn-primary w-full text-center mt-auto">ХОЧУ САЙТ</a>
@@ -229,15 +239,10 @@
 
     <!-- ========== HERO СЕКЦІЯ З ВІДЕО ФОНОМ (ВИПАДКОВЕ ВІДЕО З 3) ========== -->
     <section class="hero-video-section">
-        <!-- Відео фон - випадкове при кожному завантаженні -->
         <video autoplay muted loop playsinline class="video-background" id="heroVideo">
             <source src="" type="video/mp4">
         </video>
-
-        <!-- Градієнт поверх відео -->
         <div class="gradient-overlay"></div>
-
-        <!-- Контент поверх -->
         <div class="content">
             <div class="container-wide mx-auto px-6 md:px-12 w-full">
                 <div class="max-w-xl">
@@ -267,25 +272,19 @@
     </section>
 
     <script>
-        // Масив з URL трьох відео (ВАШІ URL З CLOUDINARY)
         const videoUrls = [
             'https://res.cloudinary.com/djvycubir/video/upload/v1777460250/landing_videos/hero_video_1.mp4',
             'https://res.cloudinary.com/djvycubir/video/upload/v1777460262/landing_videos/hero_video_2.mp4',
             'https://res.cloudinary.com/djvycubir/video/upload/v1777460373/landing_videos/hero_video_3.mp4',
         ];
-
-        // Випадковий вибір відео при завантаженні сторінки
         const randomIndex = Math.floor(Math.random() * videoUrls.length);
         const randomVideoUrl = videoUrls[randomIndex];
-
-        // Встановлюємо джерело відео
         const videoElement = document.getElementById('heroVideo');
         if (videoElement) {
             const sourceElement = videoElement.querySelector('source');
             if (sourceElement) {
                 sourceElement.src = randomVideoUrl;
                 videoElement.load();
-                console.log('🎬 Відео #' + (randomIndex + 1));
             }
         }
     </script>
@@ -381,7 +380,7 @@
         </div>
     </section>
 
-        <!-- ========== КОМУ ПІДІЙДЕ ========== -->
+    <!-- ========== КОМУ ПІДІЙДЕ ========== -->
     <section id="for-whom" class="py-24 bg-white">
         <div class="container-wide mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-20 items-center">
             <div>
@@ -420,6 +419,47 @@
                             <p class="text-slate-500 leading-relaxed">Заощаджуйте на розробці та запускайтеся за один день.</p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== МОДУЛЬ ПОШУКУ ТУРІВ (Otpusk.com) ========== -->
+    <section id="search" class="py-24 search-module-section">
+        <div class="container-wide mx-auto px-6 md:px-12">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-primary font-bold uppercase tracking-wider text-sm mb-4">ПОШУК ТУРІВ</h2>
+                <h3 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6">Знайдіть ідеальний тур</h3>
+                <p class="text-slate-500 text-lg">Оберіть країну, дати та кількість туристів — ми покажемо найкращі пропозиції</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-xl p-4 md:p-8">
+                <div id="otpusk-search-module">
+                    <script>
+                        var osGeo = '';
+                        var osDefaultDeparture = '';
+                        var osDefaultDuration = '';
+                        var osDateFrom = '';
+                        var osDateTo = '';
+                        var osHotelCategory = '';
+                        var osFood = '';
+                        var osTransport = '';
+                        var osTarget = '';
+                        var osContainer = null;
+                        var osTourContainer = null;
+                        var osLang = 'ua';
+                        var osTourTargetBlank = false;
+                        var osOrderUrl = null;
+                        var osCurrency = 'converted';
+                        var osAutoStart = false;
+                    </script>
+                    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+                    <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+                    <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+                    <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+                    <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+                    <script src="https://export.otpusk.com/js/onsite/"></script>
+                    <script src="https://export.otpusk.com/js/order"></script>
                 </div>
             </div>
         </div>
@@ -508,5 +548,22 @@
 
     <!-- Custom JS -->
     <script src="{% static 'landing/js/main.js' %}"></script>
+    <script>
+        // Мобільне меню
+        const menuBtn = document.getElementById('menuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.remove('translate-x-full');
+            });
+        }
+        if (closeMenuBtn) {
+            closeMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+            });
+        }
+    </script>
 </body>
 </html>
