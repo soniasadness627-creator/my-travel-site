@@ -228,7 +228,7 @@ span.new_r-filter-value,
 
 /* ========== КАРТКА ТУРУ - НОВА СТИЛІСТИКА ========== */
 
-/* Картка туру */
+/* Картка туру - З РАМКОЮ */
 .new_r-item {
     background: white !important;
     border-radius: 16px !important;
@@ -244,88 +244,100 @@ span.new_r-filter-value,
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Контейнер посилання */
-.new_r-item {
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-/* Фото - зверху */
+/* Контейнер для фото - відносний для позиціонування рейтингу */
 .new_r-item-img {
     width: 100% !important;
-    height: 200px !important;
+    height: 220px !important;
     object-fit: cover !important;
-    border-radius: 12px 12px 0 0 !important;
+    display: block !important;
+    position: relative !important;
 }
 
-/* Рейтинг поверх фото */
+/* Обгортка фото */
+.new_r-lazy-img {
+    position: relative !important;
+    display: block !important;
+}
+
+/* Рейтинг поверх фото (зверху справа) */
 .new_r-item-rating-container {
     position: absolute !important;
-    top: 10px !important;
-    right: 10px !important;
-    z-index: 2 !important;
+    top: 12px !important;
+    right: 12px !important;
+    z-index: 10 !important;
 }
 
-/* Тіло картки - вся інформація під фото */
+/* Тіло картки - вся інформація ПІД ФОТО */
 .new_r-item-body {
-    padding: 15px !important;
+    padding: 16px !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 10px !important;
 }
 
-/* Назва готелю */
+/* Назва готелю + зірки */
 .new_r-item-hotel {
     font-size: 1.1rem !important;
     font-weight: 700 !important;
     color: #1a202c !important;
-    margin-bottom: 5px !important;
-    display: block !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
 }
 
 /* Зірки */
 .new_r-item-stars {
     display: inline-flex !important;
     gap: 3px !important;
-    margin-left: 8px !important;
 }
 
 /* Місцезнаходження */
 .new_r-item-geo {
     display: flex !important;
     align-items: center !important;
-    gap: 5px !important;
+    gap: 6px !important;
     font-size: 0.85rem !important;
     color: #666 !important;
-    margin-bottom: 5px !important;
+    margin: 0 !important;
 }
 
 /* Харчування (все включено) */
 .new_r-item-food {
     display: inline-block !important;
     background: #e2e8f0 !important;
-    padding: 4px 10px !important;
+    padding: 4px 12px !important;
     border-radius: 20px !important;
     font-size: 0.75rem !important;
     color: #1a202c !important;
     width: fit-content !important;
+    margin: 0 !important;
 }
 
-/* Деталі вильоту */
+/* Таблиця з деталями вильоту */
 .new_r-item-table {
     display: flex !important;
     flex-direction: column !important;
-    gap: 5px !important;
-    margin-top: 5px !important;
+    gap: 8px !important;
+    margin: 5px 0 !important;
 }
 
+/* Рядок з інформацією */
 .new_r-item-from,
 .new_r-item-date {
     display: flex !important;
     align-items: center !important;
-    gap: 5px !important;
+    gap: 8px !important;
     font-size: 0.85rem !important;
     color: #555 !important;
+}
+
+/* Іконки */
+.new_r-item-icon {
+    width: 16px !important;
+    height: 16px !important;
+    fill: #888 !important;
 }
 
 /* Ціна - знизу справа */
@@ -334,8 +346,17 @@ span.new_r-filter-value,
     justify-content: flex-end !important;
     align-items: baseline !important;
     margin-top: 10px !important;
-    padding-top: 10px !important;
+    padding-top: 12px !important;
     border-top: 1px solid #e2e8f0 !important;
+    gap: 5px !important;
+    flex-wrap: wrap !important;
+}
+
+/* Текст "за двох" */
+.new_price-desc {
+    font-size: 0.8rem !important;
+    color: #666 !important;
+    font-weight: normal !important;
 }
 
 /* Ховаємо старі непотрібні елементи */
@@ -347,20 +368,13 @@ span.new_r-filter-value,
 .new_r-item-table .new_r-item-col {
     display: flex !important;
     flex-direction: column !important;
-    gap: 5px !important;
-}
-
-/* Прибираємо стару структуру */
-.new_r-item-body .new_r-item-table {
-    display: flex !important;
-    flex-direction: column !important;
+    gap: 8px !important;
 }
 
 /* Рейтинг квадратний */
-.new_r-item-rating-container,
 .new_r-p8 {
-    width: 60px !important;
-    height: 60px !important;
+    width: 58px !important;
+    height: 58px !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -371,13 +385,14 @@ span.new_r-filter-value,
     border-style: solid !important;
     box-sizing: border-box !important;
     position: relative !important;
-    z-index: 10 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
 }
 
 .new_r-item-rating-value {
     font-weight: 800 !important;
     font-size: 1rem !important;
     margin: 0 0 2px 0 !important;
+    line-height: 1 !important;
 }
 
 .new_r-item-rating-rev {
@@ -386,7 +401,7 @@ span.new_r-filter-value,
     align-items: center !important;
     font-size: 0.45rem !important;
     color: #888 !important;
-    line-height: 1 !important;
+    line-height: 1.1 !important;
 }
 
 .new_r-item-rating-rev span {
@@ -403,13 +418,6 @@ span.new_r-filter-value,
 .new_r-item-rating-container svg,
 .new_r-item-rating-container::after {
     display: none !important;
-}
-
-/* Іконки */
-.new_r-item-icon {
-    width: 14px !important;
-    height: 14px !important;
-    fill: #888 !important;
 }
 
 /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
@@ -433,12 +441,15 @@ span.new_r-filter-value,
     .new_r-item-img {
         height: 180px !important;
     }
-}
 
-/* Додатковий фікс */
-.new_price-desc {
-    color: #1a202c !important;
-    font-weight: normal !important;
+    .new_r-p8 {
+        width: 50px !important;
+        height: 50px !important;
+    }
+
+    .new_r-item-rating-value {
+        font-size: 0.9rem !important;
+    }
 }
 </style>
 
@@ -477,7 +488,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Функція для зміни кольору рамки рейтингу
 document.addEventListener('DOMContentLoaded', function() {
     function updateRatingBorderColor() {
-        const ratingContainers = document.querySelectorAll('.new_r-item-rating-container');
+        const ratingContainers = document.querySelectorAll('.new_r-p8');
 
         ratingContainers.forEach(function(container) {
             const ratingValueElement = container.querySelector('.new_r-item-rating-value');
