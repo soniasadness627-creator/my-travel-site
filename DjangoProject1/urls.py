@@ -46,6 +46,12 @@ urlpatterns = [
     # ========== ІНСТРУКЦІЯ ДЛЯ АГЕНТА (чиста сторінка без меню) ==========
     path('instruction/', TemplateView.as_view(template_name='pages/instruction_clean.html'), name='instruction'),
 
+    # ========== ТЕСТОВА СТОРІНКА ДЛЯ ПОШУКУ ТУРІВ ==========
+    path('search-test/', TemplateView.as_view(template_name='pages/test_search.html'), name='test_search'),
+
+    # ========== СТОРІНКА РЕЗУЛЬТАТІВ ПОШУКУ (для модуля Otpusk) ==========
+    path('search-results/', TemplateView.as_view(template_name='pages/test_search.html'), name='search_results'),
+
     # ========== ГОЛОВНА СТОРІНКА ==========
     path('', home_redirect, name='home_redirect'),
     path('landing/', include('landing.urls')),  # лендинг доступний за /landing/
