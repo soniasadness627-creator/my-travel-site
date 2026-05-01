@@ -240,47 +240,55 @@ span.new_r-filter-value,
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* ========== РЕЙТИНГ - ПРЯМОКУТНИЙ З КОЛЬОРОВОЮ РАМКОЮ ========== */
+/* ========== РЕЙТИНГ - КОМПАКТНИЙ, З КОЛЬОРОВОЮ РАМКОЮ ========== */
 
 /* Основний контейнер рейтингу */
 .new_r-item-rating-container,
 .new_r-p8 {
-    width: 130px !important;
-    height: 55px !important;
+    width: 100px !important;
+    min-width: 90px !important;
+    height: 46px !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
-    padding: 8px 12px !important;
+    justify-content: center !important;
+    padding: 4px 8px !important;
     box-sizing: border-box !important;
     background: white !important;
     border-radius: 8px !important;
     border-width: 2px !important;
     border-style: solid !important;
+    gap: 8px !important;
 }
 
 /* Ліва частина - кількість оцінок (стовпчик) */
 .new_r-item-rating-rev {
     display: flex !important;
     flex-direction: column !important;
-    align-items: flex-start !important;
+    align-items: center !important;
+    justify-content: center !important;
     gap: 2px !important;
-    font-size: 0.7rem !important;
-    color: #666 !important;
+    font-size: 0.55rem !important;
+    color: #888 !important;
     background: transparent !important;
+    text-align: center !important;
 }
 
+/* Кількість оцінок (цифра) */
 .new_r-item-rating-rev span {
     font-weight: 700 !important;
-    font-size: 1rem !important;
-    color: #333 !important;
+    font-size: 0.75rem !important;
+    color: #555 !important;
+    display: block !important;
+    line-height: 1.2 !important;
 }
 
 /* Права частина - оцінка */
 .new_r-item-rating-value {
     font-weight: 800 !important;
-    font-size: 1.4rem !important;
+    font-size: 1rem !important;
     background: transparent !important;
     margin: 0 !important;
+    line-height: 1 !important;
 }
 
 /* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ ТА СМУГИ */
@@ -301,25 +309,29 @@ span.new_r-filter-value,
     display: none !important;
 }
 
-/* ========== КОЛЬОРИ РАМКИ В ЗАЛЕЖНОСТІ ВІД ОЦІНКИ ========== */
+/* ========== МОБІЛЬНА ВЕРСІЯ ========== */
+@media (max-width: 768px) {
+    #otpusk-search-module {
+        padding: 15px !important;
+        margin: 0 15px !important;
+        width: auto !important;
+    }
 
-/* Низький рейтинг (0-4.9) - ЧЕРВОНА РАМКА */
-.new_r-item-rating-container[data-rating-value="low"],
-.new_r-p8:has(.new_r-item-rating-value:contains("4")) {
-    border-color: #ef4444 !important;
-}
-.new_r-item-rating-value:has(+ .new_r-item-rating-rev) {
-    /* Динамічний колір буде через JS */
+    .new_f-dropdown-btn {
+        width: 100% !important;
+        padding: 10px 14px !important;
+    }
+
+    .new_f-form-submit {
+        width: 100% !important;
+        margin-top: 10px !important;
+    }
 }
 
-/* Середній рейтинг (5-7.4) - ЖОВТА РАМКА */
-.new_r-item-rating-container[data-rating-value="medium"] {
-    border-color: #eab308 !important;
-}
-
-/* Високий рейтинг (7.5-10) - ЗЕЛЕНА РАМКА */
-.new_r-item-rating-container[data-rating-value="high"] {
-    border-color: #22c55e !important;
+/* Додатковий фікс - текст "за двох" залишається чорним */
+.new_price-desc {
+    color: #1a202c !important;
+    font-weight: normal !important;
 }
 </style>
 
@@ -361,37 +373,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const ratingContainers = document.querySelectorAll('.new_r-item-rating-container');
 
         ratingContainers.forEach(function(container) {
-            // Шукаємо елемент з оцінкою
             const ratingValueElement = container.querySelector('.new_r-item-rating-value');
             if (!ratingValueElement) return;
 
-            // Отримуємо числове значення оцінки
             const ratingText = ratingValueElement.textContent || ratingValueElement.innerText;
             const rating = parseFloat(ratingText);
 
             if (isNaN(rating)) return;
 
-            // Визначаємо колір рамки в залежності від оцінки
             if (rating < 5) {
-                // Низький рейтинг - ЧЕРВОНИЙ
                 container.style.borderColor = '#ef4444';
                 ratingValueElement.style.color = '#ef4444';
             } else if (rating >= 5 && rating < 7.5) {
-                // Середній рейтинг - ЖОВТИЙ
                 container.style.borderColor = '#eab308';
                 ratingValueElement.style.color = '#eab308';
             } else {
-                // Високий рейтинг - ЗЕЛЕНИЙ
                 container.style.borderColor = '#22c55e';
                 ratingValueElement.style.color = '#22c55e';
             }
         });
     }
 
-    // Викликаємо функцію
     updateRatingBorderColor();
 
-    // Спостерігаємо за змінами
     const observer = new MutationObserver(function() {
         updateRatingBorderColor();
     });
