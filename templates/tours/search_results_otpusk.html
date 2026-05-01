@@ -78,7 +78,7 @@
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    color: #dc2626 !important;  /* ТІЛЬКИ ЦИФРА ЧЕРВОНА */
+    color: #dc2626 !important;
     font-weight: 700 !important;
     font-size: 1.25rem !important;
 }
@@ -89,7 +89,7 @@ span.new_r-item-price,
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    color: #1a202c !important;  /* Чорний для "за двох" та іншого тексту */
+    color: #1a202c !important;
     font-weight: 500 !important;
     font-size: 1rem !important;
 }
@@ -240,6 +240,86 @@ span.new_r-filter-value,
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
+/* ========== РЕЙТИНГ - ПОВНІСТЮ ПРЯМОКУТНИЙ, БЕЗ КРУГЛИХ ЕЛЕМЕНТІВ ========== */
+
+/* Контейнер рейтингу - прямокутний */
+.new_r-item-rating-container,
+.new_r-p8 {
+    background: #e2e8f0 !important;
+    border-radius: 6px !important;
+    width: 130px !important;
+    height: 30px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 12px !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+}
+
+/* Смуга прогресу */
+.new_r-item-rating-container::before {
+    content: '' !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 85% !important;
+    height: 100% !important;
+    background: var(--primary-color) !important;
+    border-radius: 6px !important;
+    z-index: 0 !important;
+}
+
+/* Цифра рейтингу */
+.new_r-item-rating-value {
+    position: relative !important;
+    z-index: 2 !important;
+    font-weight: 700 !important;
+    color: white !important;
+    font-size: 0.85rem !important;
+    background: transparent !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+}
+
+/* Текст "оцінок" та кількість */
+.new_r-item-rating-rev {
+    position: relative !important;
+    z-index: 2 !important;
+    font-size: 0.7rem !important;
+    color: white !important;
+    background: transparent !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+}
+
+.new_r-item-rating-rev span {
+    font-weight: 600 !important;
+    color: white !important;
+}
+
+/* ЗНИЩУЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ */
+.new_r-item-rating-container .slice,
+.new_r-item-rating-container .bar,
+.new_r-item-rating-container .fill,
+.new_r-item-rating-container svg,
+.new_r-item-rating-container circle,
+.new_r-item-rating-container path {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* Ховаємо псевдоелементи */
+.new_r-item-rating-container::after,
+.new_r-p8::after {
+    display: none !important;
+    content: none !important;
+}
+
 /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
 @media (max-width: 768px) {
     #otpusk-search-module {
@@ -297,45 +377,5 @@ document.addEventListener('DOMContentLoaded', function() {
         subtree: true
     });
 });
-  /* ПОВНА ЗАМІНА РЕЙТИНГУ - НІЯКИХ КРУГЛИХ ЕЛЕМЕНТІВ */
-.new_r-item-rating-container,
-.new_r-p8 {
-    background: #e2e8f0 !important;
-    border-radius: 6px !important;
-    border: none !important;
-    box-shadow: none !important;
-    width: 130px !important;
-    height: 30px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding: 0 12px !important;
-    position: relative !important;
-}
-
-.new_r-item-rating-container::before {
-    content: '' !important;
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: 85% !important;
-    height: 100% !important;
-    background: var(--primary-color) !important;
-    border-radius: 6px !important;
-    z-index: 0 !important;
-}
-
-.new_r-item-rating-value,
-.new_r-item-rating-rev {
-    position: relative !important;
-    z-index: 1 !important;
-    color: white !important;
-    background: transparent !important;
-}
-
-/* ЗНИЩУЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ */
-.slice, .bar, .fill, circle, path, [class*="slice"], [class*="bar"], [class*="fill"] {
-    display: none !important;
-}
 </script>
 {% endblock %}
