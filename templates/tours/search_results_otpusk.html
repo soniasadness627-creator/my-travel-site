@@ -71,9 +71,9 @@
     background: var(--primary-dark) !important;
 }
 
-/* ========== ЦІНА - ПРИБИРАЄМО КОЛІР ТА РАМКУ ========== */
+/* ========== ЦІНА - ЧОРНА ========== */
 
-/* Блок ціни - прибираємо фон, рамку, робимо чорним */
+/* Блок ціни - чорний колір, без фону */
 span.new_r-item-price,
 .new_r-item-price,
 .new_price-value,
@@ -81,12 +81,14 @@ span.new_r-item-price,
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    color: #1a202c !important;  /* Чорний колір */
+    color: #1a202c !important;
     font-weight: 700 !important;
     font-size: 1.25rem !important;
 }
 
-/* Валюта в ціні (грн/$) - білий текст на фоні кольору агента */
+/* ========== ВАЛЮТА (грн/$) В ЦІНІ ========== */
+
+/* Валюта біля ціни */
 .currency,
 .new_r-item-price .currency,
 span.currency {
@@ -99,57 +101,73 @@ span.currency {
     font-size: 0.85rem !important;
 }
 
-/* ========== КНОПКИ ПЕРЕМИКАННЯ ВАЛЮТИ (грн/$) ========== */
+/* ========== КНОПКИ ПЕРЕМИКАННЯ ВАЛЮТИ - ЦІЛІСНИЙ БЛОК ========== */
 
-/* Основний стиль для кнопок валюти - ОБ'ЄДНАНИЙ */
-.new_r-currency-switch span {
+/* Контейнер кнопок валюти */
+.new_r-currency-switch {
+    display: flex !important;
+    gap: 0 !important;
     background: var(--primary-color) !important;
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    width: fit-content !important;
+}
+
+/* Стиль для обгортки label */
+.new_r-currency-switch label {
+    margin: 0 !important;
+    display: inline-block !important;
+}
+
+/* Ховаємо радіо кнопки */
+.new_r-currency-switch input[type="radio"] {
+    display: none !important;
+}
+
+/* Стиль для span (грн та $) - вони будуть як єдині кнопки в блоці */
+.new_r-currency-switch span {
+    background: transparent !important;
     color: white !important;
-    padding: 4px 12px !important;
-    border-radius: 20px !important;
+    padding: 6px 16px !important;
     display: inline-block !important;
     font-weight: 600 !important;
-    font-size: 0.85rem !important;
+    font-size: 0.9rem !important;
     cursor: pointer !important;
-    transition: all 0.3s ease !important;
+    transition: all 0.2s ease !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* Активна валюта (вибрана) */
+.new_r-currency-switch input[type="radio"]:checked + span,
+.new_r-currency-switch span.active {
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: white !important;
+}
+
+/* Ховер ефект */
+.new_r-currency-switch span:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Видаляємо старі конфліктуючі стилі */
+.new_r-currency-switch a {
+    all: unset !important;
 }
 
 /* ========== ЗІРКИ - ЖОВТІ ========== */
-
-/* Зірки готелю - жовті */
 .new_r-item-star {
-    fill: #FFD700 !important;  /* Золотий/жовтий колір */
+    fill: #FFD700 !important;
 }
 
 /* ========== ТРАНСПОРТ - КОЛІР АГЕНТА ========== */
-
-/* Транспорт у фільтрах */
 span.new_r-filter-value,
 .new_r-filter-value {
     color: var(--primary-color) !important;
     font-weight: 500 !important;
 }
 
-/* Інші оранжеві елементи транспорту */
-.new_r-item-transport,
-.transport-value {
-    color: var(--primary-color) !important;
-}
-
-/* ========== КНОПКИ ТА ЕЛЕМЕНТИ КЕРУВАННЯ ========== */
-
-/* Кнопки перемикання валюти (грн/$) */
-.new_r-currency-switch a,
-.new_r-currency-switch span {
-    color: var(--primary-color) !important;
-}
-
-.new_r-currency-switch a.active {
-    background: var(--primary-color) !important;
-    color: white !important;
-}
-
-/* Кнопка детальніше */
+/* ========== КНОПКИ ========== */
 .new_r-detail-btn {
     background: var(--primary-color) !important;
     color: white !important;
@@ -162,7 +180,6 @@ span.new_r-filter-value,
     background: var(--primary-dark) !important;
 }
 
-/* Кнопки "Застосувати" у фільтрах */
 .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
     background: var(--primary-color) !important;
     color: white !important;
@@ -171,7 +188,6 @@ span.new_r-filter-value,
     padding: 10px !important;
 }
 
-/* Кнопка "Очистити фільтри" */
 .new_f-ext-clear-btn {
     background: #e2e8f0 !important;
     color: #1a202c !important;
@@ -181,8 +197,6 @@ span.new_r-filter-value,
 }
 
 /* ========== ФІЛЬТРИ ========== */
-
-/* Примусово показуємо фільтри */
 .new_f-ext-container {
     display: block !important;
     background: #f8f9fa !important;
@@ -196,25 +210,16 @@ span.new_r-filter-value,
     display: none !important;
 }
 
-/* Чекбокси та радіо при наведенні */
 .new_f-ext-bl-body label:hover {
     border-color: var(--primary-color) !important;
 }
 
-/* Активні елементи в випадаючих списках */
 .new_f-dropdown-item.selected {
     background: var(--primary-color) !important;
     color: white !important;
 }
 
-/* Посилання */
-a {
-    color: var(--primary-color) !important;
-    text-decoration: none !important;
-}
-
 /* ========== КАРТКА ТУРУ ========== */
-
 .new_r-item {
     background: white !important;
     border-radius: 16px !important;
@@ -247,4 +252,37 @@ a {
     }
 }
 </style>
+
+<script>
+// Заміна євро на долар
+document.addEventListener('DOMContentLoaded', function() {
+    function replaceEuroToDollar() {
+        const euroElements = document.querySelectorAll('[data-cur="€"], span[data-cur="€"]');
+        euroElements.forEach(function(el) {
+            el.setAttribute('data-cur', '$');
+            if (el.textContent === '€') {
+                el.textContent = '$';
+            }
+        });
+
+        const textElements = document.querySelectorAll('.new_r-currency-switch span');
+        textElements.forEach(function(el) {
+            if (el.textContent === '€') {
+                el.textContent = '$';
+            }
+        });
+    }
+
+    replaceEuroToDollar();
+
+    const observer = new MutationObserver(function() {
+        replaceEuroToDollar();
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+});
+</script>
 {% endblock %}
