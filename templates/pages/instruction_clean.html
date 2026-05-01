@@ -45,14 +45,20 @@
         .content {
             padding: 30px;
         }
-        /* Ліве меню - ТІЛЬКИ ДЛЯ ДЕСКТОПУ */
+
+        /* ========== ОСНОВНЕ ВИПРАВЛЕННЯ ДЛЯ STICKY МЕНЮ ========== */
+        .menu-column {
+            position: relative;
+        }
         .side-menu {
             position: sticky;
-            top: 30px;
+            top: 30px;  /* Відступ від верху екрану */
             background: #f8f9fa;
             border-radius: 16px;
             padding: 15px 0;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-height: calc(100vh - 60px); /* Щоб меню не виходило за межі екрану */
+            overflow-y: auto; /* Якщо пунктів багато - з'явиться скрол */
         }
         .side-menu .nav-link {
             color: #333;
@@ -72,15 +78,13 @@
             color: var(--primary-dark);
             font-weight: 600;
         }
+
         /* ХОВАЄМО БІЧНЕ МЕНЮ НА ТЕЛЕФОНІ */
         @media (max-width: 768px) {
-            .side-menu {
+            .menu-column {
                 display: none;
             }
-            .col-md-3 {
-                display: none;
-            }
-            .col-md-9 {
+            .content-column {
                 width: 100%;
             }
             body {
@@ -90,6 +94,7 @@
                 padding: 15px;
             }
         }
+
         .step-card {
             background: #f8f9fa;
             border-radius: 16px;
@@ -137,10 +142,10 @@
 
             <div class="content">
                 <div class="row">
-                    <!-- ЛІВЕ МЕНЮ (тільки для ПК) -->
-                    <div class="col-md-3">
+                    <!-- ЛІВЕ МЕНЮ (sticky) -->
+                    <div class="col-md-3 menu-column">
                         <div class="side-menu">
-                            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            <div class="nav flex-column nav-pills">
                                 <a class="nav-link" href="#step1">1. Реєстрація</a>
                                 <a class="nav-link" href="#step2">2. Вхід в кабінет</a>
                                 <a class="nav-link" href="#step3">3. Налаштування сайту</a>
@@ -152,7 +157,7 @@
                     </div>
 
                     <!-- ПРАВИЙ КОНТЕНТ -->
-                    <div class="col-md-9">
+                    <div class="col-md-9 content-column">
                         <!-- КРОК 1 -->
                         <div id="step1" class="step-card">
                             <div class="step-title">
@@ -278,7 +283,7 @@
             });
         });
 
-        // Підсвічування активного пункту при скролі сторінки
+        // Підсвічування активного пункту ПРИ СКРОЛІ
         window.addEventListener('scroll', function() {
             const sections = document.querySelectorAll('.step-card');
             const navLinks = document.querySelectorAll('.side-menu .nav-link');
@@ -299,6 +304,14 @@
                     link.classList.add('active');
                 }
             });
+        });
+
+        // АКТИВУЄМО ПЕРШИЙ ПУНКТ ПРИ ЗАВАНТАЖЕННІ
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstLink = document.querySelector('.side-menu .nav-link');
+            if (firstLink) {
+                firstLink.classList.add('active');
+            }
         });
     </script>
 </body>
