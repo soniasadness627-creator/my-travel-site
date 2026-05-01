@@ -38,4 +38,63 @@
         </div>
     </div>
 </div>
+<style>
+/* Бічна панель для фільтрів */
+#otpusk-search-module {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 30px !important;
+    flex-wrap: wrap !important;
+}
+
+/* Контейнер фільтрів (розширений пошук) */
+.new_f-ext-container {
+    width: 280px !important;
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    top: 100px !important;
+    align-self: flex-start !important;
+    background: #f8f9fa !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+/* Контейнер результатів */
+.new_r-container {
+    flex: 1 !important;
+    min-width: 300px !important;
+}
+
+/* Приховуємо кнопку "Розширений пошук", бо фільтри вже видно */
+.new_f-ext-btn {
+    display: none !important;
+}
+
+/* Показуємо контейнер фільтрів завжди */
+.new_f-ext-container {
+    display: block !important;
+}
+
+/* Стиль для кнопок фільтрів */
+.new_f-ext-clear-btn,
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
+    width: 100% !important;
+    margin-top: 10px !important;
+}
+
+/* Мобільна версія - фільтри зверху */
+@media (max-width: 768px) {
+    #otpusk-search-module {
+        flex-direction: column !important;
+    }
+
+    .new_f-ext-container {
+        width: 100% !important;
+        position: relative !important;
+        top: 0 !important;
+        margin-bottom: 20px !important;
+    }
+}
+</style>
 {% endblock %}
