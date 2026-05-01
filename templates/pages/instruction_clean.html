@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📘 Інструкція для агента - TourConstructor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #086745;
+            --primary-dark: #02432c;
+            --primary-light: #2a6b5c;
+            --primary-lighter: #cbf6ec;
+        }
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .instruction-card {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        .header p {
+            margin: 10px 0 0;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .step-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.2s;
+        }
+        .step-card:hover {
+            transform: translateX(5px);
+        }
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+        }
+        .step-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        .alert-custom {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            border: none;
+            border-radius: 12px;
+            color: #1e40af;
+        }
+        .btn-custom {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 30px;
+            padding: 10px 25px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-custom:hover {
+            background: var(--primary-dark);
+            color: white;
+        }
+        .footer-note {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+            .step-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="instruction-card">
+        <div class="header">
+            <h1><i class="fas fa-book-open me-2"></i>Інструкція для агента</h1>
+            <p>Як користуватися конструктором сайтів TourConstructor</p>
+        </div>
+
+        <div class="content">
+            <!-- КРОК 1 -->
+            <div class="step-card">
+                <div class="step-title">
+                    <i class="fas fa-user-plus"></i> 1. Реєстрація
+                </div>
+                <p>Щоб створити власний сайт, потрібно зареєструватися:</p>
+                <ol>
+                    <li>Перейдіть на головну сторінку сайту</li>
+                    <li>Натисніть кнопку <strong>"Створити сайт безкоштовно"</strong></li>
+                    <li>Заповніть форму: ім'я, прізвище, email</li>
+                    <li>Натисніть <strong>"Надіслати код"</strong></li>
+                    <li>Введіть код, який прийшов на вашу пошту</li>
+                    <li>Після підтвердження ви потрапите в особистий кабінет</li>
+                </ol>
+                <div class="alert alert-info mt-2" style="background: #e0f2fe; border: none; border-radius: 10px;">
+                    💡 <strong>Порада:</strong> Перевірте папку "Спам", якщо лист з кодом не прийшов.
+                </div>
+            </div>
+
+            <!-- КРОК 2 -->
+            <div class="step-card">
+                <div class="step-title">
+                    <i class="fas fa-sign-in-alt"></i> 2. Вхід в кабінет
+                </div>
+                <p>Якщо ви вже зареєстровані:</p>
+                <ol>
+                    <li>Натисніть <strong>"Вже є сайт? Увійти в кабінет"</strong></li>
+                    <li>Введіть ваш email</li>
+                    <li>Отримайте код на пошту</li>
+                    <li>Введіть код і увійдіть</li>
+                </ol>
+            </div>
+
+            <!-- КРОК 3 -->
+            <div class="step-card">
+                <div class="step-title">
+                    <i class="fas fa-palette"></i> 3. Налаштування сайту
+                </div>
+                <p>У вашому кабінеті ви можете налаштувати:</p>
+                <ul>
+                    <li><strong>Кольори сайту</strong> — основний та додатковий</li>
+                    <li><strong>Логотип</strong> — завантажте своє зображення</li>
+                    <li><strong>Блок "Про нас"</strong> — текст та фото вашої агенції</li>
+                    <li><strong>Банери</strong> — додайте до 3 банерів з текстом та кнопками</li>
+                </ul>
+                <div class="alert alert-warning mt-2" style="background: #fef3c7; border: none; border-radius: 10px;">
+                    ⚠️ <strong>Важливо:</strong> Після змін не забудьте натиснути "Зберегти"!
+                </div>
+            </div>
+
+            <!-- КРОК 4 -->
+            <div class="step-card">
+                <div class="step-title">
+                    <i class="fas fa-search"></i> 4. Пошук турів
+                </div>
+                <p>На вашому сайті встановлено модуль пошуку турів:</p>
+                <ul>
+                    <li>✅ Пошук понад <strong>100 туроператорам</strong></li>
+                    <li>✅ Актуальні ціни в реальному часі</li>
+                    <li>✅ Фільтрація за країнами, курортами, готелями</li>
+                    <li>✅ Відображення на карті Google Maps</li>
+                </ul>
+            </div>
+
+            <!-- КРОК 5 -->
+            <div class="step-card">
+                <div class="step-title">
+                    <i class="fas fa-envelope"></i> 5. Робота з заявками
+                </div>
+                <p>Коли клієнт залишає заявку на тур:</p>
+                <ul>
+                    <li>Ви отримуєте <strong>сповіщення в Telegram</strong></li>
+                    <li>Заявка зберігається в адмін-панелі</li>
+                    <li>Ви можете зв'язатися з клієнтом за вказаним телефоном</li>
+                    <li>Підтвердіть бронювання туроператору</li>
+                </ul>
+            </div>
+
+            <!-- КРОК 6 -->
+            <div class="step-card">
+                <div class="step-title">
+                    <i class="fas fa-chart-line"></i> 6. Просування сайту
+                </div>
+                <p>Щоб ваш сайт знаходили клієнти:</p>
+                <ul>
+                    <li>📱 Додайте посилання на сайт в Instagram, Facebook, TikTok</li>
+                    <li>📧 Додайте адресу сайту в підпис email-листів</li>
+                    <li>🗣️ Розкажіть клієнтам про можливість онлайн-бронювання</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-custom text-center mt-3" style="border-radius: 12px;">
+                <i class="fas fa-rocket fa-2x mb-2 d-block"></i>
+                <h5 class="mb-2">✨ Ваш сайт готовий до роботи!</h5>
+                <p>Посилання на ваш сайт: <a href="https://clubdatour.com.ua" target="_blank" style="color: #086745; font-weight: bold;">clubdatour.com.ua</a></p>
+                <p>Залишилися питання? Зв'яжіться з підтримкою: <strong>info@tourconstructor.com</strong></p>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            <p class="mb-0">© 2026 TourConstructor</p>
+            <small>Створіть свій сайт для продажу турів за 5 хвилин</small>
+        </div>
+    </div>
+</body>
+</html>
