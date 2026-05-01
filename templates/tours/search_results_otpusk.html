@@ -42,7 +42,7 @@
 <style>
 /* ========== ОСНОВНІ СТИЛІ ========== */
 
-/* Контейнер модуля - на всю ширину */
+/* Контейнер модуля */
 #otpusk-search-module {
     background: white !important;
     border-radius: 24px !important;
@@ -117,42 +117,60 @@
 }
 
 /* ========== ЦІНА - ЗМІНЮЄМО ОРАНЖЕВИЙ НА КОЛІР АГЕНТА ========== */
-span.new_r-item-price,
-.new_r-item-price,
-.new_r-price,
-.price-value,
-.r-item-price {
+
+/* Головний елемент ціни */
+.new_price-value,
+.new_r-item-price .new_price-value,
+span.new_price-value,
+div.new_price-value {
     color: var(--primary-color) !important;
     font-weight: 700 !important;
     font-size: 1.25rem !important;
 }
 
-/* Додатково - будь-які інші оранжеві елементи */
-.new_r-price-currency,
-.currency-switch,
-.new_r-currency {
+/* Валюта (грн, $) */
+.currency,
+.new_r-item-price .currency,
+span.currency {
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+}
+
+/* Весь блок ціни */
+.new_r-item-price {
     color: var(--primary-color) !important;
 }
 
-/* Кнопки валюти (грн/$) - змінюємо колір */
-.new_r-currency-switch button,
-.currency-btn,
-.currency-switch-btn {
-    background: transparent !important;
-    border: 1px solid var(--primary-color) !important;
+/* Рейтинг готелю */
+.new_r-item-rating-value {
     color: var(--primary-color) !important;
-    transition: all 0.3s ease !important;
+    font-weight: 700 !important;
 }
 
-.new_r-currency-switch button.active,
-.currency-btn.active {
+/* Зірки готелю - заповнені */
+.new_r-item-star {
+    fill: var(--primary-color) !important;
+}
+
+/* ========== КНОПКИ ТА ЕЛЕМЕНТИ КЕРУВАННЯ ========== */
+
+/* Кнопки перемикання валюти (грн/$) */
+.new_r-currency-switch a,
+.new_r-currency-switch span,
+.currency-switch button {
+    color: var(--primary-color) !important;
+}
+
+.new_r-currency-switch a.active,
+.currency-switch button.active {
     background: var(--primary-color) !important;
     color: white !important;
 }
 
 /* Кнопка детальніше */
 .new_r-detail-btn,
-.detail-button {
+.detail-button,
+a.new_r-detail-btn {
     background: var(--primary-color) !important;
     color: white !important;
     border: none !important;
@@ -167,7 +185,33 @@ span.new_r-item-price,
     transform: scale(1.02) !important;
 }
 
-/* ========== ФІЛЬТРИ (РОЗШИРЕНИЙ ПОШУК) ========== */
+/* Кнопки "Застосувати" у фільтрах */
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 40px !important;
+    padding: 10px !important;
+}
+
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
+    background: var(--primary-dark) !important;
+}
+
+/* Кнопка "Очистити фільтри" */
+.new_f-ext-clear-btn {
+    background: #e2e8f0 !important;
+    color: #1a202c !important;
+    border: none !important;
+    border-radius: 40px !important;
+    padding: 10px !important;
+}
+
+.new_f-ext-clear-btn:hover {
+    background: #cbd5e1 !important;
+}
+
+/* ========== ФІЛЬТРИ ========== */
 
 /* Примусово показуємо фільтри */
 .new_f-ext-container {
@@ -187,7 +231,7 @@ span.new_r-item-price,
     display: none !important;
 }
 
-/* Групи фільтрів */
+/* Заголовки груп фільтрів */
 .new_f-ext-bl-title {
     font-weight: 600 !important;
     color: #1a202c !important;
@@ -196,71 +240,46 @@ span.new_r-item-price,
 /* Чекбокси та радіо при наведенні */
 .new_f-ext-bl-body label:hover {
     border-color: var(--primary-color) !important;
-    background: rgba(var(--primary-rgb), 0.05) !important;
 }
 
-/* Кнопки "Очистити" та "Застосувати" */
-.new_f-ext-clear-btn {
-    background: #e2e8f0 !important;
-    color: #1a202c !important;
-    border: none !important;
-    border-radius: 40px !important;
-    padding: 10px !important;
-}
-
-.new_f-ext-clear-btn:hover {
-    background: #cbd5e1 !important;
-}
-
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
-    background: var(--primary-color) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 40px !important;
-    padding: 10px !important;
-}
-
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
-    background: var(--primary-dark) !important;
-}
-
-/* Активні елементи в фільтрах */
+/* Активні елементи в випадаючих списках */
 .new_f-dropdown-item.selected {
     background: var(--primary-color) !important;
     color: white !important;
 }
 
-/* ========== ЗАПОБІГАЄМО ПОЯВІ ОРАНЖЕВОГО КОЛЬОРУ ========== */
-* {
-    --otpusk-orange: var(--primary-color) !important;
+/* Посилання */
+a {
+    color: var(--primary-color) !important;
+    text-decoration: none !important;
 }
 
-/* Перевизначаємо будь-який оранжевий */
-[class*="price"],
-[class*="Price"],
-[class*="currency"],
-[class*="Currency"],
-[class*="orange"],
+a:hover {
+    color: var(--primary-dark) !important;
+}
+
+/* ========== ПОВНЕ ПЕРЕВИЗНАЧЕННЯ ОРАНЖЕВОГО КОЛЬОРУ ========== */
+
+/* Перебиваємо конкретний оранжевий #f7941d */
 [style*="#f7941d"],
-[style*="orange"] {
-    color: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
-    background-color: transparent !important;
-}
-
-/* Спеціально для span з ціною */
-span[class*="price"] {
+[color*="#f7941d"],
+*[style*="color:#f7941d"],
+*[style*="color: #f7941d"] {
     color: var(--primary-color) !important;
 }
 
-/* Кнопки валют */
-.new_r-currency-switch {
-    display: flex !important;
-    gap: 5px !important;
+/* Всі елементи з класом price */
+[class*="price"] {
+    color: var(--primary-color) !important;
 }
 
-.new_r-currency-switch a,
-.new_r-currency-switch span {
+/* Всі елементи з класом currency */
+[class*="currency"] {
+    color: var(--primary-color) !important;
+}
+
+/* Спеціально для span всередині ціни */
+.new_r-item-price span {
     color: var(--primary-color) !important;
 }
 
@@ -286,6 +305,10 @@ span[class*="price"] {
     .new_f-ext-container {
         width: 100% !important;
         margin-bottom: 20px !important;
+    }
+
+    .new_price-value {
+        font-size: 1.1rem !important;
     }
 }
 </style>
