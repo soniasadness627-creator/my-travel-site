@@ -240,12 +240,12 @@ span.new_r-filter-value,
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* ========== РЕЙТИНГ - ПОВНІСТЮ ПРЯМОКУТНИЙ, БЕЗ КРУГЛИХ ЕЛЕМЕНТІВ ========== */
+/* ========== РЕЙТИНГ - ПРЯМОКУТНИЙ, З КОЛЬОРОМ ЯК БУВ У КРУГУ ========== */
 
-/* Контейнер рейтингу - прямокутний */
+/* Контейнер рейтингу - прямокутний, без кольору агента */
 .new_r-item-rating-container,
 .new_r-p8 {
-    background: #e2e8f0 !important;
+    background: #f0f0f0 !important;
     border-radius: 6px !important;
     width: 130px !important;
     height: 30px !important;
@@ -255,51 +255,38 @@ span.new_r-filter-value,
     padding: 0 12px !important;
     position: relative !important;
     box-sizing: border-box !important;
+    border: 1px solid #e0e0e0 !important;
 }
 
-/* Смуга прогресу */
-.new_r-item-rating-container::before {
-    content: '' !important;
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: 85% !important;
-    height: 100% !important;
-    background: var(--primary-color) !important;
-    border-radius: 6px !important;
-    z-index: 0 !important;
-}
-
-/* Цифра рейтингу */
+/* Колір фону для рейтингу - ТОЙ САМИЙ ЩО БІЛЯ КРУГА (оранжевий/золотий) */
 .new_r-item-rating-value {
-    position: relative !important;
-    z-index: 2 !important;
     font-weight: 700 !important;
-    color: white !important;
-    font-size: 0.85rem !important;
+    color: #f7941d !important;  /* Колір як був у круга */
+    font-size: 0.9rem !important;
     background: transparent !important;
     margin: 0 !important;
-    line-height: 1 !important;
 }
 
-/* Текст "оцінок" та кількість */
+/* Текст "оцінок" та кількість - сірі */
 .new_r-item-rating-rev {
-    position: relative !important;
-    z-index: 2 !important;
-    font-size: 0.7rem !important;
-    color: white !important;
-    background: transparent !important;
     display: flex !important;
     align-items: center !important;
     gap: 3px !important;
+    font-size: 0.7rem !important;
+    color: #666 !important;
+    background: transparent !important;
 }
 
 .new_r-item-rating-rev span {
     font-weight: 600 !important;
-    color: white !important;
+    color: #666 !important;
 }
 
-/* ЗНИЩУЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ */
+/* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ ТА СМУГИ */
+.new_r-item-rating-container::before {
+    display: none !important;
+}
+
 .new_r-item-rating-container .slice,
 .new_r-item-rating-container .bar,
 .new_r-item-rating-container .fill,
@@ -307,17 +294,10 @@ span.new_r-filter-value,
 .new_r-item-rating-container circle,
 .new_r-item-rating-container path {
     display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    width: 0 !important;
-    height: 0 !important;
 }
 
-/* Ховаємо псевдоелементи */
-.new_r-item-rating-container::after,
-.new_r-p8::after {
+.new_r-item-rating-container::after {
     display: none !important;
-    content: none !important;
 }
 
 /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
