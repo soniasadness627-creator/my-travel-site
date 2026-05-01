@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}🔍 Результати пошуку турів{% endblock %}
+{% block title %}{% endblock %}
 
 {% block content %}
 <div class="container my-5">
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-4">
-            <h2 class="text-center mb-4" style="color: var(--primary-color);">🔍 Результати пошуку турів</h2>
+            <h2 class="text-center mb-4" style="color: var(--primary-color);"></h2>
             <div id="otpusk-search-module">
                 <script>
                     var osGeo = '';
@@ -39,62 +39,164 @@
     </div>
 </div>
 <style>
-/* Бічна панель для фільтрів */
+/* ========== СТИЛІ ДЛЯ МОДУЛЯ ПОШУКУ OTPUSK.COM ========== */
+
+/* Основний контейнер - вужчий, з рамкою */
 #otpusk-search-module {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 30px !important;
-    flex-wrap: wrap !important;
+    background: white !important;
+    border-radius: 24px !important;
+    border: 2px solid var(--primary-color) !important;    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+    padding: 20px 24px !important;
+    max-width: 1200px !important;
+    margin: -40px auto 0 auto !important;
+    position: relative !important;
+    z-index: 10 !important;
 }
-
-/* Контейнер фільтрів (розширений пошук) */
-.new_f-ext-container {
-    width: 280px !important;
-    flex-shrink: 0 !important;
-    position: sticky !important;
-    top: 100px !important;
-    align-self: flex-start !important;
-    background: #f8f9fa !important;
-    border-radius: 16px !important;
-    padding: 20px !important;
-    border: 1px solid #e2e8f0 !important;
-}
-
-/* Контейнер результатів */
-.new_r-container {
-    flex: 1 !important;
-    min-width: 300px !important;
-}
-
-/* Приховуємо кнопку "Розширений пошук", бо фільтри вже видно */
-.new_f-ext-btn {
-    display: none !important;
-}
-
-/* Показуємо контейнер фільтрів завжди */
-.new_f-ext-container {
+/* Заголовок "Пошук туру" - чорний */
+.new_f-title {
+    color: #1a202c !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 20px !important;
     display: block !important;
 }
 
-/* Стиль для кнопок фільтрів */
-.new_f-ext-clear-btn,
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
-    width: 100% !important;
-    margin-top: 10px !important;
+/* Внутрішні контейнери */
+.new_os,
+.new_f-container,
+.new_f-wrapper,
+.new_f-form {
+    background: white !important;
 }
 
-/* Мобільна версія - фільтри зверху */
+
+
+/* Розширений пошук - чорний */
+.new_f-ext-btn-text {
+    color: #1a202c !important;
+    font-weight: 500 !important;
+}
+
+/* Кнопка "Знайти" - колір агента */
+.new_f-form-submit {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-radius: 10px !important;
+    border: none !important;
+    font-weight: 600 !important;
+    padding: 12px 28px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+}
+
+.new_f-form-submit:hover {
+    background: var(--primary-dark) !important;
+    box-shadow: 0 4px 12px rgba(8, 103, 69, 0.2) !important;
+}
+
+/* Поля вводу */
+.new_f-dropdown-btn {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    transition: all 0.3s ease !important;
+    font-size: 14px !important;
+}
+
+.new_f-dropdown-btn:hover {
+    border-color: var(--primary-color) !important;
+}
+
+/* Випадаючі списки */
+.new_f-dropdown-body {
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+/* Активні елементи */
+.new_f-dropdown-item.selected {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Результати пошуку */
+.new_r-container {
+    background: white !important;
+    margin-top: 30px !important;
+}
+
+.new_r-item {
+    background: white !important;
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    transition: all 0.3s ease !important;
+}
+
+.new_r-item:hover {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Мобільна версія */
 @media (max-width: 768px) {
     #otpusk-search-module {
-        flex-direction: column !important;
+        padding: 15px !important;
+        margin: -20px 15px 0 15px !important;
+        max-width: none !important;
     }
 
-    .new_f-ext-container {
+    .new_f-dropdown-btn {
         width: 100% !important;
-        position: relative !important;
-        top: 0 !important;
-        margin-bottom: 20px !important;
+        padding: 10px 14px !important;
     }
+
+    .new_f-form-submit {
+        width: 100% !important;
+        padding: 12px !important;
+        margin-top: 10px !important;
+    }
+}
+    /* Кнопка в розширеному пошуку */
+.new_f-ext-clear-btn,
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-radius: 40px !important;
+    border: none !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.new_f-ext-clear-btn:hover,
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
+    background: var(--primary-dark) !important;
+}
+    /* Кнопка "Очистити фільтри" - сіра */
+.new_f-ext-clear-btn {
+    background: #e2e8f0 !important;
+    color: #1a202c !important;
+    border-radius: 40px !important;
+    border: none !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.new_f-ext-clear-btn:hover {
+    background: #cbd5e1 !important;
+}
+
+/* Кнопка "Застосувати" в розширеному пошуку - залишається зеленою */
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-radius: 40px !important;
+    border: none !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
+    background: var(--primary-dark) !important;
 }
 </style>
 {% endblock %}
