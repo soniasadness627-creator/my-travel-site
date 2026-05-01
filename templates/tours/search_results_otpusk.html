@@ -240,27 +240,26 @@ span.new_r-filter-value,
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* ========== РЕЙТИНГ - КОМПАКТНИЙ, З КОЛЬОРОВОЮ РАМКОЮ ========== */
+/* ========== РЕЙТИНГ - КІЛЬКІСТЬ ЗЛІВА, ОЦІНКА СПРАВА ========== */
 
 /* Основний контейнер рейтингу */
 .new_r-item-rating-container,
 .new_r-p8 {
-    width: 100px !important;
-    min-width: 90px !important;
+    width: 110px !important;
+    min-width: 100px !important;
     height: 46px !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    padding: 4px 8px !important;
+    justify-content: space-between !important;
+    padding: 4px 10px !important;
     box-sizing: border-box !important;
     background: white !important;
     border-radius: 8px !important;
     border-width: 2px !important;
     border-style: solid !important;
-    gap: 8px !important;
 }
 
-/* Ліва частина - кількість оцінок (стовпчик) */
+/* Ліва частина - кількість оцінок (стовпчик) - ЗЛІВА */
 .new_r-item-rating-rev {
     display: flex !important;
     flex-direction: column !important;
@@ -271,24 +270,29 @@ span.new_r-filter-value,
     color: #888 !important;
     background: transparent !important;
     text-align: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Кількість оцінок (цифра) */
 .new_r-item-rating-rev span {
     font-weight: 700 !important;
-    font-size: 0.75rem !important;
+    font-size: 0.8rem !important;
     color: #555 !important;
     display: block !important;
     line-height: 1.2 !important;
 }
 
-/* Права частина - оцінка */
+/* Права частина - оцінка - СПРАВА */
 .new_r-item-rating-value {
     font-weight: 800 !important;
-    font-size: 1rem !important;
+    font-size: 1.1rem !important;
     background: transparent !important;
     margin: 0 !important;
+    padding: 0 !important;
     line-height: 1 !important;
+    text-align: right !important;
+    flex-shrink: 0 !important;
 }
 
 /* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ ТА СМУГИ */
