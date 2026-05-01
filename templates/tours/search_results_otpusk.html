@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{% endblock %}
+{% block title %}Результати пошуку турів{% endblock %}
 
 {% block content %}
 <div class="container my-5">
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-4">
-            <h2 class="text-center mb-4" style="color: var(--primary-color);"></h2>
+            <h2 class="text-center mb-4" style="color: var(--primary-color);">Результати пошуку турів</h2>
             <div id="otpusk-search-module">
                 <script>
                     var osGeo = '';
@@ -38,21 +38,24 @@
         </div>
     </div>
 </div>
-<style>
-/* ========== СТИЛІ ДЛЯ МОДУЛЯ ПОШУКУ OTPUSK.COM ========== */
 
-/* Основний контейнер - вужчий, з рамкою */
+<style>
+/* ========== ОСНОВНІ СТИЛІ ========== */
+
+/* Контейнер модуля - на всю ширину */
 #otpusk-search-module {
     background: white !important;
     border-radius: 24px !important;
-    border: 2px solid var(--primary-color) !important;    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+    border: 2px solid var(--primary-color) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
     padding: 20px 24px !important;
-    max-width: 1200px !important;
-    margin: -40px auto 0 auto !important;
+    width: 100% !important;
+    margin: 0 auto !important;
     position: relative !important;
     z-index: 10 !important;
 }
-/* Заголовок "Пошук туру" - чорний */
+
+/* Заголовок */
 .new_f-title {
     color: #1a202c !important;
     font-size: 1.5rem !important;
@@ -61,23 +64,7 @@
     display: block !important;
 }
 
-/* Внутрішні контейнери */
-.new_os,
-.new_f-container,
-.new_f-wrapper,
-.new_f-form {
-    background: white !important;
-}
-
-
-
-/* Розширений пошук - чорний */
-.new_f-ext-btn-text {
-    color: #1a202c !important;
-    font-weight: 500 !important;
-}
-
-/* Кнопка "Знайти" - колір агента */
+/* Кнопка "Знайти" */
 .new_f-form-submit {
     background: var(--primary-color) !important;
     color: white !important;
@@ -91,7 +78,7 @@
 
 .new_f-form-submit:hover {
     background: var(--primary-dark) !important;
-    box-shadow: 0 4px 12px rgba(8, 103, 69, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Поля вводу */
@@ -99,50 +86,190 @@
     background: #f8fafc !important;
     border: 1px solid #e2e8f0 !important;
     transition: all 0.3s ease !important;
-    font-size: 14px !important;
 }
 
 .new_f-dropdown-btn:hover {
     border-color: var(--primary-color) !important;
 }
 
-/* Випадаючі списки */
-.new_f-dropdown-body {
-    border-radius: 16px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-    border: 1px solid #e2e8f0 !important;
-}
+/* ========== СТИЛІ ДЛЯ РЕЗУЛЬТАТІВ ПОШУКУ ========== */
 
-/* Активні елементи */
-.new_f-dropdown-item.selected {
-    background: var(--primary-color) !important;
-    color: white !important;
-}
-
-/* Результати пошуку */
+/* Контейнер результатів */
 .new_r-container {
     background: white !important;
     margin-top: 30px !important;
 }
 
+/* Картка туру */
 .new_r-item {
     background: white !important;
     border-radius: 16px !important;
     border: 1px solid #e2e8f0 !important;
     transition: all 0.3s ease !important;
+    margin-bottom: 20px !important;
+    overflow: hidden !important;
 }
 
 .new_r-item:hover {
     border-color: var(--primary-color) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-2px) !important;
 }
 
-/* Мобільна версія */
+/* ========== ЦІНА - ЗМІНЮЄМО ОРАНЖЕВИЙ НА КОЛІР АГЕНТА ========== */
+span.new_r-item-price,
+.new_r-item-price,
+.new_r-price,
+.price-value,
+.r-item-price {
+    color: var(--primary-color) !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+}
+
+/* Додатково - будь-які інші оранжеві елементи */
+.new_r-price-currency,
+.currency-switch,
+.new_r-currency {
+    color: var(--primary-color) !important;
+}
+
+/* Кнопки валюти (грн/$) - змінюємо колір */
+.new_r-currency-switch button,
+.currency-btn,
+.currency-switch-btn {
+    background: transparent !important;
+    border: 1px solid var(--primary-color) !important;
+    color: var(--primary-color) !important;
+    transition: all 0.3s ease !important;
+}
+
+.new_r-currency-switch button.active,
+.currency-btn.active {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Кнопка детальніше */
+.new_r-detail-btn,
+.detail-button {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 40px !important;
+    padding: 8px 20px !important;
+    transition: all 0.3s ease !important;
+}
+
+.new_r-detail-btn:hover,
+.detail-button:hover {
+    background: var(--primary-dark) !important;
+    transform: scale(1.02) !important;
+}
+
+/* ========== ФІЛЬТРИ (РОЗШИРЕНИЙ ПОШУК) ========== */
+
+/* Примусово показуємо фільтри */
+.new_f-ext-container {
+    display: block !important;
+    background: #f8f9fa !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.new_f-ext-body {
+    display: block !important;
+}
+
+.new_f-ext-btn,
+.new_f-dropdown-body-top {
+    display: none !important;
+}
+
+/* Групи фільтрів */
+.new_f-ext-bl-title {
+    font-weight: 600 !important;
+    color: #1a202c !important;
+}
+
+/* Чекбокси та радіо при наведенні */
+.new_f-ext-bl-body label:hover {
+    border-color: var(--primary-color) !important;
+    background: rgba(var(--primary-rgb), 0.05) !important;
+}
+
+/* Кнопки "Очистити" та "Застосувати" */
+.new_f-ext-clear-btn {
+    background: #e2e8f0 !important;
+    color: #1a202c !important;
+    border: none !important;
+    border-radius: 40px !important;
+    padding: 10px !important;
+}
+
+.new_f-ext-clear-btn:hover {
+    background: #cbd5e1 !important;
+}
+
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 40px !important;
+    padding: 10px !important;
+}
+
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
+    background: var(--primary-dark) !important;
+}
+
+/* Активні елементи в фільтрах */
+.new_f-dropdown-item.selected {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* ========== ЗАПОБІГАЄМО ПОЯВІ ОРАНЖЕВОГО КОЛЬОРУ ========== */
+* {
+    --otpusk-orange: var(--primary-color) !important;
+}
+
+/* Перевизначаємо будь-який оранжевий */
+[class*="price"],
+[class*="Price"],
+[class*="currency"],
+[class*="Currency"],
+[class*="orange"],
+[style*="#f7941d"],
+[style*="orange"] {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    background-color: transparent !important;
+}
+
+/* Спеціально для span з ціною */
+span[class*="price"] {
+    color: var(--primary-color) !important;
+}
+
+/* Кнопки валют */
+.new_r-currency-switch {
+    display: flex !important;
+    gap: 5px !important;
+}
+
+.new_r-currency-switch a,
+.new_r-currency-switch span {
+    color: var(--primary-color) !important;
+}
+
+/* ========== МОБІЛЬНА ВЕРСІЯ ========== */
 @media (max-width: 768px) {
     #otpusk-search-module {
         padding: 15px !important;
-        margin: -20px 15px 0 15px !important;
-        max-width: none !important;
+        margin: 0 15px !important;
+        width: auto !important;
     }
 
     .new_f-dropdown-btn {
@@ -155,48 +282,11 @@
         padding: 12px !important;
         margin-top: 10px !important;
     }
-}
-    /* Кнопка в розширеному пошуку */
-.new_f-ext-clear-btn,
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
-    background: var(--primary-color) !important;
-    color: white !important;
-    border-radius: 40px !important;
-    border: none !important;
-    font-weight: 500 !important;
-    transition: all 0.3s ease !important;
-}
 
-.new_f-ext-clear-btn:hover,
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
-    background: var(--primary-dark) !important;
-}
-    /* Кнопка "Очистити фільтри" - сіра */
-.new_f-ext-clear-btn {
-    background: #e2e8f0 !important;
-    color: #1a202c !important;
-    border-radius: 40px !important;
-    border: none !important;
-    font-weight: 500 !important;
-    transition: all 0.3s ease !important;
-}
-
-.new_f-ext-clear-btn:hover {
-    background: #cbd5e1 !important;
-}
-
-/* Кнопка "Застосувати" в розширеному пошуку - залишається зеленою */
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
-    background: var(--primary-color) !important;
-    color: white !important;
-    border-radius: 40px !important;
-    border: none !important;
-    font-weight: 500 !important;
-    transition: all 0.3s ease !important;
-}
-
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
-    background: var(--primary-dark) !important;
+    .new_f-ext-container {
+        width: 100% !important;
+        margin-bottom: 20px !important;
+    }
 }
 </style>
 {% endblock %}
