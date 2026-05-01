@@ -18,107 +18,36 @@
     </div>
 </div>
 
-<!-- Форма пошуку -->
-<div class="search-form-wrapper py-5 bg-light">
-    <div class="container">
-        <form method="get" action="{% if agent_site %}{% url 'agent_search' agent_site.slug %}{% else %}{% url 'search_results' %}{% endif %}" id="searchForm">
-            <div class="row g-4 align-items-end">
-                <!-- Країна -->
-                <div class="col-lg-2 col-12">
-                    <div class="small-label">Країна, курорт</div>
-                    <select name="country" id="countrySelect" class="form-select">
-                        <option value="" disabled selected>Країна, курорт</option>
-                        {% for country in countries %}
-                            <option value="{{ country }}">{{ country }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <!-- Курорт -->
-                <div class="col-lg-2 col-12">
-                    <div class="small-label">Оберіть курорти</div>
-                    <select name="cities" id="citySelect" class="selectpicker" multiple
-                            title="Виберіть курорти"
-                            data-selected-text-format="count > 1"
-                            data-count-selected-text="кілька варіантів"
-                            data-none-selected-text="Виберіть курорти">
-                    </select>
-                </div>
-                <!-- Звідки -->
-                <div class="col-lg-2 col-12">
-                    <div class="small-label">Звідки</div>
-                    <select name="departure_city" id="departureSelect" class="form-select">
-                        <option value="">Звідки</option>
-                        {% for group in departure_groups %}
-                            <optgroup label="{{ group.country }}">
-                                {% for city in group.cities %}
-                                    <option value="{{ city.name }}">{{ city.name }} ({{ city.transport }})</option>
-                                {% endfor %}
-                            </optgroup>
-                        {% endfor %}
-                    </select>
-                </div>
-                <!-- Початок туру -->
-                <div class="col-lg-2 col-12">
-                    <div class="small-label">Початок туру</div>
-                    <input type="text" name="start_date" id="dateRange" class="form-control" placeholder="Виберіть дату" autocomplete="off">
-                    <input type="hidden" name="start_date_iso" id="start_date_iso">
-                    <input type="hidden" name="end_date_iso" id="end_date_iso">
-                </div>
-                <!-- Тривалість -->
-                <div class="col-lg-2 col-12">
-                    <div class="small-label">Тривалість</div>
-                    <select name="duration_range" id="durationRange" class="form-select">
-                        <option value="3-11" selected>3 - 11 ночей</option>
-                        <option value="6-8">6 - 8 ночей</option>
-                        <option value="7-9">7 - 9 ночей</option>
-                        <option value="8-10">8 - 10 ночей</option>
-                        <option value="9-11">9 - 11 ночей</option>
-                        <option value="10-12">10 - 12 ночей</option>
-                        <option value="11-13">11 - 13 ночей</option>
-                    </select>
-                    <input type="hidden" name="nights_min" id="nights_min" value="3">
-                    <input type="hidden" name="nights_max" id="nights_max" value="11">
-                </div>
-                <!-- Туристи -->
-                <div class="col-lg-2 col-12">
-                    <div class="small-label">Туристи</div>
-                    <div class="tourist-select-wrapper">
-                        <div class="selected-tourist-option" id="selectedTouristOption">
-                            <span id="touristDisplay">2 дорослих</span>
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </div>
-                        <div class="tourist-dropdown" id="touristDropdown" style="display: none;">
-                            <div class="tourist-dropdown-inner">
-                                <div class="tourist-adults">
-                                    <label>Дорослі</label>
-                                    <div class="quantity-selector">
-                                        <button type="button" class="qty-btn minus">-</button>
-                                        <span class="qty-value" id="adultsQty">2</span>
-                                        <button type="button" class="qty-btn plus">+</button>
-                                    </div>
-                                </div>
-                                <div class="tourist-children">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <label>Діти до 16 років</label>
-                                        <button type="button" class="btn-add-child" id="addChildBtn">+ Додати дитину</button>
-                                    </div>
-                                    <div id="childrenListContainer"></div>
-                                </div>
-                                <div class="tourist-actions">
-                                    <button type="button" class="btn-apply" id="applyTouristBtn">Застосувати</button>
-                                </div>
-                            </div>
-                        </div>
-                        <input type="hidden" name="adults" id="adultsInput" value="2">
-                        <input type="hidden" name="children_data" id="childrenDataInput" value="">
-                    </div>
-                </div>
-                <!-- Кнопка -->
-                <div class="col-lg-1 col-6">
-                    <button type="submit" class="btn btn-primary w-100">Знайти</button>
-                </div>
-            </div>
-        </form>
+<!-- МОДУЛЬ ПОШУКУ ТУРІВ (Otpusk.com) -->
+<div class="container my-5">
+    <div class="bg-white rounded-3xl shadow-xl p-4 md:p-8">
+        <div id="otpusk-search-module">
+            <script>
+                var osGeo = '';
+                var osDefaultDeparture = '';
+                var osDefaultDuration = '';
+                var osDateFrom = '';
+                var osDateTo = '';
+                var osHotelCategory = '';
+                var osFood = '';
+                var osTransport = '';
+                var osTarget = '';
+                var osContainer = null;
+                var osTourContainer = null;
+                var osLang = 'ua';
+                var osTourTargetBlank = false;
+                var osOrderUrl = null;
+                var osCurrency = 'converted';
+                var osAutoStart = false;
+            </script>
+            <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+            <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+            <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+            <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+            <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+            <script src="https://export.otpusk.com/js/onsite/"></script>
+            <script src="https://export.otpusk.com/js/order"></script>
+        </div>
     </div>
 </div>
 
