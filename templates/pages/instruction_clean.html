@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>📘 Інструкція для агента - TourConstructor</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -45,7 +45,7 @@
         .content {
             padding: 30px;
         }
-        /* Ліве меню - ЗАКРІПЛЕНЕ */
+        /* Ліве меню - ТІЛЬКИ ДЛЯ ДЕСКТОПУ */
         .side-menu {
             position: sticky;
             top: 30px;
@@ -71,6 +71,24 @@
             border-left-color: var(--primary-color);
             color: var(--primary-dark);
             font-weight: 600;
+        }
+        /* ХОВАЄМО БІЧНЕ МЕНЮ НА ТЕЛЕФОНІ */
+        @media (max-width: 768px) {
+            .side-menu {
+                display: none;
+            }
+            .col-md-3 {
+                display: none;
+            }
+            .col-md-9 {
+                width: 100%;
+            }
+            body {
+                padding: 20px 10px;
+            }
+            .step-card {
+                padding: 15px;
+            }
         }
         .step-card {
             background: #f8f9fa;
@@ -107,19 +125,6 @@
             background: #f8f9fa;
             border-top: 1px solid #e9ecef;
         }
-        @media (max-width: 768px) {
-            body {
-                padding: 20px 10px;
-            }
-            .side-menu {
-                position: relative;
-                top: 0;
-                margin-bottom: 20px;
-            }
-            .step-card {
-                padding: 15px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -132,7 +137,7 @@
 
             <div class="content">
                 <div class="row">
-                    <!-- ЛІВЕ МЕНЮ (ЗАКРІПЛЕНЕ) -->
+                    <!-- ЛІВЕ МЕНЮ (тільки для ПК) -->
                     <div class="col-md-3">
                         <div class="side-menu">
                             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
