@@ -49,6 +49,10 @@ urlpatterns = [
     # ========== ТЕСТОВА СТОРІНКА ДЛЯ ПОШУКУ ТУРІВ ==========
     path('search-test/', TemplateView.as_view(template_name='pages/test_search.html'), name='test_search'),
 
+    # ========== СТОРІНКА РЕЗУЛЬТАТІВ ПОШУКУ OTPUSK (ОКРЕМА СТОРІНКА) ==========
+    path('search-otpusk/', TemplateView.as_view(template_name='tours/search_results_otpusk.html'), name='search_otpusk'),
+    path('a/<slug:slug>/search-otpusk/', TemplateView.as_view(template_name='tours/search_results_otpusk.html'), name='agent_search_otpusk'),
+
     # ========== СТОРІНКА РЕЗУЛЬТАТІВ ПОШУКУ (для модуля Otpusk) ==========
     path('search-results/', TemplateView.as_view(template_name='pages/test_search.html'), name='search_results'),
 
