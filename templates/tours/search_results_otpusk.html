@@ -55,15 +55,6 @@
     z-index: 10 !important;
 }
 
-/* Заголовок */
-.new_f-title {
-    color: #1a202c !important;
-    font-size: 1.5rem !important;
-    font-weight: 700 !important;
-    margin-bottom: 20px !important;
-    display: block !important;
-}
-
 /* Кнопка "Знайти" */
 .new_f-form-submit {
     background: var(--primary-color) !important;
@@ -78,111 +69,82 @@
 
 .new_f-form-submit:hover {
     background: var(--primary-dark) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Поля вводу */
-.new_f-dropdown-btn {
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    transition: all 0.3s ease !important;
-}
+/* ========== ЦІНА - ПРИБИРАЄМО КОЛІР ТА РАМКУ ========== */
 
-.new_f-dropdown-btn:hover {
-    border-color: var(--primary-color) !important;
-}
-
-/* ========== СТИЛІ ДЛЯ РЕЗУЛЬТАТІВ ПОШУКУ ========== */
-
-/* Контейнер результатів */
-.new_r-container {
-    background: white !important;
-    margin-top: 30px !important;
-}
-
-/* Картка туру */
-.new_r-item {
-    background: white !important;
-    border-radius: 16px !important;
-    border: 1px solid #e2e8f0 !important;
-    transition: all 0.3s ease !important;
-    margin-bottom: 20px !important;
-    overflow: hidden !important;
-}
-
-.new_r-item:hover {
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
-    transform: translateY(-2px) !important;
-}
-
-/* ========== ЦІНА - ЗМІНЮЄМО ОРАНЖЕВИЙ НА КОЛІР АГЕНТА ========== */
-
-/* Головний елемент ціни */
+/* Блок ціни - прибираємо фон, рамку, робимо чорним */
+span.new_r-item-price,
+.new_r-item-price,
 .new_price-value,
-.new_r-item-price .new_price-value,
-span.new_price-value,
-div.new_price-value {
-    color: var(--primary-color) !important;
+.new_r-item-price .new_price-value {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #1a202c !important;  /* Чорний колір */
     font-weight: 700 !important;
     font-size: 1.25rem !important;
 }
 
-/* Валюта (грн, $) */
+/* Валюта (грн/$) - білий текст на фоні кольору агента */
 .currency,
 .new_r-item-price .currency,
 span.currency {
-    color: var(--primary-color) !important;
+    background: var(--primary-color) !important;
+    color: white !important;
+    padding: 2px 8px !important;
+    border-radius: 20px !important;
+    display: inline-block !important;
     font-weight: 600 !important;
+    font-size: 0.85rem !important;
 }
 
-/* Весь блок ціни */
-.new_r-item-price {
-    color: var(--primary-color) !important;
-}
+/* ========== ЗІРКИ - ЖОВТІ ========== */
 
-/* Рейтинг готелю */
-.new_r-item-rating-value {
-    color: var(--primary-color) !important;
-    font-weight: 700 !important;
-}
-
-/* Зірки готелю - заповнені */
+/* Зірки готелю - жовті */
 .new_r-item-star {
-    fill: var(--primary-color) !important;
+    fill: #FFD700 !important;  /* Золотий/жовтий колір */
+}
+
+/* ========== ТРАНСПОРТ - КОЛІР АГЕНТА ========== */
+
+/* Транспорт у фільтрах */
+span.new_r-filter-value,
+.new_r-filter-value {
+    color: var(--primary-color) !important;
+    font-weight: 500 !important;
+}
+
+/* Інші оранжеві елементи транспорту */
+.new_r-item-transport,
+.transport-value {
+    color: var(--primary-color) !important;
 }
 
 /* ========== КНОПКИ ТА ЕЛЕМЕНТИ КЕРУВАННЯ ========== */
 
 /* Кнопки перемикання валюти (грн/$) */
 .new_r-currency-switch a,
-.new_r-currency-switch span,
-.currency-switch button {
+.new_r-currency-switch span {
     color: var(--primary-color) !important;
 }
 
-.new_r-currency-switch a.active,
-.currency-switch button.active {
+.new_r-currency-switch a.active {
     background: var(--primary-color) !important;
     color: white !important;
 }
 
 /* Кнопка детальніше */
-.new_r-detail-btn,
-.detail-button,
-a.new_r-detail-btn {
+.new_r-detail-btn {
     background: var(--primary-color) !important;
     color: white !important;
     border: none !important;
     border-radius: 40px !important;
     padding: 8px 20px !important;
-    transition: all 0.3s ease !important;
 }
 
-.new_r-detail-btn:hover,
-.detail-button:hover {
+.new_r-detail-btn:hover {
     background: var(--primary-dark) !important;
-    transform: scale(1.02) !important;
 }
 
 /* Кнопки "Застосувати" у фільтрах */
@@ -194,10 +156,6 @@ a.new_r-detail-btn {
     padding: 10px !important;
 }
 
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
-    background: var(--primary-dark) !important;
-}
-
 /* Кнопка "Очистити фільтри" */
 .new_f-ext-clear-btn {
     background: #e2e8f0 !important;
@@ -205,10 +163,6 @@ a.new_r-detail-btn {
     border: none !important;
     border-radius: 40px !important;
     padding: 10px !important;
-}
-
-.new_f-ext-clear-btn:hover {
-    background: #cbd5e1 !important;
 }
 
 /* ========== ФІЛЬТРИ ========== */
@@ -222,19 +176,9 @@ a.new_r-detail-btn {
     border: 1px solid #e2e8f0 !important;
 }
 
-.new_f-ext-body {
-    display: block !important;
-}
-
 .new_f-ext-btn,
 .new_f-dropdown-body-top {
     display: none !important;
-}
-
-/* Заголовки груп фільтрів */
-.new_f-ext-bl-title {
-    font-weight: 600 !important;
-    color: #1a202c !important;
 }
 
 /* Чекбокси та радіо при наведенні */
@@ -254,33 +198,19 @@ a {
     text-decoration: none !important;
 }
 
-a:hover {
-    color: var(--primary-dark) !important;
+/* ========== КАРТКА ТУРУ ========== */
+
+.new_r-item {
+    background: white !important;
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    margin-bottom: 20px !important;
+    overflow: hidden !important;
 }
 
-/* ========== ПОВНЕ ПЕРЕВИЗНАЧЕННЯ ОРАНЖЕВОГО КОЛЬОРУ ========== */
-
-/* Перебиваємо конкретний оранжевий #f7941d */
-[style*="#f7941d"],
-[color*="#f7941d"],
-*[style*="color:#f7941d"],
-*[style*="color: #f7941d"] {
-    color: var(--primary-color) !important;
-}
-
-/* Всі елементи з класом price */
-[class*="price"] {
-    color: var(--primary-color) !important;
-}
-
-/* Всі елементи з класом currency */
-[class*="currency"] {
-    color: var(--primary-color) !important;
-}
-
-/* Спеціально для span всередині ціни */
-.new_r-item-price span {
-    color: var(--primary-color) !important;
+.new_r-item:hover {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
@@ -298,17 +228,7 @@ a:hover {
 
     .new_f-form-submit {
         width: 100% !important;
-        padding: 12px !important;
         margin-top: 10px !important;
-    }
-
-    .new_f-ext-container {
-        width: 100% !important;
-        margin-bottom: 20px !important;
-    }
-
-    .new_price-value {
-        font-size: 1.1rem !important;
     }
 }
 </style>
