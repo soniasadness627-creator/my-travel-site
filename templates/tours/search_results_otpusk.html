@@ -251,8 +251,6 @@ span.new_r-filter-value,
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 6px !important;
-    padding: 6px 4px !important;
     background: white !important;
     border-radius: 8px !important;
     border-width: 2px !important;
@@ -264,7 +262,7 @@ span.new_r-filter-value,
 .new_r-item-rating-value {
     font-weight: 800 !important;
     font-size: 1.05rem !important;
-    margin: 0 !important;
+    margin: 0 0 5px 0 !important;
     padding: 0 !important;
     text-align: center !important;
     line-height: 1 !important;
@@ -276,11 +274,11 @@ span.new_r-filter-value,
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    justify-content: flex-start !important;
+    justify-content: center !important;
     text-align: center !important;
     margin: 0 !important;
     padding: 0 !important;
-    line-height: 1 !important;
+    line-height: 1.1 !important;
 }
 
 /* Кількість оцінок (цифра 4811) */
@@ -290,11 +288,11 @@ span.new_r-filter-value,
     color: #555 !important;
     display: block !important;
     line-height: 1.1 !important;
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-/* Текст "оцінок" - мінімальний відступ зверху */
+/* Текст "оцінок" - мінімальний відступ зверху (1px) */
 .new_r-item-rating-rev {
     font-size: 0.5rem !important;
     color: #888 !important;
@@ -308,8 +306,14 @@ span.new_r-filter-value,
 .new_r-item-rating-container .bar,
 .new_r-item-rating-container .fill,
 .new_r-item-rating-container svg,
+.new_r-item-rating-container circle,
+.new_r-item-rating-container path,
 .new_r-item-rating-container::after {
     display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
 }
 
 /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
