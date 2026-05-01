@@ -20,9 +20,7 @@
 
 <!-- МОДУЛЬ ПОШУКУ ТУРІВ (Otpusk.com) -->
 <div class="container my-5">
-    <div class="bg-white rounded-3xl shadow-xl p-4 md:p-8">
-        <div id="otpusk-search-module">
-            <script>
+<div id="otpusk-search-module" class="container my-5"></div>            <script>
                 var osGeo = '';
                 var osDefaultDeparture = '';
                 var osDefaultDuration = '';
@@ -1860,6 +1858,35 @@
         padding: 5px 15px !important;
         font-size: 0.8rem;
     }
+}
+
+   /* ========== ПРОСТІ СТИЛІ ДЛЯ МОДУЛЯ ПОШУКУ ========== */
+
+/* Фон модуля - білий */
+#otpusk-search-module {
+    background: white !important;
+}
+
+/* Кнопка "Знайти" - зелений колір */
+.new_f-form-submit {
+    background: #086745 !important;
+    border-color: #086745 !important;
+    color: white !important;
+}
+
+.new_f-form-submit:hover {
+    background: #02432c !important;
+}
+
+/* Поля вводу - білі з сірою рамкою */
+.new_f-dropdown-btn {
+    background: white !important;
+    border: 1px solid #ccc !important;
+}
+
+/* Фон результатів - білий */
+.new_r-container {
+    background: white !important;
 }
 </style>
 {% endblock %}
