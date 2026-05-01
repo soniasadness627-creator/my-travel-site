@@ -197,6 +197,9 @@ SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 
+# ========== ПОЛІТИКА REFERRER ДЛЯ Otpusk.com ==========
+SECURE_REFERRER_POLICY = 'unsafe-url'
+
 # ========== БЕЗПЕКА ДЛЯ ПРОДАКШЕНУ ==========
 if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
