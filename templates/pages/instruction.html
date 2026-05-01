@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Інструкція для агента - TourConstructor{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-4">📘 Інструкція для агента</h1>
+            <p class="text-center text-muted mb-5">Як користуватися конструктором сайтів TourConstructor</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group sticky-top" style="top: 20px;">
+                <a href="#step1" class="list-group-item list-group-item-action">1. Реєстрація</a>
+                <a href="#step2" class="list-group-item list-group-item-action">2. Вхід в кабінет</a>
+                <a href="#step3" class="list-group-item list-group-item-action">3. Налаштування сайту</a>
+                <a href="#step4" class="list-group-item list-group-item-action">4. Додавання турів</a>
+                <a href="#step5" class="list-group-item list-group-item-action">5. Робота з заявками</a>
+                <a href="#step6" class="list-group-item list-group-item-action">6. Пошук турів</a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <!-- КРОК 1 -->
+            <div id="step1" class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">1. Реєстрація</h3>
+                </div>
+                <div class="card-body">
+                    <p>Щоб створити власний сайт, потрібно зареєструватися:</p>
+                    <ol>
+                        <li>Перейдіть на головну сторінку сайту</li>
+                        <li>Натисніть кнопку <strong>"Створити сайт безкоштовно"</strong></li>
+                        <li>Заповніть форму: ім'я, прізвище, email</li>
+                        <li>Натисніть <strong>"Надіслати код"</strong></li>
+                        <li>Введіть код, який прийшов на вашу пошту</li>
+                        <li>Після підтвердження ви потрапите в особистий кабінет</li>
+                    </ol>
+                    <div class="alert alert-info">
+                        💡 <strong>Порада:</strong> Перевірте папку "Спам", якщо лист з кодом не прийшов.
+                    </div>
+                </div>
+            </div>
+
+            <!-- КРОК 2 -->
+            <div id="step2" class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">2. Вхід в кабінет</h3>
+                </div>
+                <div class="card-body">
+                    <p>Якщо ви вже зареєстровані:</p>
+                    <ol>
+                        <li>Натисніть <strong>"Вже є сайт? Увійти в кабінет"</strong></li>
+                        <li>Введіть ваш email</li>
+                        <li>Отримайте код на пошту</li>
+                        <li>Введіть код і увійдіть</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- КРОК 3 -->
+            <div id="step3" class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0">3. Налаштування сайту</h3>
+                </div>
+                <div class="card-body">
+                    <p>У вашому кабінеті ви можете налаштувати:</p>
+                    <ul>
+                        <li><strong>Кольори сайту</strong> — основний та додатковий</li>
+                        <li><strong>Логотип</strong> — завантажте своє зображення</li>
+                        <li><strong>Блок "Про нас"</strong> — текст та фото вашої агенції</li>
+                        <li><strong>Банери</strong> — додайте до 3 банерів з текстом та кнопками</li>
+                        <li><strong>Приховати блок "Новини"</strong> — якщо не потрібен</li>
+                    </ul>
+                    <div class="alert alert-warning">
+                        ⚠️ <strong>Важливо:</strong> Після змін не забудьте натиснути "Зберегти"!
+                    </div>
+                </div>
+            </div>
+
+            <!-- КРОК 4 -->
+            <div id="step4" class="card mb-4">
+                <div class="card-header bg-warning">
+                    <h3 class="mb-0">4. Додавання турів</h3>
+                </div>
+                <div class="card-body">
+                    <p>Тури додаються через модуль пошуку від Otpusk.com:</p>
+                    <ol>
+                        <li>Перейдіть на головну сторінку вашого сайту</li>
+                        <li>Введіть параметри пошуку (країна, дати, туристи)</li>
+                        <li>Натисніть <strong>"Знайти"</strong></li>
+                        <li>Оберіть тур з результатів пошуку</li>
+                        <li>Заповніть форму замовлення</li>
+                        <li>Надішліть заявку</li>
+                    </ol>
+                    <div class="alert alert-success">
+                        🚀 <strong>Швидкий доступ:</strong> Ваш сайт доступний за посиланням: 
+                        <a href="https://clubdatour.com.ua" target="_blank">clubdatour.com.ua</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- КРОК 5 -->
+            <div id="step5" class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">5. Робота з заявками</h3>
+                </div>
+                <div class="card-body">
+                    <p>Коли клієнт залишає заявку на тур:</p>
+                    <ul>
+                        <li>Ви отримуєте <strong>сповіщення в Telegram</strong></li>
+                        <li>Заявка зберігається в адмін-панелі</li>
+                        <li>Ви можете зв'язатися з клієнтом за вказаним телефоном</li>
+                        <li>Підтвердіть бронювання туроператору</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- КРОК 6 -->
+            <div id="step6" class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="mb-0">6. Пошук турів</h3>
+                </div>
+                <div class="card-body">
+                    <p>На вашому сайті встановлено модуль пошуку турів від Otpusk.com:</p>
+                    <ul>
+                        <li>✅ Пошук понад <strong>100 туроператорам</strong></li>
+                        <li>✅ Актуальні ціни в реальному часі</li>
+                        <li>✅ Фільтрація за країнами, курортами, готелями</li>
+                        <li>✅ Відображення на карті Google Maps</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="alert alert-success text-center mt-4">
+                <h4>✨ Ваш сайт готовий до роботи!</h4>
+                <p>Посилання на ваш сайт: <a href="https://clubdatour.com.ua" target="_blank">https://clubdatour.com.ua</a></p>
+                <p>Залишилися питання? Зв'яжіться з підтримкою: <strong>info@tourconstructor.com</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .list-group-item {
+        border-left: 3px solid transparent;
+        transition: all 0.3s;
+    }
+    .list-group-item:hover {
+        border-left-color: #086745;
+        background-color: #f8f9fa;
+    }
+    .card {
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border: none;
+    }
+    .card-header {
+        border-bottom: none;
+        border-radius: 10px 10px 0 0;
+    }
+    .sticky-top {
+        position: sticky;
+        top: 80px;
+        z-index: 100;
+    }
+</style>
+{% endblock %}

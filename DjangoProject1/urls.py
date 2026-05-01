@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect
+from django.views.generic import TemplateView  # ← ДОДАНО ДЛЯ ІНСТРУКЦІЇ
 from tours import views as tours_views
 from constructor import views as constructor_views
 from constructor.agent_admin import agent_admin_site
@@ -39,8 +40,11 @@ def custom_csrf_failure(request, reason=""):
 handler403 = custom_csrf_failure
 
 urlpatterns = [
-    # ==========  МАРШРУТ ДЛЯ СТВОРЕННЯ СУПЕРАДМІНА ==========
+    # ========== МАРШРУТ ДЛЯ СТВОРЕННЯ СУПЕРАДМІНА ==========
     path('create-admin/', constructor_views.create_admin_direct, name='create_admin'),
+
+    # ========== ІНСТРУКЦІЯ ДЛЯ АГЕНТА ==========
+    path('instruction/', TemplateView.as_view(template_name='pages/instruction.html'), name='instruction'),
 
     # ========== ГОЛОВНА СТОРІНКА ==========
     path('', home_redirect, name='home_redirect'),
