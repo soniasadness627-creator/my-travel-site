@@ -28,7 +28,7 @@ from .forms.blocks import AgentBlocksForm
 from users.models import User
 from .models.agent_site import AgentSite
 from .models.blocks import AgentBlockSettings
-from tours.views import TourListView, tour_detail, search_results, city_detail, news_detail, ConsultationCreateView, \
+from tours.views import tour_detail, search_results, city_detail, news_detail, \
     NewsListView, get_agent_colors, tour_reviews
 from tours.models import News
 
@@ -635,6 +635,9 @@ def agent_public_site(request, slug, **kwargs):
         raise Http404("Сайт не знайдено")
 
     from .models.blocks import AgentBlockSettings
+    from tours.views import get_random_agent  # Додано імпорт
+    from django.shortcuts import render
+
     block_settings = AgentBlockSettings.objects.filter(agent=request.current_agent_site.user).first()
 
     if block_settings:
@@ -653,7 +656,13 @@ def agent_public_site(request, slug, **kwargs):
     view_name = request.resolver_match.view_name
 
     if view_name == 'agent_home':
-        return TourListView.as_view()(request)
+        # Використовуємо home.html замість TourListView
+        return render(request, 'tours/home.html', {
+            'agent_site': request.current_agent_site,
+            'blocks_order': getattr(request, 'blocks_order', []),
+            'active_blocks': getattr(request, 'active_blocks', []),
+            'banners': getattr(request, 'banners', []),
+        })
     elif view_name == 'agent_tour_detail':
         return tour_detail(request, pk=kwargs['pk'])
     elif view_name == 'agent_tour_reviews':
@@ -668,7 +677,11 @@ def agent_public_site(request, slug, **kwargs):
     elif view_name == 'agent_news_detail':
         return news_detail(request, pk=kwargs['pk'])
     elif view_name == 'agent_consultation':
-        return ConsultationCreateView.as_view()(request)
+        # ВИПРАВЛЕНО: використовуємо AJAX-форму замість ConsultationCreateView
+        return render(request, 'tours/consultation_form.html', {
+            'agent_site': request.current_agent_site,
+            'random_agent': get_random_agent(),
+        })
     elif view_name == 'agent_privacy_policy':
         return agent_privacy_policy(request, slug=slug)
     elif view_name == 'agent_terms_of_service':
@@ -677,7 +690,6 @@ def agent_public_site(request, slug, **kwargs):
         return agent_login(request, slug=slug)
     else:
         raise Http404("Сторінку не знайдено")
-
 
 # -------------------------
 # Клас AgentHomeView для головної сторінки конструктора

@@ -413,68 +413,134 @@
         </div>
     </div>
 
-    <!-- ========== БЛОК КОНСУЛЬТАЦІЇ ========== -->
-    <div class="row justify-content-center my-5">
-        <div class="col-lg-10">
-            <div class="card border-0 shadow-sm" id="consultationCard">
-                <div class="card-body p-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                    <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">
-                        Довірте вибір спеціалістам
-                    </h5>
-                    <p class="text-muted mb-0">
-                        Залишіть заявку, щоб отримати персональний підбір турів
-                    </p>
-                    <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
-                        <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
-                            <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
-                                 style="width: 40px; height: 40px;">
-                                <i class="fa-regular fa-user text-secondary"></i>
+   <!-- ========== БЛОК КОНСУЛЬТАЦІЇ ========== -->
+<div class="row justify-content-center my-5">
+    <div class="col-12 col-md-10 col-lg-8">
+        <div class="card border-0 shadow-sm" id="consultationCard">
+            <div class="card-body p-4 p-md-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">
+                    Довірте вибір спеціалістам
+                </h5>
+                <p class="text-muted mb-0">
+                    Залишіть заявку, щоб отримати персональний підбір турів
+                </p>
+                <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
+                    <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
+                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
+                             style="width: 40px; height: 40px;">
+                            <i class="fa-regular fa-user text-secondary"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold" style="font-size: 0.95rem;">
+                                {% if agent_site %}
+                                    {{ agent_site.user.get_full_name|default:agent_site.user.username }}
+                                {% else %}
+                                    {{ random_agent.get_full_name|default:random_agent.username }}
+                                {% endif %}
                             </div>
-                            <div>
-                                <div class="fw-bold" style="font-size: 0.95rem;">
-                                    {% if agent_site %}
-                                        {{ agent_site.user.get_full_name|default:agent_site.user.username }}
-                                    {% else %}
-                                        {{ random_agent.get_full_name|default:random_agent.username }}
-                                    {% endif %}
-                                </div>
-                                <div class="text-muted" style="font-size: 0.8rem;">
-                                    9 років досвіду в туризмі
-                                </div>
+                            <div class="text-muted" style="font-size: 0.8rem;">
+                                9 років досвіду в туризмі
                             </div>
                         </div>
-                        <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
-                            <form method="post" action="{% if agent_site %}{% url 'agent_home' agent_site.slug %}{% else %}{% url 'home' %}{% endif %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="consultation_submit" value="1">
-                                <div class="mb-3">
-                                    <input type="text" name="name" class="form-control" placeholder="Ваше ім'я" required>
+                    </div>
+                    <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
+                        <form id="consultationForm" novalidate>
+                            {% csrf_token %}
+                            <input type="hidden" name="consultation_submit" value="1">
+                            <div class="mb-3">
+                                <input type="text" name="name" id="consultationName" class="form-control" placeholder="Ваше ім'я" required>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-4">
+                                    <select name="country_code" class="form-select" required>
+                                        <option value="+380" selected>🇺🇦 +380</option>
+                                        <option value="+48">🇵🇱 +48</option>
+                                        <option value="+1">🇺🇸 +1</option>
+                                        <option value="+44">🇬🇧 +44</option>
+                                        <option value="+49">🇩🇪 +49</option>
+                                        <option value="+33">🇫🇷 +33</option>
+                                    </select>
                                 </div>
-                                <div class="row g-2 mb-3">
-                                    <div class="col-4">
-                                        <select name="country_code" class="form-select" required>
-                                            <option value="+380" selected>🇺🇦 +380</option>
-                                            <option value="+48">🇵🇱 +48</option>
-                                            <option value="+1">🇺🇸 +1</option>
-                                            <option value="+44">🇬🇧 +44</option>
-                                            <option value="+49">🇩🇪 +49</option>
-                                            <option value="+33">🇫🇷 +33</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-8">
-                                        <input type="tel" name="phone" class="form-control" placeholder="(XX) XXX-XX-XX" required>
-                                    </div>
+                                <div class="col-8">
+                                    <input type="tel" name="phone" id="consultationPhone" class="form-control" placeholder="XXXXXXXXX" required
+                                           pattern="[0-9]+"
+                                           title="Тільки цифри (приклад: 501234567)"
+                                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)"
+                                           onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                 </div>
-                                <button class="btn w-100" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='var(--primary-dark)'" onmouseout="this.style.background='var(--primary-color)'">
-                                    Залишити запит
-                                </button>
-                            </form>
-                        </div>
+                            </div>
+                            <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">
+                                Залишити запит
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<script>
+// ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
+(function() {
+    const submitBtn = document.getElementById('submitConsultationBtn');
+    if (!submitBtn) return;
+
+    submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Збираємо дані з форми
+        const name = document.getElementById('consultationName')?.value || '';
+        const phone = document.getElementById('consultationPhone')?.value || '';
+        const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+        // Валідація
+        if (!name.trim()) {
+            console.log('Введіть ім\'я');
+            return;
+        }
+        if (!phone.trim()) {
+            console.log('Введіть телефон');
+            return;
+        }
+
+        // Визначаємо URL
+        let ajaxUrl = '/consultation-ajax/';
+        {% if agent_site %}
+        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
+        {% endif %}
+
+        // Відправляємо
+        fetch(ajaxUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: new URLSearchParams({
+                'name': name,
+                'phone': phone,
+                'country_code': countryCode,
+                'consultation_submit': '1'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Очищуємо форму
+                document.getElementById('consultationName').value = '';
+                document.getElementById('consultationPhone').value = '';
+                console.log('Заявка відправлена');
+            }
+        })
+        .catch(error => {
+            console.error('Помилка:', error);
+        });
+    });
+})();
+</script>
 
     <!-- ========== БЛОК ПЕРЕВАГ ОНЛАЙН-БРОНЮВАННЯ ========== -->
     <div class="advantages-block my-5">
