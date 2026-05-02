@@ -270,9 +270,10 @@ setTimeout(function() {
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
         let ajaxUrl = '/booking-ajax/';
-        {% if agent_site %}
-        ajaxUrl = '/a/{{ agent_site.slug }}/booking-ajax/';
-        {% endif %}
+{% if agent_site %}
+ajaxUrl = '/a/{{ agent_site.slug }}/booking-ajax/';
+{% endif %}
+console.log('AJAX URL:', ajaxUrl);
 
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Відправляємо...';
@@ -334,5 +335,12 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 </script>
-
+<script>
+console.log('=== ДІАГНОСТИКА ===');
+console.log('agent_site:', {% if agent_site %}true{% else %}false{% endif %});
+{% if agent_site %}
+console.log('slug:', '{{ agent_site.slug }}');
+{% endif %}
+console.log('submitBookingBtn:', document.getElementById('submitBookingBtn'));
+</script>
 {% endblock %}
