@@ -74,7 +74,6 @@
                         }
                     } else {
                         console.warn('⚠️ Параметри туру відсутні');
-                        // Спробуємо отримати з хеша, якщо параметрів немає в query
                         const hash = window.location.hash;
                         if (hash) {
                             console.log('Спробуємо отримати параметри з хеша:', hash);
@@ -90,40 +89,75 @@
             <script src="https://export.otpusk.com/js/onsite/"></script>
             <script src="https://export.otpusk.com/js/order"></script>
 
-            <!-- Примусове завантаження контенту туру, якщо автоматичне не спрацювало -->
+            <!-- КРОК 3: Примусове завантаження контенту туру -->
             <script>
-                setTimeout(function() {
-                    // Перевіряємо, чи з'явився контент туру
-                    const tourContainer = document.querySelector('#otpusk-tour-module .new_t-container');
-                    const hasContent = tourContainer && tourContainer.children.length > 0;
+                (function forceLoadTour() {
+                    // Чекаємо 3 секунди для повного завантаження модуля
+                    setTimeout(function() {
+                        console.log('🔍 КРОК 3: Перевірка контенту туру...');
 
-                    console.log('Перевірка контенту туру:', hasContent ? 'Контент є' : 'Контент відсутній');
+                        // Шукаємо контейнер туру
+                        const tourContainer = document.querySelector('#otpusk-tour-module .new_t-container');
+                        const hasContent = tourContainer && tourContainer.children.length > 0;
 
-                    if (!hasContent) {
-                        console.log('Спробуємо примусово завантажити тур...');
+                        console.log('Контейнер .new_t-container знайдено:', !!tourContainer);
+                        console.log('Контент туру присутній:', hasContent);
 
-                        // Спроба 1: Шукаємо будь-яке посилання на тур
-                        const tourLink = document.querySelector('.new_r-item a, .new_t-order-btn-true');
-                        if (tourLink) {
-                            console.log('Знайдено посилання на тур, імітуємо клік');
-                            tourLink.click();
-                            return;
+                        if (!hasContent) {
+                            console.log('⚠️ Контент туру відсутній. Спробуємо примусове завантаження...');
+
+                            // Спроба 1: Пошук кнопки "Замовити тур"
+                            const orderBtn = document.querySelector('.new_t-order-btn-true, .new_t-order-btn');
+                            if (orderBtn) {
+                                console.log('✅ Знайдено кнопку "Замовити тур", імітуємо клік');
+                                orderBtn.click();
+                                return;
+                            }
+
+                            // Спроба 2: Пошук посилання на тур
+                            const tourLink = document.querySelector('.new_r-item-wrap a, .new_o-single-item a');
+                            if (tourLink) {
+                                console.log('✅ Знайдено посилання на тур, імітуємо клік');
+                                tourLink.click();
+                                return;
+                            }
+
+                            // Спроба 3: Примусове оновлення сторінки з правильним URL
+                            const params = new URLSearchParams(window.location.search);
+                            const hid = params.get('hid');
+                            const oid = params.get('oid');
+                            const od = params.get('od');
+                            const ol = params.get('ol');
+
+                            if (hid && oid && od && ol) {
+                                const correctHash = `#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}`;
+                                const currentHash = window.location.hash;
+
+                                if (currentHash !== correctHash) {
+                                    const newUrl = `${window.location.pathname}?hid=${hid}&oid=${oid}&od=${od}&ol=${ol}${correctHash}`;
+                                    console.log('🔄 Оновлюємо сторінку з правильним хешем:', newUrl);
+                                    window.location.href = newUrl;
+                                } else {
+                                    console.log('❌ Хеш правильний, але контент не з\'явився. Можливо, потрібно перезавантажити сторінку вручну.');
+                                    // Показуємо повідомлення користувачеві
+                                    const msgDiv = document.createElement('div');
+                                    msgDiv.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#ffc107; color:#000; padding:10px 20px; border-radius:8px; z-index:9999; font-size:14px;';
+                                    msgDiv.innerHTML = '⚠️ Тур не завантажився. <a href="#" onclick="location.reload();return false;">Натисніть тут</a> щоб оновити сторінку.';
+                                    document.body.appendChild(msgDiv);
+                                    setTimeout(() => msgDiv.remove(), 10000);
+                                }
+                            } else {
+                                console.error('❌ Не знайдено параметри туру в URL');
+                            }
+                        } else {
+                            console.log('✅ Контент туру успішно завантажено!');
+
+                            // Додатково: перевіряємо, чи видно форму пошуку, і ховаємо її
+                            const filters = document.querySelectorAll('.new_f-ext-container, .new_r-filters-container');
+                            filters.forEach(el => el.style.display = 'none');
                         }
-
-                        // Спроба 2: Оновлюємо сторінку з правильним хешем
-                        const params = new URLSearchParams(window.location.search);
-                        const hid = params.get('hid');
-                        const oid = params.get('oid');
-                        const od = params.get('od');
-                        const ol = params.get('ol');
-
-                        if (hid && oid && od && ol) {
-                            const newUrl = `${window.location.pathname}?hid=${hid}&oid=${oid}&od=${od}&ol=${ol}#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}`;
-                            console.log('Оновлюємо сторінку:', newUrl);
-                            window.location.href = newUrl;
-                        }
-                    }
-                }, 2000);
+                    }, 3000);
+                })();
             </script>
         </div>
     </div>
