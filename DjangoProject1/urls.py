@@ -57,6 +57,9 @@ urlpatterns = [
     # ========== ОСНОВНІ МАРШРУТИ ==========
     path('home/', tours_views.home, name='home'),
 
+    # ========== НОВИНИ ==========
+    path('news/', tours_views.NewsListView.as_view(), name='news'),
+
     # ========== НОВИЙ МАРШРУТ ДЛЯ КАЛЕНДАРЯ (OTPUSK) ==========
     path('api/calendar-prices/', tours_views.calendar_prices_otpusk, name='calendar_prices'),
 
