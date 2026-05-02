@@ -196,7 +196,7 @@ span.currency {
     margin-bottom: 24px !important;
 }
 
-/* КАРТКА ТУРУ - АВТОМАТИЧНА ВИСОТА (БЕЗ ЗАЙВОГО ПРОСТОРУ) */
+/* КАРТКА ТУРУ */
 .new_r-item {
     background: white !important;
     border-radius: 16px !important;
@@ -213,7 +213,7 @@ span.currency {
     height: auto !important;
 }
 
-/* ФОТО - АВТОМАТИЧНА ВИСОТА */
+/* ФОТО */
 .new_r-item-img {
     width: 280px !important;
     height: auto !important;
@@ -236,15 +236,16 @@ span.currency {
     background-position: center !important;
 }
 
-/* КВАДРАТНИЙ РЕЙТИНГ */
-.new_r-item-rating-container {
+/* ========== РЕЙТИНГ - ВСІ КВАДРАТНІ (p8, p7, p6, p5) ========== */
+.new_r-item-rating-container,
+.new_r-p8,
+.new_r-p7,
+.new_r-p6,
+.new_r-p5 {
     position: absolute !important;
     top: 12px !important;
     right: 12px !important;
     z-index: 10 !important;
-}
-
-.new_r-p8 {
     width: 65px !important;
     height: 65px !important;
     display: flex !important;
@@ -255,7 +256,7 @@ span.currency {
     border-radius: 10px !important;
     border-width: 2px !important;
     border-style: solid !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
 .new_r-item-rating-value {
@@ -280,16 +281,20 @@ span.currency {
     color: #555 !important;
 }
 
-/* ХОВАЄМО КРУГЛІ ЕЛЕМЕНТИ */
+/* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ */
 .new_r-item-rating-container::before,
 .new_r-item-rating-container .slice,
 .new_r-item-rating-container .bar,
 .new_r-item-rating-container .fill,
-.new_r-item-rating-container svg {
+.new_r-item-rating-container svg,
+.new_r-item-rating-container circle,
+.new_r-item-rating-container path {
     display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
 }
 
-/* ТІЛО КАРТКИ - ПРАВА ЧАСТИНА АВТОМАТИЧНА ВИСОТА */
+/* ТІЛО КАРТКИ */
 .new_r-item-body {
     padding: 18px 22px !important;
     display: flex !important;
@@ -434,7 +439,11 @@ span.currency {
         height: 220px !important;
     }
 
-    .new_r-p8 {
+    .new_r-item-rating-container,
+    .new_r-p8,
+    .new_r-p7,
+    .new_r-p6,
+    .new_r-p5 {
         width: 55px !important;
         height: 55px !important;
     }
@@ -472,10 +481,10 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(document.body, { childList: true, subtree: true });
 });
 
-// КОЛІР РАМКИ РЕЙТИНГУ
+// КОЛІР РАМКИ РЕЙТИНГУ (ДЛЯ ВСІХ КЛАСІВ - p8, p7, p6, p5)
 document.addEventListener('DOMContentLoaded', function() {
     function updateRatingBorderColor() {
-        const ratingContainers = document.querySelectorAll('.new_r-p8');
+        const ratingContainers = document.querySelectorAll('.new_r-p8, .new_r-p7, .new_r-p6, .new_r-p5, .new_r-item-rating-container');
         ratingContainers.forEach(function(container) {
             const ratingValueElement = container.querySelector('.new_r-item-rating-value');
             if (!ratingValueElement) return;
