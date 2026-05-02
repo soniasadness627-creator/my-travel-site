@@ -4,36 +4,38 @@
 {% block title %}Результати пошуку турів{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-body p-4">
-            <h2 class="text-center mb-4" style="color: var(--primary-color);">Результати пошуку турів</h2>
-            <div id="otpusk-search-module">
-                <script>
-                    var osGeo = '';
-                    var osDefaultDeparture = '';
-                    var osDefaultDuration = '';
-                    var osDateFrom = '';
-                    var osDateTo = '';
-                    var osHotelCategory = '';
-                    var osFood = '';
-                    var osTransport = '';
-                    var osTarget = '';
-                    var osContainer = null;
-                    var osTourContainer = null;
-                    var osLang = 'ua';
-                    var osTourTargetBlank = false;
-                    var osOrderUrl = null;
-                    var osCurrency = 'converted';
-                    var osAutoStart = false;
-                </script>
-                <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
-                <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
-                <script src="https://export.otpusk.com/js/onsite/"></script>
-                <script src="https://export.otpusk.com/js/order"></script>
+<div class="container-fluid px-0">
+    <div class="container my-5">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4" style="color: var(--primary-color);">Результати пошуку турів</h2>
+                <div id="otpusk-search-module">
+                    <script>
+                        var osGeo = '';
+                        var osDefaultDeparture = '';
+                        var osDefaultDuration = '';
+                        var osDateFrom = '';
+                        var osDateTo = '';
+                        var osHotelCategory = '';
+                        var osFood = '';
+                        var osTransport = '';
+                        var osTarget = '';
+                        var osContainer = null;
+                        var osTourContainer = null;
+                        var osLang = 'ua';
+                        var osTourTargetBlank = false;
+                        var osOrderUrl = null;
+                        var osCurrency = 'converted';
+                        var osAutoStart = false;
+                    </script>
+                    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+                    <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+                    <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+                    <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+                    <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+                    <script src="https://export.otpusk.com/js/onsite/"></script>
+                    <script src="https://export.otpusk.com/js/order"></script>
+                </div>
             </div>
         </div>
     </div>
@@ -42,7 +44,7 @@
 <style>
 /* ========== ОСНОВНІ СТИЛІ ========== */
 
-/* Контейнер модуля */
+/* Контейнер модуля - на всю ширину */
 #otpusk-search-module {
     background: white !important;
     border-radius: 24px !important;
@@ -169,7 +171,7 @@ span.currency {
     color: white !important;
 }
 
-/* ========== КАРТКИ ТУРІВ - НА МАКСИМАЛЬНУ ШИРИНУ ========== */
+/* ========== КАРТКИ ТУРІВ - НА ВСЮ ШИРИНУ, ЯК В ПРИКЛАДІ ========== */
 
 /* Контейнер результатів - на всю ширину */
 .new_r-container {
@@ -225,7 +227,7 @@ span.currency {
     background-position: center !important;
 }
 
-/* КВАДРАТНИЙ РЕЙТИНГ ПОВЕРХ ФОТО */
+/* КВАДРАТНИЙ РЕЙТИНГ ПОВЕРХ ФОТО (ЯК МИ НАЛАШТОВУВАЛИ) */
 .new_r-item-rating-container {
     position: absolute !important;
     top: 12px !important;
@@ -233,8 +235,8 @@ span.currency {
     z-index: 10 !important;
 }
 
-/* КВАДРАТНИЙ БЛОК РЕЙТИНГУ */
-.new_r-p8 {
+/* КВАДРАТНИЙ БЛОК РЕЙТИНГУ - БІЛИЙ ФОН, КОЛЬОРОВА РАМКА */
+.new_r-p6 {
     width: 65px !important;
     height: 65px !important;
     display: flex !important;
@@ -246,7 +248,7 @@ span.currency {
     border-width: 2px !important;
     border-style: solid !important;
     box-sizing: border-box !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
 .new_r-item-rating-value {
@@ -261,7 +263,7 @@ span.currency {
     flex-direction: column !important;
     align-items: center !important;
     font-size: 0.5rem !important;
-    color: #888 !important;
+    color: #666 !important;
     line-height: 1.1 !important;
 }
 
@@ -280,7 +282,7 @@ span.currency {
     display: none !important;
 }
 
-/* ТІЛО КАРТКИ - ВСЯ ІНФОРМАЦІЯ ПРАВОРУЧ, НА ВСЮ ШИРИНУ ЩО ЗАЛИШИЛАСЬ */
+/* ТІЛО КАРТКИ - ВСЯ ІНФОРМАЦІЯ ПРАВОРУЧ */
 .new_r-item-body {
     padding: 18px 22px !important;
     display: flex !important;
@@ -399,9 +401,14 @@ span.currency {
 
 /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
 @media (max-width: 768px) {
+    .container {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+
     #otpusk-search-module {
         padding: 15px !important;
-        margin: 0 15px !important;
+        margin: 0 !important;
     }
 
     .new_r-item {
@@ -419,7 +426,7 @@ span.currency {
         height: 220px !important;
     }
 
-    .new_r-p8 {
+    .new_r-p6 {
         width: 55px !important;
         height: 55px !important;
     }
@@ -446,6 +453,12 @@ span.currency {
         flex-direction: column !important;
         gap: 8px !important;
     }
+}
+
+/* Додатковий клас для контейнера-fluid */
+.container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 }
 </style>
 
@@ -475,7 +488,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // КОЛІР РАМКИ ТА ЦИФРИ РЕЙТИНГУ (КВАДРАТНИЙ)
 document.addEventListener('DOMContentLoaded', function() {
     function updateRatingBorderColor() {
-        const ratingContainers = document.querySelectorAll('.new_r-p8');
+        const ratingContainers = document.querySelectorAll('.new_r-p6');
         ratingContainers.forEach(function(container) {
             const ratingValueElement = container.querySelector('.new_r-item-rating-value');
             if (!ratingValueElement) return;
