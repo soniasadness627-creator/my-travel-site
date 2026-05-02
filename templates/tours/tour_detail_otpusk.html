@@ -103,6 +103,13 @@
     }
 </style>
 
+<!-- Додаткова кнопка "Повернутися" (на випадок, якщо оригінальна не працює) -->
+<div class="container my-3">
+    <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm" id="customBackBtn">
+        <i class="fa-solid fa-arrow-left me-1"></i> ← Повернутися до результатів пошуку
+    </a>
+</div>
+
 <!-- ========== БЛОК БРОНЮВАННЯ ========== -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
@@ -317,14 +324,50 @@ setTimeout(function() {
     });
 })();
 
-// Додаємо CSS для анімації
-const style = document.createElement('style');
-style.textContent = `
+// ========== 4. ВИПРАВЛЕННЯ КНОПКИ "ПОВЕРНУТИСЯ" ==========
+setTimeout(function() {
+    // Шукаємо оригінальну кнопку "Повернутися"
+    const originalBackLink = document.querySelector('.new_t-menu-back-link');
+    const customBackBtn = document.getElementById('customBackBtn');
+
+    // Отримуємо збережений URL пошуку з localStorage
+    let savedSearchUrl = localStorage.getItem('lastSearchUrl');
+
+    if (savedSearchUrl && savedSearchUrl.includes('search-otpusk')) {
+        // Якщо є збережений URL, оновлюємо обидві кнопки
+        if (originalBackLink) {
+            originalBackLink.href = savedSearchUrl;
+            console.log('Оригінальна кнопка оновлена:', savedSearchUrl);
+        }
+        if (customBackBtn) {
+            customBackBtn.href = savedSearchUrl;
+        }
+    } else {
+        // Якщо немає збереженого URL, використовуємо історію
+        if (customBackBtn) {
+            customBackBtn.href = 'javascript:history.back()';
+        }
+        if (originalBackLink) {
+            originalBackLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.history.back();
+            });
+        }
+    }
+}, 1500);
+</script>
+
+<!-- Додаємо CSS для анімації -->
+<style>
     @keyframes slideIn {
         from { opacity: 0; transform: translateX(100%); }
         to { opacity: 1; transform: translateX(0); }
     }
-`;
-document.head.appendChild(style);
-</script>
+    #customBackBtn {
+        transition: all 0.3s ease;
+    }
+    #customBackBtn:hover {
+        transform: translateX(-3px);
+    }
+</style>
 {% endblock %}
