@@ -505,98 +505,46 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <script>
-// КОМБІНОВАНИЙ СКРИПТ ДЛЯ ПЕРЕХОПЛЕННЯ
+// ========== ПЕРЕХОПЛЕННЯ КЛІКІВ НА ТУРИ (ВИПРАВЛЕНИЙ) ==========
 (function() {
-    // Функція, яка генерує URL для детальної сторінки
-    function buildTourDetailUrl(linkElement) {
-        // Отримуємо поточне посилання або хеш
-        let currentUrl = linkElement.href || linkElement.getAttribute('data-uri') || window.location.href;
-        let hash = currentUrl.split('#')[1] || '';
-
-        // Шукаємо параметри в хеші (формат, який використовує Otpusk)
-        const hashParams = new URLSearchParams(hash.replace('!', '?'));
-        let hid = hashParams.get('hid');
-        let oid = hashParams.get('oid');
-        let od = hashParams.get('od');
-        let ol = hashParams.get('ol');
-        let tr = hashParams.get('tr');
-
-        // Якщо параметри не знайшли в хеші, шукаємо в query string
-        if (!hid) {
-            const urlParams = new URLSearchParams(window.location.search);
-            hid = urlParams.get('hid');
-            oid = urlParams.get('oid');
-            od = urlParams.get('od');
-            ol = urlParams.get('ol');
-            tr = urlParams.get('tr');
-        }
-
-        // Якщо все ще немає параметрів, спробуємо дістати з атрибута data-uri
-        if (!hid) {
-            const dataUri = linkElement.getAttribute('data-uri');
-            if (dataUri && dataUri.includes('hid=')) {
-                const tempParams = new URLSearchParams(dataUri.split('?')[1]);
-                hid = tempParams.get('hid');
-                oid = tempParams.get('oid');
-                od = tempParams.get('od');
-                ol = tempParams.get('ol');
-                tr = tempParams.get('tr');
-            }
-        }
-
-        if (!hid || !oid) {
-            console.warn('Не вдалося знайти параметри туру', linkElement);
-            return null;
-        }
-
-        // Визначаємо базовий URL
-        let baseUrl = window.location.pathname.startsWith('/a/')
-            ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
-            : '/tour-detail/';
-
-        // Повертаємо повний URL
-        return `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}&tr=${tr || ''}`;
+    function getUrlParamsFromHash(url) {
+        let hash = url.split('#')[1] || '';
+        // Видаляємо перший символ ! якщо він є
+        hash = hash.replace(/^!/, '');
+        let params = new URLSearchParams(hash);
+        return {
+            hid: params.get('hid'),
+            oid: params.get('oid'),
+            od: params.get('od'),
+            ol: params.get('ol'),
+            tr: params.get('tr')
+        };
     }
 
-    // Функція для обробки кліків
     function handleTourClick(event) {
-        let target = event.target.closest('a[href*="page=tour"], a[href*="#!"], .new_r-item, .new_t-order-btn');
+        let target = event.target.closest('a[href*="#!"], .new_r-item a, .new_t-order-btn');
         if (!target) return;
 
-        // Шукаємо найближчий елемент з посиланням
-        const link = target.tagName === 'A' ? target : target.querySelector('a');
-        if (!link && !target.getAttribute('data-uri')) return;
+        let url = target.href || target.getAttribute('data-uri') || '';
+        if (!url.includes('hid=') && !url.includes('#!')) return;
 
         event.preventDefault();
         event.stopPropagation();
 
-        const detailUrl = buildTourDetailUrl(link || target);
-        if (detailUrl) {
-            console.log('Перенаправляємо на:', detailUrl);
-            window.location.href = detailUrl;
-        } else {
-            console.error('Не вдалося сформувати URL для детального перегляду');
+        let params = getUrlParamsFromHash(url);
+
+        if (params.hid && params.oid) {
+            let baseUrl = window.location.pathname.startsWith('/a/')
+                ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
+                : '/tour-detail/';
+
+            let newUrl = `${baseUrl}?hid=${params.hid}&oid=${params.oid}&od=${params.od || ''}&ol=${params.ol || ''}&tr=${params.tr || ''}`;
+            console.log('Перенаправляємо на:', newUrl);
+            window.location.href = newUrl;
         }
     }
 
-    // Додаємо один головний слухач на весь документ
     document.addEventListener('click', handleTourClick);
-
-    // Також опрацьовуємо кнопки "Замовити тур", якщо вони з'являються динамічно
-    const observer = new MutationObserver(() => {
-        document.querySelectorAll('.new_t-order-btn.new_t-order-btn-true').forEach(btn => {
-            if (!btn.hasAttribute('data-handled')) {
-                btn.setAttribute('data-handled', 'true');
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const detailUrl = buildTourDetailUrl(btn);
-                    if (detailUrl) window.location.href = detailUrl;
-                });
-            }
-        });
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
 })();
 </script>
 {% endblock %}
