@@ -71,9 +71,7 @@
     background: var(--primary-dark) !important;
 }
 
-/* ========== ЦІНА - ТІЛЬКИ ЦИФРА ЧЕРВОНА ========== */
-
-/* Цифра ціни - ЧЕРВОНА */
+/* ========== ЦІНА ========== */
 .new_price-value {
     background: transparent !important;
     border: none !important;
@@ -83,7 +81,6 @@
     font-size: 1.25rem !important;
 }
 
-/* Весь блок ціни - залишаємо чорним для іншого тексту */
 span.new_r-item-price,
 .new_r-item-price {
     background: transparent !important;
@@ -94,9 +91,6 @@ span.new_r-item-price,
     font-size: 1rem !important;
 }
 
-/* ========== ВАЛЮТА (грн/$) В ЦІНІ - ЧОРНА, БЕЗ ФОНУ ========== */
-
-/* Валюта біля ціни - чорний текст, без фону */
 .currency,
 .new_r-item-price .currency,
 span.currency {
@@ -109,9 +103,7 @@ span.currency {
     font-size: 1rem !important;
 }
 
-/* ========== КНОПКИ ПЕРЕМИКАННЯ ВАЛЮТИ - ЦІЛІСНИЙ БЛОК В РЯД ========== */
-
-/* Контейнер кнопок валюти */
+/* ========== КНОПКИ ПЕРЕМИКАННЯ ВАЛЮТИ ========== */
 .new_r-currency-switch {
     display: flex !important;
     flex-direction: row !important;
@@ -123,19 +115,16 @@ span.currency {
     flex-wrap: nowrap !important;
 }
 
-/* Стиль для обгортки label */
 .new_r-currency-switch label {
     margin: 0 !important;
     display: inline-block !important;
     flex-shrink: 0 !important;
 }
 
-/* Ховаємо радіо кнопки */
 .new_r-currency-switch input[type="radio"] {
     display: none !important;
 }
 
-/* Стиль для span (грн та $) - кольоровий блок ТІЛЬКИ В ПЕРЕМИКАЧІ */
 .new_r-currency-switch span {
     background: transparent !important;
     color: white !important;
@@ -144,30 +133,22 @@ span.currency {
     font-weight: 600 !important;
     font-size: 0.9rem !important;
     cursor: pointer !important;
-    transition: all 0.2s ease !important;
     margin: 0 !important;
     border-radius: 0 !important;
     white-space: nowrap !important;
 }
 
-/* Активна валюта (вибрана) */
-.new_r-currency-switch input[type="radio"]:checked + span,
-.new_r-currency-switch span.active {
+.new_r-currency-switch input[type="radio"]:checked + span {
     background: rgba(255, 255, 255, 0.25) !important;
     color: white !important;
 }
 
-/* Ховер ефект */
-.new_r-currency-switch span:hover {
-    background: rgba(255, 255, 255, 0.15) !important;
-}
-
-/* ========== ЗІРКИ - ЖОВТІ ========== */
+/* ========== ЗІРКИ ========== */
 .new_r-item-star {
     fill: #FFD700 !important;
 }
 
-/* ========== ТРАНСПОРТ - КОЛІР АГЕНТА ========== */
+/* ========== ТРАНСПОРТ ========== */
 span.new_r-filter-value,
 .new_r-filter-value {
     color: var(--primary-color) !important;
@@ -181,10 +162,6 @@ span.new_r-filter-value,
     border: none !important;
     border-radius: 40px !important;
     padding: 8px 20px !important;
-}
-
-.new_r-detail-btn:hover {
-    background: var(--primary-dark) !important;
 }
 
 .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
@@ -217,16 +194,12 @@ span.new_r-filter-value,
     display: none !important;
 }
 
-.new_f-ext-bl-body label:hover {
-    border-color: var(--primary-color) !important;
-}
-
 .new_f-dropdown-item.selected {
     background: var(--primary-color) !important;
     color: white !important;
 }
 
-/* ========== КАРТКА ТУРУ - ВЕРТИКАЛЬНИЙ СПИСОК, ОДИН ЗА ОДНИМ ========== */
+/* ========== КАРТКИ ТУРІВ - СТОВПЧИК, ПО ОДНОМУ, ЗБІЛЬШЕНІ ========== */
 
 /* Контейнер результатів */
 .new_r-container {
@@ -239,36 +212,34 @@ span.new_r-filter-value,
     display: block !important;
 }
 
-/* Картка туру - ПО ОДНОМУ, НА ВСЮ ШИРИНУ */
+/* Картка туру - ПО ОДНОМУ ВЕРТИКАЛЬНО, НА ВСЮ ШИРИНУ */
 .new_r-item {
     background: white !important;
     border-radius: 20px !important;
     border: 1px solid #e2e8f0 !important;
-    margin-bottom: 30px !important;
+    margin-bottom: 35px !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: row !important;
     transition: all 0.3s ease !important;
-    width: 100% !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
 }
 
 .new_r-item:hover {
     border-color: var(--primary-color) !important;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12) !important;
-    transform: translateY(-3px) !important;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12) !important;
+    transform: translateY(-4px) !important;
 }
 
-/* Фото - збільшене */
+/* ФОТО - ЗБІЛЬШЕНЕ ЗЛІВА */
 .new_r-item-img {
-    width: 320px !important;
-    height: 260px !important;
+    width: 350px !important;
+    height: 280px !important;
     object-fit: cover !important;
     display: block !important;
     flex-shrink: 0 !important;
 }
 
-/* Обгортка фото */
 .new_r-lazy-img {
     position: relative !important;
     display: block !important;
@@ -283,117 +254,6 @@ span.new_r-filter-value,
     z-index: 10 !important;
 }
 
-/* Тіло картки - вся інформація ПРАВОРУЧ ВІД ФОТО */
-.new_r-item-body {
-    padding: 20px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    flex: 1 !important;
-    min-width: 0 !important;
-}
-
-/* Назва готелю + зірки */
-.new_r-item-hotel {
-    font-size: 1.3rem !important;
-    font-weight: 700 !important;
-    color: #1a202c !important;
-    margin: 0 0 10px 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    flex-wrap: wrap !important;
-    gap: 10px !important;
-}
-
-/* Зірки */
-.new_r-item-stars {
-    display: inline-flex !important;
-    gap: 4px !important;
-}
-
-/* Місцезнаходження */
-.new_r-item-geo {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    font-size: 0.95rem !important;
-    color: #666 !important;
-    margin: 0 0 12px 0 !important;
-}
-
-/* Харчування */
-.new_r-item-food {
-    display: inline-block !important;
-    background: #e2e8f0 !important;
-    padding: 6px 14px !important;
-    border-radius: 25px !important;
-    font-size: 0.85rem !important;
-    color: #1a202c !important;
-    width: fit-content !important;
-    margin: 0 0 12px 0 !important;
-}
-
-/* Таблиця з деталями вильоту */
-.new_r-item-table {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 20px !important;
-    margin: 12px 0 !important;
-}
-
-/* Рядок з інформацією */
-.new_r-item-from,
-.new_r-item-date {
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-    font-size: 0.95rem !important;
-    color: #555 !important;
-}
-
-/* Іконки */
-.new_r-item-icon {
-    width: 18px !important;
-    height: 18px !important;
-    fill: #888 !important;
-}
-
-/* Ціна - знизу справа, більша */
-.new_r-item-price {
-    display: flex !important;
-    justify-content: flex-end !important;
-    align-items: baseline !important;
-    margin-top: 15px !important;
-    padding-top: 15px !important;
-    border-top: 1px solid #e2e8f0 !important;
-    gap: 10px !important;
-    flex-wrap: wrap !important;
-}
-
-.new_price-value {
-    font-size: 1.5rem !important;
-}
-
-/* Текст "за двох" */
-.new_price-desc {
-    font-size: 0.9rem !important;
-    color: #666 !important;
-    font-weight: normal !important;
-}
-
-/* Ховаємо старі елементи */
-.new_r-item-col {
-    display: block !important;
-    width: auto !important;
-}
-
-.new_r-item-table .new_r-item-col {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 20px !important;
-}
-
-/* Рейтинг квадратний - збільшений */
 .new_r-p8 {
     width: 70px !important;
     height: 70px !important;
@@ -401,19 +261,18 @@ span.new_r-filter-value,
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    background: white !important;
+    background: rgba(0, 0, 0, 0.75) !important;
+    backdrop-filter: blur(4px) !important;
     border-radius: 12px !important;
-    border-width: 2px !important;
-    border-style: solid !important;
-    box-sizing: border-box !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
 }
 
 .new_r-item-rating-value {
     font-weight: 800 !important;
     font-size: 1.2rem !important;
     margin: 0 0 4px 0 !important;
-    line-height: 1 !important;
+    color: #FFD700 !important;
 }
 
 .new_r-item-rating-rev {
@@ -421,17 +280,17 @@ span.new_r-filter-value,
     flex-direction: column !important;
     align-items: center !important;
     font-size: 0.55rem !important;
-    color: #888 !important;
+    color: #e0e0e0 !important;
     line-height: 1.2 !important;
 }
 
 .new_r-item-rating-rev span {
     font-weight: 700 !important;
     font-size: 0.75rem !important;
-    color: #555 !important;
+    color: #e0e0e0 !important;
 }
 
-/* Ховаємо круглі елементи */
+/* Ховаємо круги */
 .new_r-item-rating-container::before,
 .new_r-item-rating-container .slice,
 .new_r-item-rating-container .bar,
@@ -441,28 +300,122 @@ span.new_r-filter-value,
     display: none !important;
 }
 
+/* ТІЛО КАРТКИ - ВСЯ ІНФОРМАЦІЯ ПРАВОРУЧ */
+.new_r-item-body {
+    padding: 20px 24px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    flex: 1 !important;
+}
+
+/* НАЗВА ГОТЕЛЮ */
+.new_r-item-hotel {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    color: #1a202c !important;
+    margin: 0 0 12px 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+}
+
+.new_r-item-stars {
+    display: inline-flex !important;
+    gap: 4px !important;
+}
+
+/* МІСЦЕЗНАХОДЖЕННЯ */
+.new_r-item-geo {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 1rem !important;
+    color: #666 !important;
+    margin: 0 0 12px 0 !important;
+}
+
+/* ХАРЧУВАННЯ */
+.new_r-item-food {
+    display: inline-block !important;
+    background: #e2e8f0 !important;
+    padding: 6px 16px !important;
+    border-radius: 30px !important;
+    font-size: 0.85rem !important;
+    color: #1a202c !important;
+    width: fit-content !important;
+    margin: 0 0 15px 0 !important;
+    font-weight: 500 !important;
+}
+
+/* ДЕТАЛІ ВИЛЬОТУ */
+.new_r-item-table {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 25px !important;
+    margin: 10px 0 15px 0 !important;
+}
+
+.new_r-item-from,
+.new_r-item-date {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-size: 1rem !important;
+    color: #555 !important;
+}
+
+.new_r-item-icon {
+    width: 20px !important;
+    height: 20px !important;
+    fill: #888 !important;
+}
+
+.new_r-item-table .new_r-item-col {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 25px !important;
+}
+
+/* ЦІНА - ЗНИЗУ СПРАВА */
+.new_r-item-price {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: baseline !important;
+    margin-top: 15px !important;
+    padding-top: 18px !important;
+    border-top: 1px solid #e2e8f0 !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+}
+
+.new_price-value {
+    font-size: 1.6rem !important;
+}
+
+.new_price-desc {
+    font-size: 0.9rem !important;
+    color: #666 !important;
+    font-weight: normal !important;
+}
+
+/* ХОВАЄМО ЗАЙВІ ЕЛЕМЕНТИ */
+.new_r-item-col {
+    display: block !important;
+    width: auto !important;
+}
+
 /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
 @media (max-width: 768px) {
     #otpusk-search-module {
         padding: 15px !important;
         margin: 0 15px !important;
-        width: auto !important;
     }
 
-    .new_f-dropdown-btn {
-        width: 100% !important;
-        padding: 10px 14px !important;
-    }
-
-    .new_f-form-submit {
-        width: 100% !important;
-        margin-top: 10px !important;
-    }
-
-    /* На мобільних картка вертикальна */
     .new_r-item {
         flex-direction: column !important;
-        margin-bottom: 20px !important;
+        margin-bottom: 25px !important;
     }
 
     .new_r-item-img {
@@ -480,11 +433,17 @@ span.new_r-filter-value,
     }
 
     .new_r-item-hotel {
-        font-size: 1.1rem !important;
+        font-size: 1.2rem !important;
+    }
+
+    .new_r-item-geo,
+    .new_r-item-from,
+    .new_r-item-date {
+        font-size: 0.85rem !important;
     }
 
     .new_price-value {
-        font-size: 1.2rem !important;
+        font-size: 1.3rem !important;
     }
 
     .new_r-item-table .new_r-item-col {
@@ -505,7 +464,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 el.textContent = '$';
             }
         });
-
         const textElements = document.querySelectorAll('.new_r-currency-switch span');
         textElements.forEach(function(el) {
             if (el.textContent === '€') {
@@ -513,56 +471,31 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
     replaceEuroToDollar();
-
-    const observer = new MutationObserver(function() {
-        replaceEuroToDollar();
-    });
-
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
+    const observer = new MutationObserver(function() { replaceEuroToDollar(); });
+    observer.observe(document.body, { childList: true, subtree: true });
 });
 
-// Функція для зміни кольору рамки рейтингу
+// Колір рейтингу
 document.addEventListener('DOMContentLoaded', function() {
     function updateRatingBorderColor() {
         const ratingContainers = document.querySelectorAll('.new_r-p8');
-
         ratingContainers.forEach(function(container) {
             const ratingValueElement = container.querySelector('.new_r-item-rating-value');
             if (!ratingValueElement) return;
-
             const ratingText = ratingValueElement.textContent || ratingValueElement.innerText;
             const rating = parseFloat(ratingText);
-
             if (isNaN(rating)) return;
-
-            if (rating < 5) {
-                container.style.borderColor = '#ef4444';
-                ratingValueElement.style.color = '#ef4444';
-            } else if (rating >= 5 && rating < 7.5) {
-                container.style.borderColor = '#eab308';
-                ratingValueElement.style.color = '#eab308';
-            } else {
-                container.style.borderColor = '#22c55e';
-                ratingValueElement.style.color = '#22c55e';
-            }
+            let color;
+            if (rating < 5) color = '#ef4444';
+            else if (rating >= 5 && rating < 7.5) color = '#eab308';
+            else color = '#22c55e';
+            ratingValueElement.style.color = color;
         });
     }
-
     updateRatingBorderColor();
-
-    const observer = new MutationObserver(function() {
-        updateRatingBorderColor();
-    });
-
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
+    const observer = new MutationObserver(function() { updateRatingBorderColor(); });
+    observer.observe(document.body, { childList: true, subtree: true });
 });
 </script>
 {% endblock %}
