@@ -530,23 +530,23 @@
                                 <h5 class="fw-bold mb-3 text-white">Популярні напрямки</h5>
                                 <div class="row">
                                     <div class="col-6">
-                                        <ul class="list-unstyled">
-                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Єгипет{% else %}{% url 'search_results' %}?country=Єгипет{% endif %}" class="text-white-50 footer-links">Тури в Єгипет</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Туреччина{% else %}{% url 'search_results' %}?country=Туреччина{% endif %}" class="text-white-50 footer-links">Тури в Туреччину</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=ОАЕ{% else %}{% url 'search_results' %}?country=ОАЕ{% endif %}" class="text-white-50 footer-links">Тури в ОАЕ</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Шрі-Ланка{% else %}{% url 'search_results' %}?country=Шрі-Ланка{% endif %}" class="text-white-50 footer-links">Тури в Шрі-Ланку</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Іспанія{% else %}{% url 'search_results' %}?country=Іспанія{% endif %}" class="text-white-50 footer-links">Тури в Іспанію</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="col-6">
-                                        <ul class="list-unstyled">
-                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Танзанія{% else %}{% url 'search_results' %}?country=Танзанія{% endif %}" class="text-white-50 footer-links">Тури в Танзанію</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Мальдіви{% else %}{% url 'search_results' %}?country=Мальдіви{% endif %}" class="text-white-50 footer-links">Тури в Мальдіви</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=В&#x27;єтнам{% else %}{% url 'search_results' %}?country=В&#x27;єтнам{% endif %}" class="text-white-50 footer-links">Тури в В'єтнам</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Албанія{% else %}{% url 'search_results' %}?country=Албанія{% endif %}" class="text-white-50 footer-links">Тури в Албанію</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country=Італія{% else %}{% url 'search_results' %}?country=Італія{% endif %}" class="text-white-50 footer-links">Тури в Італію</a></li>
-                                        </ul>
-                                    </div>
+    <ul class="list-unstyled">
+        <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/?country=Єгипет{% else %}/search-otpusk/?country=Єгипет{% endif %}" class="text-white-50 footer-links">Тури в Єгипет</a></li>
+        <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/?country=Туреччина{% else %}/search-otpusk/?country=Туреччина{% endif %}" class="text-white-50 footer-links">Тури в Туреччину</a></li>
+        <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/?country=ОАЕ{% else %}/search-otpusk/?country=ОАЕ{% endif %}" class="text-white-50 footer-links">Тури в ОАЕ</a></li>
+        <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/?country=Шрі-Ланка{% else %}/search-otpusk/?country=Шрі-Ланка{% endif %}" class="text-white-50 footer-links">Тури в Шрі-Ланку</a></li>
+        <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/?country=Іспанія{% else %}/search-otpusk/?country=Іспанія{% endif %}" class="text-white-50 footer-links">Тури в Іспанію</a></li>
+    </ul>
+</div>
+<div class="col-6">
+    <ul class="list-unstyled">
+        <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/?country=Танзанія{% else %}/search-otpusk/?country=Танзанія{% endif %}" class="text-white-50 footer-links">Тури в Танзанію</a></li>
+        <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/?country=Мальдіви{% else %}/search-otpusk/?country=Мальдіви{% endif %}" class="text-white-50 footer-links">Тури в Мальдіви</a></li>
+        <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/?country=В&#x27;єтнам{% else %}/search-otpusk/?country=В&#x27;єтнам{% endif %}" class="text-white-50 footer-links">Тури в В'єтнам</a></li>
+        <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/?country=Албанія{% else %}/search-otpusk/?country=Албанія{% endif %}" class="text-white-50 footer-links">Тури в Албанію</a></li>
+        <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/?country=Італія{% else %}/search-otpusk/?country=Італія{% endif %}" class="text-white-50 footer-links">Тури в Італію</a></li>
+    </ul>
+</div>
                                 </div>
                             </div>
                         </div>
