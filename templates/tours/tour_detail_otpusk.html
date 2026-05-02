@@ -237,43 +237,34 @@ setTimeout(function() {
     console.log('Дані туру зібрано:', {hotelName, price, dateText, hid});
 }, 2500);
 
-// ========== 3. AJAX ВІДПРАВЛЕННЯ ФОРМИ В BOOKING ==========
+// ========== 3. ТЕСТОВИЙ AJAX ВІДПРАВЛЕННЯ (ЗАМІСТЬ СТАРОГО) ==========
 (function() {
     const submitBtn = document.getElementById('submitBookingBtn');
-    if (!submitBtn) return;
+    if (!submitBtn) {
+        console.error('❌ Кнопка submitBookingBtn НЕ ЗНАЙДЕНА!');
+        return;
+    }
+    console.log('✅ Кнопка знайдена, додаємо обробник');
 
     submitBtn.addEventListener('click', function(e) {
         e.preventDefault();
+        console.log('🔴 КЛІК ПО КНОПЦІ СПРАЦЮВАВ!');
 
-        const name = document.getElementById('bookingName')?.value.trim() || '';
-        const phone = document.getElementById('bookingPhone')?.value.trim() || '';
-        const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
-        const email = document.getElementById('bookingEmail')?.value.trim() || '';
-        const tourName = document.getElementById('tourName')?.value || '';
-        const tourPrice = document.getElementById('tourPrice')?.value || '';
-        const tourDates = document.getElementById('tourDates')?.value || '';
-        const userMessage = document.getElementById('bookingMessage')?.value || '';
+        // Збираємо дані з форми
+        const name = document.getElementById('bookingName')?.value.trim() || 'Тестовий Клієнт';
+        const phone = document.getElementById('bookingPhone')?.value.trim() || '123456789';
+        const email = document.getElementById('bookingEmail')?.value.trim() || 'test@example.com';
 
-        if (!name) {
-            alert('Будь ласка, введіть ваше ім\'я');
-            return;
-        }
-        if (!phone) {
-            alert('Будь ласка, введіть номер телефону');
-            return;
-        }
-        if (!email) {
-            alert('Будь ласка, введіть email');
-            return;
-        }
+        console.log('📤 Відправляємо дані:', {name: name, phone: phone, email: email});
 
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        console.log('CSRF токен:', csrfToken ? 'є' : 'немає');
 
         let ajaxUrl = '/booking-ajax/';
-{% if agent_site %}
-ajaxUrl = '/a/{{ agent_site.slug }}/booking-ajax/';
-{% endif %}
-console.log('AJAX URL:', ajaxUrl);
+        {% if agent_site %}
+        ajaxUrl = '/a/{{ agent_site.slug }}/booking-ajax/';
+        {% endif %}
+        console.log('📍 URL запиту:', ajaxUrl);
 
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Відправляємо...';
@@ -288,35 +279,28 @@ console.log('AJAX URL:', ajaxUrl);
                 'name': name,
                 'phone': phone,
                 'email': email,
-                'country_code': countryCode,
-                'tour_name': tourName,
-                'tour_price': tourPrice,
-                'tour_dates': tourDates,
-                'message': userMessage,
+                'country_code': '+380',
                 'booking_submit': '1'
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('📥 Статус відповіді:', response.status);
+            return response.json();
+        })
         .then(data => {
+            console.log('📦 Відповідь сервера:', data);
             if (data.success) {
+                alert('✅ ТЕСТОВА заявка відправлена успішно!');
                 document.getElementById('bookingName').value = '';
                 document.getElementById('bookingPhone').value = '';
                 document.getElementById('bookingEmail').value = '';
-                document.getElementById('bookingMessage').value = '';
-
-                const successMsg = document.createElement('div');
-                successMsg.className = 'alert alert-success mt-3';
-                successMsg.innerHTML = '<i class="fa-regular fa-circle-check me-2"></i> Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом.';
-                successMsg.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 9999; background: #22c55e; color: white; border: none; border-radius: 12px; padding: 12px 20px; animation: slideIn 0.3s ease;';
-                document.body.appendChild(successMsg);
-                setTimeout(() => successMsg.remove(), 5000);
             } else {
-                alert('❌ ' + (data.error || 'Сталася помилка. Спробуйте ще раз.'));
+                alert('❌ Помилка: ' + (data.error || 'Невідома помилка'));
             }
         })
         .catch(error => {
-            console.error('Помилка:', error);
-            alert('❌ Помилка з\'єднання. Спробуйте пізніше.');
+            console.error('❌ ПОМИЛКА FETCH:', error);
+            alert('❌ Помилка з\'єднання: ' + error.message);
         })
         .finally(() => {
             submitBtn.disabled = false;
@@ -335,6 +319,7 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 </script>
+
 <script>
 console.log('=== ДІАГНОСТИКА ===');
 console.log('agent_site:', {% if agent_site %}true{% else %}false{% endif %});
@@ -343,4 +328,5 @@ console.log('slug:', '{{ agent_site.slug }}');
 {% endif %}
 console.log('submitBookingBtn:', document.getElementById('submitBookingBtn'));
 </script>
+
 {% endblock %}
