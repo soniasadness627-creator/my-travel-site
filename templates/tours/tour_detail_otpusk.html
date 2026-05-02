@@ -117,7 +117,40 @@
         </div>
     </div>
 </div>
+<style>
+    /* Приховуємо форму пошуку та фільтри на сторінці деталей туру */
+    #otpusk-tour-module .new_f-ext-container,
+    #otpusk-tour-module .new_r-filters-container,
+    #otpusk-tour-module .new_f-ext-btn,
+    #otpusk-tour-module .new_f-dropdown-body-top,
+    #otpusk-tour-module .new_r-item-wrap,
+    #otpusk-tour-module .new_r-currency-switch,
+    #otpusk-tour-module .new_f-ext-container,
+    #otpusk-tour-module .new_r-filters-container,
+    #otpusk-tour-module .new_f-form {
+        display: none !important;
+    }
 
+    /* Залишаємо тільки контент туру */
+    #otpusk-tour-module .new_t-container {
+        display: block !important;
+    }
+
+    /* Кнопка "Повернутися" - залишаємо видимою */
+    #otpusk-tour-module .new_t-menu-back {
+        display: block !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* Очищаємо фон і рамки */
+    #otpusk-tour-module {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+</style>
 <script>
 // AJAX для консультації (ваш оригінальний код)
 (function() {
