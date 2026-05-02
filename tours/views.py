@@ -270,15 +270,14 @@ def booking_ajax(request, slug=None):
         if not email:
             return JsonResponse({'success': False, 'error': "Введіть email"})
 
-        # Очищуємо телефон від нецифрових символів
+        # Очищуємо телефон
         phone_clean = re.sub(r'[^0-9]', '', phone)
         if len(phone_clean) < 9:
             return JsonResponse({'success': False, 'error': "Введіть коректний номер телефону (мінімум 9 цифр)"})
 
-        # Формуємо повний номер
         full_phone = f"{country_code}{phone_clean}"
 
-        # Формуємо повідомлення з інформацією про тур
+        # Формуємо повідомлення
         full_message = f"Тур: {tour_name}\n"
         if tour_price:
             full_message += f"Ціна: {tour_price}\n"
@@ -287,41 +286,16 @@ def booking_ajax(request, slug=None):
         if message:
             full_message += f"Коментар клієнта: {message}"
 
-        # Створюємо заявку в БРОНЮВАННЯ (Booking)
+        # Створюємо заявку (tour=None, тому що це бронювання з Otpusk)
         booking = Booking.objects.create(
+            tour=None,  # ← ОСЬ ГОЛОВНЕ ВИПРАВЛЕННЯ
             name=name,
             phone=full_phone,
             email=email,
             message=full_message
         )
 
-        # Якщо є тур, можна прив'язати (опціонально)
-        # try:
-        #     from .models import Tour
-        #     tour = Tour.objects.filter(title__icontains=tour_name[:50]).first()
-        #     if tour:
-        #         booking.tour = tour
-        #         booking.save()
-        # except:
-        #     pass
-
-        # Якщо є агентський сайт, прив'язуємо заявку до агента
-        if hasattr(request, 'current_agent_site') and request.current_agent_site:
-            booking.agent = request.current_agent_site.user
-            booking.save()
-            print(f"✅ Заявка прив'язана до агента: {request.current_agent_site.user.username}")
-        elif slug:
-            try:
-                from .models.agent_site import AgentSite
-                agent_site = AgentSite.objects.filter(slug=slug).first()
-                if agent_site:
-                    booking.agent = agent_site.user
-                    booking.save()
-                    print(f"✅ Заявка прив'язана до агента (за slug): {agent_site.user.username}")
-            except Exception as e:
-                print(f"⚠️ Не вдалося прив'язати агента за slug: {e}")
-
-        print(f"✅ Нова заявка на бронювання: {name} - {full_phone} - {email}")
+        print(f"✅ Нова заявка на бронювання: {name} - {full_phone} - {email} (ID: {booking.id})")
 
         return JsonResponse({
             'success': True,
@@ -329,9 +303,10 @@ def booking_ajax(request, slug=None):
         })
 
     except Exception as e:
-        print(f"❌ Помилка при збереженні бронювання: {e}")
-        return JsonResponse({'success': False, 'error': 'Сталася помилка. Спробуйте пізніше.'}, status=500)
-
+        print(f"❌ ПОМИЛКА: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 # ========== AJAX ОБРОБКА КОНСУЛЬТАЦІЇ ==========
 @csrf_exempt
