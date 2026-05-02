@@ -4,8 +4,8 @@
 {% block title %}Результати пошуку турів{% endblock %}
 
 {% block content %}
-<div class="my-5">
-    <div class="card shadow-sm border-0 rounded-4 mx-3">
+<div class="container my-5">
+    <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-4">
             <h2 class="text-center mb-4" style="color: var(--primary-color);">Результати пошуку турів</h2>
             <div id="otpusk-search-module">
@@ -42,7 +42,7 @@
 <style>
 /* ========== ОСНОВНІ СТИЛІ ========== */
 
-/* Контейнер модуля - БЕЗ ОБМЕЖЕНЬ ШИРИНИ */
+/* Контейнер модуля */
 #otpusk-search-module {
     background: white !important;
     border-radius: 24px !important;
@@ -50,7 +50,6 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
     padding: 20px 24px !important;
     width: 100% !important;
-    max-width: 100% !important;
     margin: 0 auto !important;
     position: relative !important;
     z-index: 10 !important;
@@ -169,14 +168,13 @@ span.currency {
     color: white !important;
 }
 
-/* ========== КАРТКИ ТУРІВ - НА ВСЮ ШИРИНУ СТОРІНКИ ========== */
+/* ========== КАРТКИ ТУРІВ - ВЕРТИКАЛЬНИЙ СТОВПЧИК ========== */
 
-/* Контейнер результатів - на всю ширину */
+/* Контейнер результатів - блочний */
 .new_r-container {
     background: white !important;
     margin-top: 30px !important;
     width: 100% !important;
-    max-width: 100% !important;
 }
 
 .new_r-wrapper {
@@ -184,12 +182,25 @@ span.currency {
     width: 100% !important;
 }
 
-/* КАРТКА ТУРУ - НА ВСЮ ШИРИНУ, ГОРИЗОНТАЛЬНА */
+/* ПРИМУСОВО ПЕРЕВИЗНАЧАЄМО СІТКУ */
+.new_r-wrapper:before,
+.new_r-wrapper:after {
+    display: none !important;
+}
+
+.new_r-item-wrap {
+    display: block !important;
+    width: 100% !important;
+    float: none !important;
+    clear: both !important;
+    margin-bottom: 24px !important;
+}
+
+/* КАРТКА ТУРУ - ОДИН ПІД ОДНИМ */
 .new_r-item {
     background: white !important;
     border-radius: 16px !important;
     border: 1px solid #e2e8f0 !important;
-    margin-bottom: 30px !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: row !important;
@@ -204,55 +215,49 @@ span.currency {
     transform: translateY(-2px) !important;
 }
 
-/* ФОТО - ЗЛІВА, ФІКСОВАНА ШИРИНА */
+/* ФОТО */
 .new_r-item-img {
-    width: 320px !important;
-    height: 320px !important;
+    width: 280px !important;
+    height: 280px !important;
     object-fit: cover !important;
     display: block !important;
     flex-shrink: 0 !important;
-    background-size: cover !important;
-    background-position: center !important;
 }
 
 .new_r-lazy-img {
     position: relative !important;
     display: block !important;
     flex-shrink: 0 !important;
-    width: 320px !important;
-    height: 320px !important;
-    background-size: cover !important;
-    background-position: center !important;
+    width: 280px !important;
+    height: 280px !important;
 }
 
-/* КВАДРАТНИЙ РЕЙТИНГ ПОВЕРХ ФОТО */
+/* КВАДРАТНИЙ РЕЙТИНГ */
 .new_r-item-rating-container {
     position: absolute !important;
-    top: 15px !important;
-    right: 15px !important;
+    top: 12px !important;
+    right: 12px !important;
     z-index: 10 !important;
 }
 
-/* КВАДРАТНИЙ БЛОК РЕЙТИНГУ - БІЛИЙ ФОН, КОЛЬОРОВА РАМКА */
 .new_r-p8 {
-    width: 70px !important;
-    height: 70px !important;
+    width: 65px !important;
+    height: 65px !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     background: white !important;
-    border-radius: 12px !important;
+    border-radius: 10px !important;
     border-width: 2px !important;
     border-style: solid !important;
-    box-sizing: border-box !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
 }
 
 .new_r-item-rating-value {
     font-weight: 800 !important;
-    font-size: 1.2rem !important;
-    margin: 0 0 4px 0 !important;
+    font-size: 1.1rem !important;
+    margin: 0 0 3px 0 !important;
     line-height: 1 !important;
 }
 
@@ -260,18 +265,18 @@ span.currency {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    font-size: 0.55rem !important;
+    font-size: 0.5rem !important;
     color: #666 !important;
-    line-height: 1.2 !important;
+    line-height: 1.1 !important;
 }
 
 .new_r-item-rating-rev span {
     font-weight: 700 !important;
-    font-size: 0.75rem !important;
+    font-size: 0.7rem !important;
     color: #555 !important;
 }
 
-/* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ */
+/* ХОВАЄМО КРУГЛІ ЕЛЕМЕНТИ */
 .new_r-item-rating-container::before,
 .new_r-item-rating-container .slice,
 .new_r-item-rating-container .bar,
@@ -280,9 +285,9 @@ span.currency {
     display: none !important;
 }
 
-/* ТІЛО КАРТКИ - ВСЯ ІНФОРМАЦІЯ ПРАВОРУЧ */
+/* ТІЛО КАРТКИ */
 .new_r-item-body {
-    padding: 20px 24px !important;
+    padding: 18px 22px !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
@@ -292,19 +297,19 @@ span.currency {
 
 /* НАЗВА ГОТЕЛЮ */
 .new_r-item-hotel {
-    font-size: 1.4rem !important;
+    font-size: 1.3rem !important;
     font-weight: 700 !important;
     color: #1a202c !important;
-    margin: 0 0 12px 0 !important;
+    margin: 0 0 10px 0 !important;
     display: flex !important;
     align-items: center !important;
     flex-wrap: wrap !important;
-    gap: 12px !important;
+    gap: 10px !important;
 }
 
 .new_r-item-stars {
     display: inline-flex !important;
-    gap: 5px !important;
+    gap: 4px !important;
 }
 
 /* МІСЦЕЗНАХОДЖЕННЯ */
@@ -312,27 +317,21 @@ span.currency {
     display: flex !important;
     align-items: center !important;
     gap: 8px !important;
-    font-size: 1rem !important;
+    font-size: 0.9rem !important;
     color: #666 !important;
-    margin: 0 0 14px 0 !important;
+    margin: 0 0 12px 0 !important;
 }
 
-.new_r-item-geo svg {
-    width: 18px !important;
-    height: 18px !important;
-    fill: #888 !important;
-}
-
-/* ТИП ХАРЧУВАННЯ */
+/* ХАРЧУВАННЯ */
 .new_r-item-food {
     display: inline-block !important;
     background: #e2e8f0 !important;
-    padding: 6px 16px !important;
-    border-radius: 25px !important;
-    font-size: 0.85rem !important;
+    padding: 5px 14px !important;
+    border-radius: 20px !important;
+    font-size: 0.8rem !important;
     color: #1a202c !important;
     width: fit-content !important;
-    margin: 0 0 14px 0 !important;
+    margin: 0 0 12px 0 !important;
     font-weight: 500 !important;
 }
 
@@ -340,111 +339,83 @@ span.currency {
 .new_r-item-table {
     display: flex !important;
     flex-wrap: wrap !important;
-    gap: 25px !important;
-    margin: 8px 0 12px 0 !important;
+    gap: 20px !important;
+    margin: 5px 0 10px 0 !important;
 }
 
 .new_r-item-from,
 .new_r-item-date {
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
-    font-size: 1rem !important;
+    gap: 8px !important;
+    font-size: 0.9rem !important;
     color: #555 !important;
 }
 
 .new_r-item-icon {
-    width: 20px !important;
-    height: 20px !important;
+    width: 18px !important;
+    height: 18px !important;
     fill: #888 !important;
 }
 
-.new_r-item-table .new_r-item-col {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 25px !important;
-}
-
-/* ЦІНА - ЗНИЗУ СПРАВА */
+/* ЦІНА */
 .new_r-item-price {
     display: flex !important;
     justify-content: flex-end !important;
     align-items: baseline !important;
-    margin-top: 18px !important;
-    padding-top: 18px !important;
+    margin-top: 15px !important;
+    padding-top: 15px !important;
     border-top: 1px solid #e2e8f0 !important;
-    gap: 10px !important;
+    gap: 8px !important;
     flex-wrap: wrap !important;
 }
 
 .new_price-value {
-    font-size: 1.5rem !important;
+    font-size: 1.4rem !important;
 }
 
 .new_price-desc {
-    font-size: 0.9rem !important;
+    font-size: 0.85rem !important;
     color: #666 !important;
     font-weight: normal !important;
-}
-
-/* ХОВАЄМО ЗАЙВІ ЕЛЕМЕНТИ */
-.new_r-item-col {
-    display: block !important;
-    width: auto !important;
-}
-
-.new_r-item-info {
-    display: block !important;
 }
 
 /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
 @media (max-width: 768px) {
     #otpusk-search-module {
         padding: 15px !important;
-        margin: 0 !important;
+        margin: 0 15px !important;
+    }
+
+    .new_r-item-wrap {
+        margin-bottom: 20px !important;
     }
 
     .new_r-item {
         flex-direction: column !important;
-        margin-bottom: 20px !important;
     }
 
     .new_r-item-img {
         width: 100% !important;
-        height: 250px !important;
+        height: 220px !important;
     }
 
     .new_r-lazy-img {
         width: 100% !important;
-        height: 250px !important;
+        height: 220px !important;
     }
 
     .new_r-p8 {
-        width: 60px !important;
-        height: 60px !important;
-    }
-
-    .new_r-item-rating-value {
-        font-size: 1rem !important;
+        width: 55px !important;
+        height: 55px !important;
     }
 
     .new_r-item-hotel {
-        font-size: 1.2rem !important;
-    }
-
-    .new_r-item-geo,
-    .new_r-item-from,
-    .new_r-item-date {
-        font-size: 0.85rem !important;
+        font-size: 1.1rem !important;
     }
 
     .new_price-value {
-        font-size: 1.3rem !important;
-    }
-
-    .new_r-item-table .new_r-item-col {
-        flex-direction: column !important;
-        gap: 10px !important;
+        font-size: 1.2rem !important;
     }
 }
 </style>
@@ -472,7 +443,7 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(document.body, { childList: true, subtree: true });
 });
 
-// КОЛІР РАМКИ ТА ЦИФРИ РЕЙТИНГУ (КВАДРАТНИЙ)
+// КОЛІР РАМКИ РЕЙТИНГУ
 document.addEventListener('DOMContentLoaded', function() {
     function updateRatingBorderColor() {
         const ratingContainers = document.querySelectorAll('.new_r-p8');
