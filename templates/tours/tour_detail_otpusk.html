@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Деталі туру{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="tour-detail-wrapper">
+        <!-- ТУТ БУДЕ КОНТЕНТ ТУРУ (без форми пошуку) -->
+        <div id="otpusk-tour-module">
+            <script>
+                var osGeo = '';
+                var osDefaultDeparture = '';
+                var osDefaultDuration = '';
+                var osDateFrom = '';
+                var osDateTo = '';
+                var osHotelCategory = '';
+                var osFood = '';
+                var osTransport = '';
+                var osTarget = '';
+                var osContainer = null;
+                var osTourContainer = null;
+                var osLang = 'ua';
+                var osTourTargetBlank = false;
+                var osOrderUrl = null;
+                var osCurrency = 'converted';
+                var osAutoStart = false;
+                
+                // Отримуємо параметри туру з URL
+                var urlParams = new URLSearchParams(window.location.search);
+                var hid = urlParams.get('hid');
+                var oid = urlParams.get('oid');
+                var od = urlParams.get('od');
+                var ol = urlParams.get('ol');
+                var tr = urlParams.get('tr');
+                
+                // Встановлюємо параметри для завантаження конкретного туру
+                window.location.hash = `#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}&tr=${tr}`;
+            </script>
+            <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+            <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+            <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+            <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+            <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+            <script src="https://export.otpusk.com/js/onsite/"></script>
+            <script src="https://export.otpusk.com/js/order"></script>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Приховуємо форму пошуку на сторінці детального туру */
+    #otpusk-tour-module .new_f-ext-container,
+    #otpusk-tour-module .new_r-filters-container,
+    #otpusk-tour-module .new_f-ext-btn,
+    #otpusk-tour-module .new_f-dropdown-body-top,
+    #otpusk-tour-module .new_f-ext-container,
+    #otpusk-tour-module .new_r-item-wrap,
+    #otpusk-tour-module .new_r-currency-switch,
+    #otpusk-tour-module .new_t-menu-back {
+        display: none !important;
+    }
+    
+    /* Але показуємо контент туру */
+    #otpusk-tour-module .new_t-container {
+        display: block !important;
+    }
+    
+    /* Прибираємо відступи */
+    #otpusk-tour-module {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+    
+    .tour-detail-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+</style>
+
+<!-- ========== БЛОК КОНСУЛЬТАЦІЇ ========== -->
+<div class="row justify-content-center my-5">
+    <div class="col-12 col-md-10 col-lg-8">
+        <div class="card border-0 shadow-sm" id="consultationCard">
+            <div class="card-body p-4 p-md-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">
+                    Довірте вибір спеціалістам
+                </h5>
+                <p class="text-muted mb-0">
+                    Залишіть заявку, щоб отримати персональний підбір турів
+                </p>
+                <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
+                    <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
+                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
+                             style="width: 40px; height: 40px;">
+                            <i class="fa-regular fa-user text-secondary"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold" style="font-size: 0.95rem;">
+                                {% if agent_site %}
+                                    {{ agent_site.user.get_full_name|default:agent_site.user.username }}
+                                {% else %}
+                                    {{ random_agent.get_full_name|default:random_agent.username }}
+                                {% endif %}
+                            </div>
+                            <div class="text-muted" style="font-size: 0.8rem;">
+                                9 років досвіду в туризмі
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
+                        <form id="consultationForm" novalidate>
+                            {% csrf_token %}
+                            <input type="hidden" name="consultation_submit" value="1">
+                            <div class="mb-3">
+                                <input type="text" name="name" id="consultationName" class="form-control" placeholder="Ваше ім'я" required>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-4">
+                                    <select name="country_code" class="form-select" required>
+                                        <option value="+380" selected>🇺🇦 +380</option>
+                                        <option value="+48">🇵🇱 +48</option>
+                                        <option value="+1">🇺🇸 +1</option>
+                                        <option value="+44">🇬🇧 +44</option>
+                                        <option value="+49">🇩🇪 +49</option>
+                                        <option value="+33">🇫🇷 +33</option>
+                                    </select>
+                                </div>
+                                <div class="col-8">
+                                    <input type="tel" name="phone" id="consultationPhone" class="form-control" placeholder="XXXXXXXXX" required
+                                           pattern="[0-9]+"
+                                           title="Тільки цифри (приклад: 501234567)"
+                                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)"
+                                           onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                </div>
+                            </div>
+                            <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">
+                                Залишити запит
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
+(function() {
+    const submitBtn = document.getElementById('submitConsultationBtn');
+    if (!submitBtn) return;
+
+    submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Збираємо дані з форми
+        const name = document.getElementById('consultationName')?.value || '';
+        const phone = document.getElementById('consultationPhone')?.value || '';
+        const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+        // Валідація
+        if (!name.trim()) {
+            console.log('Введіть ім\'я');
+            return;
+        }
+        if (!phone.trim()) {
+            console.log('Введіть телефон');
+            return;
+        }
+
+        // Визначаємо URL
+        let ajaxUrl = '/consultation-ajax/';
+        {% if agent_site %}
+        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
+        {% endif %}
+
+        // Відправляємо
+        fetch(ajaxUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: new URLSearchParams({
+                'name': name,
+                'phone': phone,
+                'country_code': countryCode,
+                'consultation_submit': '1'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Очищуємо форму
+                document.getElementById('consultationName').value = '';
+                document.getElementById('consultationPhone').value = '';
+                console.log('Заявка відправлена');
+            }
+        })
+        .catch(error => {
+            console.error('Помилка:', error);
+        });
+    });
+})();
+</script>
+{% endblock %}

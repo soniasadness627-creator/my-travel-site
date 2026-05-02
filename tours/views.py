@@ -218,6 +218,7 @@ def search_otpusk(request, slug=None):
     context = {'agent_site': agent_site}
     return render(request, 'tours/search_results_otpusk.html', context)
 
+
 def search_otpusk_by_country(request, slug=None):
     """Сторінка результатів пошуку для популярних напрямків (З БЛОКОМ КОНСУЛЬТАЦІЇ)"""
     agent_site = getattr(request, 'current_agent_site', None)
@@ -229,6 +230,19 @@ def search_otpusk_by_country(request, slug=None):
         'random_agent': get_random_agent(),
     }
     return render(request, 'tours/search_results_by_country.html', context)
+
+
+# ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (БЕЗ ФОРМИ ПОШУКУ) ==========
+def tour_detail_otpusk(request, slug=None):
+    """
+    Сторінка детального перегляду туру (без форми пошуку)
+    """
+    agent_site = getattr(request, 'current_agent_site', None)
+    context = {
+        'agent_site': agent_site,
+        'random_agent': get_random_agent(),  # для блоку консультації
+    }
+    return render(request, 'tours/tour_detail_otpusk.html', context)
 
 
 # ========== AJAX ОБРОБКА КОНСУЛЬТАЦІЇ ==========
