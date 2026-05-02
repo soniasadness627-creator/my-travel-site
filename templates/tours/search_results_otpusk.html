@@ -226,40 +226,43 @@ span.new_r-filter-value,
     color: white !important;
 }
 
-/* ========== КАРТКА ТУРУ - ВЕРТИКАЛЬНИЙ СПИСОК (ПО ОДНОМУ) ========== */
+/* ========== КАРТКА ТУРУ - ВЕРТИКАЛЬНИЙ СПИСОК, ОДИН ЗА ОДНИМ ========== */
 
-/* Контейнер результатів - блочний, не сітка */
+/* Контейнер результатів */
 .new_r-container {
     background: white !important;
     margin-top: 30px !important;
+    width: 100% !important;
 }
 
 .new_r-wrapper {
     display: block !important;
 }
 
-/* Картка туру - на всю ширину, одна під одною */
+/* Картка туру - ПО ОДНОМУ, НА ВСЮ ШИРИНУ */
 .new_r-item {
     background: white !important;
-    border-radius: 16px !important;
+    border-radius: 20px !important;
     border: 1px solid #e2e8f0 !important;
-    margin-bottom: 24px !important;
+    margin-bottom: 30px !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: row !important;
     transition: all 0.3s ease !important;
+    width: 100% !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
 }
 
 .new_r-item:hover {
     border-color: var(--primary-color) !important;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
-    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12) !important;
+    transform: translateY(-3px) !important;
 }
 
-/* Контейнер для фото - фіксована ширина зліва */
+/* Фото - збільшене */
 .new_r-item-img {
-    width: 280px !important;
-    height: 220px !important;
+    width: 320px !important;
+    height: 260px !important;
     object-fit: cover !important;
     display: block !important;
     flex-shrink: 0 !important;
@@ -272,17 +275,17 @@ span.new_r-filter-value,
     flex-shrink: 0 !important;
 }
 
-/* Рейтинг поверх фото (зверху справа) */
+/* Рейтинг поверх фото */
 .new_r-item-rating-container {
     position: absolute !important;
-    top: 12px !important;
-    right: 12px !important;
+    top: 15px !important;
+    right: 15px !important;
     z-index: 10 !important;
 }
 
 /* Тіло картки - вся інформація ПРАВОРУЧ ВІД ФОТО */
 .new_r-item-body {
-    padding: 16px !important;
+    padding: 20px !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
@@ -290,57 +293,52 @@ span.new_r-filter-value,
     min-width: 0 !important;
 }
 
-/* Верхня частина з інформацією */
-.new_r-item-body > div:first-child {
-    flex: 1 !important;
-}
-
 /* Назва готелю + зірки */
 .new_r-item-hotel {
-    font-size: 1.1rem !important;
+    font-size: 1.3rem !important;
     font-weight: 700 !important;
     color: #1a202c !important;
-    margin: 0 0 8px 0 !important;
+    margin: 0 0 10px 0 !important;
     display: flex !important;
     align-items: center !important;
     flex-wrap: wrap !important;
-    gap: 8px !important;
+    gap: 10px !important;
 }
 
 /* Зірки */
 .new_r-item-stars {
     display: inline-flex !important;
-    gap: 3px !important;
+    gap: 4px !important;
 }
 
 /* Місцезнаходження */
 .new_r-item-geo {
     display: flex !important;
     align-items: center !important;
-    gap: 6px !important;
-    font-size: 0.85rem !important;
+    gap: 8px !important;
+    font-size: 0.95rem !important;
     color: #666 !important;
-    margin: 0 0 8px 0 !important;
+    margin: 0 0 12px 0 !important;
 }
 
-/* Харчування (все включено) */
+/* Харчування */
 .new_r-item-food {
     display: inline-block !important;
     background: #e2e8f0 !important;
-    padding: 4px 12px !important;
-    border-radius: 20px !important;
-    font-size: 0.75rem !important;
+    padding: 6px 14px !important;
+    border-radius: 25px !important;
+    font-size: 0.85rem !important;
     color: #1a202c !important;
     width: fit-content !important;
-    margin: 0 0 8px 0 !important;
+    margin: 0 0 12px 0 !important;
 }
 
 /* Таблиця з деталями вильоту */
 .new_r-item-table {
     display: flex !important;
     flex-wrap: wrap !important;
-    gap: 16px !important;
-    margin: 8px 0 !important;
+    gap: 20px !important;
+    margin: 12px 0 !important;
 }
 
 /* Рядок з інформацією */
@@ -348,38 +346,42 @@ span.new_r-filter-value,
 .new_r-item-date {
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important;
-    font-size: 0.85rem !important;
+    gap: 10px !important;
+    font-size: 0.95rem !important;
     color: #555 !important;
 }
 
 /* Іконки */
 .new_r-item-icon {
-    width: 16px !important;
-    height: 16px !important;
+    width: 18px !important;
+    height: 18px !important;
     fill: #888 !important;
 }
 
-/* Ціна - знизу справа */
+/* Ціна - знизу справа, більша */
 .new_r-item-price {
     display: flex !important;
     justify-content: flex-end !important;
     align-items: baseline !important;
-    margin-top: 10px !important;
-    padding-top: 12px !important;
+    margin-top: 15px !important;
+    padding-top: 15px !important;
     border-top: 1px solid #e2e8f0 !important;
-    gap: 8px !important;
+    gap: 10px !important;
     flex-wrap: wrap !important;
+}
+
+.new_price-value {
+    font-size: 1.5rem !important;
 }
 
 /* Текст "за двох" */
 .new_price-desc {
-    font-size: 0.8rem !important;
+    font-size: 0.9rem !important;
     color: #666 !important;
     font-weight: normal !important;
 }
 
-/* Ховаємо старі непотрібні елементи */
+/* Ховаємо старі елементи */
 .new_r-item-col {
     display: block !important;
     width: auto !important;
@@ -388,30 +390,29 @@ span.new_r-filter-value,
 .new_r-item-table .new_r-item-col {
     display: flex !important;
     flex-direction: row !important;
-    gap: 16px !important;
+    gap: 20px !important;
 }
 
-/* Рейтинг квадратний */
+/* Рейтинг квадратний - збільшений */
 .new_r-p8 {
-    width: 58px !important;
-    height: 58px !important;
+    width: 70px !important;
+    height: 70px !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     background: white !important;
-    border-radius: 8px !important;
+    border-radius: 12px !important;
     border-width: 2px !important;
     border-style: solid !important;
     box-sizing: border-box !important;
-    position: relative !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
 }
 
 .new_r-item-rating-value {
     font-weight: 800 !important;
-    font-size: 1rem !important;
-    margin: 0 0 2px 0 !important;
+    font-size: 1.2rem !important;
+    margin: 0 0 4px 0 !important;
     line-height: 1 !important;
 }
 
@@ -419,14 +420,14 @@ span.new_r-filter-value,
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    font-size: 0.45rem !important;
+    font-size: 0.55rem !important;
     color: #888 !important;
-    line-height: 1.1 !important;
+    line-height: 1.2 !important;
 }
 
 .new_r-item-rating-rev span {
     font-weight: 700 !important;
-    font-size: 0.65rem !important;
+    font-size: 0.75rem !important;
     color: #555 !important;
 }
 
@@ -458,28 +459,37 @@ span.new_r-filter-value,
         margin-top: 10px !important;
     }
 
-    /* На мобільних картка стає вертикальною */
+    /* На мобільних картка вертикальна */
     .new_r-item {
         flex-direction: column !important;
+        margin-bottom: 20px !important;
     }
 
     .new_r-item-img {
         width: 100% !important;
-        height: 200px !important;
+        height: 220px !important;
     }
 
     .new_r-p8 {
-        width: 50px !important;
-        height: 50px !important;
+        width: 55px !important;
+        height: 55px !important;
     }
 
     .new_r-item-rating-value {
-        font-size: 0.9rem !important;
+        font-size: 1rem !important;
+    }
+
+    .new_r-item-hotel {
+        font-size: 1.1rem !important;
+    }
+
+    .new_price-value {
+        font-size: 1.2rem !important;
     }
 
     .new_r-item-table .new_r-item-col {
         flex-direction: column !important;
-        gap: 8px !important;
+        gap: 10px !important;
     }
 }
 </style>
