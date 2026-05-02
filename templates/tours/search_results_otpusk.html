@@ -589,4 +589,21 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', handleTourClick);
 })();
 </script>
+<script>
+// ========== ЗБЕРІГАЄМО URL ПОШУКУ ДЛЯ КНОПКИ "ПОВЕРНУТИСЯ" ==========
+(function() {
+    // Зберігаємо поточний URL при завантаженні сторінки
+    localStorage.setItem('lastSearchUrl', window.location.href);
+    console.log('Збережено URL пошуку:', window.location.href);
+
+    // Також зберігаємо при кліку на тур (на випадок, якщо URL зміниться)
+    document.addEventListener('click', function(e) {
+        const tourLink = e.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
+        if (tourLink) {
+            localStorage.setItem('lastSearchUrl', window.location.href);
+            console.log('Оновлено URL пошуку перед переходом:', window.location.href);
+        }
+    });
+})();
+</script>
 {% endblock %}
