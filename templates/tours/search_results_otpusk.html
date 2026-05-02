@@ -38,7 +38,30 @@
         </div>
     </div>
 </div>
-
+<!-- ДІАГНОСТИЧНИЙ БЛОК -->
+<div style="background: #f8d7da; padding: 15px; margin-bottom: 20px; border: 1px solid #f5c6cb; border-radius: 8px; font-family: monospace;">
+    <strong>🔍 ДІАГНОСТИКА:</strong><br>
+    URL: <span id="diag-url"></span><br>
+    hid: <span id="diag-hid"></span><br>
+    oid: <span id="diag-oid"></span><br>
+    od: <span id="diag-od"></span><br>
+    ol: <span id="diag-ol"></span><br>
+    <span id="diag-msg"></span>
+</div>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const hash = window.location.hash;
+    document.getElementById('diag-url').innerText = window.location.href;
+    document.getElementById('diag-hid').innerText = urlParams.get('hid') || (hash.match(/hid=(\d+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
+    document.getElementById('diag-oid').innerText = urlParams.get('oid') || (hash.match(/oid=([\d]+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
+    document.getElementById('diag-od').innerText = urlParams.get('od') || (hash.match(/od=([\d-]+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
+    document.getElementById('diag-ol').innerText = urlParams.get('ol') || (hash.match(/ol=(\d+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
+    if (urlParams.get('hid') && urlParams.get('oid')) {
+        document.getElementById('diag-msg').innerHTML = '✅ Параметри передаються коректно';
+    } else {
+        document.getElementById('diag-msg').innerHTML = '⚠️ ПАРАМЕТРИ НЕ ПЕРЕДАЮТЬСЯ!';
+    }
+</script>
 <style>
 /* ========== ОСНОВНІ СТИЛІ ========== */
 
@@ -505,45 +528,64 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <script>
-// ========== ПЕРЕХОПЛЕННЯ КЛІКІВ НА ТУРИ (ВИПРАВЛЕНИЙ) ==========
+// ========== ПЕРЕХОПЛЕННЯ КЛІКІВ НА ТУРИ (ПОКРАЩЕНИЙ) ==========
 (function() {
-    function getUrlParamsFromHash(url) {
-        let hash = url.split('#')[1] || '';
-        // Видаляємо перший символ ! якщо він є
-        hash = hash.replace(/^!/, '');
-        let params = new URLSearchParams(hash);
-        return {
-            hid: params.get('hid'),
-            oid: params.get('oid'),
-            od: params.get('od'),
-            ol: params.get('ol'),
-            tr: params.get('tr')
-        };
+    console.log('Скрипт перехоплення активовано');
+
+    function extractParamsFromUrl(url) {
+        // Шукаємо параметри в різних форматах
+        let hid = url.match(/hid=(\d+)/)?.[1];
+        let oid = url.match(/oid=([\d]+)/)?.[1];
+        let od = url.match(/od=([\d-]+)/)?.[1];
+        let ol = url.match(/ol=(\d+)/)?.[1];
+
+        // Якщо не знайшли в прямому вигляді, шукаємо в хеші
+        if (!hid) {
+            let hash = url.split('#')[1] || '';
+            hid = hash.match(/hid=(\d+)/)?.[1];
+            oid = hash.match(/oid=([\d]+)/)?.[1];
+            od = hash.match(/od=([\d-]+)/)?.[1];
+            ol = hash.match(/ol=(\d+)/)?.[1];
+        }
+
+        return { hid, oid, od, ol };
     }
 
     function handleTourClick(event) {
-        let target = event.target.closest('a[href*="#!"], .new_r-item a, .new_t-order-btn');
+        // Шукаємо елемент, на який клікнули
+        let target = event.target.closest('.new_r-item, .new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
         if (!target) return;
 
+        // Отримуємо URL
         let url = target.href || target.getAttribute('data-uri') || '';
-        if (!url.includes('hid=') && !url.includes('#!')) return;
+
+        // Якщо клікнули на картку, але не на посилання - шукаємо посилання всередині
+        if (!url && target.classList.contains('new_r-item')) {
+            let link = target.querySelector('a');
+            if (link) url = link.href;
+        }
+
+        if (!url || (!url.includes('hid=') && !url.includes('#!'))) return;
 
         event.preventDefault();
         event.stopPropagation();
 
-        let params = getUrlParamsFromHash(url);
+        let params = extractParamsFromUrl(url);
 
         if (params.hid && params.oid) {
             let baseUrl = window.location.pathname.startsWith('/a/')
                 ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
                 : '/tour-detail/';
 
-            let newUrl = `${baseUrl}?hid=${params.hid}&oid=${params.oid}&od=${params.od || ''}&ol=${params.ol || ''}&tr=${params.tr || ''}`;
+            let newUrl = `${baseUrl}?hid=${params.hid}&oid=${params.oid}&od=${params.od || ''}&ol=${params.ol || ''}`;
             console.log('Перенаправляємо на:', newUrl);
             window.location.href = newUrl;
+        } else {
+            console.log('Не знайдено параметри туру в URL:', url);
         }
     }
 
+    // Додаємо обробник кліків
     document.addEventListener('click', handleTourClick);
 })();
 </script>
