@@ -136,7 +136,7 @@
                     <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
                         <form id="bookingForm" novalidate>
                             {% csrf_token %}
-                            <input type="hidden" name="booking_submit" value="1">
+                            <input type="hidden" name="consultation_submit" value="1">
 
                             <!-- Приховані поля для передачі інформації про тур -->
                             <input type="hidden" name="tour_hid" id="tourHid" value="">
@@ -167,10 +167,7 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <input type="email" name="email" id="bookingEmail" class="form-control" placeholder="Ваш Email" required>
-                            </div>
-                            <div class="mb-3">
-                                <textarea name="message" id="bookingMessage" class="form-control" rows="3" placeholder="Ваші побажання (необов'язково)"></textarea>
+                                <textarea name="comment" id="bookingMessage" class="form-control" rows="3" placeholder="Ваші побажання (необов'язково)"></textarea>
                             </div>
                             <button type="button" class="btn w-100" id="submitBookingBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">
                                 <i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур
@@ -237,34 +234,43 @@ setTimeout(function() {
     console.log('Дані туру зібрано:', {hotelName, price, dateText, hid});
 }, 2500);
 
-// ========== 3. ТЕСТОВИЙ AJAX ВІДПРАВЛЕННЯ (ЗАМІСТЬ СТАРОГО) ==========
+// ========== 3. AJAX ВІДПРАВЛЕННЯ ФОРМИ В КОНСУЛЬТАЦІЇ ==========
 (function() {
     const submitBtn = document.getElementById('submitBookingBtn');
-    if (!submitBtn) {
-        console.error('❌ Кнопка submitBookingBtn НЕ ЗНАЙДЕНА!');
-        return;
-    }
-    console.log('✅ Кнопка знайдена, додаємо обробник');
+    if (!submitBtn) return;
 
     submitBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        console.log('🔴 КЛІК ПО КНОПЦІ СПРАЦЮВАВ!');
 
-        // Збираємо дані з форми
-        const name = document.getElementById('bookingName')?.value.trim() || 'Тестовий Клієнт';
-        const phone = document.getElementById('bookingPhone')?.value.trim() || '123456789';
-        const email = document.getElementById('bookingEmail')?.value.trim() || 'test@example.com';
+        const name = document.getElementById('bookingName')?.value.trim() || '';
+        const phone = document.getElementById('bookingPhone')?.value.trim() || '';
+        const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
+        const tourName = document.getElementById('tourName')?.value || '';
+        const tourPrice = document.getElementById('tourPrice')?.value || '';
+        const tourDates = document.getElementById('tourDates')?.value || '';
+        const userComment = document.getElementById('bookingMessage')?.value || '';
 
-        console.log('📤 Відправляємо дані:', {name: name, phone: phone, email: email});
+        // Формуємо коментар для консультації
+        let fullComment = `Тур: ${tourName}\n`;
+        if (tourPrice) fullComment += `Ціна: ${tourPrice}\n`;
+        if (tourDates) fullComment += `Дати: ${tourDates}\n`;
+        if (userComment) fullComment += `Коментар клієнта: ${userComment}`;
+
+        if (!name) {
+            alert('Будь ласка, введіть ваше ім\'я');
+            return;
+        }
+        if (!phone) {
+            alert('Будь ласка, введіть номер телефону');
+            return;
+        }
 
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-        console.log('CSRF токен:', csrfToken ? 'є' : 'немає');
 
-        let ajaxUrl = '/booking-ajax/';
+        let ajaxUrl = '/consultation-ajax/';
         {% if agent_site %}
-        ajaxUrl = '/a/{{ agent_site.slug }}/booking-ajax/';
+        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
         {% endif %}
-        console.log('📍 URL запиту:', ajaxUrl);
 
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Відправляємо...';
@@ -278,29 +284,31 @@ setTimeout(function() {
             body: new URLSearchParams({
                 'name': name,
                 'phone': phone,
-                'email': email,
-                'country_code': '+380',
-                'booking_submit': '1'
+                'country_code': countryCode,
+                'comment': fullComment,
+                'consultation_submit': '1'
             })
         })
-        .then(response => {
-            console.log('📥 Статус відповіді:', response.status);
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            console.log('📦 Відповідь сервера:', data);
             if (data.success) {
-                alert('✅ ТЕСТОВА заявка відправлена успішно!');
                 document.getElementById('bookingName').value = '';
                 document.getElementById('bookingPhone').value = '';
-                document.getElementById('bookingEmail').value = '';
+                document.getElementById('bookingMessage').value = '';
+
+                const successMsg = document.createElement('div');
+                successMsg.className = 'alert alert-success mt-3';
+                successMsg.innerHTML = '<i class="fa-regular fa-circle-check me-2"></i> Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом.';
+                successMsg.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 9999; background: #22c55e; color: white; border: none; border-radius: 12px; padding: 12px 20px; animation: slideIn 0.3s ease;';
+                document.body.appendChild(successMsg);
+                setTimeout(() => successMsg.remove(), 5000);
             } else {
-                alert('❌ Помилка: ' + (data.error || 'Невідома помилка'));
+                alert('❌ ' + (data.error || 'Сталася помилка. Спробуйте ще раз.'));
             }
         })
         .catch(error => {
-            console.error('❌ ПОМИЛКА FETCH:', error);
-            alert('❌ Помилка з\'єднання: ' + error.message);
+            console.error('Помилка:', error);
+            alert('❌ Помилка з\'єднання. Спробуйте пізніше.');
         })
         .finally(() => {
             submitBtn.disabled = false;
@@ -319,14 +327,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 </script>
-
-<script>
-console.log('=== ДІАГНОСТИКА ===');
-console.log('agent_site:', {% if agent_site %}true{% else %}false{% endif %});
-{% if agent_site %}
-console.log('slug:', '{{ agent_site.slug }}');
-{% endif %}
-console.log('submitBookingBtn:', document.getElementById('submitBookingBtn'));
-</script>
-
 {% endblock %}
