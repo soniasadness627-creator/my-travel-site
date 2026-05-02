@@ -72,12 +72,6 @@
         display: block !important;
     }
 
-    /* Кнопка "Повернутися" - залишаємо видимою */
-    #otpusk-tour-module .new_t-menu-back {
-        display: block !important;
-        margin-bottom: 20px !important;
-    }
-
     /* Очищаємо фон і рамки модуля */
     #otpusk-tour-module {
         background: transparent !important;
@@ -103,9 +97,9 @@
     }
 </style>
 
-<!-- Додаткова кнопка "Повернутися" (на випадок, якщо оригінальна не працює) -->
+<!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" (без повідомлення) -->
 <div class="container my-3">
-    <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm" id="customBackBtn">
+    <a href="#" id="customBackButton" class="btn btn-outline-secondary btn-sm">
         <i class="fa-solid fa-arrow-left me-1"></i> ← Повернутися до результатів пошуку
     </a>
 </div>
@@ -324,50 +318,45 @@ setTimeout(function() {
     });
 })();
 
-// ========== 4. ВИПРАВЛЕННЯ КНОПКИ "ПОВЕРНУТИСЯ" ==========
-setTimeout(function() {
-    // Шукаємо оригінальну кнопку "Повернутися"
-    const originalBackLink = document.querySelector('.new_t-menu-back-link');
-    const customBackBtn = document.getElementById('customBackBtn');
+// ========== 4. КНОПКА "ПОВЕРНУТИСЯ" (через localStorage) ==========
+const savedUrl = localStorage.getItem('lastSearchUrl');
+const backBtn = document.getElementById('customBackButton');
 
-    // Отримуємо збережений URL пошуку з localStorage
-    let savedSearchUrl = localStorage.getItem('lastSearchUrl');
-
-    if (savedSearchUrl && savedSearchUrl.includes('search-otpusk')) {
-        // Якщо є збережений URL, оновлюємо обидві кнопки
-        if (originalBackLink) {
-            originalBackLink.href = savedSearchUrl;
-            console.log('Оригінальна кнопка оновлена:', savedSearchUrl);
-        }
-        if (customBackBtn) {
-            customBackBtn.href = savedSearchUrl;
-        }
+if (backBtn) {
+    if (savedUrl && savedUrl.includes('search-otpusk')) {
+        backBtn.href = savedUrl;
+        backBtn.onclick = function(e) {
+            e.preventDefault();
+            window.location.href = savedUrl;
+        };
+        console.log('Кнопка "Повернутися" веде на:', savedUrl);
     } else {
-        // Якщо немає збереженого URL, використовуємо історію
-        if (customBackBtn) {
-            customBackBtn.href = 'javascript:history.back()';
-        }
-        if (originalBackLink) {
-            originalBackLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                window.history.back();
-            });
-        }
+        backBtn.href = 'javascript:history.back()';
+        console.log('Кнопка "Повернутися" використовує history.back()');
     }
-}, 1500);
-</script>
+}
 
-<!-- Додаємо CSS для анімації -->
-<style>
+// Додаємо CSS для анімації
+const style = document.createElement('style');
+style.textContent = `
     @keyframes slideIn {
         from { opacity: 0; transform: translateX(100%); }
         to { opacity: 1; transform: translateX(0); }
     }
-    #customBackBtn {
+    #customBackButton {
         transition: all 0.3s ease;
     }
-    #customBackBtn:hover {
+    #customBackButton:hover {
         transform: translateX(-3px);
     }
-</style>
+    .alert-success {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        animation: slideIn 0.3s ease;
+    }
+`;
+document.head.appendChild(style);
+</script>
 {% endblock %}
