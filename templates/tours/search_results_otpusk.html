@@ -196,29 +196,25 @@ span.currency {
     margin-bottom: 24px !important;
 }
 
-/* КАРТКА ТУРУ - ОДИН ПІД ОДНИМ */
+/* КАРТКА ТУРУ - ВЕРТИКАЛЬНИЙ СТОВПЧИК */
 .new_r-item {
     background: white !important;
     border-radius: 16px !important;
     border: 1px solid #e2e8f0 !important;
+    margin-bottom: 24px !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: row !important;
+    align-items: stretch !important;  /* ДОДАНО - розтягує по висоті */
     transition: all 0.3s ease !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
     width: 100% !important;
 }
 
-.new_r-item:hover {
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
-    transform: translateY(-2px) !important;
-}
-
-/* ФОТО */
+/* ФОТО - НА ВСЮ ВИСОТУ КАРТКИ */
 .new_r-item-img {
     width: 280px !important;
-    height: 280px !important;
+    height: 100% !important;
     object-fit: cover !important;
     display: block !important;
     flex-shrink: 0 !important;
@@ -229,7 +225,9 @@ span.currency {
     display: block !important;
     flex-shrink: 0 !important;
     width: 280px !important;
-    height: 280px !important;
+    height: 100% !important;
+    background-size: cover !important;
+    background-position: center !important;
 }
 
 /* КВАДРАТНИЙ РЕЙТИНГ */
