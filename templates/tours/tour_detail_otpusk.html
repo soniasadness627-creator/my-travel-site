@@ -4,6 +4,30 @@
 {% block title %}Деталі туру{% endblock %}
 
 {% block content %}
+<!-- ДІАГНОСТИЧНИЙ БЛОК -->
+<div style="background: #f8d7da; padding: 15px; margin-bottom: 20px; border: 1px solid #f5c6cb; border-radius: 8px; font-family: monospace;">
+    <strong>🔍 ДІАГНОСТИКА:</strong><br>
+    URL: <span id="diag-url"></span><br>
+    hid: <span id="diag-hid"></span><br>
+    oid: <span id="diag-oid"></span><br>
+    od: <span id="diag-od"></span><br>
+    ol: <span id="diag-ol"></span><br>
+    <span id="diag-msg"></span>
+</div>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const hash = window.location.hash;
+    document.getElementById('diag-url').innerText = window.location.href;
+    document.getElementById('diag-hid').innerText = urlParams.get('hid') || (hash.match(/hid=(\d+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
+    document.getElementById('diag-oid').innerText = urlParams.get('oid') || (hash.match(/oid=([\d]+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
+    document.getElementById('diag-od').innerText = urlParams.get('od') || (hash.match(/od=([\d-]+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
+    document.getElementById('diag-ol').innerText = urlParams.get('ol') || (hash.match(/ol=(\d+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
+    if (urlParams.get('hid') && urlParams.get('oid')) {
+        document.getElementById('diag-msg').innerHTML = '✅ Параметри передаються коректно';
+    } else {
+        document.getElementById('diag-msg').innerHTML = '⚠️ ПАРАМЕТРИ НЕ ПЕРЕДАЮТЬСЯ!';
+    }
+</script>
 <div class="container my-5">
     <div class="tour-detail-wrapper">
         <div id="otpusk-tour-module">
