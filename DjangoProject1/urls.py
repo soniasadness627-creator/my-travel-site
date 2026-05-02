@@ -80,6 +80,10 @@ urlpatterns = [
     path('a/<slug:slug>/search-otpusk-by-country/', tours_views.search_otpusk_by_country,
          name='agent_search_otpusk_by_country'),
 
+    # ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (БЕЗ ФОРМИ ПОШУКУ) ==========
+    path('tour-detail/', tours_views.tour_detail_otpusk, name='tour_detail_otpusk'),
+    path('a/<slug:slug>/tour-detail/', tours_views.tour_detail_otpusk, name='agent_tour_detail_otpusk'),
+
     # ========== КОНСУЛЬТАЦІЯ (ЗВИЧАЙНА ФОРМА З ПЕРЕНАПРАВЛЕННЯМ) ==========
     path('consultation/', TemplateView.as_view(template_name='tours/consultation_form.html'), name='consultation'),
 

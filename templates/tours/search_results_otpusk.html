@@ -504,4 +504,103 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(document.body, { childList: true, subtree: true });
 });
 </script>
+<script>
+// ========== ПЕРЕХОПЛЕННЯ КЛІКІВ НА ТУРИ ==========
+document.addEventListener('DOMContentLoaded', function() {
+    // Функція для зміни посилань на тури
+    function redirectToTourDetail() {
+        // Знаходимо всі посилання на тури
+        const tourLinks = document.querySelectorAll('.new_r-item a[href*="page=tour"], .new_r-item a[href*="#!"]');
+
+        tourLinks.forEach(link => {
+            // Отримуємо оригінальний href
+            const originalHref = link.getAttribute('href');
+            if (!originalHref) return;
+
+            // Витягуємо параметри туру
+            const match = originalHref.match(/hid=(\d+).*?oid=([\d]+).*?od=([\d-]+).*?ol=(\d+)/);
+            if (match) {
+                const hid = match[1];
+                const oid = match[2];
+                const od = match[3];
+                const ol = match[4];
+
+                // Визначаємо базовий URL
+                let baseUrl = '';
+                {% if agent_site %}
+                baseUrl = `/a/{{ agent_site.slug }}/tour-detail/`;
+                {% else %}
+                baseUrl = '/tour-detail/';
+                {% endif %}
+
+                // Формуємо нове посилання
+                const newUrl = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od}&ol=${ol}`;
+                link.setAttribute('href', newUrl);
+                link.setAttribute('data-original-href', originalHref);
+            }
+        });
+    }
+
+    // Запускаємо після завантаження сторінки
+    setTimeout(redirectToTourDetail, 1000);
+
+    // Слідкуємо за змінами в DOM (бо Otpusk додає контент динамічно)
+    const observer = new MutationObserver(function(mutations) {
+        setTimeout(redirectToTourDetail, 500);
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+});
+
+// ========== ПЕРЕХОПЛЕННЯ КЛІКІВ НА КНОПЦІ "Замовити тур" ==========
+document.addEventListener('DOMContentLoaded', function() {
+    function fixBookingButtons() {
+        const buttons = document.querySelectorAll('.new_t-order-btn.new_t-order-btn-true, .new_t-order-btn');
+
+        buttons.forEach(btn => {
+            const originalUrl = btn.getAttribute('data-uri');
+            if (originalUrl && originalUrl.includes('page=tour')) {
+                // Якщо кнопка веде на тур - змінюємо посилання
+                const match = originalUrl.match(/hid=(\d+).*?oid=([\d]+).*?od=([\d-]+).*?ol=(\d+)/);
+                if (match) {
+                    const hid = match[1];
+                    const oid = match[2];
+                    const od = match[3];
+                    const ol = match[4];
+
+                    let baseUrl = '';
+                    {% if agent_site %}
+                    baseUrl = `/a/{{ agent_site.slug }}/tour-detail/`;
+                    {% else %}
+                    baseUrl = '/tour-detail/';
+                    {% endif %}
+
+                    const newUrl = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od}&ol=${ol}`;
+                    btn.setAttribute('data-uri', newUrl);
+
+                    // Змінюємо onclick
+                    btn.onclick = function(e) {
+                        e.preventDefault();
+                        window.location.href = newUrl;
+                    };
+                }
+            }
+        });
+    }
+
+    setTimeout(fixBookingButtons, 1500);
+
+    const observer = new MutationObserver(function() {
+        setTimeout(fixBookingButtons, 500);
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+});
+</script>
 {% endblock %}
