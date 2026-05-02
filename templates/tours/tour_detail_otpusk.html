@@ -4,105 +4,58 @@
 {% block title %}Деталі туру{% endblock %}
 
 {% block content %}
-<!-- ДІАГНОСТИЧНИЙ БЛОК -->
-<div style="background: #f8d7da; padding: 15px; margin-bottom: 20px; border: 1px solid #f5c6cb; border-radius: 8px; font-family: monospace;">
-    <strong>🔍 ДІАГНОСТИКА:</strong><br>
-    URL: <span id="diag-url"></span><br>
-    hid: <span id="diag-hid"></span><br>
-    oid: <span id="diag-oid"></span><br>
-    od: <span id="diag-od"></span><br>
-    ol: <span id="diag-ol"></span><br>
-    <span id="diag-msg"></span>
-</div>
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    document.getElementById('diag-url').innerText = window.location.href;
-    document.getElementById('diag-hid').innerText = urlParams.get('hid') || '❌ НЕ ЗНАЙДЕНО';
-    document.getElementById('diag-oid').innerText = urlParams.get('oid') || '❌ НЕ ЗНАЙДЕНО';
-    document.getElementById('diag-od').innerText = urlParams.get('od') || '❌ НЕ ЗНАЙДЕНО';
-    document.getElementById('diag-ol').innerText = urlParams.get('ol') || '❌ НЕ ЗНАЙДЕНО';
-    if (urlParams.get('hid') && urlParams.get('oid')) {
-        document.getElementById('diag-msg').innerHTML = '✅ Параметри передаються коректно';
-    } else {
-        document.getElementById('diag-msg').innerHTML = '⚠️ ПАРАМЕТРИ НЕ ПЕРЕДАЮТЬСЯ!';
-    }
-</script>
-
 <div class="container my-5">
-    <div class="tour-detail-wrapper">
-        <!-- АЛЬТЕРНАТИВНЕ ЗАВАНТАЖЕННЯ ТУРУ ЧЕРЕЗ IFRAME -->
-        <div id="tour-iframe-container" style="min-height: 600px;">
-            <div style="text-align: center; padding: 50px;">
-                <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-                <p>Завантаження інформації про тур...</p>
-            </div>
-        </div>
+    <div id="otpusk-tour-module">
+        <script>
+            // 1. Отримуємо параметри туру з рядка запиту URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const hid = urlParams.get('hid');
+            const oid = urlParams.get('oid');
+            const od = urlParams.get('od');
+            const ol = urlParams.get('ol');
+            const tr = urlParams.get('tr');
+
+            // 2. Глобальні змінні для модуля Otpusk (вони обов'язкові)
+            var osGeo = '';
+            var osDefaultDeparture = '';
+            var osDefaultDuration = '';
+            var osDateFrom = '';
+            var osDateTo = '';
+            var osHotelCategory = '';
+            var osFood = '';
+            var osTransport = '';
+            var osTarget = '';
+            var osContainer = null;
+            var osTourContainer = null;
+            var osLang = 'ua';
+            var osTourTargetBlank = false;
+            var osOrderUrl = null;
+            var osCurrency = 'converted';
+            // ВАЖЛИВО: ЗМІНЮЄМО osAutoStart на false, щоб модуль не починав пошук сам
+            var osAutoStart = false;
+
+            // 3. ЗАВАНТАЖУЄМО КОНКРЕТНИЙ ТУР. Це фокус усієї сторінки.
+            if (hid && oid && od && ol) {
+                // Встановлюємо хеш, який накаже модулю відкрити потрібний тур
+                window.location.hash = `#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}&page=tour`;
+                console.log('Спроба завантажити тур:', window.location.hash);
+            } else {
+                console.warn('Параметри туру відсутні. URL має містити hid, oid, od, ol');
+                document.write('<p style="color:red; padding:20px;">❌ Помилка: Параметри туру не передано.</p>');
+            }
+        </script>
+        <!-- Підключаємо оригінальні скрипти Otpusk -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+        <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+        <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+        <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+        <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+        <script src="https://export.otpusk.com/js/onsite/"></script>
+        <script src="https://export.otpusk.com/js/order"></script>
     </div>
 </div>
 
-<script>
-    (function() {
-        // Отримуємо параметри туру
-        const urlParams = new URLSearchParams(window.location.search);
-        const hid = urlParams.get('hid');
-        const oid = urlParams.get('oid');
-        const od = urlParams.get('od');
-        const ol = urlParams.get('ol');
-
-        console.log('Параметри туру:', {hid, oid, od, ol});
-
-        if (hid && oid) {
-            // Формуємо URL для iframe з правильними параметрами
-            let baseUrl = window.location.pathname.startsWith('/a/')
-                ? `/a/${window.location.pathname.split('/')[2]}/search-otpusk/`
-                : '/search-otpusk/';
-
-            // Формуємо хеш для прямого відкриття туру
-            const hash = `#!hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}&page=tour`;
-            const iframeUrl = baseUrl + hash;
-
-            console.log('Завантажуємо iframe:', iframeUrl);
-
-            // Створюємо iframe для завантаження туру
-            const container = document.getElementById('tour-iframe-container');
-            container.innerHTML = `
-                <iframe
-                    src="${iframeUrl}"
-                    style="width: 100%; min-height: 80vh; border: none; border-radius: 16px;"
-                    onload="this.style.opacity='1'"
-                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-popups-to-escape-sandbox"
-                ></iframe>
-                <div style="text-align: center; margin-top: 20px;">
-                    <a href="${iframeUrl}" target="_blank" class="btn btn-outline-primary">
-                        <i class="fa-solid fa-external-link-alt"></i> Відкрити в повноекранному режимі
-                    </a>
-                </div>
-            `;
-        } else {
-            document.getElementById('tour-iframe-container').innerHTML = `
-                <div class="alert alert-warning">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    Параметри туру відсутні. Будь ласка, спробуйте ще раз з головної сторінки пошуку.
-                </div>
-            `;
-        }
-    })();
-</script>
-
-<style>
-    #tour-iframe-container iframe {
-        background: white;
-        transition: opacity 0.3s ease;
-        opacity: 0;
-    }
-
-    .tour-detail-wrapper {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-</style>
-
-<!-- Блок консультації -->
+<!-- Блок консультації (залишаємо без змін) -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
         <div class="card border-0 shadow-sm" id="consultationCard">
@@ -166,7 +119,7 @@
 </div>
 
 <script>
-// AJAX для консультації
+// AJAX для консультації (ваш оригінальний код)
 (function() {
     const submitBtn = document.getElementById('submitConsultationBtn');
     if (!submitBtn) return;
@@ -205,11 +158,11 @@
             if (data.success) {
                 document.getElementById('consultationName').value = '';
                 document.getElementById('consultationPhone').value = '';
+                alert('✅ Заявку відправлено!');
             }
         })
         .catch(error => console.error('Помилка:', error));
     });
 })();
 </script>
-
 {% endblock %}
