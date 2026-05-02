@@ -4,14 +4,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect
-from django.views.generic import TemplateView
 from tours import views as tours_views
 from constructor import views as constructor_views
 from constructor.agent_admin import agent_admin_site
 from landing import views as landing_views
+from django.views.generic import TemplateView
 
 # ========== ОБРОБНИК ПОМИЛКИ CSRF ==========
 from django.views.csrf import csrf_failure
+
 
 # ========== ФУНКЦІЯ ДЛЯ ПЕРЕНАПРАВЛЕННЯ ГОЛОВНОЇ СТОРІНКИ ==========
 def home_redirect(request):
@@ -24,18 +25,18 @@ def home_redirect(request):
 
     # Перевіряємо, чи це локальний запит
     if host.startswith('127.0.0.1') or host.startswith('localhost'):
-        # Локально завжди показуємо лендинг
         return redirect('/landing/')
 
     # На Render (продакшен)
     if request.user.is_authenticated and request.user.is_superuser:
-        return redirect('/home/')  # сторінка турів для суперадміна
-    return redirect('/landing/')  # лендинг для всіх інших
+        return redirect('/home/')
+    return redirect('/landing/')
 
 
 # ========== ОБРОБНИК ДЛЯ 403 ПОМИЛКИ ==========
 def custom_csrf_failure(request, reason=""):
     return redirect('/')
+
 
 handler403 = custom_csrf_failure
 
@@ -43,21 +44,9 @@ urlpatterns = [
     # ========== МАРШРУТ ДЛЯ СТВОРЕННЯ СУПЕРАДМІНА ==========
     path('create-admin/', constructor_views.create_admin_direct, name='create_admin'),
 
-    # ========== ІНСТРУКЦІЯ ДЛЯ АГЕНТА (чиста сторінка без меню) ==========
-    path('instruction/', TemplateView.as_view(template_name='pages/instruction_clean.html'), name='instruction'),
-
-    # ========== ТЕСТОВА СТОРІНКА ДЛЯ ПОШУКУ ТУРІВ ==========
-    path('search-test/', TemplateView.as_view(template_name='pages/test_search.html'), name='test_search'),
-
-    # ========== СТОРІНКА РЕЗУЛЬТАТІВ ПОШУКУ OTPUSK (ОКРЕМА СТОРІНКА) ==========
-    path('search-otpusk/', TemplateView.as_view(template_name='tours/search_results_otpusk.html'), name='search_otpusk'),
-    path('a/<slug:slug>/search-otpusk/', TemplateView.as_view(template_name='tours/search_results_otpusk.html'), name='agent_search_otpusk'),
-
-    # ========== СТОРІНКА РЕЗУЛЬТАТІВ ПОШУКУ (для модуля Otpusk) ==========
-
     # ========== ГОЛОВНА СТОРІНКА ==========
     path('', home_redirect, name='home_redirect'),
-    path('landing/', include('landing.urls')),  # лендинг доступний за /landing/
+    path('landing/', include('landing.urls')),
 
     # ========== АДМІН-ПАНЕЛІ ==========
     path('admin/', admin.site.urls, name='admin'),
@@ -65,24 +54,34 @@ urlpatterns = [
 
     path('chaining/', include('smart_selects.urls')),
 
-    # ========== ОСНОВНІ МАРШРУТИ ТУРІВ ==========
+    # ========== ОСНОВНІ МАРШРУТИ ==========
+    path('home/', tours_views.home, name='home'),
+
+    # ========== НОВИЙ МАРШРУТ ДЛЯ КАЛЕНДАРЯ (OTPUSK) ==========
+    path('api/calendar-prices/', tours_views.calendar_prices_otpusk, name='calendar_prices'),
+
+    # ========== ІНШІ API МАРШРУТИ ==========
     path('get-cities/', tours_views.get_cities, name='get_cities'),
-    path('api/calendar-prices/', tours_views.calendar_prices, name='calendar_prices'),
+    path('api/chat/', tours_views.chat_api, name='chat_api'),
+    path('api/popular-tours/', tours_views.popular_tours_api, name='popular_tours_api'),
 
-    # ========== КАБІНЕТ АГЕНТА ==========
-    path('dashboard/', tours_views.AgentDashboardView.as_view(), name='dashboard'),
-    path('tour/new/', tours_views.TourCreateView.as_view(), name='tour_create'),
-    path('tour/<int:pk>/edit/', tours_views.TourUpdateView.as_view(), name='tour_edit'),
-    path('tour/<int:pk>/delete/', tours_views.TourDeleteView.as_view(), name='tour_delete'),
+    # ========== AJAX ОБРОБКА КОНСУЛЬТАЦІЇ ==========
+    path('consultation-ajax/', tours_views.consultation_ajax, name='consultation_ajax'),
+    # ДЛЯ АГЕНТСЬКИХ САЙТІВ
+    path('a/<slug:slug>/consultation-ajax/', tours_views.consultation_ajax, name='agent_consultation_ajax'),
 
-    # ========== НОВИНИ ==========
-    path('live-search/', tours_views.live_search, name='live_search'),
-    path('news/', tours_views.NewsListView.as_view(), name='news'),
-    path('news/<int:pk>/', tours_views.news_detail, name='news_detail'),
+    # ========== СТОРІНКА РЕЗУЛЬТАТІВ ПОШУКУ OTPUSK ==========
+    # Сторінка для звичайного пошуку (без блоку консультації)
+    path('search-otpusk/', tours_views.search_otpusk, name='search_otpusk'),
+    path('a/<slug:slug>/search-otpusk/', tours_views.search_otpusk, name='agent_search_otpusk'),
 
-    # ========== КОНСУЛЬТАЦІЯ ==========
-    path('consultation/', tours_views.ConsultationCreateView.as_view(), name='consultation'),
-    path('consultation/success/', tours_views.ConsultationSuccessView.as_view(), name='consultation_success'),
+    # ========== НОВА СТОРІНКА ДЛЯ ПОПУЛЯРНИХ НАПРЯМКІВ (З БЛОКОМ КОНСУЛЬТАЦІЇ) ==========
+    path('search-otpusk-by-country/', tours_views.search_otpusk_by_country, name='search_otpusk_by_country'),
+    path('a/<slug:slug>/search-otpusk-by-country/', tours_views.search_otpusk_by_country,
+         name='agent_search_otpusk_by_country'),
+
+    # ========== КОНСУЛЬТАЦІЯ (ЗВИЧАЙНА ФОРМА З ПЕРЕНАПРАВЛЕННЯМ) ==========
+    path('consultation/', TemplateView.as_view(template_name='tours/consultation_form.html'), name='consultation'),
 
     # ========== ГЛОБАЛЬНИЙ ВХІД ТА ВИХІД ==========
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
@@ -93,11 +92,6 @@ urlpatterns = [
     path('terms-of-service/', landing_views.terms_of_service, name='terms_of_service'),
     path('tours-by-city/', tours_views.tours_by_city, name='tours_by_city'),
     path('city/<int:city_id>/', tours_views.city_detail, name='city_detail'),
-    path('api/price-options/<int:tour_id>/', tours_views.get_price_options, name='get_price_options'),
-    path('api/chat/', tours_views.chat_api, name='chat_api'),
-
-    # ========== КОРИСТУВАЧІ ==========
-    path('users/', include('users.urls')),
 
     # ========== КОНСТРУКТОР ==========
     path('constructor/', include('constructor.urls')),
@@ -106,7 +100,6 @@ urlpatterns = [
     path('a/<slug:slug>/', constructor_views.agent_public_site, name='agent_home'),
     path('a/<slug:slug>/tour/<int:pk>/', constructor_views.agent_public_site, name='agent_tour_detail'),
     path('a/<slug:slug>/tour/<int:pk>/reviews/', constructor_views.agent_public_site, name='agent_tour_reviews'),
-    path('a/<slug:slug>/search/', constructor_views.agent_public_site, name='agent_search'),
     path('a/<slug:slug>/city/<int:city_id>/', constructor_views.agent_public_site, name='agent_city_detail'),
     path('a/<slug:slug>/news/', constructor_views.agent_public_site, name='agent_news_list'),
     path('a/<slug:slug>/news/<int:pk>/', constructor_views.agent_public_site, name='agent_news_detail'),
@@ -117,11 +110,9 @@ urlpatterns = [
 ]
 
 # ========== СТАТИЧНІ ТА МЕДІА ФАЙЛИ ==========
-# Цей блок відповідає за відображення картинок в продакшені
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 else:
-    # КЛЮЧОВИЙ МОМЕНТ ДЛЯ ПРОДАКШЕНУ - медіа файли мають віддаватися завжди
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

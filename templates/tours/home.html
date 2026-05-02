@@ -3,16 +3,14 @@
 
 {% block content %}
 
-<!-- ========== ЗАКРІПЛЕНІ БЛОКИ (НЕ ПЕРЕСТАВЛЯЮТЬСЯ) ========== -->
-
 <!-- Hero секція -->
 <div class="hero-section" style="background-image: url('{% if agent_site and agent_site.hero_background %}{{ agent_site.hero_background.url }}{% else %}{% static 'images/giau-tran-ZMdXvd6jGww-unsplash.jpg' %}{% endif %}');">
     <div class="hero-overlay"></div>
     <div class="container h-100">
         <div class="row h-100 align-items-center text-center">
             <div class="col-12">
-                <h1 class="display-4 fw-bold text-white mb-4">{{ hero_title|default:"Ваша подорож починається тут" }}</h1>
-                <p class="lead text-white mb-5">{{ hero_subtitle|default:"Знайдіть ідеальний тур за лічені хвилини" }}</p>
+                <h1 class="display-4 fw-bold text-white mb-4">Ваша подорож починається тут</h1>
+                <p class="lead text-white mb-5">Знайдіть ідеальний тур за лічені хвилини</p>
             </div>
         </div>
     </div>
@@ -29,7 +27,7 @@
         var osHotelCategory = '';
         var osFood = '';
         var osTransport = '';
-var osTarget = '/a/{{ agent_site.slug }}/search-otpusk/';
+        var osTarget = '{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/{% else %}/search-otpusk/{% endif %}';
         var osContainer = null;
         var osTourContainer = null;
         var osLang = 'ua';
@@ -47,674 +45,206 @@ var osTarget = '/a/{{ agent_site.slug }}/search-otpusk/';
     <script src="https://export.otpusk.com/js/order"></script>
 </div>
 
-<!-- ========== ПЕРЕСТАВНІ БЛОКИ (ЗГІДНО З ПОРЯДКОМ) ========== -->
-{% for block_id in blocks_order %}
+<!-- ========== КАЛЕНДАР НИЗЬКИХ ЦІН ========== -->
+<div class="container my-5 pt-4">
+    <div class="price-calendar-wrapper">
+        <h2 class="text-center mb-4">Календар низьких цін</h2>
 
-    <!-- Календар низьких цін -->
-    {% if block_id == 'price_calendar' %}
-    <div class="container my-5 pt-4">
-        <div class="price-calendar-wrapper">
-            <h2 class="text-center mb-4">Календар низьких цін</h2>
+        <div class="departure-city mb-3 text-center">
+            <label class="fw-bold me-2">Місто виїзду:</label>
+            <select id="departureCitySelect" class="form-select d-inline-block w-auto">
+                <option value="Київ" selected>Київ</option>
+                <option value="Кишинів">Кишинів</option>
+                <option value="Варшава">Варшава</option>
+                <option value="Краків">Краків</option>
+                <option value="Вроцлав">Вроцлав</option>
+                <option value="Берлін">Берлін</option>
+                <option value="Бухарест">Бухарест</option>
+                <option value="Будапешт">Будапешт</option>
+                <option value="Прага">Прага</option>
+            </select>
+        </div>
 
-            <div class="departure-city mb-3 text-center">
-                <label class="fw-bold me-2">Місто виїзду:</label>
-                <select id="departureCitySelect" class="form-select d-inline-block w-auto">
-                    <option value="Київ" selected>Київ</option>
-                    <option value="Кишинів">Кишинів</option>
-                    <option value="Варшава">Варшава</option>
-                    <option value="Жешув">Жешув</option>
-                    <option value="Краків">Краків</option>
-                    <option value="Вроцлав">Вроцлав</option>
-                    <option value="Катовіце">Катовіце</option>
-                    <option value="Бухарест">Бухарест</option>
-                    <option value="Будапешт">Будапешт</option>
-                    <option value="Прага">Прага</option>
-                    <option value="Берлін">Берлін</option>
-                    <option value="Ясси">Ясси</option>
-                    <option value="Сучава">Сучава</option>
-                    <option value="Відень">Відень</option>
-                </select>
+        <div class="country-tabs mb-4"></div>
+
+        <div class="text-muted small mb-3 text-center">
+            Ціни вказані за двох дорослих на 6-8 ночей
+        </div>
+
+        <div class="calendar-container">
+            <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
+                <div class="price-range-indicator">
+                    <div class="max-price text-end">—</div>
+                    <div class="min-price text-end">—</div>
+                </div>
+                <div class="month-controls">
+                    <button class="btn btn-sm btn-outline-secondary" id="prevMonthBtn">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <span id="monthYearDisplay" class="fw-bold mx-2">Травень 2026</span>
+                    <button class="btn btn-sm btn-outline-secondary" id="nextMonthBtn">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="country-tabs mb-4"></div>
-
-            <div class="text-muted small mb-3 text-center">
-                Ціни вказані за двох дорослих на 6-8 ночей
-            </div>
-
-            <div class="calendar-container">
-                <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
-                    <div class="price-range-indicator">
-                        <div class="max-price text-end">—</div>
-                        <div class="min-price text-end">—</div>
-                    </div>
-                    <div class="month-controls">
-                        <button class="btn btn-sm btn-outline-secondary" id="prevMonthBtn">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <span id="monthYearDisplay" class="fw-bold mx-2">Березень 2026</span>
-                        <button class="btn btn-sm btn-outline-secondary" id="nextMonthBtn">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="calendar-scroll">
-                    <div class="calendar-days" id="calendarDays"></div>
-                </div>
+            <div class="calendar-scroll">
+                <div class="calendar-days" id="calendarDays"></div>
             </div>
         </div>
     </div>
-    {% endif %}
+</div>
 
-        <!-- Рекомендовані для вас -->
-    {% if block_id == 'recommended_tours' and recommended_tours %}
-    <div class="recommended-hotels-block my-5">
-        <div class="container">
-            <h3 class="mb-4">Рекомендовані для вас</h3>
-            <div class="carousel-container">
-                <div class="carousel-track" id="recommendedHotelsTrack">
-                    {% for tour in recommended_tours %}
-                    <div class="carousel-card">
-                        <div class="card h-100 shadow-sm border-0 rounded-4">
-                            <div class="position-relative">
-                                {% if tour.image %}
-                                <img src="{{ tour.image.url }}" class="card-img-top rounded-top-4" alt="{{ tour.title }}" style="height: 180px; width: 100%; object-fit: cover;">
+<!-- ========== БЛОК КОНСУЛЬТАЦІЇ ========== -->
+<div class="row justify-content-center my-5">
+    <div class="col-12 col-md-10 col-lg-8">
+        <div class="card border-0 shadow-sm" id="consultationCard">
+            <div class="card-body p-4 p-md-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">
+                    Довірте вибір спеціалістам
+                </h5>
+                <p class="text-muted mb-0">
+                    Залишіть заявку, щоб отримати персональний підбір турів
+                </p>
+                <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
+                    <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
+                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
+                             style="width: 40px; height: 40px;">
+                            <i class="fa-regular fa-user text-secondary"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold" style="font-size: 0.95rem;">
+                                {% if agent_site %}
+                                    {{ agent_site.user.get_full_name|default:agent_site.user.username }}
                                 {% else %}
-                                <div class="bg-light rounded-top-4 d-flex align-items-center justify-content-center" style="height: 180px;">
-                                    <i class="fa-solid fa-image fa-3x text-muted"></i>
-                                </div>
+                                    {{ random_agent.get_full_name|default:random_agent.username }}
                                 {% endif %}
-                                <div class="rating-badge position-absolute" style="top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 8px; font-size: 0.7rem; color: white;">
-                                    {% if tour.avg_rating %}
-                                        ⭐ {{ tour.avg_rating|floatformat:1 }}
-                                    {% else %}
-                                        Рекомендований
-                                    {% endif %}
-                                </div>
                             </div>
-                            <div class="card-body p-3">
-                                <h6 class="card-title fw-bold mb-2" style="font-size: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.5rem;">
-                                    {{ tour.title|truncatechars:35 }}
-                                </h6>
-                                <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1" style="font-size: 0.7rem;">Рекомендуємо</span>
-                                    <span class="text-muted small" style="font-size: 0.7rem;">({{ tour.reviews_count|default:"0" }} відгуків)</span>
-                                </div>
-                                <p class="card-text small text-muted mb-2" style="font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    <i class="fa-solid fa-location-dot me-1"></i> {{ tour.country }}{% if tour.city %}, {{ tour.city }}{% endif %}
-                                </p>
-                                <div class="d-flex justify-content-between align-items-center mt-2">
-                                    <span class="fw-bold text-danger" style="font-size: 1.1rem;">{{ tour.price|floatformat:"0" }} ₴</span>
-                                    <a href="{% if agent_site %}{% url 'agent_tour_detail' agent_site.slug tour.pk %}{% else %}{% url 'tour_detail' tour.pk %}{% endif %}" class="btn btn-outline-primary btn-sm" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">Детальніше</a>
-                                </div>
+                            <div class="text-muted" style="font-size: 0.8rem;">
+                                9 років досвіду в туризмі
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
-                </div>
-                <button class="carousel-btn prev" id="recommendedPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
-                <button class="carousel-btn next" id="recommendedNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Блок консультації -->
-    {% if block_id == 'consultation' %}
-    <div class="row justify-content-center my-5">
-        <div class="col-12 col-md-10 col-lg-8">
-            <div class="card border-0 shadow-sm" id="consultationCard">
-                <div class="card-body p-4 p-md-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                    <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">
-                        Довірте вибір спеціалістам
-                    </h5>
-                    <p class="text-muted mb-0">
-                        Залишіть заявку, щоб отримати персональний підбір турів
-                    </p>
-                    <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
-                        <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
-                            <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
-                                 style="width: 40px; height: 40px;">
-                                <i class="fa-regular fa-user text-secondary"></i>
+                    <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
+                        <form id="consultationForm" novalidate>
+                            {% csrf_token %}
+                            <input type="hidden" name="consultation_submit" value="1">
+                            <div class="mb-3">
+                                <input type="text" name="name" id="consultationName" class="form-control" placeholder="Ваше ім'я" required>
                             </div>
-                            <div>
-                                <div class="fw-bold" style="font-size: 0.95rem;">
-                                    {% if agent_site %}
-                                        {{ agent_site.user.get_full_name|default:agent_site.user.username }}
-                                    {% else %}
-                                        {{ random_agent.get_full_name|default:random_agent.username }}
-                                    {% endif %}
+                            <div class="row g-2 mb-3">
+                                <div class="col-4">
+                                    <select name="country_code" class="form-select" required>
+                                        <option value="+380" selected>🇺🇦 +380</option>
+                                        <option value="+48">🇵🇱 +48</option>
+                                        <option value="+1">🇺🇸 +1</option>
+                                        <option value="+44">🇬🇧 +44</option>
+                                        <option value="+49">🇩🇪 +49</option>
+                                        <option value="+33">🇫🇷 +33</option>
+                                    </select>
                                 </div>
-                                <div class="text-muted" style="font-size: 0.8rem;">
-                                    9 років досвіду в туризмі
+                                <div class="col-8">
+                                    <input type="tel" name="phone" id="consultationPhone" class="form-control" placeholder="XXXXXXXXX" required
+                                           pattern="[0-9]+"
+                                           title="Тільки цифри (приклад: 501234567)"
+                                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)"
+                                           onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
-                            <form method="post" action="{% if agent_site %}{% url 'agent_home' agent_site.slug %}{% else %}{% url 'home' %}{% endif %}" id="consultationForm">
-                                {% csrf_token %}
-                                <input type="hidden" name="consultation_submit" value="1">
-                                <div class="mb-3">
-                                    <input type="text" name="name" class="form-control" placeholder="Ваше ім'я" required>
-                                </div>
-                                <div class="row g-2 mb-3">
-                                    <div class="col-4">
-                                        <select name="country_code" class="form-select" required>
-                                            <option value="+380" selected>🇺🇦 +380</option>
-                                            <option value="+48">🇵🇱 +48</option>
-                                            <option value="+1">🇺🇸 +1</option>
-                                            <option value="+44">🇬🇧 +44</option>
-                                            <option value="+49">🇩🇪 +49</option>
-                                            <option value="+33">🇫🇷 +33</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-8">
-                                        <input type="tel" name="phone" class="form-control" placeholder="XXXXXXXXX" required
-                                               pattern="[0-9]+"
-                                               title="Тільки цифри (приклад: 501234567)"
-                                               oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)"
-                                               onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                                    </div>
-                                </div>
-                                <button class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">
-                                    Залишити запит
-                                </button>
-                            </form>
-                        </div>
+                            <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">
+                                Залишити запит
+                            </button>
+                        </form>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Популярні готелі -->
-    {% if block_id == 'popular_hotels' and popular_tours %}
-    <div class="popular-hotels-block my-5">
-        <div class="container">
-            <h3 class="mb-4">Популярні готелі</h3>
-            <div class="carousel-container">
-                <div class="carousel-track" id="popularHotelsTrack">
-                    {% for tour in popular_tours %}
-                    <div class="carousel-card">
-                        <div class="card h-100 shadow-sm border-0 rounded-4">
-                            <div class="position-relative">
-                                {% if tour.image %}
-                                <img src="{{ tour.image.url }}" class="card-img-top rounded-top-4" alt="{{ tour.title }}" style="height: 160px; object-fit: cover; width: 100%;">
-                                {% else %}
-                                <div class="bg-light rounded-top-4 d-flex align-items-center justify-content-center" style="height: 160px;">
-                                    <i class="fa-solid fa-image fa-3x text-muted"></i>
-                                </div>
-                                {% endif %}
-                                <div class="rating-badge">
-                                    {% with avg=tour.avg_rating|floatformat:1 %}
-                                        <div class="rating-main">
-                                            {% if avg|floatformat:0 >= "9" %}
-                                                <span class="rating-label very-good">ДУЖЕ ДОБРЕ</span>
-                                            {% elif avg|floatformat:0 >= "8" %}
-                                                <span class="rating-label good">ДОБРЕ</span>
-                                            {% else %}
-                                                <span class="rating-label average">СЕРЕДНЄ</span>
-                                            {% endif %}
-                                            <span class="rating-value">{{ avg }}</span>
-                                        </div>
-                                        <div class="rating-reviews">
-                                            {{ tour.reviews_count }} відгуків
-                                        </div>
-                                    {% endwith %}
-                                </div>
-                            </div>
-                            <div class="card-body p-3">
-                                <h6 class="card-title fw-bold mb-2">{{ tour.title|truncatechars:25 }}</h6>
-                                <p class="card-text small text-muted mb-2">
-                                    <i class="fa-solid fa-location-dot me-1"></i> {{ tour.country }}{% if tour.city %}, {{ tour.city }}{% endif %}
-                                </p>
-                                <div class="d-flex justify-content-center mt-2">
-                                    <a href="{% if agent_site %}{% url 'agent_tour_detail' agent_site.slug tour.pk %}{% else %}{% url 'tour_detail' tour.pk %}{% endif %}" class="btn btn-outline-primary btn-sm">Переглянути деталі</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                <button class="carousel-btn prev" id="popularPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
-                <button class="carousel-btn next" id="popularNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Про нас -->
-{% if block_id == 'about_us' %}
-<div class="about-us-block my-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h3 class="mb-4 text-start">{{ agent_site.about_us_title|default:"Про нас" }}</h3>
-            </div>
-        </div>
-        <div class="row align-items-center">
-            <div class="col-md-5 mb-4 mb-md-0">
-                {% if agent_site.about_us_image %}
-                    <img src="{{ agent_site.about_us_image.url }}" alt="Про компанію" class="img-fluid rounded-3 shadow-sm" style="max-width: 100%; height: auto;">
-                {% else %}
-                    <img src="{% static 'images/luke-porter-NEqEC7qa9FM-unsplash.jpg' %}" alt="Про компанію" class="img-fluid rounded-3 shadow-sm" style="max-width: 100%; height: auto;">
-                {% endif %}
-            </div>
-            <div class="col-md-7">
-                <div class="text-muted" style="line-height: 1.6;">
-                    {{ agent_site.about_us_text|default:"Ми – команда професіоналів, яка допомагає втілювати ваші мрії про подорожі в реальність. З понад 10-річним досвідом у туризмі, ми пропонуємо лише перевірені тури, найкращі ціни та індивідуальний підхід до кожного клієнта."|linebreaks }}
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endif %}
 
-    <!-- Популярні напрямки зараз -->
-    {% if block_id == 'popular_destinations' and popular_destinations %}
-    <div class="popular-destinations-block my-5">
-        <div class="container">
-            <h3 class="mb-4 text-start">Популярні напрямки зараз</h3>
-            <div class="carousel-container">
-                <div class="carousel-track" id="popularDestinationsTrack">
-                    {% for dest in popular_destinations %}
-                    <div class="carousel-card">
-                        <div class="card h-100 shadow-sm border-0 rounded-4">
-                            <img src="{{ dest.image_url }}" class="card-img-top rounded-top-4" alt="{{ dest.country }}" style="height: 180px; object-fit: cover;">
-                            <div class="card-body">
-                                <h5 class="card-title fw-bold">{{ dest.country }}</h5>
-                                {% if dest.min_price %}
-                                <div class="price-wrapper text-end">
-                                    <span class="from-text">від</span>
-                                    <span class="price-value">{{ dest.min_price|floatformat:"0" }} грн</span>
-                                </div>
-                                {% endif %}
-                                <div class="cities-list mt-3">
-                                    {% for city in dest.cities %}
-                                    <a href="{% if agent_site %}{% url 'agent_city_detail' agent_site.slug city.id %}{% else %}{% url 'city_detail' city.id %}{% endif %}" class="city-link d-block mb-1">
-                                        <i class="fa-solid fa-location-dot me-1"></i> Тури в {{ city.name }}
-                                    </a>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                <button class="carousel-btn prev" id="popularDestinationsPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
-                <button class="carousel-btn next" id="popularDestinationsNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
-            </div>
-        </div>
-    </div>
-    {% endif %}
+<script>
+// ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
+(function() {
+    const submitBtn = document.getElementById('submitConsultationBtn');
+    if (!submitBtn) return;
 
-    <!-- Тури з вашого міста -->
-    {% if block_id == 'tours_from_city' and countries_by_city %}
-    <div class="city-tours-block my-5 p-4" style="background: linear-gradient(135deg, var(--primary-lighter) 100%);">
-        <div class="container">
-            <h3 class="mb-2 text-start">Тури з вашого міста</h3>
-            <p class="text-muted small mb-4 text-start">Оберіть місто вильоту та знайдіть найкращі пропозиції для вашої подорожі</p>
+    submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
 
-            <div class="city-tabs mb-4">
-                {% for city in departure_cities %}
-                <button class="city-tab {% if forloop.first %}active{% endif %}" data-city="{{ city }}">
-                    {{ city }}
-                </button>
-                {% endfor %}
-            </div>
+        // Збираємо дані з форми
+        const name = document.getElementById('consultationName')?.value || '';
+        const phone = document.getElementById('consultationPhone')?.value || '';
+        const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
-            <div id="countriesByCityContainer" class="row">
-                {% for country_data in countries_by_city %}
-                <div class="col-md-4 mb-4">
-                    <a href="{% if agent_site %}{% url 'agent_search' agent_site.slug %}?country={{ country_data.country|urlencode }}&departure_city={{ departure_cities.0|urlencode }}{% else %}{% url 'search_results' %}?country={{ country_data.country|urlencode }}&departure_city={{ departure_cities.0|urlencode }}{% endif %}"
-                       class="text-decoration-none country-card-link">
-                        <div class="card country-card shadow-sm h-100">
-                            {% if country_data.image_url %}
-                            <img src="{{ country_data.image_url }}" class="card-img-top" alt="{{ country_data.country }}" style="height: 180px; object-fit: cover;">
-                            {% else %}
-                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
-                                <i class="fa-solid fa-globe fa-3x text-muted"></i>
-                            </div>
-                            {% endif %}
-                            <div class="card-body text-start">
-                                <h5 class="card-title fw-bold">{{ country_data.country }}</h5>
-                                {% if country_data.closest_date %}
-                                <p class="card-text text-muted small mb-1">
-                                    <i class="fa-solid fa-plane-departure"></i> Виліт з {{ departure_cities.0 }} {{ country_data.closest_date }}
-                                </p>
-                                {% endif %}
-                                {% if country_data.min_price %}
-                                <p class="card-text mb-0">
-                                    <span class="fw-bold text-danger">{{ country_data.min_price|floatformat:"0" }} грн</span>
-                                    <span class="text-muted small"> за двох</span>
-                                </p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                {% empty %}
-                <div class="col-12 text-center">
-                    <p>Немає турів для вибраного міста.</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    {% endif %}
+        // Валідація
+        if (!name.trim()) {
+            console.log('Введіть ім\'я');
+            return;
+        }
+        if (!phone.trim()) {
+            console.log('Введіть телефон');
+            return;
+        }
 
-    <!-- Банери агента -->
-{% if block_id == 'banners' and banners %}
-    {% for banner in banners %}
-        {% if banner.active %}
-        <div class="container my-4" style="text-align: {{ banner.position }};">
-            <div class="banner-container" style="position: relative; display: inline-block; {% if banner.position == 'full' %}width: 100%;{% else %}max-width: 600px;{% endif %}">
-                <a href="{{ banner.link }}" target="_blank" rel="noopener noreferrer" style="display: block; position: relative;">
-                    <img src="{{ banner.image }}" class="img-fluid" alt="{{ banner.title|default:'Банер' }}" style="width: 100%; border-radius: 12px;">
-
-                    <!-- Затемнення -->
-                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,{{ banner.overlay_opacity|default:0.4 }}); border-radius: 12px;"></div>
-
-                    <!-- Текстові блоки -->
-                    {% for text_block in banner.text_blocks %}
-                    <div class="banner-text-overlay" style="
-                        position: absolute;
-                        padding: 20px;
-                        display: flex;
-                        flex-direction: column;
-                        {% if text_block.position == 'top-left' %}top: 0; left: 0; align-items: flex-start; text-align: left;
-                        {% elif text_block.position == 'top-center' %}top: 0; left: 0; right: 0; align-items: center; text-align: center;
-                        {% elif text_block.position == 'top-right' %}top: 0; right: 0; align-items: flex-end; text-align: right;
-                        {% elif text_block.position == 'center-left' %}top: 50%; left: 0; transform: translateY(-50%); align-items: flex-start; text-align: left;
-                        {% elif text_block.position == 'center' %}top: 50%; left: 0; right: 0; transform: translateY(-50%); align-items: center; text-align: center;
-                        {% elif text_block.position == 'center-right' %}top: 50%; right: 0; transform: translateY(-50%); align-items: flex-end; text-align: right;
-                        {% elif text_block.position == 'bottom-left' %}bottom: 0; left: 0; align-items: flex-start; text-align: left;
-                        {% elif text_block.position == 'bottom-center' %}bottom: 0; left: 0; right: 0; align-items: center; text-align: center;
-                        {% elif text_block.position == 'bottom-right' %}bottom: 0; right: 0; align-items: flex-end; text-align: right;
-                        {% endif %}
-                    ">
-                        {% if text_block.heading %}
-                        <h2 style="color: {{ text_block.heading_color }}; margin: 0; font-size: 28px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
-                            {{ text_block.heading }}
-                        </h2>
-                        {% endif %}
-                        {% if text_block.text %}
-                        <p style="color: {{ text_block.text_color }}; margin: 10px 0 0; font-size: 16px; text-shadow: 1px 1px 1px rgba(0,0,0,0.3);">
-                            {{ text_block.text }}
-                        </p>
-                        {% endif %}
-                        {% if text_block.button_text %}
-                        <a href="{{ text_block.button_link|default:banner.link }}" target="_blank" style="text-decoration: none;">
-                            <button class="btn banner-button" style="
-                                background: {{ text_block.button_color }};
-                                color: white;
-                                border: none;
-                                padding: 10px 25px;
-                                border-radius: 30px;
-                                margin-top: 15px;
-                                cursor: pointer;
-                                font-weight: 500;
-                                transition: all 0.3s ease;
-                            " onmouseover="this.style.opacity='0.9'; this.style.transform='scale(1.05)'" onmouseout="this.style.opacity='1'; this.style.transform='scale(1)'">
-                                {{ text_block.button_text }}
-                            </button>
-                        </a>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                </a>
-            </div>
-        </div>
+        // Визначаємо URL
+        let ajaxUrl = '/consultation-ajax/';
+        {% if agent_site %}
+        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
         {% endif %}
-    {% endfor %}
-{% endif %}
 
+        // Відправляємо
+        fetch(ajaxUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: new URLSearchParams({
+                'name': name,
+                'phone': phone,
+                'country_code': countryCode,
+                'consultation_submit': '1'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Очищуємо форму
+                document.getElementById('consultationName').value = '';
+                document.getElementById('consultationPhone').value = '';
+                console.log('Заявка відправлена');
+            }
+        })
+        .catch(error => {
+            console.error('Помилка:', error);
+        });
+    });
+})();
+</script>
 
-{% endfor %}
-
-<!-- Тільки стилі, яких немає в base.html - ВИДАЛЕНО :root -->
 <style>
-        /* ========== ОБМЕЖЕННЯ РОЗМІРУ БАНЕРІВ НА САЙТІ ========== */
-    .banner-container {
-        max-width: 100% !important;
+    #otpusk-search-module {
+        background: white !important;
+        border-radius: 24px !important;
+        border: 2px solid var(--primary-color) !important;
+        padding: 20px 24px !important;
+        max-width: 1200px !important;
+        margin: -40px auto 0 auto !important;
+        position: relative !important;
+        z-index: 10 !important;
     }
-
-    .banner-container img {
-        width: 100% !important;
-        max-width: 100% !important;
-        height: auto !important;
-        max-height: 800px !important;
-        object-fit: cover !important;
-    }
-
-    .banner-container:not([style*="width: 100%"]) {
-        max-width: 600px !important;
-    }
-
-    @media (max-width: 768px) {
-        .banner-container img {
-            max-height: 250px !important;
-        }
-        .banner-container h2 {
-            font-size: 1rem !important;
-        }
-        .banner-container p {
-            font-size: 0.7rem !important;
-        }
-        .banner-container .banner-button {
-            padding: 4px 12px !important;
-            font-size: 0.7rem !important;
-        }
-    }
-    /* ===== ВСІ СТАРІ СТИЛІ (БЕЗ :root) ===== */
-    .form-control {
-        font-size: 0.85rem;
-        height: 38px;
-        padding: 6px 12px;
-        border-radius: 0.375rem;
-        border: 1px solid #ced4da;
-        background-color: #fff;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-    .form-control:focus {
-        border-color: var(--primary-color);
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(194, 255, 246, 0.25);
-    }
-    .form-control::placeholder {
-        color: #6c757d;
-        opacity: 1;
-    }
-    .small-label {
-        font-size: 0.85rem;
-        color: var(--primary-color);
-        margin-bottom: 0.25rem;
-        letter-spacing: 0.3px;
-        font-weight: 500;
-    }
-    .select2-container--default .select2-selection--single {
-        height: 38px !important;
-        padding: 6px 12px !important;
-        border: 1px solid #ced4da !important;
-        border-radius: 0.375rem !important;
-        font-size: 0.85rem !important;
-        background-color: #fff !important;
-    }
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-        line-height: 24px !important;
-        color: #33393a !important;
-    }
-    .select2-container--default .select2-selection--single .select2-selection__placeholder {
-        color: #6c757d !important;
-    }
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 36px !important;
-    }
-    .bootstrap-select .dropdown-toggle {
-        height: 38px;
-        font-size: 0.85rem;
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 0.375rem;
-        padding: 6px 12px;
-    }
-    .bootstrap-select .dropdown-toggle .filter-option {
-        line-height: 24px;
-    }
-    .bootstrap-select .dropdown-menu {
-        font-size: 0.85rem;
-        max-height: 300px;
-        overflow-y: auto;
-    }
-
-    /* ===== БЛОК ФОРМИ ===== */
-    .search-form-wrapper {
-        background-color: rgba(38, 97, 85, 0.9);
-        backdrop-filter: blur(4px);
-        border-radius: 1rem;
-        padding: 1.5rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        border: 3px solid var(--primary-color);
-        width: 95%;
-        max-width: 1400px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .hero-section {
-        margin-bottom: 0;
-    }
-
-    /* ===== ПРИХОВУЄМО СТАНДАРТНІ ГАЛОЧКИ ===== */
-    .bootstrap-select .dropdown-menu .dropdown-item input[type="checkbox"],
-    .bootstrap-select .dropdown-menu .dropdown-item .check-mark,
-    .bootstrap-select .dropdown-menu .dropdown-item.selected::before,
-    .bootstrap-select .dropdown-menu .dropdown-item.active::before,
-    .bootstrap-select .dropdown-menu .dropdown-item.active::after {
-        display: none !important;
-        content: none !important;
-        visibility: hidden !important;
-        width: 0 !important;
-        height: 0 !important;
-    }
-
-    /* ===== КАСТОМНА ГАЛОЧКА ===== */
-    .bootstrap-select .dropdown-menu .dropdown-item:not(.disabled) {
-        position: relative;
-        padding-right: 35px !important;
-        padding-left: 12px !important;
-    }
-
-    .bootstrap-select .dropdown-menu .dropdown-item:not(.disabled)::after {
-        content: "";
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 18px;
-        height: 18px;
-        border: 1.5px solid var(--primary-color);
-        border-radius: 4px;
-        background: #fff;
-        box-sizing: border-box;
-    }
-
-    .bootstrap-select .dropdown-menu .dropdown-item.selected::after {
-        content: "✓";
-        font-size: 14px;
-        color: var(--primary-color);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        line-height: 1;
-    }
-
-    .bootstrap-select .dropdown-menu .dropdown-item.disabled {
-        padding-right: 12px !important;
-    }
-    .bootstrap-select .dropdown-menu .dropdown-item.disabled::after {
-        display: none !important;
-    }
-
-    .bootstrap-select .dropdown-menu .dropdown-item:hover,
-    .bootstrap-select .dropdown-menu .dropdown-item:focus {
-        background-color: var(--primary-lighter) !important;
-        color: white !important;
-    }
-
-    /* ===== ХОВЕР ТА ФОКУС ДЛЯ ВСІХ ПОЛІВ ФОРМИ ===== */
-    .form-control:hover,
-    .form-select:hover,
-    .bootstrap-select .dropdown-toggle:hover,
-    .form-control:focus,
-    .form-select:focus,
-    .bootstrap-select .dropdown-toggle:focus {
-        border-color: var(--primary-color) !important;
-        box-shadow: 0 0 0 0.25rem rgba(6, 57, 47, 0.25) !important;
-        transition: all 0.2s ease;
-    }
-
-    .bootstrap-select .dropdown-toggle {
-        transition: all 0.2s ease;
-    }
-
-    .select2-container--default .select2-selection--single:hover,
-    .select2-container--default .select2-selection--single:focus {
-        border-color: var(--primary-color) !important;
-        box-shadow: 0 0 0 0.25rem rgba(6, 57, 47, 0.25) !important;
-    }
-
-    @media (max-width: 576px) {
-        .form-control {
-            font-size: 0.75rem;
-            height: 34px;
-            padding: 4px 10px;
-        }
-        .select2-container--default .select2-selection--single {
-            height: 34px !important;
-            padding: 4px 10px !important;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 24px !important;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 32px !important;
-        }
-        .bootstrap-select .dropdown-toggle {
-            height: 34px;
-            font-size: 0.75rem;
-            padding: 4px 10px;
-        }
-        .small-label {
-            font-size: 0.65rem;
-        }
-        .search-form-wrapper {
-            padding: 1rem;
-        }
-    }
-
-    /* ===== ПІДНЯТТЯ ФОРМИ НАД HERO ===== */
     .hero-section {
         position: relative;
         background-size: cover;
         background-position: center;
-        background-repeat: no-repeat;
         height: 450px;
-        margin-bottom: 0;
         display: flex;
         align-items: center;
         justify-content: center;
     }
-    .search-form-wrapper {
-        margin-top: -60px;
-        position: relative;
-        z-index: 10;
-        background-color: rgba(6, 57, 47, 0.95);
-    }
-
-    .hero-section .hero-overlay {
+    .hero-overlay {
         position: absolute;
         top: 0;
         left: 0;
@@ -723,113 +253,19 @@ var osTarget = '/a/{{ agent_site.slug }}/search-otpusk/';
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 1;
     }
-
     .hero-section .container {
         position: relative;
         z-index: 2;
         color: white;
         text-align: center;
     }
-
-    /* ===== ГОРИЗОНТАЛЬНЕ ВИРІВНЮВАННЯ НА ВЕЛИКИХ ЕКРАНАХ ===== */
-    @media (min-width: 992px) {
-        .search-form-wrapper .row {
-            justify-content: center;
-        }
-        .col-lg-1 {
-            min-width: 100px;
-        }
-        .col-lg-2 {
-            flex: 1 0 auto;
-            min-width: 150px;
-        }
-        .bootstrap-select {
-            width: 100% !important;
-            min-width: 0 !important;
-        }
-        .bootstrap-select .dropdown-toggle {
-            width: 100% !important;
-            min-width: 0 !important;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        #durationRange + .select2-container {
-            width: 100% !important;
-            min-width: 0 !important;
-        }
-        #durationRange + .select2-container .select2-selection--single .select2-selection__rendered {
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-    }
-
-    /* ===== ВЕРТИКАЛЬНЕ ВИРІВНЮВАННЯ НА МОБІЛЬНИХ ===== */
-    @media (max-width: 992px) {
-        .search-form-wrapper .row > [class*="col-"] {
-            margin-bottom: 1rem;
-        }
-        .search-form-wrapper .row > [class*="col-"]:last-child {
-            margin-bottom: 0;
-        }
-        .bootstrap-select {
-            width: 100% !important;
-        }
-    }
-
-    /* ===== СТИЛІ ДЛЯ КАРТОК КРАЇН ===== */
-    .country-card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        border-radius: 12px;
-        overflow: hidden;
-        cursor: pointer;
-    }
-    .country-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-    .country-card .card-img-top {
-        height: 180px;
-        object-fit: cover;
-    }
-    .country-card-link {
-        text-decoration: none;
-        display: block;
-    }
-    .country-card-link:hover .country-card {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-    .card-body.text-start {
-        text-align: left !important;
-    }
-
-    /* ===== СТИЛІ ДЛЯ БЛОКУ КОНСУЛЬТАЦІЇ ===== */
     .agent-card {
         background: rgba(255, 255, 255, 0.55);
         backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
 
-    @media (max-width: 768px) {
-        .consult-row {
-            flex-direction: column !important;
-            gap: 1.5rem !important;
-        }
-        .form-block {
-            order: 1;
-            width: 100%;
-        }
-        .agent-block {
-            order: 2;
-            width: 100%;
-            justify-content: center;
-        }
-    }
-
-    /* ===== СТИЛІ ДЛЯ КАЛЕНДАРЯ (оновлені) ===== */
+    /* ===== СТИЛІ ДЛЯ КАЛЕНДАРЯ ===== */
     .price-calendar-wrapper {
         background: #fff;
         border-radius: 1rem;
@@ -837,7 +273,6 @@ var osTarget = '/a/{{ agent_site.slug }}/search-otpusk/';
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         border: 1px solid #e9ecef;
     }
-
     .country-tabs {
         display: flex;
         flex-wrap: wrap;
@@ -845,7 +280,6 @@ var osTarget = '/a/{{ agent_site.slug }}/search-otpusk/';
         justify-content: center;
         margin-bottom: 1.5rem;
     }
-
     .country-tab {
         background: #f8f9fa;
         border: 1px solid #dee2e6;
@@ -853,30 +287,14 @@ var osTarget = '/a/{{ agent_site.slug }}/search-otpusk/';
         padding: 0.4rem 1.2rem;
         font-size: 0.9rem;
         font-weight: 500;
-        color: #495057;
-        transition: all 0.2s;
         cursor: pointer;
+        transition: all 0.2s;
     }
-
     .country-tab.active {
         background: var(--primary-color);
         border-color: var(--primary-color);
         color: white;
     }
-
-    .country-tab:hover {
-        background: #e9ecef;
-    }
-
-    .country-tab.active:hover {
-        background: var(--primary-dark);
-        color: white !important;
-    }
-
-    .calendar-container {
-        margin-top: 1rem;
-    }
-
     .calendar-header {
         display: flex;
         justify-content: space-between;
@@ -885,7 +303,6 @@ var osTarget = '/a/{{ agent_site.slug }}/search-otpusk/';
         flex-wrap: wrap;
         gap: 1rem;
     }
-
     .price-range-indicator {
         background: #f8f9fa;
         border-radius: 0.75rem;
@@ -893,88 +310,12 @@ var osTarget = '/a/{{ agent_site.slug }}/search-otpusk/';
         min-width: 180px;
         text-align: right;
     }
-
-    .price-range-indicator .max-price {
-        font-size: 0.9rem;
-        line-height: 1.3;
-        font-weight: 700;
-        color: #dc3545;
-    }
-
-    .price-range-indicator .min-price {
-        font-size: 0.9rem;
-        line-height: 1.3;
-        font-weight: 700;
-        color: #28a745;
-    }
-
-    .month-controls {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .month-controls .btn {
-        width: 32px;
-        height: 32px;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .month-controls span {
-        font-size: 1rem;
-        font-weight: 500;
-        min-width: 140px;
-        text-align: center;
-    }
-
-    .calendar-scroll {
-        overflow-x: auto;
-        padding-bottom: 0.5rem;
-    }
-
-    .calendar-days {
-        display: inline-flex;
-        gap: 0.75rem;
-        align-items: flex-end;
-    }
-
-    .price-bar-container {
-        width: 40px;
-        height: 100px;
-        background: #e9ecef;
-        border-radius: 6px;
-        position: relative;
-        margin: 0 auto 0.5rem;
-        overflow: hidden;
-    }
-
-    .price-column {
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        transition: height 0.2s;
-        border-radius: 6px 6px 0 0;
-    }
-
-    .price-column.low {
-        background: linear-gradient(135deg, #28a745, #20c997);
-    }
-
-    .price-column.medium {
-        background: linear-gradient(135deg, #ffc107, #fd7e14);
-    }
-
-    .price-column.red {
-        background: linear-gradient(135deg, #dc3545, #e83e8c);
-    }
-
-    .price-column.gray {
-        background: #ced4da;
-    }
-
+    .price-range-indicator .max-price { font-size: 0.9rem; font-weight: 700; color: #dc3545; }
+    .price-range-indicator .min-price { font-size: 0.9rem; font-weight: 700; color: #28a745; }
+    .month-controls .btn { width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; }
+    .month-controls span { font-size: 1rem; font-weight: 500; min-width: 140px; text-align: center; }
+    .calendar-scroll { overflow-x: auto; padding-bottom: 0.5rem; }
+    .calendar-days { display: inline-flex; gap: 0.75rem; align-items: flex-end; }
     .day-column {
         display: inline-flex;
         flex-direction: column;
@@ -987,1327 +328,64 @@ var osTarget = '/a/{{ agent_site.slug }}/search-otpusk/';
         transition: all 0.2s;
         border: 1px solid #e9ecef;
     }
-
-    .day-column:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        border-color: var(--primary-color);
-    }
-
-    .day-column.selected {
-        outline: 2px solid var(--primary-color);
-        background: #f0fdf4;
-    }
-
-    .day-week {
-        font-size: 0.75rem;
-        color: #6c757d;
-        text-transform: capitalize;
-        margin-bottom: 0.25rem;
-    }
-
-    .day-date {
-        font-weight: 600;
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .price-value-text {
-        font-weight: 500;
-        font-size: 0.7rem;
-        white-space: nowrap;
-        margin-top: 0.25rem;
-    }
-
-        /* ===== РЕКОМЕНДОВАНІ ДЛЯ ВАС - АДАПТИВНА КАРУСЕЛЬ ===== */
-    .recommended-hotels-block {
-        width: 100%;
-        overflow-x: hidden;
-    }
-
-    .recommended-hotels-block .carousel-container {
-        position: relative;
-        width: 100%;
-        overflow: hidden;
-        padding: 0 5px;
-    }
-
-    .recommended-hotels-block .carousel-track {
-        display: flex;
-        transition: transform 0.4s ease;
-        gap: 15px;
-        will-change: transform;
-    }
-
-    .recommended-hotels-block .carousel-card {
-        flex: 0 0 calc(33.333% - 15px);
-        min-width: 0;
-        box-sizing: border-box;
-        display: flex;
-    }
-
-    .recommended-hotels-block .card {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        transition: transform 0.2s ease;
-        border-radius: 16px !important;
-        overflow: hidden;
-    }
-
-    .recommended-hotels-block .card:hover {
-        transform: translateY(-5px);
-    }
-
-    .recommended-hotels-block .card-img-top {
-        height: 180px;
-        object-fit: cover;
-        width: 100%;
-    }
-
-    .recommended-hotels-block .card-body {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        padding: 0.75rem;
-    }
-
-    .recommended-hotels-block .card-title {
-        font-size: 0.95rem !important;
-        font-weight: 700;
-        line-height: 1.3;
-        margin-bottom: 0.5rem;
-    }
-
-    .recommended-hotels-block .badge {
-        font-size: 0.65rem;
-        padding: 0.2rem 0.5rem;
-        white-space: nowrap;
-    }
-
-    .recommended-hotels-block .text-muted.small {
-        font-size: 0.65rem !important;
-    }
-
-    .recommended-hotels-block .card-text {
-        font-size: 0.75rem;
-        line-height: 1.3;
-        margin-bottom: 0.5rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .recommended-hotels-block .fw-bold.text-danger {
-        font-size: 0.95rem !important;
-    }
-
-    .recommended-hotels-block .btn {
-        padding: 0.25rem 0.6rem;
-        font-size: 0.7rem;
-        white-space: nowrap;
-    }
-
-    .recommended-hotels-block .rating-badge {
-        font-size: 0.7rem;
-        padding: 2px 8px !important;
-    }
-
-    /* Кнопки навігації */
-    .recommended-hotels-block .carousel-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: rgba(0, 0, 0, 0.5);
-        border: none;
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s;
-    }
-
-    .recommended-hotels-block .carousel-btn:hover {
-        background: rgba(0, 0, 0, 0.8);
-    }
-
-    .recommended-hotels-block .carousel-btn.prev {
-        left: -5px;
-    }
-
-    .recommended-hotels-block .carousel-btn.next {
-        right: -5px;
-    }
-
-    /* АДАПТИВНІСТЬ */
-    @media (min-width: 1400px) {
-        .recommended-hotels-block .carousel-card {
-            flex: 0 0 calc(25% - 15px);
-        }
-    }
-
-    @media (max-width: 1399px) and (min-width: 992px) {
-        .recommended-hotels-block .carousel-card {
-            flex: 0 0 calc(33.333% - 15px);
-        }
-    }
-
-    @media (max-width: 991px) and (min-width: 768px) {
-        .recommended-hotels-block .carousel-card {
-            flex: 0 0 calc(50% - 15px);
-        }
-        .recommended-hotels-block .card-img-top {
-            height: 160px;
-        }
-    }
-
-    @media (max-width: 767px) {
-        .recommended-hotels-block .carousel-card {
-            flex: 0 0 calc(100% - 15px);
-        }
-        .recommended-hotels-block .carousel-btn {
-            width: 30px;
-            height: 30px;
-            font-size: 14px;
-        }
-        .recommended-hotels-block .carousel-btn.prev {
-            left: -2px;
-        }
-        .recommended-hotels-block .carousel-btn.next {
-            right: -2px;
-        }
-        .recommended-hotels-block .card-img-top {
-            height: 200px;
-        }
-    }
-    /* ===== СТИЛІ ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ ===== */
-    .popular-hotels-block .carousel-container {
-        position: relative;
-        width: 100%;
-        overflow: hidden;
-        padding: 0 5px;
-    }
-
-    .popular-hotels-block .carousel-track {
-        display: flex;
-        transition: transform 0.4s ease;
-        gap: 15px;
-    }
-
-    .popular-hotels-block .carousel-card {
-        flex: 0 0 calc(25% - 15px);
-        min-width: 0;
-        box-sizing: border-box;
-        display: flex;
-    }
-
-    .popular-hotels-block .card {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        background-color: #fff;
-        border: 1px solid rgba(0,0,0,0.08);
-        transition: transform 0.2s;
-    }
-
-    .popular-hotels-block .card:hover {
-        transform: translateY(-5px);
-    }
-
-    .popular-hotels-block .card-body {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 1rem;
-    }
-
-    .popular-hotels-block .card-title {
-        font-size: 1.25rem !important;
-        font-weight: 700;
-        line-height: 1.3;
-        margin-bottom: 0.6rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        min-height: 3rem;
-    }
-
-    .popular-hotels-block .card-text {
-        font-size: 0.9rem !important;
-        line-height: 1.3;
-        margin-bottom: 0.8rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .popular-hotels-block .btn {
-        padding: 0.4rem 0.9rem !important;
-        font-size: 0.9rem !important;
-        white-space: nowrap;
-    }
-
-    @media (max-width: 992px) {
-        .popular-hotels-block .carousel-card {
-            flex: 0 0 calc(33.33% - 15px);
-        }
-    }
-    @media (max-width: 768px) {
-        .popular-hotels-block .carousel-card {
-            flex: 0 0 calc(50% - 15px);
-        }
-        .popular-hotels-block .card-title {
-            font-size: 1.1rem !important;
-        }
-        .popular-hotels-block .btn {
-            font-size: 0.85rem !important;
-            padding: 0.3rem 0.7rem !important;
-        }
-    }
-    @media (max-width: 576px) {
-        .popular-hotels-block .carousel-card {
-            flex: 0 0 calc(100% - 15px);
-        }
-        .popular-hotels-block .card-title {
-            font-size: 1rem !important;
-        }
-        .popular-hotels-block .btn {
-            font-size: 0.9rem !important;
-        }
-    }
-
-    .popular-hotels-block .carousel-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
+    .day-column:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: var(--primary-color); }
+    .day-week { font-size: 0.75rem; color: #6c757d; text-transform: capitalize; margin-bottom: 0.25rem; }
+    .day-date { font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem; }
+    .price-bar-container {
         width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: rgba(0, 0, 0, 0.6);
-        border: none;
-        color: white;
-        font-size: 18px;
-        cursor: pointer;
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s;
-    }
-    .popular-hotels-block .carousel-btn:hover {
-        background: rgba(0, 0, 0, 0.9);
-    }
-    .popular-hotels-block .carousel-btn.prev {
-        left: 0px;
-    }
-    .popular-hotels-block .carousel-btn.next {
-        right: 0px;
-    }
-    @media (max-width: 768px) {
-        .popular-hotels-block .carousel-btn {
-            width: 35px;
-            height: 35px;
-            font-size: 16px;
-        }
-        .popular-hotels-block .carousel-btn.prev {
-            left: 5px;
-        }
-        .popular-hotels-block .carousel-btn.next {
-            right: 5px;
-        }
-    }
-    @media (max-width: 576px) {
-        .popular-hotels-block .carousel-btn {
-            width: 30px;
-            height: 30px;
-            background: rgba(0, 0, 0, 0.5);
-        }
-        .popular-hotels-block .carousel-btn.prev {
-            left: 0px;
-        }
-        .popular-hotels-block .carousel-btn.next {
-            right: 0px;
-        }
-    }
-
-    /* ===== СТИЛІ ДЛЯ БЛОКУ "ТУРИ З ВАШОГО МІСТА" ===== */
-    .city-tabs {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        justify-content: center;
-        margin-bottom: 1.5rem;
-    }
-    .city-tab {
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 2rem;
-        padding: 0.4rem 1.2rem;
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #495057;
-        transition: all 0.2s;
-        cursor: pointer;
-    }
-    .city-tab.active {
-        background: var(--primary-color);
-        border-color: var(--primary-color);
-        color: white;
-    }
-    .city-tab:hover {
-        background: #f2faf2;
-        color: #000 !important;
-    }
-    .city-tours-block {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-
-    /* ===== СТИЛІ ДЛЯ БАДЖА ОЦІНКИ НА ФОТО ===== */
-    .popular-hotels-block .position-relative {
+        height: 100px;
+        background: #e9ecef;
+        border-radius: 6px;
         position: relative;
-    }
-    .popular-hotels-block .rating-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(4px);
-        border-radius: 8px;
-        padding: 6px 12px;
-        color: white;
-        font-size: 0.75rem;
-        font-weight: 500;
-        z-index: 2;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-    }
-    .popular-hotels-block .rating-main {
-        display: flex;
-        align-items: baseline;
-        gap: 8px;
-    }
-    .popular-hotels-block .rating-label {
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        font-size: 0.75rem;
-    }
-    .popular-hotels-block .rating-label.very-good {
-        color: #ffd966;
-    }
-    .popular-hotels-block .rating-label.good {
-        color: #a3d9a5;
-    }
-    .popular-hotels-block .rating-label.average {
-        color: #ffb347;
-    }
-    .popular-hotels-block .rating-value {
-        font-weight: 700;
-        font-size: 0.85rem;
-        color: white;
-    }
-    .popular-hotels-block .rating-reviews {
-        font-size: 0.7rem;
-        color: #e0e0e0;
-        line-height: 1.2;
-    }
-    @media (max-width: 576px) {
-        .popular-hotels-block .rating-badge {
-            top: 6px;
-            right: 6px;
-            padding: 4px 8px;
-        }
-        .popular-hotels-block .rating-main {
-            gap: 4px;
-        }
-        .popular-hotels-block .rating-label {
-            font-size: 0.65rem;
-        }
-        .popular-hotels-block .rating-value {
-            font-size: 0.7rem;
-        }
-        .popular-hotels-block .rating-reviews {
-            font-size: 0.6rem;
-        }
-    }
-
-    /* ===== ПРО НАС ===== */
-    .about-us-block {
-        background-color: #f8f9fa;
-        padding: 2rem 0;
-        border-radius: 1rem;
-    }
-    .about-us-block img {
-        transition: transform 0.3s ease;
-    }
-    .about-us-block img:hover {
-        transform: scale(1.02);
-    }
-
-    /* ===== ПОПУЛЯРНІ НАПРЯМКИ ===== */
-    .popular-destinations-block .carousel-container {
-        position: relative;
-        width: 100%;
+        margin: 0 auto 0.5rem;
         overflow: hidden;
-        padding: 0 5px;
     }
-    .popular-destinations-block .carousel-track {
-        display: flex;
-        transition: transform 0.4s ease;
-        gap: 15px;
-    }
-    .popular-destinations-block .carousel-card {
-        flex: 0 0 calc(25% - 15px);
-        min-width: 0;
-        box-sizing: border-box;
-    }
-    @media (max-width: 992px) {
-        .popular-destinations-block .carousel-card {
-            flex: 0 0 calc(33.33% - 15px);
-        }
-    }
-    @media (max-width: 768px) {
-        .popular-destinations-block .carousel-card {
-            flex: 0 0 calc(50% - 15px);
-        }
-    }
-    @media (max-width: 576px) {
-        .popular-destinations-block .carousel-card {
-            flex: 0 0 calc(100% - 15px);
-        }
-    }
-    .popular-destinations-block .carousel-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: rgba(0,0,0,0.6);
-        border: none;
-        color: white;
-        font-size: 18px;
-        cursor: pointer;
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .popular-destinations-block .carousel-btn.prev { left: 0px; }
-    .popular-destinations-block .carousel-btn.next { right: 0px; }
-    .popular-destinations-block .carousel-btn:hover { background: rgba(0,0,0,0.9); }
-    .popular-destinations-block .card {
-        transition: transform 0.2s;
-    }
-    .popular-destinations-block .card:hover {
-        transform: translateY(-5px);
-    }
-    .popular-destinations-block .city-link {
-        color: var(--primary-color);
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: color 0.2s;
-    }
-    .popular-destinations-block .city-link:hover {
-        color: var(--primary-dark);
-        text-decoration: underline;
-    }
-
-    /* ===== СТИЛІ ДЛЯ ЦІНИ В БЛОЦІ ПОПУЛЯРНИХ НАПРЯМКІВ ===== */
-    .popular-destinations-block .price-wrapper {
-        margin-bottom: 0.5rem;
-    }
-    .popular-destinations-block .from-text {
-        font-size: 0.7rem;
-        color: #6c757d;
-        margin-right: 0.25rem;
-        font-weight: normal;
-    }
-    .popular-destinations-block .price-value {
-        font-size: 1rem;
-        font-weight: 500;
-        color: #000000;
-    }
-
-    .popular-destinations li a {
-        position: relative;
-        text-decoration: none;
-        display: inline-block;
-        padding-bottom: 2px;
-        transition: color 0.2s ease;
-    }
-    .popular-destinations li a::after {
-        content: '';
+    .price-column {
         position: absolute;
         bottom: 0;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background-color: currentColor;
-        transition: width 0.3s ease-in-out;
-    }
-    .popular-destinations li a:hover::after {
         width: 100%;
+        transition: height 0.2s;
+        border-radius: 6px 6px 0 0;
     }
-    .popular-destinations a:hover {
-        color: var(--primary-color) !important;
-    }
+    .price-column.low { background: linear-gradient(135deg, #28a745, #20c997); }
+    .price-column.medium { background: linear-gradient(135deg, #ffc107, #fd7e14); }
+    .price-column.red { background: linear-gradient(135deg, #dc3545, #e83e8c); }
+    .price-column.gray { background: #ced4da; }
+    .price-value-text { font-weight: 500; font-size: 0.7rem; white-space: nowrap; margin-top: 0.25rem; }
 
-    /* ===== СТИЛІ ДЛЯ ВИБОРУ ТУРИСТІВ ===== */
-    .child-item {
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 8px 12px;
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-    .age-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        align-items: center;
-    }
-    .age-btn {
-        min-width: 40px;
-        padding: 4px 8px;
-        font-size: 0.8rem;
-        border: 1px solid #dee2e6;
-        background: white;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    .age-btn.selected {
-        background: var(--primary-color);
-        color: white;
-        border-color: var(--primary-color);
-    }
-    .remove-child {
-        background: none;
-        border: none;
-        color: #dc3545;
-        font-size: 1.2rem;
-        cursor: pointer;
-        padding: 0 5px;
-    }
-
-    .tourist-select-wrapper {
-        position: relative;
-    }
-    .selected-tourist-option {
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 0.375rem;
-        padding: 6px 12px;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.85rem;
-        height: 38px;
-    }
-    .selected-tourist-option:hover {
-        border-color: var(--primary-color);
-    }
-    .tourist-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 1px solid #ced4da;
-        border-radius: 0.375rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
-        margin-top: 4px;
-    }
-    .tourist-dropdown-inner {
-        padding: 12px;
-    }
-    .tourist-adults {
-        margin-bottom: 12px;
-    }
-    .tourist-adults label, .tourist-children label {
-        font-size: 0.8rem;
-        font-weight: 500;
-        margin-bottom: 6px;
-        display: block;
-    }
-    .quantity-selector {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    .qty-btn {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        border: 1px solid #ced4da;
-        background: #f8f9fa;
-        cursor: pointer;
-        font-size: 1.1rem;
-    }
-    .qty-value {
-        min-width: 30px;
-        text-align: center;
-        font-weight: 500;
-    }
-    .btn-add-child {
-        background: none;
-        border: none;
-        color: var(--primary-color);
-        font-size: 0.8rem;
-        cursor: pointer;
-        padding: 0;
-    }
-    .child-item-inline {
-        background: #f8f9fa;
-        border-radius: 20px;
-        padding: 4px 10px;
-        margin-bottom: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 0.8rem;
-    }
-    .child-age-select {
-        border: 1px solid #ced4da;
-        border-radius: 20px;
-        padding: 2px 8px;
-        font-size: 0.8rem;
-        background: white;
-        flex: 1;
-    }
-    .remove-child-btn {
-        background: none;
-        border: none;
-        color: #dc3545;
-        cursor: pointer;
-        font-size: 0.9rem;
-        margin-left: 8px;
-    }
-    .tourist-actions {
-        margin-top: 12px;
-        text-align: right;
-    }
-    .btn-apply {
-        background: var(--primary-color);
-        color: white;
-        border: none;
-        border-radius: 0.375rem;
-        padding: 5px 15px;
-        font-size: 0.8rem;
-        cursor: pointer;
-    }
-
-    /* Фіксація кнопок календаря на мобільних пристроях */
     @media (max-width: 768px) {
-        .calendar-header {
-            flex-wrap: nowrap !important;
-            justify-content: space-between;
-            gap: 0.5rem;
-        }
-        .month-controls {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        .month-controls .btn {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-            width: 28px;
-            height: 28px;
-        }
-        .month-controls span {
-            white-space: nowrap;
-            font-size: 0.85rem;
-            min-width: 100px;
-        }
-        .price-range-indicator {
-            min-width: 120px;
-            padding: 0.25rem 0.5rem;
-        }
-        .price-range-indicator .max-price,
-        .price-range-indicator .min-price {
-            font-size: 0.7rem;
-        }
-        .day-column {
-            min-width: 65px;
-            padding: 0.5rem 0.25rem;
-        }
-        .price-bar-container {
-            width: 35px;
-            height: 80px;
-        }
-        .price-value-text {
-            font-size: 0.6rem;
-        }
+        .consult-row { flex-direction: column !important; gap: 1.5rem !important; }
+        .form-block { order: 1; width: 100%; }
+        .agent-block { order: 2; width: 100%; justify-content: center; }
+        #otpusk-search-module { padding: 15px !important; margin: -20px 15px 0 15px !important; max-width: none !important; }
+        .calendar-header { flex-wrap: nowrap !important; justify-content: space-between; gap: 0.5rem; }
+        .month-controls span { font-size: 0.85rem; min-width: 100px; }
+        .price-range-indicator { min-width: 120px; padding: 0.25rem 0.5rem; }
+        .day-column { min-width: 65px; padding: 0.5rem 0.25rem; }
+        .price-bar-container { width: 35px; height: 80px; }
     }
-
-    /* Адаптація блоку консультації для мобільних пристроїв */
-    @media (max-width: 768px) {
-        .consult-row {
-            flex-direction: column !important;
-            gap: 1.5rem !important;
-        }
-        .form-block {
-            order: 1;
-            width: 100%;
-            min-width: 100% !important;
-        }
-        .agent-block {
-            order: 2;
-            width: 100%;
-            justify-content: center;
-            text-align: center;
-            flex-direction: column !important;
-        }
-        .agent-block .rounded-circle {
-            margin-right: 0 !important;
-            margin-bottom: 0.5rem;
-        }
-        .card-body.p-4.p-md-5 {
-            padding: 1.5rem !important;
-        }
-        #consultationCard .form-control,
-        #consultationCard .form-select,
-        #consultationCard .btn {
-            font-size: 0.9rem;
-            height: auto;
-            padding: 0.5rem 0.75rem;
-        }
-        #consultationCard .row.g-2 {
-            --bs-gutter-x: 0.5rem;
-        }
-    }
-    /* ===== СТИЛІ ДЛЯ БАНЕРІВ З ТЕКСТОМ ===== */
-.banner-container {
-    position: relative;
-    overflow: hidden;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-}
-
-.banner-container:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-}
-
-.banner-text-overlay {
-    position: absolute;
-    left: 0;
-    right: 0;
-    padding: 20px;
-    pointer-events: none;
-    background: linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 100%);
-    border-radius: 12px;
-}
-
-.banner-text-overlay h2 {
-    font-size: clamp(1.2rem, 4vw, 2rem);
-    margin-bottom: 0.5rem;
-}
-
-.banner-text-overlay p {
-    font-size: clamp(0.8rem, 2vw, 1rem);
-    margin-bottom: 0;
-}
-
-.banner-button {
-    pointer-events: auto;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.banner-button:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
-}
-
-@media (max-width: 768px) {
-    .banner-text-overlay {
-        padding: 10px;
-    }
-    .banner-text-overlay h2 {
-        font-size: 1rem;
-    }
-    .banner-text-overlay p {
-        font-size: 0.7rem;
-    }
-    .banner-button {
-        padding: 5px 15px !important;
-        font-size: 0.8rem;
-    }
-}
-
-   /* ========== СТИЛІ ДЛЯ МОДУЛЯ ПОШУКУ OTPUSK.COM ========== */
-
-/* Основний контейнер - вужчий, з рамкою */
-#otpusk-search-module {
-    background: white !important;
-    border-radius: 24px !important;
-    border: 2px solid var(--primary-color) !important;    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
-    padding: 20px 24px !important;
-    max-width: 1200px !important;
-    margin: -40px auto 0 auto !important;
-    position: relative !important;
-    z-index: 10 !important;
-}
-/* Заголовок "Пошук туру" - чорний */
-.new_f-title {
-    color: #1a202c !important;
-    font-size: 1.5rem !important;
-    font-weight: 700 !important;
-    margin-bottom: 20px !important;
-    display: block !important;
-}
-
-/* Внутрішні контейнери */
-.new_os,
-.new_f-container,
-.new_f-wrapper,
-.new_f-form {
-    background: white !important;
-}
-
-
-
-/* Розширений пошук - чорний */
-.new_f-ext-btn-text {
-    color: #1a202c !important;
-    font-weight: 500 !important;
-}
-
-/* Кнопка "Знайти" - колір агента */
-.new_f-form-submit {
-    background: var(--primary-color) !important;
-    color: white !important;
-    border-radius: 10px !important;
-    border: none !important;
-    font-weight: 600 !important;
-    padding: 12px 28px !important;
-    transition: all 0.3s ease !important;
-    cursor: pointer !important;
-}
-
-.new_f-form-submit:hover {
-    background: var(--primary-dark) !important;
-    box-shadow: 0 4px 12px rgba(8, 103, 69, 0.2) !important;
-}
-
-/* Поля вводу */
-.new_f-dropdown-btn {
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    transition: all 0.3s ease !important;
-    font-size: 14px !important;
-}
-
-.new_f-dropdown-btn:hover {
-    border-color: var(--primary-color) !important;
-}
-
-/* Випадаючі списки */
-.new_f-dropdown-body {
-    border-radius: 16px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-    border: 1px solid #e2e8f0 !important;
-}
-
-/* Активні елементи */
-.new_f-dropdown-item.selected {
-    background: var(--primary-color) !important;
-    color: white !important;
-}
-
-/* Результати пошуку */
-.new_r-container {
-    background: white !important;
-    margin-top: 30px !important;
-}
-
-.new_r-item {
-    background: white !important;
-    border-radius: 16px !important;
-    border: 1px solid #e2e8f0 !important;
-    transition: all 0.3s ease !important;
-}
-
-.new_r-item:hover {
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Мобільна версія */
-@media (max-width: 768px) {
-    #otpusk-search-module {
-        padding: 15px !important;
-        margin: -20px 15px 0 15px !important;
-        max-width: none !important;
-    }
-
-    .new_f-dropdown-btn {
-        width: 100% !important;
-        padding: 10px 14px !important;
-    }
-
-    .new_f-form-submit {
-        width: 100% !important;
-        padding: 12px !important;
-        margin-top: 10px !important;
-    }
-}
-    /* Кнопка в розширеному пошуку */
-.new_f-ext-clear-btn,
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
-    background: var(--primary-color) !important;
-    color: white !important;
-    border-radius: 40px !important;
-    border: none !important;
-    font-weight: 500 !important;
-    transition: all 0.3s ease !important;
-}
-
-.new_f-ext-clear-btn:hover,
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
-    background: var(--primary-dark) !important;
-}
-    /* Кнопка "Очистити фільтри" - сіра */
-.new_f-ext-clear-btn {
-    background: #e2e8f0 !important;
-    color: #1a202c !important;
-    border-radius: 40px !important;
-    border: none !important;
-    font-weight: 500 !important;
-    transition: all 0.3s ease !important;
-}
-
-.new_f-ext-clear-btn:hover {
-    background: #cbd5e1 !important;
-}
-
-/* Кнопка "Застосувати" в розширеному пошуку - залишається зеленою */
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
-    background: var(--primary-color) !important;
-    color: white !important;
-    border-radius: 40px !important;
-    border: none !important;
-    font-weight: 500 !important;
-    transition: all 0.3s ease !important;
-}
-
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
-    background: var(--primary-dark) !important;
-}
 </style>
-{% endblock %}
-
-{% block extra_js %}
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/uk.js"></script>
 
 <script>
-(function() {
-    if (window._citySelectFinal) return;
-    window._citySelectFinal = true;
-
-    let rebuildLock = false;
-
-    function setCityOptionsDisabled(citySelect, disabled) {
-        citySelect.find('option').each(function() {
-            const val = $(this).val();
-            if (val && val !== '__all__') {
-                $(this).prop('disabled', disabled);
-            }
-        });
-    }
-
-    function rebuildCitySelect(citySelect, optionsHtml) {
-        if (rebuildLock) return;
-        rebuildLock = true;
-        try {
-            if (citySelect.data('selectpicker')) {
-                citySelect.selectpicker('destroy');
-            }
-            citySelect.siblings('.bootstrap-select').remove();
-            citySelect.empty();
-            citySelect.html(optionsHtml);
-            citySelect.selectpicker({
-                liveSearch: false,
-                actionsBox: false,
-                selectedTextFormat: "count > 1",
-                countSelectedText: "кілька варіантів",
-                noneSelectedText: "Виберіть курорти",
-                noneResultsText: "Нічого не знайдено"
-            });
-
-            const vals = citySelect.val() || [];
-            const hasEmpty = vals.includes('');
-            if (hasEmpty) {
-                setCityOptionsDisabled(citySelect, true);
-            } else {
-                setCityOptionsDisabled(citySelect, false);
-            }
-        } finally {
-            rebuildLock = false;
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const countrySelect = $('#countrySelect');
-        const citySelect = $('#citySelect');
-        const departureSelect = $('#departureSelect');
-        const durationSelect = $('#durationRange');
-
-        countrySelect.select2({
-            placeholder: "Країна, курорт",
-            language: "uk",
-            width: "100%"
-        });
-
-        rebuildCitySelect(citySelect, '<option value="">Всі курорти</option>');
-
-        departureSelect.select2({
-            placeholder: "Звідки",
-            language: "uk",
-            width: "100%",
-            minimumResultsForSearch: Infinity
-        });
-        durationSelect.select2({
-            placeholder: "Тривалість",
-            language: "uk",
-            width: "100%",
-            minimumResultsForSearch: Infinity
-        });
-
-        const availableDates = {{ available_dates_json|safe }};
-        const dateMap = {};
-        availableDates.forEach(d => dateMap[d] = true);
-        flatpickr("#dateRange", {
-            mode: "range",
-            dateFormat: "d M",
-            locale: "uk",
-            altInput: true,
-            altFormat: "d M",
-            minDate: "today",
-            onChange: function(selectedDates) {
-                if (selectedDates.length === 2) {
-                    document.getElementById('start_date_iso').value = selectedDates[0].toISOString().slice(0,10);
-                    document.getElementById('end_date_iso').value = selectedDates[1].toISOString().slice(0,10);
-                } else {
-                    document.getElementById('start_date_iso').value = '';
-                    document.getElementById('end_date_iso').value = '';
-                }
-            },
-            onDayCreate: function(_, __, ___, dayElem) {
-                const y = dayElem.dateObj.getFullYear();
-                const m = String(dayElem.dateObj.getMonth() + 1).padStart(2, '0');
-                const d = String(dayElem.dateObj.getDate()).padStart(2, '0');
-                if (dateMap[`${y}-${m}-${d}`]) dayElem.classList.add('available-date');
-            }
-        });
-
-        const nightsMin = $('#nights_min'), nightsMax = $('#nights_max');
-        durationSelect.on('change', function() {
-            const val = durationSelect.val();
-            if (val) {
-                const parts = val.split('-');
-                nightsMin.val(parts[0]);
-                nightsMax.val(parts[1]);
-            }
-        }).trigger('change');
-
-        let currentCountry = '';
-        let lastCountry = '';
-        let activeRequest = null;
-
-        countrySelect.on('change', function() {
-            const newCountry = this.value;
-            if (newCountry === lastCountry) return;
-            lastCountry = newCountry;
-
-            if (newCountry === currentCountry) return;
-            currentCountry = newCountry;
-
-            if (activeRequest) {
-                activeRequest.abort();
-                activeRequest = null;
-            }
-
-            if (!currentCountry) {
-                rebuildCitySelect(citySelect, '<option value="">Всі курорти</option>');
-                return;
-            }
-
-            rebuildCitySelect(citySelect, '<option value="">Всі курорти</option><option value="" disabled>Завантаження...</option>');
-
-            const controller = new AbortController();
-            activeRequest = controller;
-
-            fetch(`/get-cities/?country=${encodeURIComponent(currentCountry)}`, { signal: controller.signal })
-                .then(res => res.json())
-                .then(data => {
-                    if (currentCountry !== this.value) return;
-
-                    let filtered = data.filter(city => city !== 'Всі курорти');
-                    const unique = [...new Set(filtered)];
-
-                    let optionsHtml = '<option value="">Всі курорти</option>';
-                    if (unique.length) {
-                        optionsHtml += '<option disabled>——————————</option>';
-                        unique.sort((a,b)=>a.localeCompare(b,'uk')).forEach(city => {
-                            optionsHtml += `<option value="${city}">${city}</option>`;
-                        });
-                    } else {
-                        optionsHtml += '<option value="" disabled>Немає міст для цієї країни</option>';
-                    }
-
-                    rebuildCitySelect(citySelect, optionsHtml);
-                    activeRequest = null;
-                })
-                .catch(err => {
-                    if (err.name === 'AbortError') return;
-                    console.error('Помилка завантаження міст:', err);
-                    if (currentCountry) {
-                        rebuildCitySelect(citySelect, '<option value="">Всі курорти</option><option value="" disabled>Помилка завантаження</option>');
-                    }
-                    activeRequest = null;
-                });
-        });
-
-        let processing = false;
-
-        citySelect.on('changed.bs.select', function(e, clickedIndex, isSelected) {
-            if (processing) return;
-            processing = true;
-
-            try {
-                const ALL = '__all__';
-
-                const allOptions = citySelect.find('option');
-                const cityOptions = allOptions.filter(function() {
-                    const val = $(this).val();
-                    return val && val !== ALL;
-                });
-
-                const allCityValues = cityOptions.map(function() {
-                    return $(this).val();
-                }).get();
-
-                let selected = citySelect.val() || [];
-
-                if (selected.includes(ALL)) {
-                    if (selected.length === 1) {
-                        citySelect.val([ALL, ...allCityValues]);
-                        setCityOptionsDisabled(citySelect, true);
-                    } else {
-                        selected = selected.filter(v => v !== ALL);
-                        citySelect.val(selected);
-                        setCityOptionsDisabled(citySelect, false);
-                    }
-
-                    citySelect.selectpicker('refresh');
-                    return;
-                }
-
-                if (selected.length === allCityValues.length && allCityValues.length > 0) {
-                    citySelect.val([ALL, ...allCityValues]);
-                    setCityOptionsDisabled(citySelect, true);
-                    citySelect.selectpicker('refresh');
-                    return;
-                }
-
-                if (selected.length === 0) {
-                    setCityOptionsDisabled(citySelect, false);
-                }
-
-            } finally {
-                processing = false;
-            }
-        });
-    });
-})();
-</script>
-
-<!-- Скрипт для роботи з обраним -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const favoriteBtns = document.querySelectorAll('.favorite-btn');
-    favoriteBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const tourId = this.dataset.id;
-            const url = `/toggle-favorite/${tourId}/`;
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'added') {
-                    this.textContent = 'Прибрати';
-                    this.classList.remove('btn-outline-danger');
-                    this.classList.add('btn-danger');
-                } else if (data.status === 'removed') {
-                    this.textContent = 'Додати';
-                    this.classList.remove('btn-danger');
-                    this.classList.add('btn-outline-danger');
-                }
-            })
-            .catch(error => console.error('Помилка:', error));
-        });
-    });
-});
-</script>
-
-<!-- ===== ОНОВЛЕНИЙ СКРИПТ ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН ===== -->
-<script>
+// ========== КАЛЕНДАР НИЗЬКИХ ЦІН ==========
 document.addEventListener('DOMContentLoaded', function() {
     // Список країн для кожного міста вильоту
     const countryListByDepartureCity = {
-        "Київ": ["Україна", "Єгипет", "Туреччина", "ОАЕ", "Шрі Ланка", "Іспанія", "Мальдіви", "Кіпр", "Грузія", "Чехія", "Індонезія", "Маврикій"],
-        "Кишинів": ["Єгипет", "Туреччина", "ОАЕ", "Шрі Ланка", "Іспанія", "Танзанія", "Мальдіви", "В'єтнам", "Італія", "Кіпр", "Греція"],
-        "Варшава": ["Єгипет", "Туреччина", "ОАЕ", "Шрі Ланка", "Іспанія", "Танзанія", "Мальдіви", "В'єтнам", "Італія", "Кіпр", "Греція"],
-        "Жешув": ["Єгипет"],
-        "Краків": ["ОАЕ", "Шрі Ланка", "Іспанія", "Танзанія", "Мальдіви", "Італія", "Кіпр", "Греція", "Таїланд", "Індія", "Маврикій"],
+        "Київ": ["Україна", "Єгипет", "Туреччина", "ОАЕ", "Шрі Ланка", "Іспанія", "Мальдіви", "Кіпр", "Грузія"],
+        "Кишинів": ["Єгипет", "Туреччина", "ОАЕ", "Шрі Ланка", "Іспанія", "Танзанія", "Мальдіви", "Італія", "Кіпр", "Греція"],
+        "Варшава": ["Єгипет", "Туреччина", "ОАЕ", "Шрі Ланка", "Іспанія", "Мальдіви", "Італія", "Кіпр", "Греція"],
+        "Краків": ["ОАЕ", "Шрі Ланка", "Іспанія", "Мальдіви", "Італія", "Кіпр", "Греція"],
         "Вроцлав": ["Єгипет", "Кіпр"],
-        "Катовіце": ["Єгипет", "Туреччина", "Іспанія", "Італія"],
-        "Бухарест": ["Єгипет", "Туреччина", "ОАЕ", "Шрі Ланка", "Іспанія", "Мальдіви", "Італія", "Кіпр", "Індонезія", "Маврикій"],
-        "Будапешт": ["ОАЕ", "Іспанія", "Мальдіви", "Італія", "Кіпр", "Чорногорія", "Греція", "Індонезія"],
-        "Прага": ["Єгипет", "Італія"],
         "Берлін": ["Туреччина", "Шрі Ланка", "Іспанія", "Мальдіви", "Італія", "Греція"],
-        "Ясси": ["Єгипет", "ОАЕ", "Іспанія"],
-        "Сучава": ["Єгипет"],
-        "Відень": ["Маврикій"]
+        "Бухарест": ["Єгипет", "Туреччина", "ОАЕ", "Шрі Ланка", "Іспанія", "Мальдіви", "Італія", "Кіпр"],
+        "Будапешт": ["ОАЕ", "Іспанія", "Мальдіви", "Італія", "Кіпр", "Греція"],
+        "Прага": ["Єгипет", "Італія"]
     };
 
     let currentCountry = '';
     let currentMonth = new Date();
-    currentMonth.setMonth(3); // Квітень 2026
-    let currentDeparture = '';
+    currentMonth.setMonth(4);
+    let currentDeparture = 'Київ';
 
     const calendarDays = document.getElementById('calendarDays');
     const monthYearDisplay = document.getElementById('monthYearDisplay');
@@ -2363,16 +441,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function getColorForPrice(price, minPrice, maxPrice) {
         if (price === null) return 'gray';
-
-        // Якщо це найдешевший тур - зелений
         if (price === minPrice) return 'low';
-
-        // Якщо це найдорожчий тур - червоний
         if (price === maxPrice) return 'red';
-
-        // Проміжні значення - жовтий/помаранчевий
         if (maxPrice - minPrice === 0) return 'medium';
-
         const ratio = (price - minPrice) / (maxPrice - minPrice);
         if (ratio < 0.33) return 'low';
         if (ratio < 0.66) return 'medium';
@@ -2382,13 +453,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function getHeightForPrice(price, minPrice, maxPrice) {
         if (price === null) return 30;
         if (minPrice === maxPrice) return 50;
-
-        // Нормалізуємо висоту від 20% до 100%
         const ratio = (price - minPrice) / (maxPrice - minPrice);
         return 20 + (ratio * 80);
     }
 
-    function renderCalendar(prices, maxPriceFromApi) {
+    function renderCalendar(prices) {
         if (!calendarDays) return;
 
         const year = currentMonth.getFullYear();
@@ -2396,9 +465,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         calendarDays.innerHTML = '';
 
-        // Фільтруємо тільки ціни, які існують (не null)
         const validPrices = prices.filter(p => p !== null);
-
         let globalMin = null;
         let globalMax = null;
 
@@ -2407,47 +474,20 @@ document.addEventListener('DOMContentLoaded', function() {
             globalMax = Math.max(...validPrices);
         }
 
-        // Оновлюємо показники мінімальної та максимальної ціни
         if (globalMin !== null) {
             minPriceSpan.innerHTML = `від ${globalMin.toLocaleString('uk-UA')} ₴`;
             minPriceSpan.style.color = '#28a745';
-            minPriceSpan.style.fontWeight = 'bold';
         } else {
             minPriceSpan.innerHTML = 'немає даних';
-            minPriceSpan.style.color = '#6c757d';
         }
 
         if (globalMax !== null) {
             maxPriceSpan.innerHTML = `до ${globalMax.toLocaleString('uk-UA')} ₴`;
             maxPriceSpan.style.color = '#dc3545';
-            maxPriceSpan.style.fontWeight = 'bold';
         } else {
             maxPriceSpan.innerHTML = 'немає даних';
-            maxPriceSpan.style.color = '#6c757d';
         }
 
-        // Якщо немає жодної ціни - показуємо сірі стовпчики
-        if (globalMin === null || globalMax === null) {
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayDate = new Date(year, month, day);
-                const dayOfWeek = dayDate.toLocaleDateString('uk', { weekday: 'short' });
-                const col = document.createElement('div');
-                col.className = 'day-column';
-                col.setAttribute('title', `Немає турів на ${day} ${dayDate.toLocaleDateString('uk', { month: 'long' })}`);
-                col.innerHTML = `
-                    <div class="day-week">${dayOfWeek}</div>
-                    <div class="day-date">${day}</div>
-                    <div class="price-bar-container">
-                        <div class="price-column gray" style="height: 30%;"></div>
-                    </div>
-                    <div class="price-value-text" style="font-size: 0.7rem; color: #6c757d; margin-top: 4px;">—</div>
-                `;
-                calendarDays.appendChild(col);
-            }
-            return;
-        }
-
-        // Малюємо стовпчики для кожного дня
         for (let day = 1; day <= daysInMonth; day++) {
             const price = prices[day - 1];
             const dayDate = new Date(year, month, day);
@@ -2459,42 +499,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (price !== null) {
                 const barClass = getColorForPrice(price, globalMin, globalMax);
                 const barHeight = getHeightForPrice(price, globalMin, globalMax);
-                const formattedPrice = price.toLocaleString('uk-UA') + ' ₴';
-
-                col.setAttribute('title', `${day} ${dayDate.toLocaleDateString('uk', { month: 'long' })}: ${formattedPrice}`);
-                col.setAttribute('data-price', price);
-                col.setAttribute('data-date', `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
-
                 col.innerHTML = `
                     <div class="day-week">${dayOfWeek}</div>
                     <div class="day-date">${day}</div>
                     <div class="price-bar-container">
                         <div class="price-column ${barClass}" style="height: ${barHeight}%;"></div>
                     </div>
-                    <div class="price-value-text" style="font-size: 0.65rem; color: ${barClass === 'low' ? '#28a745' : (barClass === 'red' ? '#dc3545' : '#ffc107')}; margin-top: 4px; font-weight: 500;">
+                    <div class="price-value-text" style="color: ${barClass === 'low' ? '#28a745' : (barClass === 'red' ? '#dc3545' : '#ffc107')}">
                         ${Math.round(price).toLocaleString('uk-UA')} ₴
                     </div>
                 `;
-
-                // Додаємо обробник кліку для пошуку
-                col.addEventListener('click', () => {
-                    document.querySelectorAll('.day-column').forEach(c => c.classList.remove('selected'));
-                    col.classList.add('selected');
-
-                    // Формуємо URL для пошуку
-                    let searchUrl = '/search/';
-                    {% if agent_site %}
-                    searchUrl = `/a/{{ agent_site.slug }}/search/`;
-                    {% endif %}
-
-                    const params = new URLSearchParams();
-                    params.set('country', currentCountry);
-                    params.set('departure_city', currentDeparture);
-                    params.set('start_date_iso', col.getAttribute('data-date'));
-                    params.set('end_date_iso', col.getAttribute('data-date'));
-
-                    window.location.href = searchUrl + '?' + params.toString();
-                });
             } else {
                 col.innerHTML = `
                     <div class="day-week">${dayOfWeek}</div>
@@ -2502,9 +516,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="price-bar-container">
                         <div class="price-column gray" style="height: 20%;"></div>
                     </div>
-                    <div class="price-value-text" style="font-size: 0.65rem; color: #adb5bd; margin-top: 4px;">немає</div>
+                    <div class="price-value-text" style="color: #adb5bd;">немає</div>
                 `;
-                col.setAttribute('title', `Немає турів на ${day} ${dayDate.toLocaleDateString('uk', { month: 'long' })}`);
             }
             calendarDays.appendChild(col);
         }
@@ -2512,16 +525,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function updateCalendar() {
         if (!currentCountry || !currentDeparture) return;
-
         monthYearDisplay.textContent = currentMonth.toLocaleString('uk', { month: 'long', year: 'numeric' });
-
-        // Показуємо індикатор завантаження
-        if (calendarDays) {
-            calendarDays.innerHTML = '<div class="text-center w-100 py-5">Завантаження...</div>';
-        }
-
-        const { prices, maxPrice } = await fetchPriceData(currentCountry, currentMonth, currentDeparture);
-        renderCalendar(prices, maxPrice);
+        if (calendarDays) calendarDays.innerHTML = '<div class="text-center w-100 py-5">Завантаження...</div>';
+        const { prices } = await fetchPriceData(currentCountry, currentMonth, currentDeparture);
+        renderCalendar(prices);
     }
 
     function onDepartureChange() {
@@ -2535,189 +542,91 @@ document.addEventListener('DOMContentLoaded', function() {
         rebuildCountryTabs(currentDeparture);
     }
 
-    if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-            currentMonth.setMonth(currentMonth.getMonth() - 1);
-            updateCalendar();
-        });
-    }
-
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-            currentMonth.setMonth(currentMonth.getMonth() + 1);
-            updateCalendar();
-        });
-    }
+    if (prevBtn) prevBtn.addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() - 1); updateCalendar(); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() + 1); updateCalendar(); });
 });
-</script>
 
-<!-- ===== ІНІЦІАЛІЗАЦІЯ КАРУСЕЛІ ДЛЯ РЕКОМЕНДОВАНИХ ===== -->
-<script>
-function initCarousel(trackId, prevBtnId, nextBtnId) {
-    const track = document.getElementById(trackId);
-    const prevBtn = document.getElementById(prevBtnId);
-    const nextBtn = document.getElementById(nextBtnId);
-    if (!track || !prevBtn || !nextBtn) return;
-
-    let currentIndex = 0;
-    const cards = track.children;
-    const totalCards = cards.length;
-
-    function getVisibleCards() {
-        if (window.innerWidth >= 992) return 4;
-        if (window.innerWidth >= 768) return 3;
-        if (window.innerWidth >= 576) return 2;
-        return 1;
-    }
-
-    function updateCarousel() {
-        const visibleCards = getVisibleCards();
-        const maxIndex = Math.max(0, totalCards - visibleCards);
-        currentIndex = Math.min(currentIndex, maxIndex);
-        const cardWidth = cards[0].offsetWidth + 15;
-        track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-    }
-
-    prevBtn.addEventListener('click', () => {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateCarousel();
-        }
-    });
-
-    nextBtn.addEventListener('click', () => {
-        const visibleCards = getVisibleCards();
-        const maxIndex = totalCards - visibleCards;
-        if (currentIndex < maxIndex) {
-            currentIndex++;
-            updateCarousel();
-        }
-    });
-
-    window.addEventListener('resize', () => updateCarousel());
-    updateCarousel();
-}
-
+// ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
 document.addEventListener('DOMContentLoaded', function() {
-    initCarousel('recommendedHotelsTrack', 'recommendedPrevBtn', 'recommendedNextBtn');
-});
-</script>
+    const form = document.getElementById('consultationForm');
+    if (!form) return;
 
-<!-- ===== СКРИПТ ДЛЯ БЛОКУ "ТУРИ З ВАШОГО МІСТА" ===== -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const cityTabs = document.querySelectorAll('.city-tab');
-    const countriesContainer = document.getElementById('countriesByCityContainer');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    function saveSelectedCity(city) {
-        localStorage.setItem('selectedDepartureCity', city);
-    }
+        // Визначаємо правильний URL для відправки
+        let ajaxUrl = '/consultation-ajax/';
+        {% if agent_site %}
+        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
+        {% endif %}
 
-    function getSavedCity() {
-        return localStorage.getItem('selectedDepartureCity');
-    }
+        const formData = new FormData(form);
+        const btn = form.querySelector('button[type="submit"]');
+        const originalText = btn.innerHTML;
 
-    function renderCountries(countries, currentCity) {
-        if (!countries.length) {
-            countriesContainer.innerHTML = '<div class="col-12 text-center"><p>Немає турів для вибраного міста.</p></div>';
-            return;
-        }
-        let html = '';
-        let baseUrl = '';
-        if (window.location.pathname.startsWith('/a/')) {
-            const slug = window.location.pathname.split('/')[2];
-            baseUrl = `/a/${slug}`;
-        }
-        countries.forEach(country => {
-            let searchUrl = `${baseUrl}/search/?country=${encodeURIComponent(country.country)}&departure_city=${encodeURIComponent(currentCity)}`;
-            html += `
-            <div class="col-md-4 mb-4">
-                <a href="${searchUrl}" class="text-decoration-none country-card-link">
-                    <div class="card country-card shadow-sm h-100">
-                        ${country.image_url ? `<img src="${country.image_url}" class="card-img-top" alt="${country.country}" style="height: 180px; object-fit: cover;">` :
-                          `<div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;"><i class="fa-solid fa-globe fa-3x text-muted"></i></div>`}
-                        <div class="card-body text-start">
-                            <h5 class="card-title fw-bold">${country.country}</h5>
-                            ${country.closest_date ? `<p class="card-text text-muted small mb-1"><i class="fa-solid fa-plane-departure"></i> Виліт з ${currentCity} ${country.closest_date}</p>` : ''}
-                            ${country.min_price ? `<p class="card-text mb-0"><span class="fw-bold text-danger">${parseFloat(country.min_price).toLocaleString()} грн</span> <span class="text-muted small">за двох</span></p>` : ''}
-                        </div>
-                    </div>
-                </a>
-            </div>`;
-        });
-        countriesContainer.innerHTML = html;
-    }
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Відправляємо...';
 
-    function loadCountriesForCity(city) {
-        fetch(`/tours-by-city/?city=${encodeURIComponent(city)}`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        fetch(ajaxUrl, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
         })
         .then(response => response.json())
         .then(data => {
-            if (data.countries) {
-                renderCountries(data.countries, city);
-            } else {
-                countriesContainer.innerHTML = '<div class="col-12 text-center"><p>Немає турів для вибраного міста.</p></div>';
+            if (data.success) {
+                form.reset();
             }
         })
-        .catch(error => console.error('Помилка завантаження країн:', error));
-    }
-
-    cityTabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            const city = this.getAttribute('data-city');
-            if (!city) return;
-
-            cityTabs.forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
-            saveSelectedCity(city);
-            loadCountriesForCity(city);
+        .catch(error => {
+            console.error('Помилка:', error);
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
         });
     });
+});
 
-    const savedCity = getSavedCity();
-    if (savedCity) {
-        const activeTab = Array.from(cityTabs).find(tab => tab.getAttribute('data-city') === savedCity);
-        if (activeTab) {
-            cityTabs.forEach(t => t.classList.remove('active'));
-            activeTab.classList.add('active');
-            loadCountriesForCity(savedCity);
-        } else {
-            const firstCity = cityTabs[0]?.getAttribute('data-city');
-            if (firstCity) {
-                cityTabs[0].classList.add('active');
-                if (countriesContainer.children.length === 0 || countriesContainer.innerHTML.includes('Немає турів')) {
-                    loadCountriesForCity(firstCity);
-                }
-            }
-        }
-    } else {
-        const firstCity = cityTabs[0]?.getAttribute('data-city');
-        if (firstCity && cityTabs[0].classList.contains('active')) {
-            if (countriesContainer.children.length === 0 || countriesContainer.innerHTML.includes('Немає турів')) {
-                loadCountriesForCity(firstCity);
-            }
-        }
+    // Функція для маленького тихого повідомлення
+    function showTinyMessage(message, type) {
+        // Видаляємо старі повідомлення
+        const oldMsg = document.querySelector('.tiny-message');
+        if (oldMsg) oldMsg.remove();
+
+        const msg = document.createElement('div');
+        msg.className = 'tiny-message';
+        msg.innerHTML = message;
+        msg.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#22c55e' : '#ef4444'};
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        `;
+        document.body.appendChild(msg);
+
+        // Анімація появи
+        setTimeout(() => { msg.style.opacity = '1'; }, 10);
+
+        // Зникає через 2 секунди
+        setTimeout(() => {
+            msg.style.opacity = '0';
+            setTimeout(() => msg.remove(), 300);
+        }, 2000);
     }
 });
-</script>
 
-<!-- ===== ІНІЦІАЛІЗАЦІЯ КАРУСЕЛІ ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ ===== -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    initCarousel('popularHotelsTrack', 'popularPrevBtn', 'popularNextBtn');
-});
-</script>
-
-<!-- ===== ІНІЦІАЛІЗАЦІЯ КАРУСЕЛІ ДЛЯ ПОПУЛЯРНИХ НАПРЯМКІВ ===== -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    initCarousel('popularDestinationsTrack', 'popularDestinationsPrevBtn', 'popularDestinationsNextBtn');
-});
-</script>
-
-<!-- ===== СКРИПТ ДЛЯ ВИПАДКОВОГО ФОНУ БЛОКУ КОНСУЛЬТАЦІЇ ===== -->
-<script>
+// Випадковий фон для блоку консультації
 document.addEventListener('DOMContentLoaded', function() {
     const colors = ['#c4edd4', '#ccfbfb', '#FFC0CB'];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
@@ -2731,183 +640,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- ===== НОВИЙ СКРИПТ ДЛЯ ВИБОРУ ТУРИСТІВ ===== -->
-<script>
-// ========== ВИПАДАЮЧИЙ СПИСОК ТУРИСТІВ ==========
-document.addEventListener('DOMContentLoaded', function() {
-    const selectedOption = document.getElementById('selectedTouristOption');
-    const dropdown = document.getElementById('touristDropdown');
-    const adultsQtySpan = document.getElementById('adultsQty');
-    const adultsInput = document.getElementById('adultsInput');
-    const touristDisplay = document.getElementById('touristDisplay');
-    const childrenListContainer = document.getElementById('childrenListContainer');
-    const addChildBtn = document.getElementById('addChildBtn');
-    const applyBtn = document.getElementById('applyTouristBtn');
-    const childrenDataInput = document.getElementById('childrenDataInput');
-
-    let adults = 2;
-    let children = [];
-    let nextChildId = 1;
-
-    function updateAdultsDisplay() {
-        adultsQtySpan.textContent = adults;
-        adultsInput.value = adults;
-        updateMainDisplay();
-    }
-
-    function updateMainDisplay() {
-        let text = adults + ' ' + (adults === 1 ? 'дорослий' : 'дорослих');
-        if (children.length > 0) {
-            text += ' + ' + children.length + ' ' + (children.length === 1 ? 'дитина' : 'дітей');
-        }
-        touristDisplay.textContent = text;
-    }
-
-    function renderChildrenList() {
-        childrenListContainer.innerHTML = '';
-        children.forEach(child => {
-            const div = document.createElement('div');
-            div.className = 'child-item-inline';
-            div.dataset.id = child.id;
-
-            const select = document.createElement('select');
-            select.className = 'child-age-select';
-            const ages = [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
-            ages.forEach(age => {
-                const option = document.createElement('option');
-                option.value = age;
-                option.textContent = age === 0 ? 'до 2 років' : age + ' років';
-                if (child.age === age) option.selected = true;
-                select.appendChild(option);
-            });
-            select.addEventListener('change', function(e) {
-                child.age = parseInt(e.target.value);
-                updateChildrenData();
-                updateMainDisplay();
-            });
-
-            const removeBtn = document.createElement('button');
-            removeBtn.innerHTML = '✕';
-            removeBtn.className = 'remove-child-btn';
-            removeBtn.addEventListener('click', () => {
-                children = children.filter(c => c.id !== child.id);
-                renderChildrenList();
-                updateChildrenData();
-                updateMainDisplay();
-            });
-
-            div.appendChild(select);
-            div.appendChild(removeBtn);
-            childrenListContainer.appendChild(div);
-        });
-    }
-
-    function updateChildrenData() {
-        const data = children.map(c => c.age);
-        childrenDataInput.value = JSON.stringify(data);
-    }
-
-    selectedOption.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const isVisible = dropdown.style.display === 'block';
-        dropdown.style.display = isVisible ? 'none' : 'block';
-    });
-
-    document.addEventListener('click', function(e) {
-        if (!selectedOption.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.style.display = 'none';
-        }
-    });
-
-    const minusBtn = document.querySelector('#touristDropdown .minus');
-    const plusBtn = document.querySelector('#touristDropdown .plus');
-    if (minusBtn) {
-        minusBtn.addEventListener('click', function() {
-            if (adults > 1) {
-                adults--;
-                updateAdultsDisplay();
-            }
-        });
-    }
-    if (plusBtn) {
-        plusBtn.addEventListener('click', function() {
-            adults++;
-            updateAdultsDisplay();
-        });
-    }
-
-    addChildBtn.addEventListener('click', function() {
-        if (children.length < 5) {
-            children.push({ id: nextChildId++, age: 0 });
-            renderChildrenList();
-            updateChildrenData();
-            updateMainDisplay();
-        } else {
-            alert('Можна додати не більше 5 дітей');
-        }
-    });
-
-    applyBtn.addEventListener('click', function() {
-        dropdown.style.display = 'none';
-    });
-
-    updateAdultsDisplay();
-    renderChildrenList();
-    updateChildrenData();
-});
-</script>
-
-<!-- ===== ЖОРСТКИЙ ЗАХИСТ ДЛЯ ПОЛЯ ТЕЛЕФОНУ ===== -->
-<script>
-(function() {
-    function protectPhoneField(field) {
-        if (!field || field.dataset.protected === 'true') return;
-        field.dataset.protected = 'true';
-
-        field.addEventListener('input', function() {
-            const numbers = this.value.replace(/[^0-9]/g, '');
-            if (this.value !== numbers) this.value = numbers;
-        });
-
-        field.addEventListener('keydown', function(e) {
-            const key = e.key;
-            const allowed = ['Backspace', 'Tab', 'Enter', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'];
-            if (allowed.includes(key)) return;
-            if (!/^\d$/.test(key)) {
-                e.preventDefault();
-                return false;
-            }
-        });
-
-        field.addEventListener('paste', function(e) {
-            e.preventDefault();
-            const pasted = (e.clipboardData || window.clipboardData).getData('text');
-            this.value = pasted.replace(/[^0-9]/g, '');
-        });
-    }
-
-    function protectAllPhoneFields() {
-        document.querySelectorAll('input[type="tel"], input[name="phone"]').forEach(protectPhoneField);
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', protectAllPhoneFields);
-    } else {
-        protectAllPhoneFields();
-    }
-
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            mutation.addedNodes.forEach(function(node) {
-                if (node.nodeType === 1) {
-                    if (node.matches && node.matches('input[type="tel"], input[name="phone"]')) protectPhoneField(node);
-                    if (node.querySelectorAll) node.querySelectorAll('input[type="tel"], input[name="phone"]').forEach(protectPhoneField);
-                }
-            });
-        });
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-})();
-</script>
 {% endblock %}
