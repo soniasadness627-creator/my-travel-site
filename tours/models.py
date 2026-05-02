@@ -75,7 +75,6 @@ class Tour(models.Model):
     )
     start_date = models.DateField(verbose_name="Дата початку")
     end_date = models.DateField(verbose_name="Дата закінчення")
-    # ЗМІНЕНО: ImageField на CloudinaryField
     image = CloudinaryField(verbose_name="Фото туру", folder='tours', blank=True, null=True)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -189,6 +188,7 @@ class Consultation(models.Model):
         verbose_name_plural = "Заявки на консультацію"
         ordering = ['-created_at']
 
+
 class TourImage(models.Model):
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name="gallery")
     image = models.ImageField(upload_to="tour_gallery/", verbose_name="Додаткове фото")
@@ -197,8 +197,15 @@ class TourImage(models.Model):
         return f"Фото для {self.tour.title}"
 
 
+# ========== ВИПРАВЛЕНА МОДЕЛЬ BOOKING (ДОДАНО null=True, blank=True) ==========
 class Booking(models.Model):
-    tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='bookings')
+    tour = models.ForeignKey(
+        Tour,
+        on_delete=models.CASCADE,
+        related_name='bookings',
+        null=True,      # ← ДОДАНО
+        blank=True      # ← ДОДАНО
+    )
     name = models.CharField(max_length=100, verbose_name="Ім'я")
     phone = models.CharField(max_length=20, verbose_name="Телефон")
     email = models.EmailField(verbose_name="Email")
@@ -206,9 +213,13 @@ class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Заявка на {self.tour.title} від {self.name}"
+        if self.tour:
+            return f"Заявка на {self.tour.title} від {self.name}"
+        return f"Заявка на тур від {self.name}"
 
     class Meta:
+        verbose_name = "Бронювання"
+        verbose_name_plural = "Бронювання"
         ordering = ['-created_at']
 
 
@@ -238,6 +249,7 @@ class Review(models.Model):
         verbose_name = "Відгук"
         verbose_name_plural = "Відгуки"
         ordering = ['-created_at']
+
 
 class News(models.Model):
     title = models.CharField(max_length=200, verbose_name="Заголовок")
