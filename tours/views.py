@@ -14,7 +14,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from .models import Tour, News, Review, Consultation
+from .models import Tour, News, Review, Consultation, Booking
 from .forms import ConsultationForm, ReviewForm
 
 User = get_user_model()
@@ -240,9 +240,97 @@ def tour_detail_otpusk(request, slug=None):
     agent_site = getattr(request, 'current_agent_site', None)
     context = {
         'agent_site': agent_site,
-        'random_agent': get_random_agent(),  # для блоку консультації
+        'random_agent': get_random_agent(),
     }
     return render(request, 'tours/tour_detail_otpusk.html', context)
+
+
+# ========== AJAX ОБРОБКА БРОНЮВАННЯ (Booking) ==========
+@csrf_exempt
+@require_http_methods(["POST"])
+def booking_ajax(request, slug=None):
+    """
+    AJAX-обробка форми бронювання (зберігається в Booking)
+    """
+    try:
+        name = request.POST.get('name', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        email = request.POST.get('email', '').strip()
+        message = request.POST.get('message', '').strip()
+        tour_name = request.POST.get('tour_name', '').strip()
+        tour_price = request.POST.get('tour_price', '').strip()
+        tour_dates = request.POST.get('tour_dates', '').strip()
+        country_code = request.POST.get('country_code', '+380')
+
+        # Валідація
+        if not name:
+            return JsonResponse({'success': False, 'error': "Введіть ваше ім'я"})
+        if not phone:
+            return JsonResponse({'success': False, 'error': "Введіть номер телефону"})
+        if not email:
+            return JsonResponse({'success': False, 'error': "Введіть email"})
+
+        # Очищуємо телефон від нецифрових символів
+        phone_clean = re.sub(r'[^0-9]', '', phone)
+        if len(phone_clean) < 9:
+            return JsonResponse({'success': False, 'error': "Введіть коректний номер телефону (мінімум 9 цифр)"})
+
+        # Формуємо повний номер
+        full_phone = f"{country_code}{phone_clean}"
+
+        # Формуємо повідомлення з інформацією про тур
+        full_message = f"Тур: {tour_name}\n"
+        if tour_price:
+            full_message += f"Ціна: {tour_price}\n"
+        if tour_dates:
+            full_message += f"Дати: {tour_dates}\n"
+        if message:
+            full_message += f"Коментар клієнта: {message}"
+
+        # Створюємо заявку в БРОНЮВАННЯ (Booking)
+        booking = Booking.objects.create(
+            name=name,
+            phone=full_phone,
+            email=email,
+            message=full_message
+        )
+
+        # Якщо є тур, можна прив'язати (опціонально)
+        # try:
+        #     from .models import Tour
+        #     tour = Tour.objects.filter(title__icontains=tour_name[:50]).first()
+        #     if tour:
+        #         booking.tour = tour
+        #         booking.save()
+        # except:
+        #     pass
+
+        # Якщо є агентський сайт, прив'язуємо заявку до агента
+        if hasattr(request, 'current_agent_site') and request.current_agent_site:
+            booking.agent = request.current_agent_site.user
+            booking.save()
+            print(f"✅ Заявка прив'язана до агента: {request.current_agent_site.user.username}")
+        elif slug:
+            try:
+                from .models.agent_site import AgentSite
+                agent_site = AgentSite.objects.filter(slug=slug).first()
+                if agent_site:
+                    booking.agent = agent_site.user
+                    booking.save()
+                    print(f"✅ Заявка прив'язана до агента (за slug): {agent_site.user.username}")
+            except Exception as e:
+                print(f"⚠️ Не вдалося прив'язати агента за slug: {e}")
+
+        print(f"✅ Нова заявка на бронювання: {name} - {full_phone} - {email}")
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом.'
+        })
+
+    except Exception as e:
+        print(f"❌ Помилка при збереженні бронювання: {e}")
+        return JsonResponse({'success': False, 'error': 'Сталася помилка. Спробуйте пізніше.'}, status=500)
 
 
 # ========== AJAX ОБРОБКА КОНСУЛЬТАЦІЇ ==========

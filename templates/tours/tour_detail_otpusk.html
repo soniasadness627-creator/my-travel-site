@@ -28,7 +28,7 @@
             var osTourContainer = null;
             var osLang = 'ua';
             var osTourTargetBlank = false;
-            var osOrderUrl = null;  // Залишаємо порожнім, щоб не йшло до туроператора
+            var osOrderUrl = null;
             var osCurrency = 'converted';
             var osAutoStart = false;
 
@@ -54,7 +54,7 @@
 
 <!-- ========== СТИЛІ ДЛЯ ПРИХОВУВАННЯ ФОРМИ ПОШУКУ ========== -->
 <style>
-    /* Приховуємо форму пошуку та фільтри */
+    /* Ховаємо форму пошуку та фільтри */
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
     #otpusk-tour-module .new_f-ext-btn,
@@ -103,16 +103,16 @@
     }
 </style>
 
-<!-- ========== БЛОК КОНСУЛЬТАЦІЇ (ТУТ АГЕНТ ОТРИМУЄ ЗАЯВКИ) ========== -->
+<!-- ========== БЛОК БРОНЮВАННЯ ========== -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
         <div class="card border-0 shadow-sm" id="consultationCard">
             <div class="card-body p-4 p-md-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
                 <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">
-                    Довірте вибір спеціалістам
+                    Забронювати тур
                 </h5>
                 <p class="text-muted mb-0">
-                    Залишіть заявку, щоб отримати персональний підбір турів
+                    Заповніть форму, щоб забронювати цей тур
                 </p>
                 <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
                     <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
@@ -134,18 +134,18 @@
                         </div>
                     </div>
                     <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
-                        <form id="consultationForm" novalidate>
+                        <form id="bookingForm" novalidate>
                             {% csrf_token %}
-                            <input type="hidden" name="consultation_submit" value="1">
+                            <input type="hidden" name="booking_submit" value="1">
 
-                            <!-- Приховані поля для передачі інформації про тур агенту -->
+                            <!-- Приховані поля для передачі інформації про тур -->
                             <input type="hidden" name="tour_hid" id="tourHid" value="">
                             <input type="hidden" name="tour_name" id="tourName" value="">
                             <input type="hidden" name="tour_price" id="tourPrice" value="">
                             <input type="hidden" name="tour_dates" id="tourDates" value="">
 
                             <div class="mb-3">
-                                <input type="text" name="name" id="consultationName" class="form-control" placeholder="Ваше ім'я" required>
+                                <input type="text" name="name" id="bookingName" class="form-control" placeholder="Ваше ім'я" required>
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-4">
@@ -159,14 +159,21 @@
                                     </select>
                                 </div>
                                 <div class="col-8">
-                                    <input type="tel" name="phone" id="consultationPhone" class="form-control" placeholder="XXXXXXXXX" required>
+                                    <input type="tel" name="phone" id="bookingPhone" class="form-control" placeholder="XXXXXXXXX" required
+                                           pattern="[0-9]+"
+                                           title="Тільки цифри (приклад: 501234567)"
+                                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)"
+                                           onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <textarea name="comment" id="consultationComment" class="form-control" rows="3" placeholder="Ваш коментар (необов'язково)"></textarea>
+                                <input type="email" name="email" id="bookingEmail" class="form-control" placeholder="Ваш Email" required>
                             </div>
-                            <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">
-                                <i class="fa-regular fa-calendar-check me-2"></i> Отримати консультацію та забронювати
+                            <div class="mb-3">
+                                <textarea name="message" id="bookingMessage" class="form-control" rows="3" placeholder="Ваші побажання (необов'язково)"></textarea>
+                            </div>
+                            <button type="button" class="btn w-100" id="submitBookingBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">
+                                <i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур
                             </button>
                         </form>
                     </div>
@@ -178,18 +185,15 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== 1. ПЕРЕНАПРАВЛЕННЯ КНОПКИ "ЗАМОВИТИ ТУР" ДО ФОРМИ КОНСУЛЬТАЦІЇ ==========
+// ========== 1. ПЕРЕНАПРАВЛЕННЯ КНОПКИ "ЗАМОВИТИ ТУР" ДО ФОРМИ ==========
 setTimeout(function() {
-    // Шукаємо кнопку "Замовити тур" від Otpusk
     const orderBtn = document.querySelector('.new_t-order-btn-true, .new_t-order-btn');
     const orderBlock = document.querySelector('.new_t-order-table');
 
     if (orderBtn) {
-        // Ховаємо оригінальну кнопку
         orderBtn.style.display = 'none';
         orderBtn.style.visibility = 'hidden';
 
-        // Створюємо свою кнопку поруч з ціною
         const myBtn = document.createElement('button');
         myBtn.className = 'btn btn-primary w-100 mt-3';
         myBtn.style.cssText = 'background: var(--primary-color); color: white; padding: 12px 20px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease;';
@@ -197,12 +201,10 @@ setTimeout(function() {
         myBtn.onmouseover = function() { this.style.background = 'var(--primary-dark)'; };
         myBtn.onmouseout = function() { this.style.background = 'var(--primary-color)'; };
         myBtn.onclick = function() {
-            // Прокручуємо до форми консультації
             document.getElementById('consultationCard').scrollIntoView({ behavior: 'smooth' });
-            document.getElementById('consultationName').focus();
+            document.getElementById('bookingName').focus();
         };
 
-        // Додаємо кнопку після ціни
         if (orderBlock) {
             orderBlock.appendChild(myBtn);
         } else if (orderBtn.parentNode) {
@@ -211,68 +213,47 @@ setTimeout(function() {
     }
 }, 2000);
 
-// ========== 2. ЗБИРАЄМО ДАНІ ТУРУ І ДОДАЄМО В ФОРМУ ==========
+// ========== 2. ЗБИРАЄМО ДАНІ ТУРУ ==========
 setTimeout(function() {
-    // Отримуємо назву готелю
     const hotelName = document.querySelector('.new_t-header-title')?.innerText || '';
-    // Отримуємо ціну
     const price = document.querySelector('.new_price-value')?.innerText || '';
-    // Отримуємо дати
     const dates = document.querySelectorAll('.new_t-important');
     let dateText = '';
     if (dates.length >= 2) {
         dateText = `${dates[0]?.innerText || ''} – ${dates[1]?.innerText || ''}`;
     }
-    // Отримуємо hid
     const hid = new URLSearchParams(window.location.search).get('hid') || '';
 
-    // Заповнюємо приховані поля
-    if (document.getElementById('tourName')) {
-        document.getElementById('tourName').value = hotelName;
-    }
-    if (document.getElementById('tourPrice')) {
-        document.getElementById('tourPrice').value = price;
-    }
-    if (document.getElementById('tourDates')) {
-        document.getElementById('tourDates').value = dateText;
-    }
-    if (document.getElementById('tourHid')) {
-        document.getElementById('tourHid').value = hid;
-    }
+    if (document.getElementById('tourName')) document.getElementById('tourName').value = hotelName;
+    if (document.getElementById('tourPrice')) document.getElementById('tourPrice').value = price;
+    if (document.getElementById('tourDates')) document.getElementById('tourDates').value = dateText;
+    if (document.getElementById('tourHid')) document.getElementById('tourHid').value = hid;
 
-    // Якщо є коментар, додаємо інформацію про тур
-    const commentField = document.getElementById('consultationComment');
-    if (commentField && hotelName) {
-        commentField.placeholder = `Напишіть, якщо у вас є додаткові побажання щодо туру "${hotelName}"`;
+    const messageField = document.getElementById('bookingMessage');
+    if (messageField && hotelName) {
+        messageField.placeholder = `Напишіть, якщо у вас є додаткові побажання щодо туру "${hotelName}"`;
     }
 
     console.log('Дані туру зібрано:', {hotelName, price, dateText, hid});
 }, 2500);
 
-// ========== 3. AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
+// ========== 3. AJAX ВІДПРАВЛЕННЯ ФОРМИ В BOOKING ==========
 (function() {
-    const submitBtn = document.getElementById('submitConsultationBtn');
+    const submitBtn = document.getElementById('submitBookingBtn');
     if (!submitBtn) return;
 
     submitBtn.addEventListener('click', function(e) {
         e.preventDefault();
 
-        // Збираємо дані з форми
-        const name = document.getElementById('consultationName')?.value.trim() || '';
-        const phone = document.getElementById('consultationPhone')?.value.trim() || '';
+        const name = document.getElementById('bookingName')?.value.trim() || '';
+        const phone = document.getElementById('bookingPhone')?.value.trim() || '';
         const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
+        const email = document.getElementById('bookingEmail')?.value.trim() || '';
         const tourName = document.getElementById('tourName')?.value || '';
         const tourPrice = document.getElementById('tourPrice')?.value || '';
         const tourDates = document.getElementById('tourDates')?.value || '';
-        const userComment = document.getElementById('consultationComment')?.value || '';
+        const userMessage = document.getElementById('bookingMessage')?.value || '';
 
-        // Формуємо повідомлення для агента
-        let fullComment = `Тур: ${tourName}\n`;
-        if (tourPrice) fullComment += `Ціна: ${tourPrice}\n`;
-        if (tourDates) fullComment += `Дати: ${tourDates}\n`;
-        if (userComment) fullComment += `Коментар клієнта: ${userComment}`;
-
-        // Валідація
         if (!name) {
             alert('Будь ласка, введіть ваше ім\'я');
             return;
@@ -281,15 +262,18 @@ setTimeout(function() {
             alert('Будь ласка, введіть номер телефону');
             return;
         }
+        if (!email) {
+            alert('Будь ласка, введіть email');
+            return;
+        }
 
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
-        let ajaxUrl = '/consultation-ajax/';
+        let ajaxUrl = '/booking-ajax/';
         {% if agent_site %}
-        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
+        ajaxUrl = '/a/{{ agent_site.slug }}/booking-ajax/';
         {% endif %}
 
-        // Блокуємо кнопку
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Відправляємо...';
 
@@ -302,20 +286,23 @@ setTimeout(function() {
             body: new URLSearchParams({
                 'name': name,
                 'phone': phone,
+                'email': email,
                 'country_code': countryCode,
-                'comment': fullComment,
-                'consultation_submit': '1'
+                'tour_name': tourName,
+                'tour_price': tourPrice,
+                'tour_dates': tourDates,
+                'message': userMessage,
+                'booking_submit': '1'
             })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Очищуємо форму
-                document.getElementById('consultationName').value = '';
-                document.getElementById('consultationPhone').value = '';
-                document.getElementById('consultationComment').value = '';
+                document.getElementById('bookingName').value = '';
+                document.getElementById('bookingPhone').value = '';
+                document.getElementById('bookingEmail').value = '';
+                document.getElementById('bookingMessage').value = '';
 
-                // Показуємо повідомлення про успіх
                 const successMsg = document.createElement('div');
                 successMsg.className = 'alert alert-success mt-3';
                 successMsg.innerHTML = '<i class="fa-regular fa-circle-check me-2"></i> Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом.';
@@ -332,7 +319,7 @@ setTimeout(function() {
         })
         .finally(() => {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fa-regular fa-calendar-check me-2"></i> Отримати консультацію та забронювати';
+            submitBtn.innerHTML = '<i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур';
         });
     });
 })();
