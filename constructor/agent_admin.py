@@ -2,15 +2,16 @@ from django.contrib import admin
 from django.contrib.admin import AdminSite
 from django.urls import path
 from django import forms
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
+
 from tours.models import (
     Tour, Booking, PriceOption, Review, Consultation, News,
     TourPriceByTourists, CountryInfo, PriceCalendar, PopularDestination,
     City, DepartureCity
 )
 from django.contrib.auth import get_user_model
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_GET
 
 User = get_user_model()
 
@@ -81,14 +82,13 @@ class AgentTourForm(forms.ModelForm):
             'meal_type': forms.Select(attrs={'class': 'form-select'}),
             'is_popular': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'amenities': forms.SelectMultiple(attrs={'class': 'form-select', 'size': '10'}),
-            'author': forms.HiddenInput(),  # Ховаємо поле автор
+            'author': forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # ========== КРАЇНИ ==========
-        # Збираємо всі країни з турів та міст
         countries_from_tours = Tour.objects.values_list('country', flat=True).distinct()
         countries_from_cities = City.objects.values_list('country', flat=True).distinct()
         all_countries = set(list(countries_from_tours) + list(countries_from_cities))
@@ -97,7 +97,6 @@ class AgentTourForm(forms.ModelForm):
         self.fields['country'].choices = country_choices
 
         # ========== МІСТА ==========
-        # Якщо є значення країни - фільтруємо міста
         country_value = None
         if self.data and self.data.get('country'):
             country_value = self.data.get('country')
@@ -122,7 +121,6 @@ class AgentTourForm(forms.ModelForm):
             self.fields['author'].widget = forms.HiddenInput()
 
     def clean_author(self):
-        """Встановлює автора як поточного користувача"""
         if hasattr(self, 'request'):
             return self.request.user
         return self.cleaned_data.get('author')
@@ -213,17 +211,39 @@ class AgentReviewAdmin(admin.ModelAdmin):
         return False
 
 
+# ========== НАЛАШТУВАННЯ ДЛЯ ЗАЯВОК НА КОНСУЛЬТАЦІЮ (BOOKINGS) ==========
 class AgentConsultationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone', 'created_at', 'is_processed')
-    list_filter = ('created_at', 'is_processed')
+    list_display = ('name', 'phone', 'get_comment_preview', 'created_at', 'is_processed')
+    list_filter = ('is_processed', 'created_at')
     search_fields = ('name', 'phone', 'comment')
+    list_editable = ('is_processed',)
+    readonly_fields = ('created_at',)
+    list_per_page = 20
+
+    def get_comment_preview(self, obj):
+        """Показує перші 50 символів коментаря"""
+        if obj.comment:
+            return obj.comment[:50] + '...' if len(obj.comment) > 50 else obj.comment
+        return '—'
+
+    get_comment_preview.short_description = 'Коментар'
 
     def get_queryset(self, request):
+        """Фільтрує заявки тільки для поточного агента"""
         qs = super().get_queryset(request)
         return qs.filter(agent=request.user)
 
     def has_add_permission(self, request):
+        """Забороняє додавати заявки вручну"""
         return False
+
+    def has_change_permission(self, request, obj=None):
+        """Дозволяє змінювати тільки статус is_processed"""
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        """Дозволяє видаляти заявки"""
+        return True
 
 
 class AgentNewsAdmin(admin.ModelAdmin):
@@ -345,7 +365,7 @@ agent_admin_site.register(Tour, AgentTourAdmin)
 agent_admin_site.register(Booking, AgentBookingAdmin)
 agent_admin_site.register(PriceOption, AgentPriceOptionAdmin)
 agent_admin_site.register(Review, AgentReviewAdmin)
-agent_admin_site.register(Consultation, AgentConsultationAdmin)
+agent_admin_site.register(Consultation, AgentConsultationAdmin)  # Заявки на консультацію
 agent_admin_site.register(News, AgentNewsAdmin)
 agent_admin_site.register(CountryInfo, AgentCountryInfoAdmin)
 agent_admin_site.register(PriceCalendar, AgentPriceCalendarAdmin)
