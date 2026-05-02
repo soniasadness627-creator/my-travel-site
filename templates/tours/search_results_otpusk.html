@@ -4,8 +4,8 @@
 {% block title %}Результати пошуку турів{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="card shadow-sm border-0 rounded-4">
+<div class="my-5">
+    <div class="card shadow-sm border-0 rounded-4 mx-3">
         <div class="card-body p-4">
             <h2 class="text-center mb-4" style="color: var(--primary-color);">Результати пошуку турів</h2>
             <div id="otpusk-search-module">
@@ -42,18 +42,18 @@
 <style>
 /* ========== ОСНОВНІ СТИЛІ ========== */
 
-/* Контейнер модуля - ширина як у форми */
+/* Контейнер модуля - БЕЗ ОБМЕЖЕНЬ ШИРИНИ */
 #otpusk-search-module {
     background: white !important;
     border-radius: 24px !important;
     border: 2px solid var(--primary-color) !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
     padding: 20px 24px !important;
-    max-width: 1200px !important;
-    margin: -40px auto 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
     position: relative !important;
     z-index: 10 !important;
-    width: 100% !important;
     box-sizing: border-box !important;
 }
 
@@ -169,13 +169,14 @@ span.currency {
     color: white !important;
 }
 
-/* ========== КАРТКИ ТУРІВ - ШИРИНА ЯК У ФОРМИ ========== */
+/* ========== КАРТКИ ТУРІВ - НА ВСЮ ШИРИНУ СТОРІНКИ ========== */
 
-/* Контейнер результатів */
+/* Контейнер результатів - на всю ширину */
 .new_r-container {
     background: white !important;
     margin-top: 30px !important;
     width: 100% !important;
+    max-width: 100% !important;
 }
 
 .new_r-wrapper {
@@ -183,7 +184,7 @@ span.currency {
     width: 100% !important;
 }
 
-/* КАРТКА ТУРУ - НА ВСЮ ШИРИНУ КОНТЕЙНЕРА */
+/* КАРТКА ТУРУ - НА ВСЮ ШИРИНУ, ГОРИЗОНТАЛЬНА */
 .new_r-item {
     background: white !important;
     border-radius: 16px !important;
@@ -203,7 +204,7 @@ span.currency {
     transform: translateY(-2px) !important;
 }
 
-/* ФОТО - ЗЛІВА, ЗБІЛЬШЕНЕ */
+/* ФОТО - ЗЛІВА, ФІКСОВАНА ШИРИНА */
 .new_r-item-img {
     width: 320px !important;
     height: 320px !important;
@@ -224,7 +225,7 @@ span.currency {
     background-position: center !important;
 }
 
-/* КВАДРАТНИЙ РЕЙТИНГ ПОВЕРХ ФОТО - ДЛЯ ВСІХ БЛОКІВ */
+/* КВАДРАТНИЙ РЕЙТИНГ ПОВЕРХ ФОТО */
 .new_r-item-rating-container {
     position: absolute !important;
     top: 15px !important;
@@ -232,8 +233,8 @@ span.currency {
     z-index: 10 !important;
 }
 
-/* КВАДРАТНИЙ БЛОК РЕЙТИНГУ - ТІЛЬКИ КВАДРАТ, НІЯКИХ КРУГІВ */
-.new_r-p6 {
+/* КВАДРАТНИЙ БЛОК РЕЙТИНГУ - БІЛИЙ ФОН, КОЛЬОРОВА РАМКА */
+.new_r-p8 {
     width: 70px !important;
     height: 70px !important;
     display: flex !important;
@@ -270,17 +271,13 @@ span.currency {
     color: #555 !important;
 }
 
-/* ПОВНІСТЮ ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ */
+/* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ */
 .new_r-item-rating-container::before,
 .new_r-item-rating-container .slice,
 .new_r-item-rating-container .bar,
 .new_r-item-rating-container .fill,
-.new_r-item-rating-container svg,
-.new_r-item-rating-container circle,
-.new_r-item-rating-container path {
+.new_r-item-rating-container svg {
     display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
 }
 
 /* ТІЛО КАРТКИ - ВСЯ ІНФОРМАЦІЯ ПРАВОРУЧ */
@@ -368,7 +365,7 @@ span.currency {
     gap: 25px !important;
 }
 
-/* ЦІНА - ЗНИЗУ СПРАВА, БІЛЬША */
+/* ЦІНА - ЗНИЗУ СПРАВА */
 .new_r-item-price {
     display: flex !important;
     justify-content: flex-end !important;
@@ -404,8 +401,7 @@ span.currency {
 @media (max-width: 768px) {
     #otpusk-search-module {
         padding: 15px !important;
-        margin: -20px 15px 0 15px !important;
-        max-width: none !important;
+        margin: 0 !important;
     }
 
     .new_r-item {
@@ -423,7 +419,7 @@ span.currency {
         height: 250px !important;
     }
 
-    .new_r-p6 {
+    .new_r-p8 {
         width: 60px !important;
         height: 60px !important;
     }
@@ -476,10 +472,10 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(document.body, { childList: true, subtree: true });
 });
 
-// КОЛІР РАМКИ ТА ЦИФРИ РЕЙТИНГУ (ТІЛЬКИ КВАДРАТ)
+// КОЛІР РАМКИ ТА ЦИФРИ РЕЙТИНГУ (КВАДРАТНИЙ)
 document.addEventListener('DOMContentLoaded', function() {
     function updateRatingBorderColor() {
-        const ratingContainers = document.querySelectorAll('.new_r-p6');
+        const ratingContainers = document.querySelectorAll('.new_r-p8');
         ratingContainers.forEach(function(container) {
             const ratingValueElement = container.querySelector('.new_r-item-rating-value');
             if (!ratingValueElement) return;
