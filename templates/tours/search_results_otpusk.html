@@ -168,7 +168,7 @@ span.currency {
     color: white !important;
 }
 
-/* ========== КАРТКИ ТУРІВ - ВЕРТИКАЛЬНИЙ СТОВПЧИК ========== */
+/* ========== КАРТКИ ТУРІВ - ЗБІЛЬШЕНА ВИСОТА ========== */
 
 /* Контейнер результатів - блочний */
 .new_r-container {
@@ -196,7 +196,7 @@ span.currency {
     margin-bottom: 24px !important;
 }
 
-/* КАРТКА ТУРУ */
+/* КАРТКА ТУРУ - ЗБІЛЬШЕНА ВИСОТА */
 .new_r-item {
     background: white !important;
     border-radius: 16px !important;
@@ -209,14 +209,14 @@ span.currency {
     transition: all 0.3s ease !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
     width: 100% !important;
-    min-height: 165px !important;  /* МІНІМАЛЬНА ВИСОТА КАРТКИ */
+    min-height: 260px !important;  /* ЗБІЛЬШЕНО ДО 260px */
 }
 
 /* ФОТО - 100% ВИСОТИ КАРТКИ */
 .new_r-item-img {
     width: 280px !important;
     height: 100% !important;
-    min-height: 165px !important;
+    min-height: 260px !important;
     object-fit: cover !important;
     display: block !important;
     flex-shrink: 0 !important;
@@ -228,7 +228,7 @@ span.currency {
     flex-shrink: 0 !important;
     width: 280px !important;
     height: 100% !important;
-    min-height: 165px !important;
+    min-height: 260px !important;
     background-size: cover !important;
     background-position: center !important;
 }
@@ -394,16 +394,19 @@ span.currency {
 
     .new_r-item {
         flex-direction: column !important;
+        min-height: auto !important;
     }
 
     .new_r-item-img {
         width: 100% !important;
         height: 220px !important;
+        min-height: 220px !important;
     }
 
     .new_r-lazy-img {
         width: 100% !important;
         height: 220px !important;
+        min-height: 220px !important;
     }
 
     .new_r-p8 {
