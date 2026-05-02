@@ -50,9 +50,11 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
     padding: 20px 24px !important;
     width: 100% !important;
+    max-width: 100% !important;
     margin: 0 auto !important;
     position: relative !important;
     z-index: 10 !important;
+    box-sizing: border-box !important;
 }
 
 /* Кнопка "Знайти" */
@@ -167,20 +169,22 @@ span.currency {
     color: white !important;
 }
 
-/* ========== КАРТКИ ТУРІВ - НОВА ВЕРСТКА ========== */
+/* ========== КАРТКИ ТУРІВ - НА МАКСИМАЛЬНУ ШИРИНУ ========== */
 
-/* Контейнер результатів */
+/* Контейнер результатів - на всю ширину */
 .new_r-container {
     background: white !important;
     margin-top: 30px !important;
     width: 100% !important;
+    max-width: 100% !important;
 }
 
 .new_r-wrapper {
     display: block !important;
+    width: 100% !important;
 }
 
-/* КАРТКА ТУРУ - ГОРИЗОНТАЛЬНА, НА ВСЮ ШИРИНУ */
+/* КАРТКА ТУРУ - НА ВСЮ ШИРИНУ, ГОРИЗОНТАЛЬНА */
 .new_r-item {
     background: white !important;
     border-radius: 16px !important;
@@ -191,6 +195,7 @@ span.currency {
     flex-direction: row !important;
     transition: all 0.3s ease !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    width: 100% !important;
 }
 
 .new_r-item:hover {
@@ -201,8 +206,8 @@ span.currency {
 
 /* ФОТО - ЗЛІВА, ФІКСОВАНА ШИРИНА */
 .new_r-item-img {
-    width: 260px !important;
-    height: 260px !important;
+    width: 280px !important;
+    height: 280px !important;
     object-fit: cover !important;
     display: block !important;
     flex-shrink: 0 !important;
@@ -214,13 +219,13 @@ span.currency {
     position: relative !important;
     display: block !important;
     flex-shrink: 0 !important;
-    width: 260px !important;
-    height: 260px !important;
+    width: 280px !important;
+    height: 280px !important;
     background-size: cover !important;
     background-position: center !important;
 }
 
-/* РЕЙТИНГ ПОВЕРХ ФОТО (КВАДРАТНИЙ, В КУТКУ) */
+/* КВАДРАТНИЙ РЕЙТИНГ ПОВЕРХ ФОТО */
 .new_r-item-rating-container {
     position: absolute !important;
     top: 12px !important;
@@ -228,25 +233,27 @@ span.currency {
     z-index: 10 !important;
 }
 
-.new_r-p6 {
-    width: 60px !important;
-    height: 60px !important;
+/* КВАДРАТНИЙ БЛОК РЕЙТИНГУ */
+.new_r-p8 {
+    width: 65px !important;
+    height: 65px !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    background: rgba(0, 0, 0, 0.75) !important;
-    backdrop-filter: blur(4px) !important;
+    background: white !important;
     border-radius: 10px !important;
-    border: none !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+    border-width: 2px !important;
+    border-style: solid !important;
+    box-sizing: border-box !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
 }
 
 .new_r-item-rating-value {
     font-weight: 800 !important;
-    font-size: 1.15rem !important;
-    margin: 0 0 4px 0 !important;
-    color: #FFD700 !important;
+    font-size: 1.1rem !important;
+    margin: 0 0 3px 0 !important;
+    line-height: 1 !important;
 }
 
 .new_r-item-rating-rev {
@@ -254,14 +261,14 @@ span.currency {
     flex-direction: column !important;
     align-items: center !important;
     font-size: 0.5rem !important;
-    color: #e0e0e0 !important;
-    line-height: 1.2 !important;
+    color: #888 !important;
+    line-height: 1.1 !important;
 }
 
 .new_r-item-rating-rev span {
     font-weight: 700 !important;
     font-size: 0.7rem !important;
-    color: #e0e0e0 !important;
+    color: #555 !important;
 }
 
 /* ХОВАЄМО КРУГЛІ ЕЛЕМЕНТИ */
@@ -273,19 +280,14 @@ span.currency {
     display: none !important;
 }
 
-/* ТІЛО КАРТКИ - ВСЯ ІНФОРМАЦІЯ ПРАВОРУЧ */
+/* ТІЛО КАРТКИ - ВСЯ ІНФОРМАЦІЯ ПРАВОРУЧ, НА ВСЮ ШИРИНУ ЩО ЗАЛИШИЛАСЬ */
 .new_r-item-body {
-    padding: 16px 20px !important;
+    padding: 18px 22px !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
     flex: 1 !important;
     min-width: 0 !important;
-}
-
-/* Верхня частина інформації */
-.new_r-item-body > div:first-child {
-    flex: 1 !important;
 }
 
 /* НАЗВА ГОТЕЛЮ */
@@ -305,7 +307,7 @@ span.currency {
     gap: 4px !important;
 }
 
-/* МІСЦЕЗНАХОДЖЕННЯ (КРАЇНА, МІСТО) */
+/* МІСЦЕЗНАХОДЖЕННЯ */
 .new_r-item-geo {
     display: flex !important;
     align-items: center !important;
@@ -334,7 +336,7 @@ span.currency {
     font-weight: 500 !important;
 }
 
-/* ТАБЛИЦЯ З ДЕТАЛЯМИ ВИЛЬОТУ */
+/* ДЕТАЛІ ВИЛЬОТУ */
 .new_r-item-table {
     display: flex !important;
     flex-wrap: wrap !important;
@@ -391,7 +393,6 @@ span.currency {
     width: auto !important;
 }
 
-/* ПРИБИРАЄМО ЗАЙВІ ВІДСТУПИ В СТАРИХ КЛАСАХ */
 .new_r-item-info {
     display: block !important;
 }
@@ -418,7 +419,7 @@ span.currency {
         height: 220px !important;
     }
 
-    .new_r-p6 {
+    .new_r-p8 {
         width: 55px !important;
         height: 55px !important;
     }
@@ -428,7 +429,7 @@ span.currency {
     }
 
     .new_r-item-hotel {
-        font-size: 1.15rem !important;
+        font-size: 1.1rem !important;
     }
 
     .new_r-item-geo,
@@ -471,10 +472,10 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(document.body, { childList: true, subtree: true });
 });
 
-// Колір зірочок та рейтингу
+// КОЛІР РАМКИ ТА ЦИФРИ РЕЙТИНГУ (КВАДРАТНИЙ)
 document.addEventListener('DOMContentLoaded', function() {
-    function updateRatingColor() {
-        const ratingContainers = document.querySelectorAll('.new_r-p6');
+    function updateRatingBorderColor() {
+        const ratingContainers = document.querySelectorAll('.new_r-p8');
         ratingContainers.forEach(function(container) {
             const ratingValueElement = container.querySelector('.new_r-item-rating-value');
             if (!ratingValueElement) return;
@@ -485,11 +486,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (rating < 5) color = '#ef4444';
             else if (rating >= 5 && rating < 7.5) color = '#eab308';
             else color = '#22c55e';
+            container.style.borderColor = color;
             ratingValueElement.style.color = color;
         });
     }
-    updateRatingColor();
-    const observer = new MutationObserver(function() { updateRatingColor(); });
+    updateRatingBorderColor();
+    const observer = new MutationObserver(function() { updateRatingBorderColor(); });
     observer.observe(document.body, { childList: true, subtree: true });
 });
 </script>
