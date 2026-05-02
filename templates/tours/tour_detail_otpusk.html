@@ -28,44 +28,59 @@
         document.getElementById('diag-msg').innerHTML = '⚠️ ПАРАМЕТРИ НЕ ПЕРЕДАЮТЬСЯ!';
     }
 </script>
+
 <div class="container my-5">
     <div class="tour-detail-wrapper">
         <div id="otpusk-tour-module">
             <script>
-                // Отримуємо параметри туру з URL рядка (не з хеша)
-                const urlParams = new URLSearchParams(window.location.search);
-                const hid = urlParams.get('hid');
-                const oid = urlParams.get('oid');
-                const od = urlParams.get('od');
-                const ol = urlParams.get('ol');
-                const tr = urlParams.get('tr');
+                (function() {
+                    // 1. Отримуємо параметри з URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    let hid = urlParams.get('hid');
+                    let oid = urlParams.get('oid');
+                    let od = urlParams.get('od');
+                    let ol = urlParams.get('ol');
 
-                // Глобальні змінні для модуля Otpusk
-                var osGeo = '';
-                var osDefaultDeparture = '';
-                var osDefaultDuration = '';
-                var osDateFrom = '';
-                var osDateTo = '';
-                var osHotelCategory = '';
-                var osFood = '';
-                var osTransport = '';
+                    console.log('Отримані параметри:', {hid, oid, od, ol});
 
-                // Цільова сторінка (порожня, результати не потрібні)
-                var osTarget = '';
-                var osContainer = null;
-                var osTourContainer = null;
-                var osLang = 'ua';
-                var osTourTargetBlank = false;
-                var osOrderUrl = null;
-                var osCurrency = 'converted';
-                var osAutoStart = false;
+                    // 2. Змінні для модуля Otpusk (обов'язкові)
+                    var osGeo = '';
+                    var osDefaultDeparture = '';
+                    var osDefaultDuration = '';
+                    var osDateFrom = '';
+                    var osDateTo = '';
+                    var osHotelCategory = '';
+                    var osFood = '';
+                    var osTransport = '';
+                    var osTarget = '';
+                    var osContainer = null;
+                    var osTourContainer = null;
+                    var osLang = 'ua';
+                    var osTourTargetBlank = false;
+                    var osOrderUrl = null;
+                    var osCurrency = 'converted';
+                    var osAutoStart = false;
 
-                // Якщо параметри є, формуємо хеш для завантаження конкретного туру
-                if (hid && oid && od && ol) {
-                    window.location.hash = `#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}`;
-                } else {
-                    console.warn('Параметри туру відсутні. Переконайтеся, що URL містить hid, oid, od, ol');
-                }
+                    // 3. Якщо параметри є, формуємо і встановлюємо хеш
+                    if (hid && oid && od && ol) {
+                        const newHash = `#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}`;
+
+                        // Перевіряємо, чи хеш вже встановлено
+                        if (window.location.hash !== newHash) {
+                            window.location.hash = newHash;
+                            console.log('✅ Хеш встановлено на:', newHash);
+                        } else {
+                            console.log('✅ Хеш вже встановлено:', window.location.hash);
+                        }
+                    } else {
+                        console.warn('⚠️ Параметри туру відсутні');
+                        // Спробуємо отримати з хеша, якщо параметрів немає в query
+                        const hash = window.location.hash;
+                        if (hash) {
+                            console.log('Спробуємо отримати параметри з хеша:', hash);
+                        }
+                    }
+                })();
             </script>
             <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
             <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
@@ -74,6 +89,42 @@
             <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
             <script src="https://export.otpusk.com/js/onsite/"></script>
             <script src="https://export.otpusk.com/js/order"></script>
+
+            <!-- Примусове завантаження контенту туру, якщо автоматичне не спрацювало -->
+            <script>
+                setTimeout(function() {
+                    // Перевіряємо, чи з'явився контент туру
+                    const tourContainer = document.querySelector('#otpusk-tour-module .new_t-container');
+                    const hasContent = tourContainer && tourContainer.children.length > 0;
+
+                    console.log('Перевірка контенту туру:', hasContent ? 'Контент є' : 'Контент відсутній');
+
+                    if (!hasContent) {
+                        console.log('Спробуємо примусово завантажити тур...');
+
+                        // Спроба 1: Шукаємо будь-яке посилання на тур
+                        const tourLink = document.querySelector('.new_r-item a, .new_t-order-btn-true');
+                        if (tourLink) {
+                            console.log('Знайдено посилання на тур, імітуємо клік');
+                            tourLink.click();
+                            return;
+                        }
+
+                        // Спроба 2: Оновлюємо сторінку з правильним хешем
+                        const params = new URLSearchParams(window.location.search);
+                        const hid = params.get('hid');
+                        const oid = params.get('oid');
+                        const od = params.get('od');
+                        const ol = params.get('ol');
+
+                        if (hid && oid && od && ol) {
+                            const newUrl = `${window.location.pathname}?hid=${hid}&oid=${oid}&od=${od}&ol=${ol}#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}`;
+                            console.log('Оновлюємо сторінку:', newUrl);
+                            window.location.href = newUrl;
+                        }
+                    }
+                }, 2000);
+            </script>
         </div>
     </div>
 </div>
@@ -249,13 +300,11 @@
 setTimeout(function() {
     const backLink = document.querySelector('.new_t-menu-back-link');
     if (backLink) {
-        // Отримуємо URL з якого прийшли
         const referrer = document.referrer;
         if (referrer && (referrer.includes('search-otpusk') || referrer.includes('search-otpusk-by-country'))) {
             backLink.href = referrer;
             console.log('Кнопка "Повернутися" веде на:', referrer);
         } else {
-            // Якщо немає referrer, ведемо на сторінку пошуку
             let searchUrl = window.location.pathname.startsWith('/a/')
                 ? `/a/${window.location.pathname.split('/')[2]}/search-otpusk/`
                 : '/search-otpusk/';
