@@ -249,9 +249,12 @@ def tour_detail_otpusk(request, slug=None):
 @csrf_exempt
 @require_http_methods(["POST"])
 def booking_ajax(request, slug=None):
-    """
-    AJAX-обробка форми бронювання (зберігається в Booking)
-    """
+    print("=" * 50)
+    print("🚀 booking_ajax ВИКЛИКАНО!")
+    print(f"slug: {slug}")
+    print(f"POST data: {request.POST}")
+    print("=" * 50)
+
     try:
         name = request.POST.get('name', '').strip()
         phone = request.POST.get('phone', '').strip()
@@ -262,22 +265,12 @@ def booking_ajax(request, slug=None):
         tour_dates = request.POST.get('tour_dates', '').strip()
         country_code = request.POST.get('country_code', '+380')
 
-        # Валідація
-        if not name:
-            return JsonResponse({'success': False, 'error': "Введіть ваше ім'я"})
-        if not phone:
-            return JsonResponse({'success': False, 'error': "Введіть номер телефону"})
-        if not email:
-            return JsonResponse({'success': False, 'error': "Введіть email"})
+        if not name or not phone or not email:
+            return JsonResponse({'success': False, 'error': "Заповніть всі поля"})
 
-        # Очищуємо телефон
         phone_clean = re.sub(r'[^0-9]', '', phone)
-        if len(phone_clean) < 9:
-            return JsonResponse({'success': False, 'error': "Введіть коректний номер телефону (мінімум 9 цифр)"})
-
         full_phone = f"{country_code}{phone_clean}"
 
-        # Формуємо повідомлення
         full_message = f"Тур: {tour_name}\n"
         if tour_price:
             full_message += f"Ціна: {tour_price}\n"
@@ -286,16 +279,19 @@ def booking_ajax(request, slug=None):
         if message:
             full_message += f"Коментар клієнта: {message}"
 
-        # Створюємо заявку (tour=None, тому що це бронювання з Otpusk)
+        # СТВОРЮЄМО ЗАЯВКУ В БРОНЮВАННЯ
         booking = Booking.objects.create(
-            tour=None,  # ← ОСЬ ГОЛОВНЕ ВИПРАВЛЕННЯ
+            tour=None,
             name=name,
             phone=full_phone,
             email=email,
             message=full_message
         )
 
-        print(f"✅ Нова заявка на бронювання: {name} - {full_phone} - {email} (ID: {booking.id})")
+        print(f"✅ Booking створено! ID={booking.id}")
+        print(f"   Ім'я: {booking.name}")
+        print(f"   Телефон: {booking.phone}")
+        print(f"   Email: {booking.email}")
 
         return JsonResponse({
             'success': True,
