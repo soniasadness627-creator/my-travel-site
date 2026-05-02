@@ -168,7 +168,7 @@ span.currency {
     color: white !important;
 }
 
-/* ========== КАРТКИ ТУРІВ - ЗБІЛЬШЕНА ВИСОТА ========== */
+/* ========== КАРТКИ ТУРІВ - ВЕРТИКАЛЬНИЙ СТОВПЧИК ========== */
 
 /* Контейнер результатів - блочний */
 .new_r-container {
@@ -209,14 +209,14 @@ span.currency {
     transition: all 0.3s ease !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
     width: 100% !important;
-    min-height: 260px !important;  /* ЗБІЛЬШЕНО ДО 260px */
+    min-height: 280px !important;
 }
 
 /* ФОТО - 100% ВИСОТИ КАРТКИ */
 .new_r-item-img {
     width: 280px !important;
     height: 100% !important;
-    min-height: 260px !important;
+    min-height: 280px !important;
     object-fit: cover !important;
     display: block !important;
     flex-shrink: 0 !important;
@@ -228,7 +228,7 @@ span.currency {
     flex-shrink: 0 !important;
     width: 280px !important;
     height: 100% !important;
-    min-height: 260px !important;
+    min-height: 280px !important;
     background-size: cover !important;
     background-position: center !important;
 }
@@ -286,7 +286,7 @@ span.currency {
     display: none !important;
 }
 
-/* ТІЛО КАРТКИ */
+/* ТІЛО КАРТКИ - ФІКСОВАНА ШИРИНА, БЕЗ ВИХОДУ ЗА МЕЖІ */
 .new_r-item-body {
     padding: 18px 22px !important;
     display: flex !important;
@@ -294,6 +294,9 @@ span.currency {
     justify-content: space-between !important;
     flex: 1 !important;
     min-width: 0 !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 /* НАЗВА ГОТЕЛЮ */
@@ -336,12 +339,23 @@ span.currency {
     font-weight: 500 !important;
 }
 
-/* ДЕТАЛІ ВИЛЬОТУ */
+/* ДЕТАЛІ ВИЛЬОТУ - ВИПРАВЛЕНО */
 .new_r-item-table {
     display: flex !important;
     flex-wrap: wrap !important;
     gap: 20px !important;
     margin: 5px 0 10px 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.new_r-item-col {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 20px !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .new_r-item-from,
@@ -351,6 +365,7 @@ span.currency {
     gap: 8px !important;
     font-size: 0.9rem !important;
     color: #555 !important;
+    white-space: nowrap !important;
 }
 
 .new_r-item-icon {
@@ -369,6 +384,8 @@ span.currency {
     border-top: 1px solid #e2e8f0 !important;
     gap: 8px !important;
     flex-wrap: wrap !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .new_price-value {
@@ -379,6 +396,27 @@ span.currency {
     font-size: 0.85rem !important;
     color: #666 !important;
     font-weight: normal !important;
+}
+
+/* ФІНАЛЬНИЙ ФІКС - ЗАБОРОНА ВИХОДУ ЗА МЕЖІ */
+.new_r-item-body * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    word-wrap: break-word !important;
+}
+
+/* АДАПТИВ - ПРИ ЗМЕНШЕННІ ЕКРАНУ */
+@media (max-width: 1400px) {
+    .new_r-item-from,
+    .new_r-item-date {
+        white-space: normal !important;
+        word-break: keep-all !important;
+    }
+
+    .new_r-item-col {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
 }
 
 /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
