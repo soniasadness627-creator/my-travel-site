@@ -212,12 +212,11 @@ def tour_reviews(request, pk):
     })
 
 
-def search_otpusk(request):
+def search_otpusk(request, slug=None):
     """Сторінка результатів пошуку Otpusk.com (БЕЗ блоку консультації)"""
     agent_site = getattr(request, 'current_agent_site', None)
     context = {'agent_site': agent_site}
     return render(request, 'tours/search_results_otpusk.html', context)
-
 
 def search_otpusk_by_country(request, slug=None):
     """Сторінка результатів пошуку для популярних напрямків (З БЛОКОМ КОНСУЛЬТАЦІЇ)"""
