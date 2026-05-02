@@ -13,9 +13,8 @@
             const oid = urlParams.get('oid');
             const od = urlParams.get('od');
             const ol = urlParams.get('ol');
-            const tr = urlParams.get('tr');
 
-            // 2. Глобальні змінні для модуля Otpusk (вони обов'язкові)
+            // 2. Глобальні змінні для модуля Otpusk (обов'язкові)
             var osGeo = '';
             var osDefaultDeparture = '';
             var osDefaultDuration = '';
@@ -29,21 +28,19 @@
             var osTourContainer = null;
             var osLang = 'ua';
             var osTourTargetBlank = false;
-            var osOrderUrl = null;
+            var osOrderUrl = null;  // Залишаємо порожнім, щоб не йшло до туроператора
             var osCurrency = 'converted';
-            // ВАЖЛИВО: ЗМІНЮЄМО osAutoStart на false, щоб модуль не починав пошук сам
             var osAutoStart = false;
 
-            // 3. ЗАВАНТАЖУЄМО КОНКРЕТНИЙ ТУР. Це фокус усієї сторінки.
+            // 3. Завантажуємо конкретний тур
             if (hid && oid && od && ol) {
-                // Встановлюємо хеш, який накаже модулю відкрити потрібний тур
                 window.location.hash = `#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}&page=tour`;
-                console.log('Спроба завантажити тур:', window.location.hash);
+                console.log('Завантаження туру:', window.location.hash);
             } else {
-                console.warn('Параметри туру відсутні. URL має містити hid, oid, od, ol');
                 document.write('<p style="color:red; padding:20px;">❌ Помилка: Параметри туру не передано.</p>');
             }
         </script>
+
         <!-- Підключаємо оригінальні скрипти Otpusk -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
         <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
@@ -55,7 +52,58 @@
     </div>
 </div>
 
-<!-- Блок консультації (залишаємо без змін) -->
+<!-- ========== СТИЛІ ДЛЯ ПРИХОВУВАННЯ ФОРМИ ПОШУКУ ========== -->
+<style>
+    /* Приховуємо форму пошуку та фільтри */
+    #otpusk-tour-module .new_f-ext-container,
+    #otpusk-tour-module .new_r-filters-container,
+    #otpusk-tour-module .new_f-ext-btn,
+    #otpusk-tour-module .new_f-dropdown-body-top,
+    #otpusk-tour-module .new_r-item-wrap,
+    #otpusk-tour-module .new_r-currency-switch,
+    #otpusk-tour-module .new_f-ext-container,
+    #otpusk-tour-module .new_r-filters-container,
+    #otpusk-tour-module .new_f-form {
+        display: none !important;
+    }
+
+    /* Залишаємо тільки контент туру */
+    #otpusk-tour-module .new_t-container {
+        display: block !important;
+    }
+
+    /* Кнопка "Повернутися" - залишаємо видимою */
+    #otpusk-tour-module .new_t-menu-back {
+        display: block !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* Очищаємо фон і рамки модуля */
+    #otpusk-tour-module {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+
+    /* Додаткові стилі для адаптації ціни */
+    .new_r-item-price {
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: baseline !important;
+        gap: 8px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .new_price-value {
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
+        color: #dc2626 !important;
+    }
+</style>
+
+<!-- ========== БЛОК КОНСУЛЬТАЦІЇ (ТУТ АГЕНТ ОТРИМУЄ ЗАЯВКИ) ========== -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
         <div class="card border-0 shadow-sm" id="consultationCard">
@@ -89,6 +137,13 @@
                         <form id="consultationForm" novalidate>
                             {% csrf_token %}
                             <input type="hidden" name="consultation_submit" value="1">
+
+                            <!-- Приховані поля для передачі інформації про тур агенту -->
+                            <input type="hidden" name="tour_hid" id="tourHid" value="">
+                            <input type="hidden" name="tour_name" id="tourName" value="">
+                            <input type="hidden" name="tour_price" id="tourPrice" value="">
+                            <input type="hidden" name="tour_dates" id="tourDates" value="">
+
                             <div class="mb-3">
                                 <input type="text" name="name" id="consultationName" class="form-control" placeholder="Ваше ім'я" required>
                             </div>
@@ -107,8 +162,11 @@
                                     <input type="tel" name="phone" id="consultationPhone" class="form-control" placeholder="XXXXXXXXX" required>
                                 </div>
                             </div>
+                            <div class="mb-3">
+                                <textarea name="comment" id="consultationComment" class="form-control" rows="3" placeholder="Ваш коментар (необов'язково)"></textarea>
+                            </div>
                             <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">
-                                Залишити запит
+                                <i class="fa-regular fa-calendar-check me-2"></i> Отримати консультацію та забронювати
                             </button>
                         </form>
                     </div>
@@ -117,61 +175,123 @@
         </div>
     </div>
 </div>
-<style>
-    /* Приховуємо форму пошуку та фільтри на сторінці деталей туру */
-    #otpusk-tour-module .new_f-ext-container,
-    #otpusk-tour-module .new_r-filters-container,
-    #otpusk-tour-module .new_f-ext-btn,
-    #otpusk-tour-module .new_f-dropdown-body-top,
-    #otpusk-tour-module .new_r-item-wrap,
-    #otpusk-tour-module .new_r-currency-switch,
-    #otpusk-tour-module .new_f-ext-container,
-    #otpusk-tour-module .new_r-filters-container,
-    #otpusk-tour-module .new_f-form {
-        display: none !important;
-    }
 
-    /* Залишаємо тільки контент туру */
-    #otpusk-tour-module .new_t-container {
-        display: block !important;
-    }
-
-    /* Кнопка "Повернутися" - залишаємо видимою */
-    #otpusk-tour-module .new_t-menu-back {
-        display: block !important;
-        margin-bottom: 20px !important;
-    }
-
-    /* Очищаємо фон і рамки */
-    #otpusk-tour-module {
-        background: transparent !important;
-        border: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        box-shadow: none !important;
-    }
-</style>
+<!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// AJAX для консультації (ваш оригінальний код)
+// ========== 1. ПЕРЕНАПРАВЛЕННЯ КНОПКИ "ЗАМОВИТИ ТУР" ДО ФОРМИ КОНСУЛЬТАЦІЇ ==========
+setTimeout(function() {
+    // Шукаємо кнопку "Замовити тур" від Otpusk
+    const orderBtn = document.querySelector('.new_t-order-btn-true, .new_t-order-btn');
+    const orderBlock = document.querySelector('.new_t-order-table');
+
+    if (orderBtn) {
+        // Ховаємо оригінальну кнопку
+        orderBtn.style.display = 'none';
+        orderBtn.style.visibility = 'hidden';
+
+        // Створюємо свою кнопку поруч з ціною
+        const myBtn = document.createElement('button');
+        myBtn.className = 'btn btn-primary w-100 mt-3';
+        myBtn.style.cssText = 'background: var(--primary-color); color: white; padding: 12px 20px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease;';
+        myBtn.innerHTML = '<i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур';
+        myBtn.onmouseover = function() { this.style.background = 'var(--primary-dark)'; };
+        myBtn.onmouseout = function() { this.style.background = 'var(--primary-color)'; };
+        myBtn.onclick = function() {
+            // Прокручуємо до форми консультації
+            document.getElementById('consultationCard').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('consultationName').focus();
+        };
+
+        // Додаємо кнопку після ціни
+        if (orderBlock) {
+            orderBlock.appendChild(myBtn);
+        } else if (orderBtn.parentNode) {
+            orderBtn.parentNode.appendChild(myBtn);
+        }
+    }
+}, 2000);
+
+// ========== 2. ЗБИРАЄМО ДАНІ ТУРУ І ДОДАЄМО В ФОРМУ ==========
+setTimeout(function() {
+    // Отримуємо назву готелю
+    const hotelName = document.querySelector('.new_t-header-title')?.innerText || '';
+    // Отримуємо ціну
+    const price = document.querySelector('.new_price-value')?.innerText || '';
+    // Отримуємо дати
+    const dates = document.querySelectorAll('.new_t-important');
+    let dateText = '';
+    if (dates.length >= 2) {
+        dateText = `${dates[0]?.innerText || ''} – ${dates[1]?.innerText || ''}`;
+    }
+    // Отримуємо hid
+    const hid = new URLSearchParams(window.location.search).get('hid') || '';
+
+    // Заповнюємо приховані поля
+    if (document.getElementById('tourName')) {
+        document.getElementById('tourName').value = hotelName;
+    }
+    if (document.getElementById('tourPrice')) {
+        document.getElementById('tourPrice').value = price;
+    }
+    if (document.getElementById('tourDates')) {
+        document.getElementById('tourDates').value = dateText;
+    }
+    if (document.getElementById('tourHid')) {
+        document.getElementById('tourHid').value = hid;
+    }
+
+    // Якщо є коментар, додаємо інформацію про тур
+    const commentField = document.getElementById('consultationComment');
+    if (commentField && hotelName) {
+        commentField.placeholder = `Напишіть, якщо у вас є додаткові побажання щодо туру "${hotelName}"`;
+    }
+
+    console.log('Дані туру зібрано:', {hotelName, price, dateText, hid});
+}, 2500);
+
+// ========== 3. AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
 (function() {
     const submitBtn = document.getElementById('submitConsultationBtn');
     if (!submitBtn) return;
 
     submitBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        e.stopPropagation();
 
-        const name = document.getElementById('consultationName')?.value || '';
-        const phone = document.getElementById('consultationPhone')?.value || '';
+        // Збираємо дані з форми
+        const name = document.getElementById('consultationName')?.value.trim() || '';
+        const phone = document.getElementById('consultationPhone')?.value.trim() || '';
         const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        const tourName = document.getElementById('tourName')?.value || '';
+        const tourPrice = document.getElementById('tourPrice')?.value || '';
+        const tourDates = document.getElementById('tourDates')?.value || '';
+        const userComment = document.getElementById('consultationComment')?.value || '';
 
-        if (!name.trim() || !phone.trim()) return;
+        // Формуємо повідомлення для агента
+        let fullComment = `Тур: ${tourName}\n`;
+        if (tourPrice) fullComment += `Ціна: ${tourPrice}\n`;
+        if (tourDates) fullComment += `Дати: ${tourDates}\n`;
+        if (userComment) fullComment += `Коментар клієнта: ${userComment}`;
+
+        // Валідація
+        if (!name) {
+            alert('Будь ласка, введіть ваше ім\'я');
+            return;
+        }
+        if (!phone) {
+            alert('Будь ласка, введіть номер телефону');
+            return;
+        }
+
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
         let ajaxUrl = '/consultation-ajax/';
         {% if agent_site %}
         ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
         {% endif %}
+
+        // Блокуємо кнопку
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Відправляємо...';
 
         fetch(ajaxUrl, {
             method: 'POST',
@@ -183,19 +303,49 @@
                 'name': name,
                 'phone': phone,
                 'country_code': countryCode,
+                'comment': fullComment,
                 'consultation_submit': '1'
             })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                // Очищуємо форму
                 document.getElementById('consultationName').value = '';
                 document.getElementById('consultationPhone').value = '';
-                alert('✅ Заявку відправлено!');
+                document.getElementById('consultationComment').value = '';
+
+                // Показуємо повідомлення про успіх
+                const successMsg = document.createElement('div');
+                successMsg.className = 'alert alert-success mt-3';
+                successMsg.innerHTML = '<i class="fa-regular fa-circle-check me-2"></i> Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом.';
+                successMsg.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 9999; background: #22c55e; color: white; border: none; border-radius: 12px; padding: 12px 20px; animation: slideIn 0.3s ease;';
+                document.body.appendChild(successMsg);
+                setTimeout(() => successMsg.remove(), 5000);
+            } else {
+                alert('❌ ' + (data.error || 'Сталася помилка. Спробуйте ще раз.'));
             }
         })
-        .catch(error => console.error('Помилка:', error));
+        .catch(error => {
+            console.error('Помилка:', error);
+            alert('❌ Помилка з\'єднання. Спробуйте пізніше.');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-regular fa-calendar-check me-2"></i> Отримати консультацію та забронювати';
+        });
     });
 })();
+
+// Додаємо CSS для анімації
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(100%); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+`;
+document.head.appendChild(style);
 </script>
+
 {% endblock %}
