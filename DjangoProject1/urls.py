@@ -54,7 +54,6 @@ urlpatterns = [
     path('a/<slug:slug>/search-otpusk/', TemplateView.as_view(template_name='tours/search_results_otpusk.html'), name='agent_search_otpusk'),
 
     # ========== СТОРІНКА РЕЗУЛЬТАТІВ ПОШУКУ (для модуля Otpusk) ==========
-    path('search-results/', TemplateView.as_view(template_name='pages/test_search.html'), name='search_results'),
 
     # ========== ГОЛОВНА СТОРІНКА ==========
     path('', home_redirect, name='home_redirect'),
@@ -67,12 +66,8 @@ urlpatterns = [
     path('chaining/', include('smart_selects.urls')),
 
     # ========== ОСНОВНІ МАРШРУТИ ТУРІВ ==========
-    path('home/', tours_views.TourListView.as_view(), name='home'),
-    path('search/', tours_views.search_results, name='search_results'),
     path('get-cities/', tours_views.get_cities, name='get_cities'),
     path('api/calendar-prices/', tours_views.calendar_prices, name='calendar_prices'),
-    path('tour/<int:pk>/', tours_views.tour_detail, name='tour_detail'),
-    path('tour/<int:pk>/reviews/', tours_views.tour_reviews, name='tour_reviews'),
 
     # ========== КАБІНЕТ АГЕНТА ==========
     path('dashboard/', tours_views.AgentDashboardView.as_view(), name='dashboard'),
