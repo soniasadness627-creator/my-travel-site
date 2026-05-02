@@ -590,42 +590,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-    // Функція для маленького тихого повідомлення
-    function showTinyMessage(message, type) {
-        // Видаляємо старі повідомлення
-        const oldMsg = document.querySelector('.tiny-message');
-        if (oldMsg) oldMsg.remove();
-
-        const msg = document.createElement('div');
-        msg.className = 'tiny-message';
-        msg.innerHTML = message;
-        msg.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: ${type === 'success' ? '#22c55e' : '#ef4444'};
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            z-index: 9999;
-            opacity: 0;
-            transition: opacity 0.3s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        `;
-        document.body.appendChild(msg);
-
-        // Анімація появи
-        setTimeout(() => { msg.style.opacity = '1'; }, 10);
-
-        // Зникає через 2 секунди
-        setTimeout(() => {
-            msg.style.opacity = '0';
-            setTimeout(() => msg.remove(), 300);
-        }, 2000);
-    }
-});
-
 // Випадковий фон для блоку консультації
 document.addEventListener('DOMContentLoaded', function() {
     const colors = ['#c4edd4', '#ccfbfb', '#FFC0CB'];
