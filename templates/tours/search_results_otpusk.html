@@ -196,7 +196,7 @@ span.currency {
     margin-bottom: 24px !important;
 }
 
-/* КАРТКА ТУРУ - ВЕРТИКАЛЬНИЙ СТОВПЧИК */
+/* КАРТКА ТУРУ */
 .new_r-item {
     background: white !important;
     border-radius: 16px !important;
@@ -205,16 +205,18 @@ span.currency {
     overflow: hidden !important;
     display: flex !important;
     flex-direction: row !important;
-    align-items: stretch !important;  /* ДОДАНО - розтягує по висоті */
+    align-items: stretch !important;
     transition: all 0.3s ease !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
     width: 100% !important;
+    min-height: 165px !important;  /* МІНІМАЛЬНА ВИСОТА КАРТКИ */
 }
 
-/* ФОТО - НА ВСЮ ВИСОТУ КАРТКИ */
+/* ФОТО - 100% ВИСОТИ КАРТКИ */
 .new_r-item-img {
     width: 280px !important;
     height: 100% !important;
+    min-height: 165px !important;
     object-fit: cover !important;
     display: block !important;
     flex-shrink: 0 !important;
@@ -226,6 +228,7 @@ span.currency {
     flex-shrink: 0 !important;
     width: 280px !important;
     height: 100% !important;
+    min-height: 165px !important;
     background-size: cover !important;
     background-position: center !important;
 }
