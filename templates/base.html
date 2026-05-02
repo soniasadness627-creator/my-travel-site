@@ -431,7 +431,7 @@
 
                     {% if not agent_site or agent_site.show_news %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/news/{% else %}{% url 'news' %}{% endif %}">Новини</a>
+<a class="nav-link" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/news/{% else %}{% url 'news_list' %}{% endif %}">Новини</a>
                     </li>
                     {% endif %}
 
