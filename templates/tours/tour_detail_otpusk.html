@@ -55,17 +55,41 @@
 </div>
 
 <style>
-    /* Ховаємо все зайве */
+    /* Ховаємо все зайве (форму пошуку, фільтри), АЛЕ залишаємо кнопку "Повернутися" */
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
     #otpusk-tour-module .new_f-ext-btn,
     #otpusk-tour-module .new_f-dropdown-body-top,
     #otpusk-tour-module .new_r-item-wrap,
     #otpusk-tour-module .new_r-currency-switch,
-    #otpusk-tour-module .new_t-menu-back,
     #otpusk-tour-module .new_r-filters-container,
     #otpusk-tour-module .new_f-ext-container {
         display: none !important;
+    }
+
+    /* Кнопка "Повернутися до результатів пошуку" - ПОКАЗУЄМО */
+    #otpusk-tour-module .new_t-menu-back {
+        display: block !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* Стилізація кнопки "Повернутися" */
+    .new_t-menu-back-link {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        color: var(--primary-color) !important;
+        text-decoration: none !important;
+        font-size: 0.95rem !important;
+        padding: 8px 0 !important;
+    }
+
+    .new_t-menu-back-link:hover {
+        text-decoration: underline !important;
+    }
+
+    .new_t-menu-back-link span {
+        font-size: 1.2rem !important;
     }
 
     /* Показуємо тільки контент туру */
@@ -88,7 +112,7 @@
     }
 </style>
 
-<!-- Блок консультації (залишаємо без змін) -->
+<!-- Блок консультації -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
         <div class="card border-0 shadow-sm" id="consultationCard">
@@ -152,7 +176,7 @@
 </div>
 
 <script>
-// AJAX для консультації (такий самий, як у вас)
+// AJAX для консультації
 (function() {
     const submitBtn = document.getElementById('submitConsultationBtn');
     if (!submitBtn) return;
@@ -196,6 +220,26 @@
         .catch(error => console.error('Помилка:', error));
     });
 })();
+
+// Фіксація кнопки "Повернутися до результатів пошуку"
+setTimeout(function() {
+    const backLink = document.querySelector('.new_t-menu-back-link');
+    if (backLink) {
+        // Отримуємо URL з якого прийшли
+        const referrer = document.referrer;
+        if (referrer && (referrer.includes('search-otpusk') || referrer.includes('search-otpusk-by-country'))) {
+            backLink.href = referrer;
+            console.log('Кнопка "Повернутися" веде на:', referrer);
+        } else {
+            // Якщо немає referrer, ведемо на сторінку пошуку
+            let searchUrl = window.location.pathname.startsWith('/a/')
+                ? `/a/${window.location.pathname.split('/')[2]}/search-otpusk/`
+                : '/search-otpusk/';
+            backLink.href = searchUrl;
+            console.log('Кнопка "Повернутися" веде на сторінку пошуку:', searchUrl);
+        }
+    }
+}, 1500);
 </script>
 
 {% endblock %}
