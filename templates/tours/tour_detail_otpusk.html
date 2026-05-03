@@ -498,9 +498,9 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== ВИПРАВЛЕННЯ ДЛЯ РОЗШИРЕННЯ БЛОКУ ТУРИСТІВ ==========
-
-// 1. Оновлення ціни
+// =========================
+// 1. ОНОВЛЕННЯ ЦІНИ
+// =========================
 function updateCustomPrice() {
     const originalPriceBlock = document.querySelector('.new_t-order-price');
     const customPriceBlock = document.querySelector('.price-number');
@@ -512,6 +512,7 @@ function updateCustomPrice() {
             if (customPriceBlock.innerText !== newPrice) {
                 console.log('Оновлюємо ціну:', newPrice);
                 customPriceBlock.innerText = newPrice;
+
                 const tourPriceField = document.getElementById('tourPrice');
                 if (tourPriceField) tourPriceField.value = newPrice;
             }
@@ -519,91 +520,41 @@ function updateCustomPrice() {
     }
 }
 
-// 2. Спостерігач за ціною
+// =========================
+// 2. СПОСТЕРІГАЧ ЗА ЦІНОЮ
+// =========================
 function startPriceWatcher() {
     const observer = new MutationObserver(function() {
         updateCustomPrice();
     });
-    observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true });
-    console.log('✅ Спостерігач за ціною запущено');
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+
     updateCustomPrice();
 }
 
-// 3. ПЕРЕКОНУЄМОСЬ, ЩО КНОПКА ВИДИМА
-function ensureButtonVisible() {
-    const originalBtn = document.querySelector('.new_t-change-people');
-    if (originalBtn) {
-        originalBtn.style.display = 'inline-flex';
-        console.log('✅ Кнопка "Ще" видима');
-    } else {
-        console.log('Кнопку не знайдено, повторюємо спробу');
-        setTimeout(ensureButtonVisible, 500);
-    }
-}
-
-// 4. РОЗШИРЕННЯ БЛОКУ ТУРИСТИ ПРИ ВІДКРИТТІ ФОРМИ
-function expandTouristBlock() {
-    // Шукаємо правильний блок - це .tourist-table або .new_t-tour-tab-table.tourist-table
-    const touristTable = document.querySelector('.new_t-tour-tab-table.tourist-table');
-
-    if (touristTable) {
-        console.log('Розширюємо блок туристів');
-        // Зберігаємо оригінальний стан
-        if (!touristTable.hasAttribute('data-original-height')) {
-            touristTable.setAttribute('data-original-height', touristTable.style.height || 'auto');
-        }
-        // Розширюємо блок
-        touristTable.style.minHeight = '550px';
-        touristTable.style.height = 'auto';
-        touristTable.style.overflow = 'visible';
-        touristTable.style.position = 'relative';
-        touristTable.style.zIndex = '1000';
-        touristTable.style.marginBottom = '50px';
-    }
-
-    // Також збільшуємо відступ для контейнера
-    const contentCol = document.querySelector('.new_t-content-col');
-    if (contentCol) {
-        contentCol.style.paddingBottom = '400px';
-    }
-
-    // Прокручуємо до форми
-    const dropdown = document.querySelector('.new_f-dropdown-body');
-    if (dropdown) {
-        setTimeout(() => {
-            dropdown.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 150);
-    }
-}
-
-// 5. ПОВЕРНЕННЯ БЛОКУ ТУРИСТИ В НОРМАЛЬНИЙ СТАН
-function collapseTouristBlock() {
-    const touristTable = document.querySelector('.new_t-tour-tab-table.tourist-table');
-
-    if (touristTable) {
-        console.log('Повертаємо блок туристів в нормальний стан');
-        touristTable.style.minHeight = '';
-        touristTable.style.height = '';
-        touristTable.style.overflow = '';
-        touristTable.style.position = '';
-        touristTable.style.zIndex = '';
-        touristTable.style.marginBottom = '';
-    }
-
-    const contentCol = document.querySelector('.new_t-content-col');
-    if (contentCol) {
-        contentCol.style.paddingBottom = '';
-    }
-}
-
-// 6. СТВОРЕННЯ ЗАТЕМНЕННЯ
+// =========================
+// 3. OVERLAY (затемнення)
+// =========================
 let modalOverlay = null;
 
 function createOverlay() {
     if (!modalOverlay) {
         modalOverlay = document.createElement('div');
-        modalOverlay.className = 'modal-overlay-custom';
-        modalOverlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 99999998; display: none;';
+        modalOverlay.style.cssText = `
+            position: fixed;
+            top:0;
+            left:0;
+            right:0;
+            bottom:0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999999998;
+            display:none;
+        `;
         document.body.appendChild(modalOverlay);
     }
     return modalOverlay;
@@ -616,110 +567,61 @@ function showOverlay() {
 }
 
 function hideOverlay() {
-    if (modalOverlay) {
-        modalOverlay.style.display = 'none';
-    }
+    if (modalOverlay) modalOverlay.style.display = 'none';
     document.body.style.overflow = '';
 }
 
-// 7. ОБРОБКА ВІДКРИТТЯ/ЗАКРИТТЯ ФОРМИ
-function handleFormOpen() {
-    console.log('Форма відкрита');
-    expandTouristBlock();
-    showOverlay();
+// =========================
+// 4. СПОСТЕРЕЖЕННЯ ЗА DROPDOWN
+// =========================
+function watchDropdown() {
+    const observer = new MutationObserver(() => {
+        const dropdown = document.querySelector('.new_f-dropdown-body');
+        if (!dropdown) return;
+
+        const isVisible = window.getComputedStyle(dropdown).display !== 'none';
+
+        if (isVisible) {
+            console.log('✅ Dropdown відкрився');
+            showOverlay();
+        } else {
+            console.log('❌ Dropdown закрився');
+            hideOverlay();
+        }
+    });
+
+    observer.observe(document.body, {
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style']
+    });
 }
 
-function handleFormClose() {
-    console.log('Форма закрита');
-    collapseTouristBlock();
-    hideOverlay();
-}
-
-// 8. СПОСТЕРІГАЄМО ЗА ЗМІНОЮ ФОРМИ
-const formObserver = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+// =========================
+// 5. ЗАКРИТТЯ ПО OVERLAY
+// =========================
+function overlayClickClose() {
+    document.addEventListener('click', function(e) {
+        if (e.target === modalOverlay) {
             const dropdown = document.querySelector('.new_f-dropdown-body');
-            if (dropdown && dropdown.style.display === 'block') {
-                handleFormOpen();
-            } else if (dropdown && dropdown.style.display === 'none') {
-                handleFormClose();
+            if (dropdown) {
+                dropdown.style.display = 'none';
+                hideOverlay();
             }
         }
     });
-});
-
-const targetForm = document.querySelector('.new_f-dropdown-body');
-if (targetForm) {
-    formObserver.observe(targetForm, { attributes: true });
 }
 
-// 9. ДОДАЄМО ОБРОБНИК ДЛЯ КНОПКИ "ЩЕ"
-function setupButtonHandler() {
-    const peopleBtn = document.querySelector('.new_t-change-people');
-    if (peopleBtn) {
-        // Видаляємо старі обробники і додаємо новий
-        const newBtn = peopleBtn.cloneNode(true);
-        peopleBtn.parentNode.replaceChild(newBtn, peopleBtn);
-
-        newBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            const dropdown = this.querySelector('.new_f-dropdown-body');
-            if (dropdown) {
-                if (dropdown.style.display === 'none' || dropdown.style.display === '') {
-                    dropdown.style.display = 'block';
-                } else {
-                    dropdown.style.display = 'none';
-                }
-            }
-        });
-        console.log('✅ Обробник для кнопки "Ще" додано');
-    }
-}
-
-// 10. ДОДАЄМО ОБРОБНИКИ ДЛЯ КНОПОК ФОРМИ
-function setupFormButtons() {
-    const cancelBtn = document.querySelector('.new_f-dropdown-btn-cancel');
-    const applyBtn = document.querySelector('.new_f-dropdown-btn-apply');
-    const closeBtn = document.querySelector('.new_f-dropdown-body-close');
-
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', function() {
-            const dropdown = document.querySelector('.new_f-dropdown-body');
-            if (dropdown) dropdown.style.display = 'none';
-            handleFormClose();
-        });
-    }
-    if (applyBtn) {
-        applyBtn.addEventListener('click', function() {
-            const dropdown = document.querySelector('.new_f-dropdown-body');
-            if (dropdown) dropdown.style.display = 'none';
-            handleFormClose();
-            setTimeout(() => updateCustomPrice(), 500);
-        });
-    }
-    if (closeBtn) {
-        closeBtn.addEventListener('click', function() {
-            const dropdown = document.querySelector('.new_f-dropdown-body');
-            if (dropdown) dropdown.style.display = 'none';
-            handleFormClose();
-        });
-    }
-}
-
-// 11. ЗАПУСК
+// =========================
+// 6. ЗАПУСК
+// =========================
 setTimeout(() => {
-    ensureButtonVisible();
     startPriceWatcher();
+    watchDropdown();
+    overlayClickClose();
     createOverlay();
-    setupButtonHandler();
-    setupFormButtons();
+    console.log('🚀 Все запущено');
 }, 2000);
 
-setTimeout(() => {
-    setupButtonHandler();
-    setupFormButtons();
-}, 4000);
 </script>
 {% endblock %}
