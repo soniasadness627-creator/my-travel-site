@@ -370,127 +370,62 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== ФОРМА ВИБОРУ ТУРИСТІВ - ПОВЕРХ ВСЬОГО ========== */
-    .new_f-dropdown-body {
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        z-index: 2147483647 !important;
-        background: white !important;
-        border-radius: 16px !important;
-        box-shadow: 0 0 0 10000px rgba(0,0,0,0.5) !important;
-        display: none !important;
-    }
+    /* ========== ПРИМУСОВО ПІДНІМАЄМО ФОРМУ НАД ВСІМА БЛОКАМИ ========== */
 
-    .new_f-dropdown-body[style*="display: block"] {
-        display: block !important;
-    }
+/* Форма - максимальний пріоритет */
+.new_f-dropdown-body {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 999999999 !important;
+    background: white !important;
+    border-radius: 16px !important;
+    box-shadow: 0 0 0 10000px rgba(0,0,0,0.7) !important;
+    display: none !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
 
-    /* Всі інші елементи не можуть перекрити форму */
-    .new_t-content-table,
-    .new_t-content-col,
-    .new_t-tour-tab-table,
-    .new_t-date-table {
-        z-index: 1 !important;
-        position: relative !important;
-    }
+.new_f-dropdown-body[style*="display: block"] {
+    display: block !important;
+}
 
-    body.modal-open {
-        overflow: hidden !important;
-    }
+/* Всі блоки, які можуть перекривати - опускаємо вниз */
+.new_t-date-table,
+.new_t-tour-tab-table.food-table,
+.new_t-tour-tab-table.services-table,
+.new_t-content-col,
+.new_t-content-table,
+.new_t-header,
+.new_t-menu,
+.new_t-container,
+.new_t-similar-viewed,
+.price-block-under-menu,
+#consultationCard,
+.consult-row,
+.card,
+.container,
+.row,
+.col-* {
+    z-index: 1 !important;
+    position: relative !important;
+}
 
-    .new_t-tour-tab-table {
-        animation: fadeUp 0.3s ease forwards;
-    }
+/* Спеціально для блоку дати */
+.new_t-date-table {
+    z-index: 1 !important;
+    position: relative !important;
+}
 
-    @keyframes fadeUp {
-        from {
-            opacity: 0;
-            transform: translateY(15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+.new_t-date-col {
+    z-index: 1 !important;
+}
 
-    .new_t-content-table {
-        display: flex !important;
-        flex-direction: column !important;
-        width: 100% !important;
-    }
-
-    .new_t-content-col.new_t-tabs-content {
-        width: 100% !important;
-        max-width: 100% !important;
-        flex: 1 1 100% !important;
-    }
-
-    .new_t-content {
-        width: 100% !important;
-    }
-
-    .new_t-duration-icons {
-        display: none !important;
-    }
-
-    .price-block-under-menu {
-        text-align: right;
-        margin: 15px 0 25px 0;
-        padding: 0;
-    }
-
-    .price-number {
-        color: #dc2626;
-        font-size: 1.8rem;
-        font-weight: 700;
-    }
-
-    @media (max-width: 768px) {
-        .new_t-menu {
-            gap: 8px !important;
-            padding: 8px 12px !important;
-        }
-        .new_t-menu-item {
-            padding: 6px 16px !important;
-            font-size: 12px !important;
-        }
-        .new_t-tour-tab-table {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            padding: 16px !important;
-        }
-        .new_t-tour-tab-col-1-title {
-            white-space: normal !important;
-            margin-bottom: 8px !important;
-        }
-        .new_t-tour-tab-col-2 {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-        }
-        .new_t-date-table {
-            flex-wrap: wrap !important;
-        }
-        .new_t-date-col.new_t-nostretch:first-child,
-        .new_t-date-col.new_t-nostretch:last-child {
-            min-width: 100% !important;
-            width: 100% !important;
-        }
-        .new_t-date-col.new_t-duration-col {
-            min-width: 100% !important;
-            width: 100% !important;
-        }
-        .new_t-duration-container {
-            white-space: normal !important;
-        }
-        .new_t-duration-text {
-            white-space: normal !important;
-        }
-        .price-number {
-            font-size: 1.4rem !important;
-        }
-    }
+/* Затемнення фону */
+body.modal-open {
+    overflow: hidden !important;
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
