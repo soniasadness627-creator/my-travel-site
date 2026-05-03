@@ -524,6 +524,46 @@
             max-height: 85vh !important;
         }
     }
+    /* ========== ПРИМУСОВЕ ВІДОБРАЖЕННЯ ФОРМИ ========== */
+.new_f-dropdown-body {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 999999999 !important;
+    background: #fff !important;
+    border-radius: 12px !important;
+    display: block !important;
+    width: 400px !important;
+    max-width: 90vw !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
+}
+
+/* Спочатку ховаємо */
+.new_f-dropdown-body {
+    display: none !important;
+}
+
+/* Показуємо коли є атрибут style */
+.new_f-dropdown-body[style*="display: block"] {
+    display: block !important;
+}
+
+/* Затемнення */
+.people-dropdown-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 99999998;
+}
+
+/* Для кнопки "Ще" */
+.new_t-change-people {
+    cursor: pointer !important;
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -740,5 +780,71 @@ setTimeout(() => {
     setupButtonHandler();
     setupFormButtons();
 }, 4000);
+// ========== ФІКС ДЛЯ КНОПКИ "ЩЕ" ==========
+function initPeopleButton() {
+    const peopleBtn = document.querySelector('.new_t-change-people');
+    if (!peopleBtn) {
+        setTimeout(initPeopleButton, 500);
+        return;
+    }
+
+    console.log('Кнопка знайдена, додаємо обробник');
+
+    // Видаляємо старі обробники
+    const newBtn = peopleBtn.cloneNode(true);
+    peopleBtn.parentNode.replaceChild(newBtn, peopleBtn);
+
+    const dropdown = newBtn.querySelector('.new_f-dropdown-body');
+    if (!dropdown) return;
+
+    // Створюємо overlay
+    let overlay = null;
+
+    function showDropdown() {
+        if (overlay) overlay.remove();
+        overlay = document.createElement('div');
+        overlay.className = 'people-dropdown-overlay';
+        overlay.onclick = function() {
+            dropdown.style.display = 'none';
+            overlay.remove();
+            overlay = null;
+        };
+        document.body.appendChild(overlay);
+        dropdown.style.display = 'block';
+    }
+
+    function hideDropdown() {
+        dropdown.style.display = 'none';
+        if (overlay) {
+            overlay.remove();
+            overlay = null;
+        }
+    }
+
+    newBtn.onclick = function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+            showDropdown();
+        } else {
+            hideDropdown();
+        }
+    };
+
+    // Закриття через кнопки в формі
+    const cancelBtn = dropdown.querySelector('.new_f-dropdown-btn-cancel');
+    const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
+    const closeBtn = dropdown.querySelector('.new_f-dropdown-body-close');
+
+    if (cancelBtn) cancelBtn.onclick = hideDropdown;
+    if (applyBtn) applyBtn.onclick = hideDropdown;
+    if (closeBtn) closeBtn.onclick = hideDropdown;
+
+    console.log('✅ Кнопка "Ще" налаштована');
+}
+
+setTimeout(initPeopleButton, 1000);
+setTimeout(initPeopleButton, 3000);
+setTimeout(initPeopleButton, 5000);
 </script>
 {% endblock %}
