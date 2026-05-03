@@ -783,81 +783,79 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== ПРОСТЕ РІШЕННЯ: КНОПКА + ОНОВЛЕННЯ ЦІНИ ==========
+// ========== КНОПКА "ОБРАТИ ТУРИСТІВ" З ОНОВЛЕННЯМ ЦІНИ ==========
 
-// 1. Функція для оновлення ціни в нашому блоку
+// 1. Функція для оновлення ціни
 function updateCustomPrice() {
-    const originalPriceElement = document.querySelector('.new_t-order-price .new_price-value');
+    const originalPrice = document.querySelector('.new_t-order-price .new_price-value');
     const customPriceBlock = document.querySelector('.price-number');
 
-    if (originalPriceElement && customPriceBlock) {
-        const newPrice = originalPriceElement.innerText;
+    if (originalPrice && customPriceBlock) {
+        const newPrice = originalPrice.innerText;
         if (customPriceBlock.innerText !== newPrice) {
             console.log('Оновлюємо ціну:', newPrice);
             customPriceBlock.innerText = newPrice;
-
-            // Оновлюємо приховане поле форми бронювання
             const tourPriceField = document.getElementById('tourPrice');
             if (tourPriceField) tourPriceField.value = newPrice;
         }
     }
 }
 
-// 2. Спостерігаємо за зміною ціни в оригінальному блоці (оновлює нашу)
+// 2. Спостерігаємо за зміною ціни
 function startPriceWatcher() {
     const priceContainer = document.querySelector('.new_t-order-price');
     if (!priceContainer) {
         setTimeout(startPriceWatcher, 500);
         return;
     }
-
-    const observer = new MutationObserver(function() {
-        updateCustomPrice();
-    });
-
-    observer.observe(priceContainer, {
-        childList: true,
-        subtree: true,
-        characterData: true,
-        attributes: true
-    });
-
-    console.log('Спостерігач за ціною запущено');
-    updateCustomPrice(); // Оновлюємо одразу
+    const observer = new MutationObserver(function() { updateCustomPrice(); });
+    observer.observe(priceContainer, { childList: true, subtree: true, characterData: true, attributes: true });
+    console.log('✅ Спостерігач за ціною запущено');
+    updateCustomPrice();
 }
 
-// 3. ГОЛОВНА ФУНКЦІЯ: створюємо нову кнопку та підключаємо її до оригінальної логіки
+// 3. ГОЛОВНА ФУНКЦІЯ
 function setupTouristSelector() {
-    // Шукаємо батьківський контейнер для кнопки
     const touristBlock = document.querySelector('.tourist-table .new_t-tour-tab-col-2');
     if (!touristBlock) {
         setTimeout(setupTouristSelector, 300);
         return;
     }
 
-    // Знаходимо ПРИХОВАНУ оригінальну кнопку "Ще" (вона є в DOM)
-    const originalButton = touristBlock.querySelector('.new_t-change-people');
+    // Знаходимо оригінальну кнопку "Ще"
+    let originalButton = touristBlock.querySelector('.new_t-change-people');
     if (!originalButton) {
-        console.log('Оригінальну кнопку не знайдено, повторюємо спробу');
         setTimeout(setupTouristSelector, 300);
         return;
     }
 
-    // Видаляємо стару кнопку, якщо вона є, щоб уникнути дублювання
+    console.log('✅ Оригінальна кнопка знайдена');
+
+    // Робимо оригінальну кнопку клікабельною, але невидимою
+    originalButton.style.display = 'inline-flex';
+    originalButton.style.opacity = '0';
+    originalButton.style.position = 'absolute';
+    originalButton.style.width = '1px';
+    originalButton.style.height = '1px';
+    originalButton.style.overflow = 'hidden';
+    originalButton.style.pointerEvents = 'auto';
+    originalButton.style.zIndex = '1';
+
+    // Видаляємо стару кастомну кнопку
     const oldCustomBtn = touristBlock.querySelector('.custom-tourist-btn-fixed');
     if (oldCustomBtn) oldCustomBtn.remove();
 
-    // СТВОРЮЄМО НОВУ КРАСИВУ КНОПКУ
+    // Створюємо нову красиву кнопку
     const newButton = document.createElement('button');
     newButton.className = 'custom-tourist-btn-fixed';
     newButton.innerHTML = '👥 Обрати туристів';
     newButton.style.cssText = `
         background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
         border: none;
-        padding: 6px 20px;
+        padding: 8px 24px;
         border-radius: 30px;
         cursor: pointer;
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         font-weight: 500;
         margin-left: 15px;
         transition: all 0.3s ease;
@@ -866,26 +864,24 @@ function setupTouristSelector() {
     newButton.onmouseover = () => newButton.style.background = 'linear-gradient(135deg, #e2e8f0, #cbd5e1)';
     newButton.onmouseout = () => newButton.style.background = 'linear-gradient(135deg, #f1f5f9, #e2e8f0)';
 
-    // ПРИ НАТИСКАННІ - ІМІТУЄМО КЛІК ПО ОРИГІНАЛЬНІЙ КНОПЦІ
+    // При натисканні - клікаємо по оригінальній кнопці
     newButton.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log('Клік по новій кнопці, викликаємо оригінальну...');
-        originalButton.click(); // <--- Це чарівний рядок, який відкриває правильну форму
+        console.log('👆 Клік по новій кнопці, викликаємо оригінальну...');
+        originalButton.click();
     };
 
-    // Вставляємо кнопку в потрібне місце
     touristBlock.appendChild(newButton);
-    console.log('✅ Нова кнопка успішно створена та підключена');
+    console.log('✅ Нова кнопка створена');
 }
 
-// 4. Запускаємо всі наші функції з невеликою затримкою, щоб DOM встиг завантажитись
+// 4. Запуск
 setTimeout(() => {
     setupTouristSelector();
     startPriceWatcher();
 }, 1500);
 
-// Дублюємо запуск через 3 секунди для надійності (на випадок, якщо щось пішло не так)
 setTimeout(() => {
     setupTouristSelector();
     updateCustomPrice();
