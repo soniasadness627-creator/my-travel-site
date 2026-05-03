@@ -215,7 +215,7 @@
         font-size: 1rem !important;
     }
 
-    /* ========== КНОПКА "ЩЕ" - ОРИГІНАЛЬНА, АЛЕ КРАСИВА ========== */
+    /* ========== КНОПКА "ЩЕ" - КРАСИВА І КЛІКАБЕЛЬНА ========== */
     .new_t-change-people {
         display: inline-flex !important;
         align-items: center !important;
@@ -228,6 +228,8 @@
         margin-left: 10px !important;
         transition: all 0.2s ease !important;
         border: none !important;
+        position: relative !important;
+        z-index: 10 !important;
     }
 
     .new_t-change-people:hover {
@@ -368,7 +370,7 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== ОРИГІНАЛЬНА ФОРМА ВИБОРУ ТУРИСТІВ ========== */
+    /* ========== ОРИГІНАЛЬНА ФОРМА ВИБОРУ ТУРИСТІВ - ЗАКРИТА ЗА ЗАМОВЧУВАННЯМ ========== */
     .new_f-dropdown-body {
         position: fixed !important;
         top: 50% !important;
@@ -384,10 +386,6 @@
         min-width: 320px !important;
         max-height: 85vh !important;
         overflow-y: auto !important;
-    }
-
-    .new_f-dropdown-body[style*="display: block"] {
-        display: block !important;
     }
 
     /* Стилі для кнопок форми */
@@ -584,7 +582,7 @@ function ensureButtonVisible() {
     else setTimeout(ensureButtonVisible, 500);
 }
 
-// 4. Ініціалізація - просто робимо кнопку клікабельною
+// 4. Ініціалізація - ЗАКРИВАЄМО ФОРМУ ЗА ЗАМОВЧУВАННЯМ
 function initPeopleButton() {
     const peopleBtn = document.querySelector('.new_t-change-people');
     if (!peopleBtn) {
@@ -592,52 +590,59 @@ function initPeopleButton() {
         return;
     }
 
-    console.log('✅ Кнопка готова');
-
-    // Видаляємо всі старі обробники і додаємо новий
-    const newBtn = peopleBtn.cloneNode(true);
-    peopleBtn.parentNode.replaceChild(newBtn, peopleBtn);
+    console.log('✅ Кнопка "Ще" готова');
 
     // Отримуємо випадаючий список
-    const dropdown = newBtn.querySelector('.new_f-dropdown-body');
+    const dropdown = peopleBtn.querySelector('.new_f-dropdown-body');
     if (dropdown) {
-        // Спочатку ховаємо
+        // ЗАКРИВАЄМО форму за замовчуванням
         dropdown.style.display = 'none';
 
+        // Видаляємо старі обробники
+        const newBtn = peopleBtn.cloneNode(true);
+        peopleBtn.parentNode.replaceChild(newBtn, peopleBtn);
+        const newDropdown = newBtn.querySelector('.new_f-dropdown-body');
+
+        // Додаємо обробник кліку
         newBtn.onclick = function(e) {
             e.stopPropagation();
             e.preventDefault();
-            if (dropdown.style.display === 'none' || dropdown.style.display === '') {
-                dropdown.style.display = 'block';
+            if (newDropdown.style.display === 'none' || newDropdown.style.display === '') {
+                newDropdown.style.display = 'block';
             } else {
-                dropdown.style.display = 'none';
+                newDropdown.style.display = 'none';
             }
         };
 
-        // Закриття через кнопки
-        const cancelBtn = dropdown.querySelector('.new_f-dropdown-btn-cancel');
-        const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
-        const closeBtn = dropdown.querySelector('.new_f-dropdown-body-close');
+        // Закриття через кнопки форми
+        const cancelBtn = newDropdown.querySelector('.new_f-dropdown-btn-cancel');
+        const applyBtn = newDropdown.querySelector('.new_f-dropdown-btn-apply');
+        const closeBtn = newDropdown.querySelector('.new_f-dropdown-body-close');
 
         if (cancelBtn) {
             cancelBtn.onclick = function(e) {
                 e.stopPropagation();
-                dropdown.style.display = 'none';
+                newDropdown.style.display = 'none';
             };
         }
         if (applyBtn) {
             applyBtn.onclick = function(e) {
                 e.stopPropagation();
-                dropdown.style.display = 'none';
+                newDropdown.style.display = 'none';
                 setTimeout(updateCustomPrice, 500);
             };
         }
         if (closeBtn) {
             closeBtn.onclick = function(e) {
                 e.stopPropagation();
-                dropdown.style.display = 'none';
+                newDropdown.style.display = 'none';
             };
         }
+
+        // Запобігаємо закриттю при кліку всередині форми
+        newDropdown.onclick = function(e) {
+            e.stopPropagation();
+        };
     }
 }
 
@@ -647,5 +652,9 @@ setTimeout(() => {
     startPriceWatcher();
     initPeopleButton();
 }, 1500);
+
+setTimeout(() => {
+    initPeopleButton();
+}, 3500);
 </script>
 {% endblock %}
