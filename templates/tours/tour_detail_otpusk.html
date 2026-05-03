@@ -130,7 +130,7 @@
 
     /* ========== НОВІ СУЧАСНІ СТИЛІ ========== */
 
-    /* 1. СТИЛІ ДЛЯ МЕНЮ (залишаємо випадаючим, але красивим) */
+    /* 1. СТИЛІ ДЛЯ МЕНЮ */
     .new_t-menu {
         display: flex !important;
         gap: 12px !important;
@@ -171,7 +171,6 @@
         box-shadow: 0 4px 12px rgba(59,130,246,0.35) !important;
     }
 
-    /* Ефект ripple при натисканні */
     .new_t-menu-item::before {
         content: '';
         position: absolute;
@@ -190,17 +189,26 @@
         height: 100%;
     }
 
-    /* 2. СТИЛІ ДЛЯ БЛОКУ "ТУРИСТИ" - без сірого фону та рамок */
+    /* ========== ВИПРАВЛЕНІ СТИЛІ ДЛЯ БЛОКУ "ТУР" - ВСЕ АКУРАТНО ========== */
+
+    /* Загальний контейнер для всіх рядків */
+    .new_t-tabs-content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    /* Кожен рядок (Туристи, Дата, Харчування, Послуги) */
     .new_t-tour-tab-table {
         background: transparent !important;
         padding: 0 !important;
-        margin-bottom: 25px !important;
+        margin-bottom: 0 !important;
         box-shadow: none !important;
         border: none !important;
         display: flex !important;
         flex-wrap: wrap !important;
-        align-items: flex-start !important;
-        gap: 15px !important;
+        align-items: center !important;
+        gap: 16px !important;
     }
 
     .new_t-tour-tab-col {
@@ -208,51 +216,58 @@
         background: transparent !important;
     }
 
-    /* Ліва колонка з іконкою - компактна */
+    /* Ліва колонка з іконкою */
     .new_t-tour-tab-col-1 {
         background: transparent !important;
-        padding: 8px 12px !important;
-        margin-right: 20px !important;
-        border-radius: 16px !important;
-        min-width: 70px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        min-width: 90px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
     }
 
     .new_t-tour-tab-col-1 svg {
-        width: 28px !important;
-        height: 28px !important;
-        margin-bottom: 5px !important;
+        width: 22px !important;
+        height: 22px !important;
+        margin: 0 !important;
         fill: var(--primary-color, #3b82f6) !important;
     }
 
     .new_t-tour-tab-col-1-title {
-        font-size: 0.7rem !important;
-        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+        font-weight: 500 !important;
         color: #64748b !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
+        margin: 0 !important;
     }
 
+    /* Права колонка з контентом */
     .new_t-tour-tab-col-2 {
         background: transparent !important;
         padding: 0 !important;
+        flex: 1 !important;
     }
 
     /* Текст "2 дорослих" */
     .new_weight-bold {
-        font-weight: 600 !important;
+        font-weight: 500 !important;
         color: #1e293b !important;
-        font-size: 1rem !important;
+        font-size: 0.95rem !important;
     }
 
     /* Кнопка "Ще" */
     .new_t-change-btn {
         background: #f1f5f9 !important;
-        padding: 5px 16px !important;
-        border-radius: 40px !important;
-        margin-left: 15px !important;
+        padding: 4px 14px !important;
+        border-radius: 30px !important;
+        margin-left: 12px !important;
         transition: all 0.3s ease !important;
         font-weight: 500 !important;
-        font-size: 0.8rem !important;
+        font-size: 0.75rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 4px !important;
     }
 
     .new_t-change-btn:hover {
@@ -265,19 +280,19 @@
     }
 
     .new_t-change-btn svg {
-        width: 16px !important;
-        height: 16px !important;
+        width: 14px !important;
+        height: 14px !important;
         fill: var(--primary-color, #3b82f6) !important;
     }
 
-    /* 3. СТИЛІ ДЛЯ ДАТИ ВІДПРАВЛЕННЯ - без сірого фону */
+    /* ========== СТИЛІ ДЛЯ ДАТИ ========== */
     .new_t-date-table {
         background: transparent !important;
         padding: 0 !important;
         border: none !important;
         display: flex !important;
         flex-wrap: wrap !important;
-        gap: 20px !important;
+        gap: 16px !important;
         align-items: center !important;
     }
 
@@ -288,64 +303,66 @@
     }
 
     .new_t-important {
-        font-weight: 700 !important;
+        font-weight: 600 !important;
         color: var(--primary-color, #3b82f6) !important;
-        font-size: 1rem !important;
+        font-size: 0.9rem !important;
     }
 
     .new_t-duration-container {
         background: #f1f5f9 !important;
-        padding: 8px 20px !important;
-        border-radius: 40px !important;
-        font-weight: 600 !important;
+        padding: 6px 18px !important;
+        border-radius: 30px !important;
+        font-weight: 500 !important;
         color: #1e293b !important;
+        font-size: 0.85rem !important;
     }
 
     .new_t-duration-text {
-        font-size: 0.75rem !important;
+        font-size: 0.7rem !important;
         color: #64748b !important;
     }
 
     .new_t-date-col .new_weight-bold {
         color: #64748b !important;
-        font-weight: 500 !important;
-        font-size: 0.85rem !important;
+        font-weight: 400 !important;
+        font-size: 0.8rem !important;
     }
 
-    /* 4. СТИЛІ ДЛЯ ТИПУ КІМНАТИ ТА ХАРЧУВАННЯ */
+    /* ========== СТИЛІ ДЛЯ ХАРЧУВАННЯ ТА КІМНАТИ ========== */
     .new_t-tour-tab-table.food-table .new_t-tour-tab-col-2 {
         display: flex !important;
         flex-wrap: wrap !important;
-        gap: 20px !important;
+        gap: 24px !important;
         align-items: baseline !important;
     }
 
     .new_t-tour-tab-table.food-table .new_weight-bold {
         color: #64748b !important;
-        font-weight: 500 !important;
+        font-weight: 400 !important;
         font-size: 0.85rem !important;
     }
 
     .new_t-tour-tab-table.food-table .new_t-important {
-        font-weight: 600 !important;
+        font-weight: 500 !important;
         color: #1e293b !important;
     }
 
-    /* 5. СТИЛІ ДЛЯ ПОСЛУГ */
+    /* ========== СТИЛІ ДЛЯ ПОСЛУГ ========== */
     .new_t-tour-tab-table.services-table .new_t-tour-tab-col-2 {
         display: flex !important;
         flex-wrap: wrap !important;
-        gap: 12px !important;
+        gap: 10px !important;
+        align-items: center !important;
     }
 
     .new_t-service-item {
         display: inline-flex !important;
         align-items: center !important;
         gap: 8px !important;
-        padding: 8px 18px !important;
+        padding: 5px 14px !important;
         background: #f1f5f9 !important;
-        border-radius: 40px !important;
-        font-size: 0.85rem !important;
+        border-radius: 30px !important;
+        font-size: 0.8rem !important;
         font-weight: 500 !important;
         color: #1e293b !important;
         transition: all 0.3s ease !important;
@@ -358,8 +375,8 @@
     }
 
     .new_t-service-item svg {
-        width: 16px !important;
-        height: 16px !important;
+        width: 14px !important;
+        height: 14px !important;
     }
 
     .new_t-service-item.new_t-service-item-yes svg {
@@ -388,7 +405,6 @@
         font-weight: 600 !important;
     }
 
-    /* Стиль для вибору кількості людей */
     .new_f-people-list {
         border: 1px solid #e2e8f0 !important;
         border-radius: 12px !important;
@@ -404,7 +420,6 @@
         background: var(--primary-color, #3b82f6) !important;
     }
 
-    /* Стиль для вибору віку дітей */
     .new_f-children-age-item {
         border-radius: 30px !important;
         background: #f8fafc !important;
@@ -446,22 +461,26 @@
 
         .new_t-tour-tab-table {
             flex-direction: column !important;
+            align-items: flex-start !important;
         }
 
         .new_t-tour-tab-col-1 {
-            flex-direction: row !important;
-            align-items: center !important;
-            gap: 10px !important;
-            width: 100% !important;
-        }
-
-        .new_t-tour-tab-col-1 svg {
-            margin-bottom: 0 !important;
+            min-width: auto !important;
         }
 
         .new_t-date-table {
             flex-direction: column !important;
             align-items: flex-start !important;
+        }
+
+        .new_t-tour-tab-table.food-table .new_t-tour-tab-col-2 {
+            flex-direction: column !important;
+            gap: 8px !important;
+        }
+
+        .new_t-tour-tab-table.services-table .new_t-tour-tab-col-2 {
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
         }
     }
 </style>
