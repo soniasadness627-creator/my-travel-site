@@ -521,6 +521,51 @@
     color: #dc2626;
     margin-left: 5px;
 }
+    /* Стилі для простої модальної форми */
+.simple-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100000;
+}
+
+.simple-tourist-modal {
+    font-family: inherit;
+}
+
+.simple-tourist-modal button {
+    transition: all 0.2s ease;
+}
+
+.simple-tourist-modal button:hover {
+    transform: scale(0.98);
+}
+
+/* Оригінальна кнопка - ховаємо */
+.new_t-change-people {
+    display: none !important;
+}
+
+/* Ваша кнопка */
+.custom-tourist-btn-final {
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    border: none;
+    padding: 8px 24px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    color: #1e293b;
+}
+
+.custom-tourist-btn-final:hover {
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+    transform: translateY(-1px);
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -612,7 +657,11 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== КНОПКА "ОБРАТИ ТУРИСТІВ" З МОДАЛЬНИМ ВІКНОМ ==========
+// ========== КНОПКА "ОБРАТИ ТУРИСТІВ" З ПРОСТОЮ ФОРМОЮ ==========
+
+// Глобальні змінні
+let selectedAdults = 2;
+let selectedChildren = [];
 
 // 1. Оновлення ціни
 function updateCustomPrice() {
@@ -643,172 +692,158 @@ function startPriceWatcher() {
     updateCustomPrice();
 }
 
-// 3. ВІДКРИТТЯ ОРИГІНАЛЬНОЇ ФОРМИ В МОДАЛЬНОМУ ВІКНІ
-function openOriginalTouristModal() {
-    // Знаходимо оригінальний випадаючий список
-    const originalDropdown = document.querySelector('.new_f-dropdown-body');
-    if (!originalDropdown) {
-        console.log('Оригінальну форму не знайдено');
-        // Спробуємо знайти через батьківський елемент
-        const peopleBtn = document.querySelector('.new_t-change-people');
-        if (peopleBtn) {
-            const dropdown = peopleBtn.querySelector('.new_f-dropdown-body');
-            if (dropdown) {
-                openModalWithDropdown(dropdown);
-                return;
-            }
-        }
-        return;
-    }
+// 3. СТВОРЕННЯ ПРОСТОЇ ФОРМИ ДЛЯ ВИБОРУ ТУРИСТІВ
+function createSimpleTouristModal() {
+    // Видаляємо старе модальне вікно
+    const oldModal = document.querySelector('.simple-tourist-modal');
+    if (oldModal) oldModal.remove();
+    const oldOverlay = document.querySelector('.simple-modal-overlay');
+    if (oldOverlay) oldOverlay.remove();
 
-    openModalWithDropdown(originalDropdown);
-}
-
-function openModalWithDropdown(dropdown) {
-    // Клонуємо випадаючий список
-    const clonedDropdown = dropdown.cloneNode(true);
-
-    // Додаємо стилі для модального вікна
-    clonedDropdown.style.position = 'fixed';
-    clonedDropdown.style.top = '50%';
-    clonedDropdown.style.left = '50%';
-    clonedDropdown.style.transform = 'translate(-50%, -50%)';
-    clonedDropdown.style.zIndex = '100001';
-    clonedDropdown.style.width = '90%';
-    clonedDropdown.style.maxWidth = '450px';
-    clonedDropdown.style.maxHeight = '80vh';
-    clonedDropdown.style.overflowY = 'auto';
-    clonedDropdown.style.background = 'white';
-    clonedDropdown.style.borderRadius = '20px';
-    clonedDropdown.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
-    clonedDropdown.style.display = 'block';
-    clonedDropdown.style.border = 'none';
-
-    // Додаємо затемнення
+    // Створюємо затемнення
     const overlay = document.createElement('div');
-    overlay.className = 'tourist-modal-overlay';
+    overlay.className = 'simple-modal-overlay';
     overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100000;';
 
-    document.body.appendChild(overlay);
-    document.body.appendChild(clonedDropdown);
+    // Створюємо модальне вікно
+    const modal = document.createElement('div');
+    modal.className = 'simple-tourist-modal';
+    modal.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100001; width: 90%; max-width: 400px; background: white; border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); overflow: hidden;';
 
-    // Функція закриття
+    let tempAdults = selectedAdults;
+    let tempChildren = [...selectedChildren];
+
+    // HTML форми
+    modal.innerHTML = `
+        <div style="background: var(--primary-color, #3b82f6); padding: 15px 20px; color: white; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
+            <span>👥 Вибір туристів</span>
+            <span class="close-simple-modal" style="cursor: pointer; font-size: 24px;">&times;</span>
+        </div>
+        <div style="padding: 20px;">
+            <div style="margin-bottom: 20px;">
+                <label style="font-weight: 600; display: block; margin-bottom: 10px;">Кількість дорослих:</label>
+                <div class="simple-adults-container" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    ${[1,2,3,4,5,6,7,8].map(n => `<button class="simple-adult-opt" data-val="${n}" style="flex:1; padding: 10px; border: 1px solid #e2e8f0; background: ${selectedAdults === n ? 'var(--primary-color, #3b82f6)' : 'white'}; color: ${selectedAdults === n ? 'white' : '#1e293b'}; border-radius: 8px; cursor: pointer;">${n}</button>`).join('')}
+                </div>
+            </div>
+            <div>
+                <label style="font-weight: 600; display: block; margin-bottom: 10px;">Діти:</label>
+                <button class="simple-add-child" style="background: #f1f5f9; border: none; padding: 8px 16px; border-radius: 30px; cursor: pointer;">+ Додати дитину</button>
+                <div class="simple-children-list" style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
+            </div>
+        </div>
+        <div style="padding: 15px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px;">
+            <button class="simple-cancel-btn" style="background: #e2e8f0; border: none; padding: 8px 24px; border-radius: 30px; cursor: pointer;">Відміна</button>
+            <button class="simple-apply-btn" style="background: var(--primary-color, #3b82f6); border: none; padding: 8px 24px; border-radius: 30px; cursor: pointer; color: white;">Застосувати</button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(modal);
+
     const closeModal = () => {
-        clonedDropdown.remove();
+        modal.remove();
         overlay.remove();
     };
 
-    // Закриття при кліку на затемнення
-    overlay.onclick = closeModal;
+    // Закриття
+    modal.querySelector('.close-simple-modal')?.addEventListener('click', closeModal);
+    modal.querySelector('.simple-cancel-btn')?.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
 
-    // Закриття через хрестик
-    const closeBtn = clonedDropdown.querySelector('.new_f-dropdown-body-close');
-    if (closeBtn) {
-        closeBtn.onclick = closeModal;
-    }
-
-    // Закриття через кнопку "Відміна"
-    const cancelBtn = clonedDropdown.querySelector('.new_f-dropdown-btn-cancel');
-    if (cancelBtn) {
-        cancelBtn.onclick = closeModal;
-    }
-
-    // Обробка кнопки "Застосувати"
-    const applyBtn = clonedDropdown.querySelector('.new_f-dropdown-btn-apply');
-    if (applyBtn) {
-        applyBtn.onclick = () => {
-            closeModal();
-            // Оновлюємо ціну після застосування
-            setTimeout(() => {
-                updateCustomPrice();
-            }, 500);
-        };
-    }
-
-    // Додаємо обробники для кліків на елементи форми
-    const peopleItems = clonedDropdown.querySelectorAll('.new_f-people-item');
-    peopleItems.forEach(item => {
-        item.onclick = (e) => {
-            e.stopPropagation();
-            // Видаляємо активний клас з усіх
-            peopleItems.forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-            // Оновлюємо значення в оригінальному dropdown
-            const originalPeopleItems = document.querySelectorAll('.new_f-people-item');
-            originalPeopleItems.forEach(origItem => {
-                if (origItem.innerText === item.innerText) {
-                    origItem.classList.add('active');
-                } else {
-                    origItem.classList.remove('active');
+    // Вибір дорослих
+    modal.querySelectorAll('.simple-adult-opt').forEach(btn => {
+        btn.onclick = () => {
+            tempAdults = parseInt(btn.dataset.val);
+            modal.querySelectorAll('.simple-adult-opt').forEach(b => {
+                b.style.background = 'white';
+                b.style.color = '#1e293b';
+                if (parseInt(b.dataset.val) === tempAdults) {
+                    b.style.background = 'var(--primary-color, #3b82f6)';
+                    b.style.color = 'white';
                 }
             });
         };
     });
 
-    // Обробка додавання дітей
-    const addChildBtn = clonedDropdown.querySelector('.new_f-children-accordion-btn');
-    if (addChildBtn) {
-        addChildBtn.onclick = (e) => {
-            e.stopPropagation();
-            const body = clonedDropdown.querySelector('.new_f-children-accordion-body');
-            if (body) {
-                if (body.style.display === 'none' || body.style.display === '') {
-                    body.style.display = 'flex';
-                } else {
-                    body.style.display = 'none';
-                }
-            }
+    // Оновлення списку дітей
+    const updateChildrenList = () => {
+        const container = modal.querySelector('.simple-children-list');
+        container.innerHTML = '';
+        tempChildren.forEach((age, idx) => {
+            const childDiv = document.createElement('div');
+            childDiv.style.cssText = 'background: #e2e8f0; padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 8px;';
+            childDiv.innerHTML = `<span>${age} ${age === 1 ? 'рік' : 'років'}</span><span class="simple-remove-child" data-idx="${idx}" style="cursor: pointer; color: #dc2626;">&times;</span>`;
+            container.appendChild(childDiv);
+        });
+        modal.querySelectorAll('.simple-remove-child').forEach(btn => {
+            btn.onclick = () => {
+                const idx = parseInt(btn.dataset.idx);
+                tempChildren.splice(idx, 1);
+                updateChildrenList();
+            };
+        });
+    };
+
+    // Додавання дитини
+    modal.querySelector('.simple-add-child')?.addEventListener('click', () => {
+        const selectContainer = document.createElement('div');
+        selectContainer.style.cssText = 'margin-top: 10px; display: flex; gap: 10px; align-items: center;';
+
+        const select = document.createElement('select');
+        select.style.cssText = 'padding: 8px; border-radius: 30px; border: 1px solid #e2e8f0;';
+        for (let i = 1; i <= 16; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `${i} ${i === 1 ? 'рік' : 'років'}`;
+            select.appendChild(option);
+        }
+
+        const confirmBtn = document.createElement('button');
+        confirmBtn.textContent = 'Додати';
+        confirmBtn.style.cssText = 'background: var(--primary-color, #3b82f6); color: white; border: none; padding: 8px 16px; border-radius: 30px; cursor: pointer;';
+
+        selectContainer.appendChild(select);
+        selectContainer.appendChild(confirmBtn);
+
+        const container = modal.querySelector('.simple-children-list');
+        container.appendChild(selectContainer);
+
+        confirmBtn.onclick = () => {
+            const age = parseInt(select.value);
+            tempChildren.push(age);
+            updateChildrenList();
+            selectContainer.remove();
         };
-    }
+    });
 
-    // Обробка вибору віку дитини
-    const ageItems = clonedDropdown.querySelectorAll('.new_f-children-age-item');
-    ageItems.forEach(ageItem => {
-        ageItem.onclick = (e) => {
-            e.stopPropagation();
-            // Додаємо вибраний вік до списку
-            const age = ageItem.dataset.value;
-            const childrenList = clonedDropdown.querySelector('.new_f-children-list');
-            if (childrenList) {
-                // Перевіряємо чи вже є такий вік
-                const existing = childrenList.querySelector(`[data-value="${age}"]`);
-                if (!existing) {
-                    const newChild = document.createElement('div');
-                    newChild.className = 'new_f-children-list-item';
-                    newChild.setAttribute('data-value', age);
-                    newChild.innerHTML = `${age} ${age == 1 ? 'рік' : 'років'} <span class="remove-child">×</span>`;
-                    childrenList.appendChild(newChild);
+    updateChildrenList();
 
-                    // Додаємо обробник для видалення
-                    const removeBtn = newChild.querySelector('.remove-child');
-                    removeBtn.onclick = () => {
-                        newChild.remove();
-                        // Оновлюємо оригінальний список
-                        const originalChildrenList = document.querySelector('.new_f-children-list');
-                        if (originalChildrenList) {
-                            const origChild = originalChildrenList.querySelector(`[data-value="${age}"]`);
-                            if (origChild) origChild.remove();
-                        }
-                    };
+    // Застосування - оновлюємо ціну через оригінальну кнопку
+    modal.querySelector('.simple-apply-btn')?.addEventListener('click', () => {
+        selectedAdults = tempAdults;
+        selectedChildren = tempChildren;
 
-                    // Додаємо в оригінальний список
-                    const originalChildrenList = document.querySelector('.new_f-children-list');
-                    if (originalChildrenList) {
-                        const origNewChild = document.createElement('div');
-                        origNewChild.className = 'new_f-children-list-item';
-                        origNewChild.setAttribute('data-value', age);
-                        origNewChild.innerHTML = `${age} ${age == 1 ? 'рік' : 'років'} <span class="remove-child">×</span>`;
-                        originalChildrenList.appendChild(origNewChild);
-
-                        const origRemoveBtn = origNewChild.querySelector('.remove-child');
-                        origRemoveBtn.onclick = () => {
-                            origNewChild.remove();
-                            newChild.remove();
-                        };
-                    }
-                }
+        // Оновлюємо текст на сторінці
+        const weightSpan = document.querySelector('.tourist-table .new_weight-bold');
+        if (weightSpan) {
+            let childrenText = '';
+            if (selectedChildren.length > 0) {
+                childrenText = `, ${selectedChildren.length} ${selectedChildren.length === 1 ? 'дитина' : 'дітей'}`;
             }
-        };
+            weightSpan.innerText = `${selectedAdults} дорослих${childrenText}`;
+        }
+
+        closeModal();
+
+        // Знаходимо і клікаємо оригінальну кнопку "Застосувати"
+        setTimeout(() => {
+            const applyBtn = document.querySelector('.new_f-dropdown-btn-apply');
+            if (applyBtn) {
+                applyBtn.click();
+            }
+            setTimeout(() => updateCustomPrice(), 500);
+        }, 100);
     });
 }
 
@@ -829,9 +864,9 @@ function createCustomTouristForm() {
     newBtn.onmouseover = () => newBtn.style.background = 'linear-gradient(135deg, #e2e8f0, #cbd5e1)';
     newBtn.onmouseout = () => newBtn.style.background = 'linear-gradient(135deg, #f1f5f9, #e2e8f0)';
 
-    // При натисканні відкриваємо модальне вікно
+    // При натисканні відкриваємо просту форму
     newBtn.onclick = () => {
-        openOriginalTouristModal();
+        createSimpleTouristModal();
     };
 
     touristBlock.appendChild(newBtn);
