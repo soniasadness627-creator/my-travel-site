@@ -375,271 +375,247 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== ФІКС ДЛЯ ФОРМИ ВИБОРУ ТУРИСТІВ - ПОВЕРХ ВСЬОГО ========== */
+    /* ========== ВИПРАВЛЕННЯ ДЛЯ ФОРМИ ВИБОРУ ТУРИСТІВ - БІЛЬША ТА ПОВНА ========== */
+
+/* Основний контейнер форми - робимо більшим */
+.new_f-dropdown-body {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 9999999 !important;
+    width: 90% !important;
+    max-width: 550px !important;
+    min-width: 320px !important;
+    background: white !important;
+    border-radius: 24px !important;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4) !important;
+    border: none !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    display: none !important;
+    padding: 0 !important;
+}
+
+/* Внутрішній контейнер */
+.new_f-dropdown-body-wrap {
+    width: 100% !important;
+    background: white !important;
+    border-radius: 24px !important;
+    overflow: hidden !important;
+}
+
+/* Заголовок форми */
+.new_f-dropdown-body-top {
+    background: var(--primary-color, #3b82f6) !important;
+    padding: 18px 24px !important;
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 1.2rem !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+/* Контейнер для списку дорослих */
+.new_f-people-container {
+    padding: 20px 24px 0 24px !important;
+}
+
+.new_f-people-title {
+    font-weight: 600 !important;
+    margin-bottom: 12px !important;
+    font-size: 1rem !important;
+    color: #1e293b !important;
+}
+
+/* Список вибору кількості дорослих */
+.new_f-people-list {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    margin: 0 0 20px 0 !important;
+}
+
+.new_f-people-item {
+    flex: 1 !important;
+    min-width: 50px !important;
+    text-align: center !important;
+    padding: 12px 0 !important;
+    cursor: pointer !important;
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    transition: all 0.2s ease !important;
+    background: white !important;
+    color: #1e293b !important;
+}
+
+.new_f-people-item.active {
+    background: var(--primary-color, #3b82f6) !important;
+    color: white !important;
+    border-color: var(--primary-color, #3b82f6) !important;
+}
+
+.new_f-people-item:hover {
+    background: #e2e8f0 !important;
+    transform: translateY(-2px);
+}
+
+/* Контейнер для дітей */
+.new_f-children-container {
+    padding: 0 24px !important;
+}
+
+.new_f-children-accordion-wrap {
+    margin-bottom: 20px !important;
+}
+
+.new_f-children-accordion-btn {
+    background: #f1f5f9 !important;
+    padding: 10px 20px !important;
+    border-radius: 40px !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.new_f-children-accordion-btn:hover {
+    background: #e2e8f0 !important;
+    transform: translateY(-1px);
+}
+
+/* Тіло акордеону з віком дітей */
+.new_f-children-accordion-body {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    margin-top: 15px !important;
+    padding: 10px 0 !important;
+}
+
+.new_f-children-age-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 10px 16px !important;
+    background: #f1f5f9 !important;
+    border-radius: 40px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    font-weight: 500 !important;
+    min-width: 60px !important;
+}
+
+.new_f-children-age-item:hover {
+    background: var(--primary-color, #3b82f6) !important;
+    color: white !important;
+    transform: scale(1.02);
+}
+
+/* Список вибраних дітей */
+.new_f-children-list {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    margin: 15px 0 20px 0 !important;
+    padding: 0 24px !important;
+}
+
+.new_f-children-list-item {
+    background: #e2e8f0 !important;
+    padding: 6px 14px !important;
+    border-radius: 30px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+}
+
+.remove-child {
+    cursor: pointer !important;
+    color: #dc2626 !important;
+    font-size: 1.2rem !important;
+    font-weight: bold !important;
+    margin-left: 6px !important;
+}
+
+.remove-child:hover {
+    color: #b91c1c !important;
+}
+
+/* Нижня частина з кнопками */
+.new_f-dropdown-body-bottom {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    padding: 20px 24px !important;
+    border-top: 1px solid #e2e8f0 !important;
+    background: #f8fafc !important;
+}
+
+.new_f-dropdown-bottom-btn {
+    padding: 10px 28px !important;
+    border-radius: 40px !important;
+    cursor: pointer !important;
+    font-weight: 600 !important;
+    border: none !important;
+    transition: all 0.2s ease !important;
+    font-size: 0.9rem !important;
+}
+
+.new_f-dropdown-bottom-btn:hover {
+    transform: translateY(-2px);
+}
+
+.new_f-dropdown-btn-cancel {
+    background: #e2e8f0 !important;
+    color: #475569 !important;
+}
+
+.new_f-dropdown-btn-cancel:hover {
+    background: #cbd5e1 !important;
+}
+
+.new_f-dropdown-btn-apply {
+    background: var(--primary-color, #3b82f6) !important;
+    color: white !important;
+}
+
+.new_f-dropdown-btn-apply:hover {
+    background: #2563eb !important;
+    box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+}
+
+/* Стилі для мобільних пристроїв */
+@media (max-width: 768px) {
     .new_f-dropdown-body {
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        z-index: 9999999 !important;
-        width: 90% !important;
-        max-width: 500px !important;
-        background: white !important;
-        border-radius: 24px !important;
-        box-shadow: 0 25px 60px rgba(0,0,0,0.4) !important;
-        border: none !important;
+        width: 95% !important;
+        max-width: 95% !important;
+        min-width: auto !important;
         max-height: 85vh !important;
-        overflow-y: auto !important;
-        display: none !important;
-    }
-
-    /* Коли форма відкрита - показуємо */
-    .new_f-dropdown-body[style*="display: block"] {
-        display: block !important;
-    }
-
-    /* Затемнення фону */
-    body.modal-open {
-        overflow: hidden !important;
-    }
-
-    /* Стилі для контенту форми */
-    .new_f-dropdown-body-wrap {
-        border-radius: 24px !important;
-        overflow: hidden !important;
-    }
-
-    .new_f-dropdown-body-top {
-        background: var(--primary-color, #3b82f6) !important;
-        padding: 15px 20px !important;
-        color: white !important;
-        font-weight: 600 !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-    }
-
-    .new_f-dropdown-body-close {
-        cursor: pointer !important;
-        font-size: 24px !important;
-        line-height: 1 !important;
-    }
-
-    .new_f-people-list {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 8px !important;
-        margin: 15px 0 !important;
     }
 
     .new_f-people-item {
-        flex: 1 !important;
-        text-align: center !important;
-        padding: 10px !important;
-        cursor: pointer !important;
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 8px !important;
         min-width: 40px !important;
-        transition: all 0.2s ease !important;
-    }
-
-    .new_f-people-item.active {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-        border-color: var(--primary-color, #3b82f6) !important;
-    }
-
-    .new_f-people-item:hover {
-        background: #e2e8f0 !important;
-    }
-
-    .new_f-children-accordion-btn {
-        background: #f1f5f9 !important;
-        padding: 8px 16px !important;
-        border-radius: 30px !important;
-        cursor: pointer !important;
-        margin: 10px 0 !important;
-        display: inline-block !important;
-        transition: all 0.2s ease !important;
-    }
-
-    .new_f-children-accordion-btn:hover {
-        background: #e2e8f0 !important;
-    }
-
-    .new_f-children-accordion-body {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 8px !important;
-        margin-top: 10px !important;
+        padding: 10px 0 !important;
     }
 
     .new_f-children-age-item {
-        display: inline-block !important;
-        padding: 8px 14px !important;
-        margin: 4px !important;
-        background: #f1f5f9 !important;
-        border-radius: 30px !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-    }
-
-    .new_f-children-age-item:hover,
-    .new_f-children-age-item.selected {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-    }
-
-    .new_f-children-list {
-        margin-top: 15px !important;
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 8px !important;
-    }
-
-    .new_f-children-list-item {
-        background: #e2e8f0 !important;
-        padding: 4px 12px !important;
-        border-radius: 20px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 8px !important;
-    }
-
-    .remove-child {
-        cursor: pointer !important;
-        color: #dc2626 !important;
-        margin-left: 5px !important;
-    }
-
-    .new_f-dropdown-body-bottom {
-        display: flex !important;
-        justify-content: flex-end !important;
-        gap: 10px !important;
-        padding: 15px 20px !important;
-        border-top: 1px solid #e2e8f0 !important;
-        margin-top: 15px !important;
+        padding: 8px 12px !important;
+        min-width: 50px !important;
     }
 
     .new_f-dropdown-bottom-btn {
-        padding: 8px 24px !important;
-        border-radius: 30px !important;
-        cursor: pointer !important;
-        font-weight: 500 !important;
-        border: none !important;
-        transition: all 0.2s ease !important;
+        padding: 8px 20px !important;
     }
-
-    .new_f-dropdown-bottom-btn:hover {
-        transform: scale(0.98);
-    }
-
-    .new_f-dropdown-btn-cancel {
-        background: #e2e8f0 !important;
-        color: #475569 !important;
-    }
-
-    .new_f-dropdown-btn-apply {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-    }
-
-    .new_t-tour-tab-table {
-        animation: fadeUp 0.3s ease forwards;
-    }
-
-    @keyframes fadeUp {
-        from {
-            opacity: 0;
-            transform: translateY(15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .new_t-content-table {
-        display: flex !important;
-        flex-direction: column !important;
-        width: 100% !important;
-    }
-
-    .new_t-content-col.new_t-tabs-content {
-        width: 100% !important;
-        max-width: 100% !important;
-        flex: 1 1 100% !important;
-    }
-
-    .new_t-content {
-        width: 100% !important;
-    }
-
-    .new_t-duration-icons {
-        display: none !important;
-    }
-
-    .price-block-under-menu {
-        text-align: right;
-        margin: 15px 0 25px 0;
-        padding: 0;
-    }
-
-    .price-number {
-        color: #dc2626;
-        font-size: 1.8rem;
-        font-weight: 700;
-    }
-
-    /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
-    @media (max-width: 768px) {
-        .new_t-menu {
-            gap: 8px !important;
-            padding: 8px 12px !important;
-        }
-        .new_t-menu-item {
-            padding: 6px 16px !important;
-            font-size: 12px !important;
-        }
-        .new_t-tour-tab-table {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            padding: 16px !important;
-        }
-        .new_t-tour-tab-col-1-title {
-            white-space: normal !important;
-            margin-bottom: 8px !important;
-        }
-        .new_t-tour-tab-col-2 {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-        }
-        .new_t-date-table {
-            flex-wrap: wrap !important;
-        }
-        .new_t-date-col.new_t-nostretch:first-child,
-        .new_t-date-col.new_t-nostretch:last-child {
-            min-width: 100% !important;
-            width: 100% !important;
-        }
-        .new_t-date-col.new_t-duration-col {
-            min-width: 100% !important;
-            width: 100% !important;
-        }
-        .new_t-duration-container {
-            white-space: normal !important;
-        }
-        .new_t-duration-text {
-            white-space: normal !important;
-        }
-        .price-number {
-            font-size: 1.4rem !important;
-        }
-        .new_f-dropdown-body {
-            width: 95% !important;
-            max-width: 95% !important;
-        }
-    }
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
