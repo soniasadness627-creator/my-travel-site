@@ -206,6 +206,11 @@
         background: transparent !important;
         padding: 0 !important;
         flex: 1 !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
     }
 
     /* Текст "2 дорослих" */
@@ -215,34 +220,53 @@
         font-size: 1rem !important;
     }
 
-    /* Кнопка "Ще" */
+    /* ========== КРУГЛА КНОПКА "ЩЕ" - 30x30, справа ========== */
     .new_t-change-btn {
+        width: 30px !important;
+        height: 30px !important;
+        min-width: 30px !important;
+        max-width: 30px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        margin-left: auto !important;
         background: #f1f5f9 !important;
-        padding: 6px 16px !important;
-        border-radius: 40px !important;
-        margin-left: 16px !important;
-        transition: all 0.3s ease !important;
-        font-weight: 500 !important;
-        font-size: 0.8rem !important;
+        border-radius: 50% !important;
         display: inline-flex !important;
         align-items: center !important;
-        gap: 6px !important;
+        justify-content: center !important;
         cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        flex-shrink: 0 !important;
     }
 
-    .new_t-change-btn:hover {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
+    .new_t-change-btn span {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
     }
 
-    .new_t-change-btn:hover svg {
-        fill: white !important;
+    /* Ховаємо текст "Ще", залишаємо тільки стрілку */
+    .new_t-change-btn span:not(svg) {
+        display: none !important;
     }
 
     .new_t-change-btn svg {
         width: 14px !important;
         height: 14px !important;
+        margin: 0 !important;
         fill: var(--primary-color, #3b82f6) !important;
+        transition: fill 0.3s ease !important;
+    }
+
+    .new_t-change-btn:hover {
+        background: var(--primary-color, #3b82f6) !important;
+        transform: scale(1.05);
+    }
+
+    .new_t-change-btn:hover svg {
+        fill: white !important;
     }
 
     /* ========== ДАТА ========== */
@@ -293,8 +317,9 @@
     .new_t-tour-tab-table.food-table .new_t-tour-tab-col-2 {
         display: flex !important;
         flex-wrap: wrap !important;
-        gap: 24px !important;
-        align-items: baseline !important;
+        gap: 20px !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
     }
 
     .new_t-tour-tab-table.food-table .new_weight-bold {
@@ -313,6 +338,8 @@
         display: flex !important;
         flex-wrap: wrap !important;
         gap: 10px !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
     }
 
     .new_t-service-item {
@@ -481,13 +508,23 @@
 
         .new_t-tour-tab-table {
             flex-direction: column !important;
-            align-items: flex-start !important;
+            align-items: stretch !important;
             padding: 16px !important;
         }
 
         .new_t-tour-tab-col-1-title {
             white-space: normal !important;
             margin-bottom: 8px !important;
+        }
+
+        .new_t-tour-tab-col-2 {
+            flex-direction: column !important;
+            align-items: stretch !important;
+        }
+
+        .new_t-change-btn {
+            margin-left: 0 !important;
+            align-self: flex-end !important;
         }
 
         .new_t-date-table {
@@ -498,16 +535,14 @@
         .new_t-tour-tab-table.food-table .new_t-tour-tab-col-2 {
             flex-direction: column !important;
             gap: 12px !important;
+            align-items: flex-start !important;
+        }
+
+        .new_t-tour-tab-table.services-table .new_t-tour-tab-col-2 {
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
         }
     }
-    /* Фіксована ширина для кнопки "Ще" */
-.new_t-change-btn {
-    min-width: 60px !important;
-    width: 60px !important;
-    padding: 5px 0 !important;
-    text-align: center !important;
-    justify-content: center !important;
-}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
