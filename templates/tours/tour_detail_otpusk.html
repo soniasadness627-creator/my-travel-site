@@ -115,7 +115,7 @@
 }
 
 .new_t-menu-item:hover {
-    background: rgba(var(--primary-color-rgb), 0.1) !important;
+background: var(--primary-lighter) !important;
     color: var(--primary-color) !important;
 }
 
@@ -127,6 +127,156 @@
 .new_t-tab-rev.selected {
     background: var(--primary-color) !important;
     color: white !important;
+}
+    /* ========== ЗМІНА КОЛЬОРІВ НА КОЛІР АГЕНТА ========== */
+
+/* 1. ЦІНА - червоний колір для цифр, чорний для "грн" */
+.new_t-order-price .new_price-value {
+    color: #dc2626 !important;
+    font-weight: 700 !important;
+}
+.new_t-order-price .currency {
+    color: #1a202c !important;
+    font-weight: 500 !important;
+}
+.new_price-value {
+    color: #dc2626 !important;
+}
+.currency {
+    color: #1a202c !important;
+}
+
+/* 2. Кнопка "Застосувати" - колір агента */
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
+    background: var(--primary-dark) !important;
+    transform: translateY(-1px);
+}
+
+/* 3. Вибір кількості туристів (активний елемент) */
+.new_f-people-item.active {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-color: var(--primary-color) !important;
+}
+.new_f-people-item {
+    transition: all 0.3s ease !important;
+}
+.new_f-people-item:hover {
+    background: var(--primary-lighter) !important;
+    color: var(--primary-color) !important;
+}
+
+/* 4. Модальні вікна (Дати, Номер і харчування, Мапа) */
+.new_t-modal-body-top,
+.new_t-tab-content-top {
+    background: var(--primary-color) !important;
+    color: white !important;
+    padding: 12px 16px !important;
+    border-radius: 8px 8px 0 0 !important;
+    font-weight: 600 !important;
+}
+.new_t-tab-content-close {
+    color: white !important;
+    opacity: 0.8 !important;
+    cursor: pointer !important;
+}
+.new_t-tab-content-close:hover {
+    opacity: 1 !important;
+}
+
+/* 5. Кнопка "Ще" та її випадаючі списки */
+.new_t-change-btn {
+    color: var(--primary-color) !important;
+    cursor: pointer !important;
+}
+.new_t-change-btn:hover {
+    color: var(--primary-dark) !important;
+}
+.new_f-dropdown-body {
+    border-top: 3px solid var(--primary-color) !important;
+    border-radius: 8px !important;
+}
+.new_f-dropdown-item.selected {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+.new_f-dropdown-item:hover {
+    background: var(--primary-lighter) !important;
+    color: var(--primary-color) !important;
+}
+
+/* 6. Кнопка "Застосувати" у випадаючих списках (дати, харчування) */
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
+    background: var(--primary-color) !important;
+}
+.new_f-dropdown-btn-cancel {
+    background: #e2e8f0 !important;
+    color: #4a5568 !important;
+}
+.new_f-dropdown-btn-cancel:hover {
+    background: #cbd5e1 !important;
+}
+
+/* 7. Активна вкладка в календарі дат */
+.new_t-date-table .new_t-important {
+    color: var(--primary-color) !important;
+}
+.new_t-date-col .new_weight-bold {
+    color: #1a202c !important;
+}
+   /* Загальне перевизначення всіх можливих голубих кольорів */
+.new_t-order-btn,
+.new_r-currency-switch span,
+.new_f-dropdown-item.selected,
+.new_f-people-item.active,
+.new_t-change-btn span,
+.new_t-change-btn svg,
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply,
+.new_t-modal-body-top,
+.new_t-tab-content-top {
+    transition: all 0.3s ease;
+}
+
+/* Колір для SVG іконок */
+.new_t-change-btn svg {
+    fill: var(--primary-color) !important;
+}
+.new_t-change-btn:hover svg {
+    fill: var(--primary-dark) !important;
+}
+
+/* Стилі для випадаючого списку "Туристи" */
+.new_f-people-list {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    overflow: hidden;
+}
+.new_f-people-item {
+    padding: 8px 12px !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    border-right: 1px solid #e2e8f0 !important;
+}
+.new_f-people-item:last-child {
+    border-right: none !important;
+}
+
+/* Стилі для кнопки "Ще" */
+.new_t-change-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    font-size: 0.85rem !important;
+    margin-left: 10px !important;
 }
 </style>
 
