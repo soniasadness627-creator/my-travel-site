@@ -52,7 +52,7 @@
     </div>
 </div>
 
-<!-- ========== СТИЛІ ДЛЯ ПРИХОВУВАННЯ ФОРМИ ПОШУКУ ТА ОРИГІНАЛЬНОЇ КНОПКИ ========== -->
+<!-- ========== СТИЛІ ========== -->
 <style>
     /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
     #otpusk-tour-module .new_f-ext-container,
@@ -78,12 +78,12 @@
         padding: 0 !important;
     }
 
-    /* ========== ЗАЛИШАЄМО ТІЛЬКИ КОНТЕНТ ТУРУ ========== */
+    /* ========== ЗАЛИШАЄМО КОНТЕЙНЕР ВИДИМИМ ========== */
     #otpusk-tour-module .new_t-container {
         display: block !important;
     }
 
-    /* ========== ОЧИЩАЄМО ФОН І РАМКИ МОДУЛЯ ========== */
+    /* ========== ОЧИЩАЄМО ФОН ========== */
     #otpusk-tour-module {
         background: transparent !important;
         border: none !important;
@@ -92,10 +92,9 @@
         box-shadow: none !important;
     }
 
-    /* ========== ЦІНА - ЧЕРВОНА ДЛЯ ЦИФР, ЧОРНА ДЛЯ "грн" ========== */
+    /* ========== ЦІНА ========== */
     .new_t-order-price .new_price,
     .new_t-order-price .new_price-value,
-    .new_t-order-price span[class*="new_price"],
     .new_price-value,
     .new_price {
         color: #dc2626 !important;
@@ -104,269 +103,376 @@
     }
 
     .new_t-order-price .currency,
-    .new_t-order-price span.currency,
     .currency {
         color: #1a202c !important;
         font-weight: 500 !important;
         font-size: 1rem !important;
     }
 
-    /* ========== АДАПТАЦІЯ ЦІНИ ========== */
-    .new_r-item-price {
-        display: flex !important;
-        justify-content: flex-end !important;
-        align-items: baseline !important;
-        gap: 8px !important;
-        flex-wrap: wrap !important;
-    }
-
-    /* ========== СТИЛІ ДЛЯ ВКЛАДОК (ТУР, ОПИС, ФОТО, МАПА, ВІДГУКИ) ========== */
-    .new_t-menu-item {
-        background: transparent !important;
-        color: #4a5568 !important;
-        transition: all 0.3s ease !important;
-    }
-    .new_t-menu-item:hover {
-        background: var(--primary-lighter) !important;
-        color: var(--primary-color) !important;
-    }
-    .new_t-menu-item.selected,
-    .new_t-tab-tour.selected,
-    .new_t-tab-desc.selected,
-    .new_t-tab-photos.selected,
-    .new_t-tab-map.selected,
-    .new_t-tab-rev.selected {
-        background: var(--primary-color) !important;
-        color: white !important;
-    }
-
-    /* ========== КНОПКА "ЗАСТОСУВАТИ" ========== */
-    .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
-        background: var(--primary-color) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 8px !important;
-        padding: 8px 16px !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
-    }
-    .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
-        background: var(--primary-dark) !important;
-        transform: translateY(-1px);
-    }
-    .new_f-dropdown-btn-cancel {
-        background: #e2e8f0 !important;
-        color: #4a5568 !important;
-        border-radius: 8px !important;
-        padding: 8px 16px !important;
-        transition: all 0.3s ease !important;
-    }
-    .new_f-dropdown-btn-cancel:hover {
-        background: #cbd5e1 !important;
-    }
-
-    /* ========== ВИБІР КІЛЬКОСТІ ТУРИСТІВ ========== */
-    .new_f-people-item.active {
-        background: var(--primary-color) !important;
-        color: white !important;
-        border-color: var(--primary-color) !important;
-    }
-    .new_f-people-item {
-        transition: all 0.3s ease !important;
-        cursor: pointer !important;
-    }
-    .new_f-people-item:hover {
-        background: var(--primary-lighter) !important;
-        color: var(--primary-color) !important;
-    }
-    .new_f-people-list {
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 8px !important;
-        overflow: hidden;
-    }
-    .new_f-people-item {
-        padding: 8px 12px !important;
-        text-align: center !important;
-        border-right: 1px solid #e2e8f0 !important;
-    }
-    .new_f-people-item:last-child {
-        border-right: none !important;
-    }
-
-    /* ========== МОДАЛЬНІ ВІКНА (ДАТИ, НОМЕР, МАПА) ========== */
-    .new_t-modal-body-top,
-    .new_t-tab-content-top {
-        background: var(--primary-color) !important;
-        color: white !important;
-        padding: 12px 16px !important;
-        border-radius: 8px 8px 0 0 !important;
-        font-weight: 600 !important;
-    }
-    .new_t-tab-content-close {
-        color: white !important;
-        opacity: 0.8 !important;
-        cursor: pointer !important;
-    }
-    .new_t-tab-content-close:hover {
-        opacity: 1 !important;
-    }
-
-    /* ========== КНОПКА "ЩЕ" ТА ВИПАДАЮЧІ СПИСКИ ========== */
-    .new_t-change-btn {
-        color: var(--primary-color) !important;
-        cursor: pointer !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 4px !important;
-        font-size: 0.85rem !important;
-        margin-left: 10px !important;
-    }
-    .new_t-change-btn:hover {
-        color: var(--primary-dark) !important;
-    }
-    .new_t-change-btn svg {
-        fill: var(--primary-color) !important;
-    }
-    .new_t-change-btn:hover svg {
-        fill: var(--primary-dark) !important;
-    }
-    .new_f-dropdown-body {
-        border-top: 3px solid var(--primary-color) !important;
-        border-radius: 8px !important;
-    }
-    .new_f-dropdown-item.selected {
-        background: var(--primary-color) !important;
-        color: white !important;
-    }
-    .new_f-dropdown-item:hover {
-        background: var(--primary-lighter) !important;
-        color: var(--primary-color) !important;
-    }
-
-    /* ========== АКТИВНА ВКЛАДКА В КАЛЕНДАРІ ДАТ ========== */
-    .new_t-date-table .new_t-important {
-        color: var(--primary-color) !important;
-    }
-    .new_t-date-col .new_weight-bold {
-        color: #1a202c !important;
-    }
-
-    /* ========== СТИЛІ ДЛЯ ВИБОРУ ВІКУ ДІТЕЙ ========== */
-    .new_f-children-age-item {
-        transition: all 0.3s ease !important;
-        cursor: pointer !important;
-        border-radius: 8px !important;
-        margin: 4px !important;
-        padding: 8px 12px !important;
-        text-align: center !important;
-        background: #f8f9fa !important;
-        border: 1px solid #e2e8f0 !important;
-    }
-    .new_f-children-age-item:hover {
-        background: var(--primary-lighter) !important;
-        color: var(--primary-color) !important;
-        border-color: var(--primary-color) !important;
-    }
-    .new_f-children-age-item.active,
-    .new_f-children-age-item.selected {
-        background: var(--primary-color) !important;
-        color: white !important;
-        border-color: var(--primary-color) !important;
-    }
-    .new_f-children-accordion-body {
-        border-top: 2px solid var(--primary-color) !important;
-        border-radius: 8px !important;
-        padding: 10px !important;
-    }
-    .new_f-children-accordion-btn {
-        background: transparent !important;
-        color: var(--primary-color) !important;
-        border: 1px solid var(--primary-color) !important;
-        border-radius: 20px !important;
-        padding: 6px 16px !important;
-        transition: all 0.3s ease !important;
-        cursor: pointer !important;
-    }
-    .new_f-children-accordion-btn:hover {
-        background: var(--primary-color) !important;
-        color: white !important;
-    }
-    .new_f-children-list .new_f-children-item {
-        background: var(--primary-lighter) !important;
-        border-radius: 20px !important;
-        padding: 4px 12px !important;
-        margin: 4px !important;
-        display: inline-block !important;
-        font-size: 0.85rem !important;
-    }
-    .new_f-children-list .new_f-children-item .remove-child {
-        color: #dc2626 !important;
-        cursor: pointer !important;
-        margin-left: 8px !important;
-    }
-
-    /* ========== ЗАГАЛЬНІ ПЕРЕВИЗНАЧЕННЯ ========== */
+    /* ========== ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ========== */
+    .new_t-order-btn-true,
     .new_t-order-btn,
-    .new_r-currency-switch span,
-    .new_f-dropdown-item.selected,
-    .new_f-people-item.active,
-    .new_t-change-btn span,
-    .new_t-change-btn svg,
-    .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply,
-    .new_t-modal-body-top,
-    .new_t-tab-content-top {
-        transition: all 0.3s ease;
+    .new_t-order-table {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
     }
 
-    /* ========== ХОВАЄМО БЛОК РЕЙТИНГУ ========== */
+    /* ========== ХОВАЄМО РЕЙТИНГ ========== */
     .new_r-item-rating-container {
         display: none !important;
     }
 
-    /* ========== ЗМІНА КОЛЬОРУ ФОРМИ ПОШУКУ ========== */
-    .new_f-title {
-        background: var(--primary-color) !important;
+    /* ========== НОВІ СУЧАСНІ СТИЛІ ========== */
+
+    /* 1. СТИЛІ ДЛЯ МЕНЮ (залишаємо випадаючим, але красивим) */
+    .new_t-menu {
+        display: flex !important;
+        gap: 12px !important;
+        background: rgba(255,255,255,0.96) !important;
+        padding: 8px 20px !important;
+        border-radius: 60px !important;
+        margin: 20px 0 30px !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08) !important;
+        flex-wrap: wrap !important;
+        backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255,255,255,0.3) !important;
+    }
+
+    .new_t-menu-item {
+        padding: 10px 28px !important;
+        background: #f1f5f9 !important;
+        border-radius: 50px !important;
+        color: #334155 !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        letter-spacing: 0.3px !important;
+        cursor: pointer !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+
+    .new_t-menu-item:hover {
+        background: var(--primary-color, #3b82f6) !important;
         color: white !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(59,130,246,0.25) !important;
+    }
+
+    .new_t-menu-item.selected {
+        background: var(--primary-color, #3b82f6) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(59,130,246,0.35) !important;
+    }
+
+    /* Ефект ripple при натисканні */
+    .new_t-menu-item::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.5s, height 0.5s;
+    }
+
+    .new_t-menu-item:active::before {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* 2. СТИЛІ ДЛЯ БЛОКУ "ТУРИСТИ" - без сірого фону та рамок */
+    .new_t-tour-tab-table {
+        background: transparent !important;
+        padding: 0 !important;
+        margin-bottom: 25px !important;
+        box-shadow: none !important;
+        border: none !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: flex-start !important;
+        gap: 15px !important;
+    }
+
+    .new_t-tour-tab-col {
+        border: none !important;
+        background: transparent !important;
+    }
+
+    /* Ліва колонка з іконкою - компактна */
+    .new_t-tour-tab-col-1 {
+        background: transparent !important;
+        padding: 8px 12px !important;
+        margin-right: 20px !important;
+        border-radius: 16px !important;
+        min-width: 70px !important;
+    }
+
+    .new_t-tour-tab-col-1 svg {
+        width: 28px !important;
+        height: 28px !important;
+        margin-bottom: 5px !important;
+        fill: var(--primary-color, #3b82f6) !important;
+    }
+
+    .new_t-tour-tab-col-1-title {
+        font-size: 0.7rem !important;
+        font-weight: 600 !important;
+        color: #64748b !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    .new_t-tour-tab-col-2 {
+        background: transparent !important;
+        padding: 0 !important;
+    }
+
+    /* Текст "2 дорослих" */
+    .new_weight-bold {
+        font-weight: 600 !important;
+        color: #1e293b !important;
+        font-size: 1rem !important;
+    }
+
+    /* Кнопка "Ще" */
+    .new_t-change-btn {
+        background: #f1f5f9 !important;
+        padding: 5px 16px !important;
+        border-radius: 40px !important;
+        margin-left: 15px !important;
+        transition: all 0.3s ease !important;
+        font-weight: 500 !important;
+        font-size: 0.8rem !important;
+    }
+
+    .new_t-change-btn:hover {
+        background: var(--primary-color, #3b82f6) !important;
+        color: white !important;
+    }
+
+    .new_t-change-btn:hover svg {
+        fill: white !important;
+    }
+
+    .new_t-change-btn svg {
+        width: 16px !important;
+        height: 16px !important;
+        fill: var(--primary-color, #3b82f6) !important;
+    }
+
+    /* 3. СТИЛІ ДЛЯ ДАТИ ВІДПРАВЛЕННЯ - без сірого фону */
+    .new_t-date-table {
+        background: transparent !important;
+        padding: 0 !important;
+        border: none !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 20px !important;
+        align-items: center !important;
+    }
+
+    .new_t-date-col {
+        background: transparent !important;
+        padding: 0 !important;
+        border: none !important;
+    }
+
+    .new_t-important {
+        font-weight: 700 !important;
+        color: var(--primary-color, #3b82f6) !important;
+        font-size: 1rem !important;
+    }
+
+    .new_t-duration-container {
+        background: #f1f5f9 !important;
+        padding: 8px 20px !important;
+        border-radius: 40px !important;
+        font-weight: 600 !important;
+        color: #1e293b !important;
+    }
+
+    .new_t-duration-text {
+        font-size: 0.75rem !important;
+        color: #64748b !important;
+    }
+
+    .new_t-date-col .new_weight-bold {
+        color: #64748b !important;
+        font-weight: 500 !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* 4. СТИЛІ ДЛЯ ТИПУ КІМНАТИ ТА ХАРЧУВАННЯ */
+    .new_t-tour-tab-table.food-table .new_t-tour-tab-col-2 {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 20px !important;
+        align-items: baseline !important;
+    }
+
+    .new_t-tour-tab-table.food-table .new_weight-bold {
+        color: #64748b !important;
+        font-weight: 500 !important;
+        font-size: 0.85rem !important;
+    }
+
+    .new_t-tour-tab-table.food-table .new_t-important {
+        font-weight: 600 !important;
+        color: #1e293b !important;
+    }
+
+    /* 5. СТИЛІ ДЛЯ ПОСЛУГ */
+    .new_t-tour-tab-table.services-table .new_t-tour-tab-col-2 {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+    }
+
+    .new_t-service-item {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 8px 18px !important;
+        background: #f1f5f9 !important;
+        border-radius: 40px !important;
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
+        color: #1e293b !important;
+        transition: all 0.3s ease !important;
+        cursor: default !important;
+    }
+
+    .new_t-service-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    .new_t-service-item svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    .new_t-service-item.new_t-service-item-yes svg {
+        fill: #22c55e !important;
+    }
+
+    .new_t-service-item.new_t-service-item-no svg {
+        fill: #ef4444 !important;
+    }
+
+    /* 6. ІНШІ ПОКРАЩЕННЯ */
+    .new_f-dropdown-body {
+        border-radius: 16px !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+        border: none !important;
+    }
+
+    .new_f-dropdown-body-wrap {
+        border-radius: 16px !important;
+        overflow: hidden !important;
+    }
+
+    .new_f-dropdown-body-top {
+        background: var(--primary-color, #3b82f6) !important;
         padding: 12px 20px !important;
-        border-radius: 12px 12px 0 0 !important;
-        margin: -20px -24px 20px -24px !important;
-        font-size: 1.2rem !important;
         font-weight: 600 !important;
     }
-    /* ========== ПОВНІСТЮ ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ========== */
-.new_t-order-btn-true,
-.new_t-order-btn,
-.new_t-order-table {
-    display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    overflow: hidden !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
 
-/* Також ховаємо блок з ціною, якщо він містить тільки кнопку */
-.new_t-order-col {
-    position: relative;
-}
+    /* Стиль для вибору кількості людей */
+    .new_f-people-list {
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        overflow: hidden;
+    }
 
-/* Додатково ховаємо будь-які інші кнопки замовлення */
-.new_t-order-btn-true,
-[class*="new_t-order"] {
-    display: none !important;
-}
+    .new_f-people-item {
+        padding: 10px 0 !important;
+        font-weight: 500 !important;
+    }
+
+    .new_f-people-item.active {
+        background: var(--primary-color, #3b82f6) !important;
+    }
+
+    /* Стиль для вибору віку дітей */
+    .new_f-children-age-item {
+        border-radius: 30px !important;
+        background: #f8fafc !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .new_f-children-age-item:hover {
+        background: var(--primary-color, #3b82f6) !important;
+        color: white !important;
+    }
+
+    /* Анімація */
+    .new_t-tour-tab-table {
+        animation: fadeUp 0.4s ease forwards;
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Мобільна версія */
+    @media (max-width: 768px) {
+        .new_t-menu {
+            gap: 8px !important;
+            padding: 8px 12px !important;
+        }
+
+        .new_t-menu-item {
+            padding: 6px 16px !important;
+            font-size: 12px !important;
+        }
+
+        .new_t-tour-tab-table {
+            flex-direction: column !important;
+        }
+
+        .new_t-tour-tab-col-1 {
+            flex-direction: row !important;
+            align-items: center !important;
+            gap: 10px !important;
+            width: 100% !important;
+        }
+
+        .new_t-tour-tab-col-1 svg {
+            margin-bottom: 0 !important;
+        }
+
+        .new_t-date-table {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+    }
 </style>
 
-<!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" (без повідомлення) -->
+<!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
 <div class="container my-3">
     <a href="#" id="customBackButton" class="btn btn-outline-secondary btn-sm">
         <i class="fa-solid fa-arrow-left me-1"></i> ← Повернутися до результатів пошуку
     </a>
 </div>
 
-<!-- Видаляємо оригінальну кнопку через JavaScript -->
 <script>
     setTimeout(function() {
         const originalBackBtn = document.querySelector('.new_t-menu-back, .new_t-menu-back-link');
@@ -412,7 +518,6 @@
                             {% csrf_token %}
                             <input type="hidden" name="consultation_submit" value="1">
 
-                            <!-- Приховані поля для передачі інформації про тур -->
                             <input type="hidden" name="tour_hid" id="tourHid" value="">
                             <input type="hidden" name="tour_name" id="tourName" value="">
                             <input type="hidden" name="tour_price" id="tourPrice" value="">
@@ -508,7 +613,7 @@ setTimeout(function() {
     console.log('Дані туру зібрано:', {hotelName, price, dateText, hid});
 }, 2500);
 
-// ========== 3. AJAX ВІДПРАВЛЕННЯ ФОРМИ В КОНСУЛЬТАЦІЇ ==========
+// ========== 3. AJAX ВІДПРАВЛЕННЯ ФОРМИ ==========
 (function() {
     const submitBtn = document.getElementById('submitBookingBtn');
     if (!submitBtn) return;
@@ -524,7 +629,6 @@ setTimeout(function() {
         const tourDates = document.getElementById('tourDates')?.value || '';
         const userComment = document.getElementById('bookingMessage')?.value || '';
 
-        // Формуємо коментар для консультації
         let fullComment = `Тур: ${tourName}\n`;
         if (tourPrice) fullComment += `Ціна: ${tourPrice}\n`;
         if (tourDates) fullComment += `Дати: ${tourDates}\n`;
@@ -591,7 +695,7 @@ setTimeout(function() {
     });
 })();
 
-// ========== 4. КНОПКА "ПОВЕРНУТИСЯ" (через localStorage) ==========
+// ========== 4. КНОПКА "ПОВЕРНУТИСЯ" ==========
 const savedUrl = localStorage.getItem('lastSearchUrl');
 const backBtn = document.getElementById('customBackButton');
 
@@ -602,14 +706,12 @@ if (backBtn) {
             e.preventDefault();
             window.location.href = savedUrl;
         };
-        console.log('Кнопка "Повернутися" веде на:', savedUrl);
     } else {
         backBtn.href = 'javascript:history.back()';
-        console.log('Кнопка "Повернутися" використовує history.back()');
     }
 }
 
-// Додаємо CSS для анімації
+// ========== 5. CSS ДЛЯ АНІМАЦІЇ ==========
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
