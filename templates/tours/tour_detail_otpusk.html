@@ -384,70 +384,49 @@
         display: block !important;
     }
 
-    /* Затемнення */
-    .people-dropdown-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 999999;
-    }
+    /* ========== ВИПРАВЛЕННЯ ДЛЯ ФОРМИ ========== */
 
-    body.modal-open {
-        overflow: hidden !important;
-    }
+/* Затемнення - нижній шар */
+.people-dropdown-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999999;
+}
 
-    .price-block-under-menu {
-        text-align: right;
-        margin: 15px 0 25px 0;
-        padding: 0;
-    }
+/* Форма - верхній шар (повинна бути клікабельною) */
+.new_f-dropdown-body {
+    z-index: 1000000 !important;
+}
 
-    .price-number {
-        color: #dc2626;
-        font-size: 1.8rem;
-        font-weight: 700;
-    }
+/* Всі елементи всередині форми повинні бути клікабельними */
+.new_f-dropdown-body * {
+    pointer-events: auto !important;
+}
 
-    .new_t-duration-icons {
-        display: none !important;
-    }
+/* Стилі для кнопок форми */
+.new_f-dropdown-body button,
+.new_f-dropdown-body .new_f-people-item,
+.new_f-dropdown-body .new_f-dropdown-bottom-btn,
+.new_f-dropdown-body .new_f-dropdown-body-close {
+    cursor: pointer !important;
+}
 
-    @media (max-width: 768px) {
-        .new_t-menu {
-            gap: 8px !important;
-            padding: 8px 12px !important;
-        }
-        .new_t-menu-item {
-            padding: 6px 16px !important;
-            font-size: 12px !important;
-        }
-        .new_t-tour-tab-table {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            padding: 16px !important;
-        }
-        .new_t-tour-tab-col-1-title {
-            white-space: normal !important;
-            margin-bottom: 8px !important;
-        }
-        .new_t-tour-tab-col-2 {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-        }
-        .new_t-date-table {
-            flex-wrap: wrap !important;
-        }
-        .price-number {
-            font-size: 1.4rem !important;
-        }
-        .new_f-dropdown-body {
-            width: 95% !important;
-            min-width: 280px !important;
-        }
-    }
+.new_f-people-item {
+    cursor: pointer !important;
+}
+
+.new_f-people-item:hover {
+    background: #e2e8f0 !important;
+}
+
+/* Блокуємо прокрутку фону */
+body.modal-open {
+    overflow: hidden !important;
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -590,17 +569,35 @@ function initPeopleButton() {
     const newDropdown = newBtn.querySelector('.new_f-dropdown-body');
 
     function showDropdown() {
-        // Показуємо форму
-        newDropdown.style.display = 'block';
-
-        // Додаємо затемнення
+        // СПОЧАТКУ додаємо затемнення (воно буде ПІД формою)
         if (activeOverlay) activeOverlay.remove();
         activeOverlay = document.createElement('div');
         activeOverlay.className = 'people-dropdown-overlay';
+        activeOverlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999999;';
         activeOverlay.onclick = function() {
             hideDropdown();
         };
         document.body.appendChild(activeOverlay);
+
+        // ПОТІМ показуємо форму (вона буде НАД затемненням)
+        newDropdown.style.display = 'block';
+        newDropdown.style.position = 'fixed';
+        newDropdown.style.top = '50%';
+        newDropdown.style.left = '50%';
+        newDropdown.style.transform = 'translate(-50%, -50%)';
+        newDropdown.style.zIndex = '1000000';
+        newDropdown.style.background = 'white';
+        newDropdown.style.borderRadius = '20px';
+        newDropdown.style.width = '90%';
+        newDropdown.style.maxWidth = '450px';
+        newDropdown.style.maxHeight = '80vh';
+        newDropdown.style.overflowY = 'auto';
+        newDropdown.style.boxShadow = '0 25px 60px rgba(0,0,0,0.3)';
+
+        // Запобігаємо закриттю при кліку на форму
+        newDropdown.onclick = function(e) {
+            e.stopPropagation();
+        };
 
         document.body.classList.add('modal-open');
         document.body.style.overflow = 'hidden';
@@ -626,22 +623,30 @@ function initPeopleButton() {
         }
     };
 
-    // Закриття через кнопки форми
+    // Закриття через кнопки форми - ВАЖЛИВО: зберігаємо посилання на newDropdown
     const cancelBtn = newDropdown.querySelector('.new_f-dropdown-btn-cancel');
     const applyBtn = newDropdown.querySelector('.new_f-dropdown-btn-apply');
     const closeBtn = newDropdown.querySelector('.new_f-dropdown-body-close');
 
-    if (cancelBtn) cancelBtn.onclick = hideDropdown;
-    if (applyBtn) applyBtn.onclick = function() {
-        hideDropdown();
-        setTimeout(updateCustomPrice, 500);
-    };
-    if (closeBtn) closeBtn.onclick = hideDropdown;
-
-    // Запобігаємо закриттю при кліку всередині форми
-    newDropdown.onclick = function(e) {
-        e.stopPropagation();
-    };
+    if (cancelBtn) {
+        cancelBtn.onclick = function(e) {
+            e.stopPropagation();
+            hideDropdown();
+        };
+    }
+    if (applyBtn) {
+        applyBtn.onclick = function(e) {
+            e.stopPropagation();
+            hideDropdown();
+            setTimeout(updateCustomPrice, 500);
+        };
+    }
+    if (closeBtn) {
+        closeBtn.onclick = function(e) {
+            e.stopPropagation();
+            hideDropdown();
+        };
+    }
 }
 
 // 5. ЗАПУСК
