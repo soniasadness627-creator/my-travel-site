@@ -741,7 +741,9 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== 1. ЗМІНА ПОРЯДКУ БЛОКІВ У ДАТІ ==========
+// ========== ПРОСТЕ РІШЕННЯ ДЛЯ ФОРМИ ТУРИСТІВ ==========
+
+// 1. Зміна порядку блоків дати
 function reorderDateBlocks() {
     const dateTable = document.querySelector('.new_t-date-table');
     if (!dateTable) return;
@@ -756,7 +758,7 @@ function reorderDateBlocks() {
     }
 }
 
-// ========== 2. ЦІНА ПІД МЕНЮ ==========
+// 2. Ціна під меню
 function createPriceBlock() {
     const originalPrice = document.querySelector('.new_t-order-price');
     if (!originalPrice) return;
@@ -772,7 +774,7 @@ function createPriceBlock() {
     if (originalContainer) originalContainer.style.display = 'none';
 }
 
-// ========== 3. ОНОВЛЕННЯ ЦІНИ ==========
+// 3. Оновлення ціни
 function updatePrice() {
     const originalPrice = document.querySelector('.new_t-order-price');
     if (!originalPrice) return;
@@ -782,83 +784,131 @@ function updatePrice() {
     if (priceBlock) priceBlock.innerHTML = `<span class="price-number">${priceValue.innerText}</span>`;
 }
 
-// ========== 4. КНОПКА "ЩЕ" ДЛЯ ТУРИСТІВ ==========
-function fixTouristButton() {
-    const btn = document.querySelector('.new_t-change-people');
-    if (!btn) { setTimeout(fixTouristButton, 500); return; }
-
-    const dropdown = btn.querySelector('.new_f-dropdown-body');
-    if (!dropdown) return;
-
-    // Видаляємо старі обробники
-    const newBtn = btn.cloneNode(true);
-    btn.parentNode.replaceChild(newBtn, btn);
-    const newDropdown = newBtn.querySelector('.new_f-dropdown-body');
-
-    // Закриття форми
-    function closeDropdown() {
-        if (newDropdown) newDropdown.style.display = 'none';
-        const overlay = document.querySelector('.people-dropdown-overlay');
-        if (overlay) overlay.remove();
+// 4. ГОЛОВНА ФУНКЦІЯ - ВІДКРИТТЯ ФОРМИ ТУРИСТІВ
+function initTouristForm() {
+    // Знаходимо кнопку "Ще"
+    const targetNode = document.querySelector('.new_t-tour-tab-table.tourist-table .new_t-change-people');
+    if (!targetNode) {
+        setTimeout(initTouristForm, 500);
+        return;
     }
 
-    // Відкриття форми
+    // Знаходимо випадаючий блок
+    const dropdown = targetNode.querySelector('.new_f-dropdown-body');
+    if (!dropdown) {
+        setTimeout(initTouristForm, 500);
+        return;
+    }
+
+    console.log('Форма знайдена, додаємо обробник');
+
+    // Очищаємо старі обробники - видаляємо всі клони і створюємо нову кнопку
+    const parent = targetNode.parentNode;
+    const textSpan = parent.querySelector('.new_weight-bold');
+
+    // Видаляємо стару кнопку
+    if (targetNode) targetNode.remove();
+
+    // Створюємо нову кнопку
+    const newBtn = document.createElement('span');
+    newBtn.className = 'new_t-change-btn new_t-change-people';
+    newBtn.style.cssText = 'width: 30px; height: 30px; min-width: 30px; background: #f1f5f9; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 15px;';
+    newBtn.innerHTML = '<span style="font-size: 0;">▼</span>';
+
+    // Вставляємо кнопку після тексту
+    if (textSpan) {
+        textSpan.after(newBtn);
+    } else {
+        parent.appendChild(newBtn);
+    }
+
+    // Додаємо обробник кліку
     newBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         e.preventDefault();
-        if (newDropdown.style.display === 'none' || newDropdown.style.display === '') {
-            newDropdown.style.display = 'block';
+
+        if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+            // Показуємо форму
+            dropdown.style.display = 'block';
+            dropdown.style.position = 'fixed';
+            dropdown.style.top = '50%';
+            dropdown.style.left = '50%';
+            dropdown.style.transform = 'translate(-50%, -50%)';
+            dropdown.style.zIndex = '100000';
+            dropdown.style.width = '90%';
+            dropdown.style.maxWidth = '450px';
+            dropdown.style.maxHeight = '80vh';
+            dropdown.style.overflowY = 'auto';
+            dropdown.style.background = 'white';
+            dropdown.style.borderRadius = '20px';
+            dropdown.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
+
+            // Затемнення
             const overlay = document.createElement('div');
-            overlay.className = 'people-dropdown-overlay';
-            overlay.style.cssText = 'position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:99998;';
-            overlay.onclick = closeDropdown;
+            overlay.className = 'tourist-overlay';
+            overlay.style.cssText = 'position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:99999;';
+            overlay.onclick = function() {
+                dropdown.style.display = 'none';
+                overlay.remove();
+            };
             document.body.appendChild(overlay);
         } else {
-            closeDropdown();
+            dropdown.style.display = 'none';
+            const overlay = document.querySelector('.tourist-overlay');
+            if (overlay) overlay.remove();
         }
     });
 
-    // Закриття через кнопки
-    const cancelBtn = newDropdown?.querySelector('.new_f-dropdown-btn-cancel');
-    const applyBtn = newDropdown?.querySelector('.new_f-dropdown-btn-apply');
-    const closeX = newDropdown?.querySelector('.new_f-dropdown-body-close');
-    if (cancelBtn) cancelBtn.addEventListener('click', closeDropdown);
-    if (applyBtn) applyBtn.addEventListener('click', closeDropdown);
-    if (closeX) closeX.addEventListener('click', closeDropdown);
+    // Закриття через кнопки всередині форми
+    const cancelBtn = dropdown.querySelector('.new_f-dropdown-btn-cancel');
+    const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
+    const closeBtn = dropdown.querySelector('.new_f-dropdown-body-close');
+
+    const closeForm = function() {
+        dropdown.style.display = 'none';
+        const overlay = document.querySelector('.tourist-overlay');
+        if (overlay) overlay.remove();
+    };
+
+    if (cancelBtn) cancelBtn.addEventListener('click', closeForm);
+    if (applyBtn) applyBtn.addEventListener('click', closeForm);
+    if (closeBtn) closeBtn.addEventListener('click', closeForm);
 }
 
-// ========== 5. ЗАПУСК ==========
-setTimeout(() => {
+// 5. ЗАПУСК
+setTimeout(function() {
     reorderDateBlocks();
     createPriceBlock();
-    fixTouristButton();
-}, 1500);
+    initTouristForm();
+}, 2000);
 
-const observer = new MutationObserver(() => {
-    setTimeout(() => {
+// Спостерігач за змінами
+const observer = new MutationObserver(function() {
+    setTimeout(function() {
         reorderDateBlocks();
         updatePrice();
-        fixTouristButton();
+        const btn = document.querySelector('.new_t-tour-tab-table.tourist-table .new_t-change-people');
+        if (!btn) initTouristForm();
     }, 100);
 });
 observer.observe(document.body, { childList: true, subtree: true, attributes: true });
 
-// ========== 6. ЗБИРАЄМО ДАНІ ТУРУ ==========
-setTimeout(() => {
+// ========== ЗБИРАЄМО ДАНІ ТУРУ ==========
+setTimeout(function() {
     const hotelName = document.querySelector('.new_t-header-title')?.innerText || '';
     const price = document.querySelector('.price-number')?.innerText || '';
     const dates = document.querySelectorAll('.new_t-important');
     const dateText = dates.length >= 2 ? `${dates[0]?.innerText} – ${dates[1]?.innerText}` : '';
     const hid = new URLSearchParams(window.location.search).get('hid') || '';
-    document.getElementById('tourName') && (document.getElementById('tourName').value = hotelName);
-    document.getElementById('tourPrice') && (document.getElementById('tourPrice').value = price);
-    document.getElementById('tourDates') && (document.getElementById('tourDates').value = dateText);
-    document.getElementById('tourHid') && (document.getElementById('tourHid').value = hid);
+    if (document.getElementById('tourName')) document.getElementById('tourName').value = hotelName;
+    if (document.getElementById('tourPrice')) document.getElementById('tourPrice').value = price;
+    if (document.getElementById('tourDates')) document.getElementById('tourDates').value = dateText;
+    if (document.getElementById('tourHid')) document.getElementById('tourHid').value = hid;
     const msgField = document.getElementById('bookingMessage');
     if (msgField && hotelName) msgField.placeholder = `💬 Побажання щодо туру "${hotelName}"`;
 }, 2500);
 
-// ========== 7. AJAX ФОРМИ ==========
+// ========== AJAX ФОРМИ ==========
 (function() {
     const submitBtn = document.getElementById('submitBookingBtn');
     if (!submitBtn) return;
@@ -896,7 +946,7 @@ setTimeout(() => {
     });
 })();
 
-// ========== 8. КНОПКА "ПОВЕРНУТИСЯ" ==========
+// ========== КНОПКА "ПОВЕРНУТИСЯ" ==========
 const savedUrl = localStorage.getItem('lastSearchUrl');
 const backBtn = document.getElementById('customBackButton');
 if (backBtn) {
