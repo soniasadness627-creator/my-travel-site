@@ -370,7 +370,7 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== ФОРМА ТУРИСТІВ - ПЕРЕДНІЙ ПЛАН ========== */
+    /* ========== ФОРМА ТУРИСТІВ - ПОВЕРХ ВСЬОГО ========== */
     .new_f-dropdown-body {
         position: fixed !important;
         top: 50% !important;
@@ -386,6 +386,10 @@
         min-width: 320px !important;
         max-height: 85vh !important;
         overflow-y: auto !important;
+    }
+
+    .new_f-dropdown-body[style*="display: block"] {
+        display: block !important;
     }
 
     /* Стилі для вмісту форми */
@@ -547,6 +551,21 @@
         display: none !important;
     }
 
+    /* Затемнення фону */
+    .form-overlay-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 9999998;
+    }
+
+    body.modal-open {
+        overflow: hidden !important;
+    }
+
     /* Мобільна версія */
     @media (max-width: 768px) {
         .new_t-menu {
@@ -685,10 +704,13 @@ function updateCustomPrice() {
     const customPriceBlock = document.querySelector('.price-number');
     if (originalPriceBlock && customPriceBlock) {
         const priceSpan = originalPriceBlock.querySelector('.new_price, .new_price-value');
-        if (priceSpan && customPriceBlock.innerText !== priceSpan.innerText) {
-            customPriceBlock.innerText = priceSpan.innerText;
-            const tourPriceField = document.getElementById('tourPrice');
-            if (tourPriceField) tourPriceField.value = priceSpan.innerText;
+        if (priceSpan) {
+            const newPrice = priceSpan.innerText;
+            if (customPriceBlock.innerText !== newPrice) {
+                customPriceBlock.innerText = newPrice;
+                const tourPriceField = document.getElementById('tourPrice');
+                if (tourPriceField) tourPriceField.value = newPrice;
+            }
         }
     }
 }
@@ -712,7 +734,6 @@ function addOverlay() {
     if (activeOverlay) return;
     activeOverlay = document.createElement('div');
     activeOverlay.className = 'form-overlay-bg';
-    activeOverlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999998;';
     document.body.appendChild(activeOverlay);
     document.body.classList.add('modal-open');
     document.body.style.overflow = 'hidden';
@@ -740,8 +761,6 @@ function initPeopleButton() {
         setTimeout(initPeopleButton, 500);
         return;
     }
-
-    console.log('✅ Кнопка "Ще" готова');
 
     const dropdown = peopleBtn.querySelector('.new_f-dropdown-body');
     if (dropdown) {
