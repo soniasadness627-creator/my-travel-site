@@ -651,18 +651,33 @@
         }
     }
 /* ========== СТИЛІ ДЛЯ КНОПКИ ВИБОРУ ТУРИСТІВ ========== */
-/* Стилі для кнопки */
-/* Оригінальна кнопка - невидима, але клікабельна */
+/* Оригінальна кнопка - видима, але ми її відсунули */
 .new_t-change-people {
     display: inline-flex !important;
-    opacity: 0 !important;
     position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    overflow: hidden !important;
-    pointer-events: auto !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    right: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 30px !important;
+    height: 30px !important;
+    background: #f1f5f9 !important;
+    border-radius: 50% !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+}
+
+/* Сховати текст "Ще" в оригінальній кнопці */
+.new_t-change-people span:not(svg) {
+    display: none !important;
+}
+
+/* Показати стрілку */
+.new_t-change-people svg {
+    width: 14px !important;
+    height: 14px !important;
+    transform: rotate(90deg) !important;
 }
 
 /* Ваша красива кнопка */
@@ -674,7 +689,6 @@
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 500;
-    margin-left: 15px;
     transition: all 0.3s ease;
     color: #1e293b;
 }
@@ -682,6 +696,14 @@
 .custom-tourist-btn-final:hover {
     background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
     transform: translateY(-1px);
+}
+
+/* Контейнер для кнопок */
+.new_t-tour-tab-col-2 {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
 }
 
 </style>
@@ -775,11 +797,7 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== СТВОРЮЄМО СВОЮ ФОРМУ ДЛЯ ТУРИСТІВ ==========
-
-// Глобальні змінні
-let selectedAdults = 2;
-let selectedChildren = [];
+// ========== КНОПКА "ОБРАТИ ТУРИСТІВ" ==========
 
 // 1. Оновлення ціни
 function updateCustomPrice() {
@@ -810,75 +828,57 @@ function startPriceWatcher() {
     updateCustomPrice();
 }
 
-// 3. Функція для відкриття оригінальної форми Otpusk
-function openOriginalTouristForm() {
-    // Знаходимо оригінальну кнопку "Ще"
-    const originalBtn = document.querySelector('.new_t-change-people');
-    if (originalBtn) {
-        // Робимо кнопку видимою на мить
-        originalBtn.style.display = 'inline-flex';
-        originalBtn.style.opacity = '0';
-        originalBtn.style.position = 'absolute';
-        originalBtn.style.width = '1px';
-        originalBtn.style.height = '1px';
-        originalBtn.style.overflow = 'hidden';
-
-        // Клікаємо
-        originalBtn.click();
-
-        // Ховаємо назад
-        setTimeout(() => {
-            originalBtn.style.display = 'none';
-        }, 100);
-
-        console.log('Оригінальна форма відкрита');
-        return true;
-    }
-    console.log('Оригінальну кнопку не знайдено');
-    return false;
-}
-
-// 4. СТВОРЕННЯ ФОРМИ ВИБОРУ ТУРИСТІВ
+// 3. СТВОРЕННЯ КНОПКИ
 function createCustomTouristForm() {
     const touristBlock = document.querySelector('.tourist-table .new_t-tour-tab-col-2');
     if (!touristBlock) { setTimeout(createCustomTouristForm, 500); return; }
 
-    // Отримуємо поточне значення
-    const weightSpan = touristBlock.querySelector('.new_weight-bold');
-    if (weightSpan) {
-        const match = weightSpan.innerText.match(/(\d+)\s*дорослих/);
-        if (match) selectedAdults = parseInt(match[1]);
+    // Знаходимо оригінальну кнопку "Ще"
+    const originalBtn = touristBlock.querySelector('.new_t-change-people');
+    if (!originalBtn) {
+        console.log('Оригінальну кнопку не знайдено');
+        setTimeout(createCustomTouristForm, 500);
+        return;
     }
 
-    // Видаляємо стару кнопку
+    // Робимо оригінальну кнопку ВИДИМОЮ, але зсуваємо її в сторону
+    originalBtn.style.display = 'inline-flex';
+    originalBtn.style.position = 'absolute';
+    originalBtn.style.right = '0';
+    originalBtn.style.opacity = '1';
+    originalBtn.style.visibility = 'visible';
+    originalBtn.style.width = '30px';
+    originalBtn.style.height = '30px';
+    originalBtn.style.margin = '0';
+    originalBtn.style.zIndex = '10';
+
+    // Видаляємо стару кастомну кнопку
     const oldBtn = touristBlock.querySelector('.custom-tourist-btn-final');
     if (oldBtn) oldBtn.remove();
 
-    // Створюємо нову кнопку
+    // Створюємо нову кнопку поряд
     const newBtn = document.createElement('button');
     newBtn.className = 'custom-tourist-btn-final';
     newBtn.innerHTML = '👥 Обрати туристів';
-    newBtn.style.cssText = 'background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border: none; padding: 8px 24px; border-radius: 30px; cursor: pointer; font-size: 0.9rem; font-weight: 500; margin-left: 15px; transition: all 0.3s ease; color: #1e293b;';
+    newBtn.style.cssText = 'background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border: none; padding: 8px 24px; border-radius: 30px; cursor: pointer; font-size: 0.9rem; font-weight: 500; margin-right: 15px; transition: all 0.3s ease; color: #1e293b; z-index: 5; position: relative;';
     newBtn.onmouseover = () => newBtn.style.background = 'linear-gradient(135deg, #e2e8f0, #cbd5e1)';
     newBtn.onmouseout = () => newBtn.style.background = 'linear-gradient(135deg, #f1f5f9, #e2e8f0)';
 
-    // При натисканні - відкриваємо оригінальну форму
-    newBtn.onclick = () => {
-        openOriginalTouristForm();
-    };
+    // Вставляємо кнопку перед оригінальною
+    touristBlock.insertBefore(newBtn, originalBtn);
 
-    touristBlock.appendChild(newBtn);
     console.log('✅ Кнопка "Обрати туристів" створена');
+    console.log('Оригінальна кнопка тепер видима справа');
 }
 
-// 5. ЗАПУСК
+// 4. ЗАПУСК
 setTimeout(() => {
     createCustomTouristForm();
     startPriceWatcher();
-}, 1500);
+}, 2000);
 
 setTimeout(() => {
     createCustomTouristForm();
-}, 3000);
+}, 4000);
 </script>
 {% endblock %}
