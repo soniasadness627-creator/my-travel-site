@@ -220,12 +220,22 @@
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        width: 30px !important;
-        height: 30px !important;
+        width: 32px !important;
+        height: 32px !important;
         background: #f1f5f9 !important;
         border-radius: 50% !important;
         cursor: pointer !important;
         margin-left: 10px !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .new_t-change-people:hover {
+        background: var(--primary-color, #3b82f6) !important;
+        transform: scale(1.05);
+    }
+
+    .new_t-change-people:hover svg {
+        fill: white !important;
     }
 
     /* Ховаємо текст "Ще" */
@@ -238,6 +248,8 @@
         width: 14px !important;
         height: 14px !important;
         transform: rotate(90deg) !important;
+        fill: var(--primary-color, #3b82f6) !important;
+        transition: fill 0.3s ease !important;
     }
 
     /* ========== ДАТА ========== */
@@ -363,12 +375,173 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== ВИПАДАЮЧА ФОРМА ========== */
+    /* ========== ФІКС ДЛЯ ФОРМИ ВИБОРУ ТУРИСТІВ - ПОВЕРХ ВСЬОГО ========== */
     .new_f-dropdown-body {
-        border-radius: 16px !important;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        z-index: 9999999 !important;
+        width: 90% !important;
+        max-width: 500px !important;
+        background: white !important;
+        border-radius: 24px !important;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.4) !important;
         border: none !important;
-        z-index: 10000 !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        display: none !important;
+    }
+
+    /* Коли форма відкрита - показуємо */
+    .new_f-dropdown-body[style*="display: block"] {
+        display: block !important;
+    }
+
+    /* Затемнення фону */
+    body.modal-open {
+        overflow: hidden !important;
+    }
+
+    /* Стилі для контенту форми */
+    .new_f-dropdown-body-wrap {
+        border-radius: 24px !important;
+        overflow: hidden !important;
+    }
+
+    .new_f-dropdown-body-top {
+        background: var(--primary-color, #3b82f6) !important;
+        padding: 15px 20px !important;
+        color: white !important;
+        font-weight: 600 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    .new_f-dropdown-body-close {
+        cursor: pointer !important;
+        font-size: 24px !important;
+        line-height: 1 !important;
+    }
+
+    .new_f-people-list {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        margin: 15px 0 !important;
+    }
+
+    .new_f-people-item {
+        flex: 1 !important;
+        text-align: center !important;
+        padding: 10px !important;
+        cursor: pointer !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+        min-width: 40px !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .new_f-people-item.active {
+        background: var(--primary-color, #3b82f6) !important;
+        color: white !important;
+        border-color: var(--primary-color, #3b82f6) !important;
+    }
+
+    .new_f-people-item:hover {
+        background: #e2e8f0 !important;
+    }
+
+    .new_f-children-accordion-btn {
+        background: #f1f5f9 !important;
+        padding: 8px 16px !important;
+        border-radius: 30px !important;
+        cursor: pointer !important;
+        margin: 10px 0 !important;
+        display: inline-block !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .new_f-children-accordion-btn:hover {
+        background: #e2e8f0 !important;
+    }
+
+    .new_f-children-accordion-body {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        margin-top: 10px !important;
+    }
+
+    .new_f-children-age-item {
+        display: inline-block !important;
+        padding: 8px 14px !important;
+        margin: 4px !important;
+        background: #f1f5f9 !important;
+        border-radius: 30px !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .new_f-children-age-item:hover,
+    .new_f-children-age-item.selected {
+        background: var(--primary-color, #3b82f6) !important;
+        color: white !important;
+    }
+
+    .new_f-children-list {
+        margin-top: 15px !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+    }
+
+    .new_f-children-list-item {
+        background: #e2e8f0 !important;
+        padding: 4px 12px !important;
+        border-radius: 20px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    .remove-child {
+        cursor: pointer !important;
+        color: #dc2626 !important;
+        margin-left: 5px !important;
+    }
+
+    .new_f-dropdown-body-bottom {
+        display: flex !important;
+        justify-content: flex-end !important;
+        gap: 10px !important;
+        padding: 15px 20px !important;
+        border-top: 1px solid #e2e8f0 !important;
+        margin-top: 15px !important;
+    }
+
+    .new_f-dropdown-bottom-btn {
+        padding: 8px 24px !important;
+        border-radius: 30px !important;
+        cursor: pointer !important;
+        font-weight: 500 !important;
+        border: none !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .new_f-dropdown-bottom-btn:hover {
+        transform: scale(0.98);
+    }
+
+    .new_f-dropdown-btn-cancel {
+        background: #e2e8f0 !important;
+        color: #475569 !important;
+    }
+
+    .new_f-dropdown-btn-apply {
+        background: var(--primary-color, #3b82f6) !important;
+        color: white !important;
     }
 
     .new_t-tour-tab-table {
@@ -418,6 +591,7 @@
         font-weight: 700;
     }
 
+    /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
     @media (max-width: 768px) {
         .new_t-menu {
             gap: 8px !important;
@@ -461,50 +635,11 @@
         .price-number {
             font-size: 1.4rem !important;
         }
+        .new_f-dropdown-body {
+            width: 95% !important;
+            max-width: 95% !important;
+        }
     }
-    /* ========== ФІКС ДЛЯ ФОРМИ ВИБОРУ ТУРИСТІВ ========== */
-
-/* Піднімаємо форму на самий верх */
-.new_f-dropdown-body {
-    z-index: 999999 !important;
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    background: white !important;
-    border-radius: 20px !important;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.3) !important;
-    max-height: 80vh !important;
-    overflow-y: auto !important;
-}
-
-/* Затемнення фону */
-body.modal-open .new_f-dropdown-body {
-    display: block !important;
-}
-
-/* Блокуємо прокрутку фону коли форма відкрита */
-body.modal-open {
-    overflow: hidden !important;
-}
-
-/* Переконуємось, що інші блоки не перекривають форму */
-.new_t-date-table,
-.new_t-tour-tab-table.food-table,
-.new_t-tour-tab-table.services-table,
-.new_t-content-col.new_t-tabs-content {
-    z-index: auto !important;
-    position: relative !important;
-}
-
-/* Коли форма відкрита, інші блоки не отримують кліки */
-.new_f-dropdown-body ~ * {
-    pointer-events: auto;
-}
-
-.new_f-dropdown-body {
-    pointer-events: auto !important;
-}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -639,45 +774,40 @@ function ensureButtonVisible() {
     }
 }
 
-// 4. ЗАПУСК
-setTimeout(() => {
-    ensureButtonVisible();
-    startPriceWatcher();
-}, 2000);
-    // ========== БЛОКУЄМО ПРОКРУТКУ КОЛИ ФОРМА ВІДКРИТА ==========
-function handleModalScroll(open) {
-    if (open) {
+// 4. БЛОКУЄМО ПРОКРУТКУ КОЛИ ФОРМА ВІДКРИТА
+function setModalOpen(isOpen) {
+    if (isOpen) {
         document.body.classList.add('modal-open');
+        document.body.style.overflow = 'hidden';
     } else {
         document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
     }
 }
 
-// Спостерігаємо за появою форми
-const modalObserver = new MutationObserver(function(mutations) {
+// Спостерігаємо за зміною форми
+const styleObserver = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
         if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
             const dropdown = document.querySelector('.new_f-dropdown-body');
             if (dropdown && dropdown.style.display === 'block') {
-                handleModalScroll(true);
+                setModalOpen(true);
             } else if (dropdown && dropdown.style.display === 'none') {
-                handleModalScroll(false);
+                setModalOpen(false);
             }
         }
     });
 });
 
-const dropdown = document.querySelector('.new_f-dropdown-body');
-if (dropdown) {
-    modalObserver.observe(dropdown, { attributes: true });
+const targetDropdown = document.querySelector('.new_f-dropdown-body');
+if (targetDropdown) {
+    styleObserver.observe(targetDropdown, { attributes: true });
 }
 
-// Також перевіряємо при кліку на кнопку
-document.addEventListener('click', function(e) {
-    const dropdown = document.querySelector('.new_f-dropdown-body');
-    if (dropdown && dropdown.style.display === 'block') {
-        handleModalScroll(true);
-    }
-});
+// 5. ЗАПУСК
+setTimeout(() => {
+    ensureButtonVisible();
+    startPriceWatcher();
+}, 2000);
 </script>
 {% endblock %}
