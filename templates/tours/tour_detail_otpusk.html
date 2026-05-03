@@ -78,11 +78,6 @@
         padding: 0 !important;
     }
 
-    /* ========== ХОВАЄМО ОРИГІНАЛЬНЕ МЕНЮ ТАБІВ ========== */
-    .new_t-menu-wrap {
-        display: none !important;
-    }
-
     /* ========== ЗАЛИШАЄМО ТІЛЬКИ КОНТЕНТ ТУРУ ========== */
     #otpusk-tour-module .new_t-container {
         display: block !important;
@@ -125,103 +120,83 @@
         flex-wrap: wrap !important;
     }
 
-    /* ========== ЗАБЕЗПЕЧУЄМО ВИДИМІСТЬ ВСІХ БЛОКІВ ========== */
-    .new_t-tab-content {
-        display: block !important;
-        margin-bottom: 40px;
-        scroll-margin-top: 80px;
+    /* ========== СТИЛІ ДЛЯ ВКЛАДОК (ТУР, ОПИС, ФОТО, МАПА, ВІДГУКИ) ========== */
+    .new_t-menu-item {
+        background: transparent !important;
+        color: #4a5568 !important;
+        transition: all 0.3s ease !important;
+    }
+    .new_t-menu-item:hover {
+        background: var(--primary-lighter) !important;
+        color: var(--primary-color) !important;
+    }
+    .new_t-menu-item.selected,
+    .new_t-tab-tour.selected,
+    .new_t-tab-desc.selected,
+    .new_t-tab-photos.selected,
+    .new_t-tab-map.selected,
+    .new_t-tab-rev.selected {
+        background: var(--primary-color) !important;
+        color: white !important;
     }
 
-    /* Додаємо візуальний розділювач між секціями */
-    .new_t-tab-content:not(:last-child) {
-        border-bottom: 1px solid #e2e8f0;
-        padding-bottom: 30px;
+    /* ========== КНОПКА "ЗАСТОСУВАТИ" ========== */
+    .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
+        background: var(--primary-color) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 8px 16px !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+    }
+    .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
+        background: var(--primary-dark) !important;
+        transform: translateY(-1px);
+    }
+    .new_f-dropdown-btn-cancel {
+        background: #e2e8f0 !important;
+        color: #4a5568 !important;
+        border-radius: 8px !important;
+        padding: 8px 16px !important;
+        transition: all 0.3s ease !important;
+    }
+    .new_f-dropdown-btn-cancel:hover {
+        background: #cbd5e1 !important;
     }
 
-    /* Адаптація фото галереї */
-    .new_t-tab-content.photo img {
-        max-width: 100%;
-        height: auto;
-        margin: 10px 0;
-        border-radius: 12px;
+    /* ========== ВИБІР КІЛЬКОСТІ ТУРИСТІВ ========== */
+    .new_f-people-item.active {
+        background: var(--primary-color) !important;
+        color: white !important;
+        border-color: var(--primary-color) !important;
     }
-
-    /* Адаптація карти */
-    #new_os-map {
-        height: 400px !important;
-        width: 100% !important;
-        border-radius: 16px;
-    }
-
-    /* Адаптація відгуків */
-    .new_t-tab-content.reviews .grayInner1 {
-        max-width: 100%;
-        overflow-x: auto;
-    }
-
-    .new_t-tab-content.reviews .revBody {
-        max-width: 100%;
-        word-wrap: break-word;
-    }
-
-    /* ========== СТИЛІ ДЛЯ ВИБОРУ ВІКУ ДІТЕЙ ========== */
-    .new_f-children-age-item {
+    .new_f-people-item {
         transition: all 0.3s ease !important;
         cursor: pointer !important;
+    }
+    .new_f-people-item:hover {
+        background: var(--primary-lighter) !important;
+        color: var(--primary-color) !important;
+    }
+    .new_f-people-list {
+        border: 1px solid #e2e8f0 !important;
         border-radius: 8px !important;
-        margin: 4px !important;
+        overflow: hidden;
+    }
+    .new_f-people-item {
         padding: 8px 12px !important;
         text-align: center !important;
-        background: #f8f9fa !important;
-        border: 1px solid #e2e8f0 !important;
+        border-right: 1px solid #e2e8f0 !important;
     }
-    .new_f-children-age-item:hover {
-        background: var(--primary-lighter, #dbeafe) !important;
-        color: var(--primary-color, #3b82f6) !important;
-        border-color: var(--primary-color, #3b82f6) !important;
-    }
-    .new_f-children-age-item.active,
-    .new_f-children-age-item.selected {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-        border-color: var(--primary-color, #3b82f6) !important;
-    }
-    .new_f-children-accordion-body {
-        border-top: 2px solid var(--primary-color, #3b82f6) !important;
-        border-radius: 8px !important;
-        padding: 10px !important;
-    }
-    .new_f-children-accordion-btn {
-        background: transparent !important;
-        color: var(--primary-color, #3b82f6) !important;
-        border: 1px solid var(--primary-color, #3b82f6) !important;
-        border-radius: 20px !important;
-        padding: 6px 16px !important;
-        transition: all 0.3s ease !important;
-        cursor: pointer !important;
-    }
-    .new_f-children-accordion-btn:hover {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-    }
-    .new_f-children-list .new_f-children-item {
-        background: var(--primary-lighter, #dbeafe) !important;
-        border-radius: 20px !important;
-        padding: 4px 12px !important;
-        margin: 4px !important;
-        display: inline-block !important;
-        font-size: 0.85rem !important;
-    }
-    .new_f-children-list .new_f-children-item .remove-child {
-        color: #dc2626 !important;
-        cursor: pointer !important;
-        margin-left: 8px !important;
+    .new_f-people-item:last-child {
+        border-right: none !important;
     }
 
     /* ========== МОДАЛЬНІ ВІКНА (ДАТИ, НОМЕР, МАПА) ========== */
     .new_t-modal-body-top,
     .new_t-tab-content-top {
-        background: var(--primary-color, #3b82f6) !important;
+        background: var(--primary-color) !important;
         color: white !important;
         padding: 12px 16px !important;
         border-radius: 8px 8px 0 0 !important;
@@ -238,7 +213,7 @@
 
     /* ========== КНОПКА "ЩЕ" ТА ВИПАДАЮЧІ СПИСКИ ========== */
     .new_t-change-btn {
-        color: var(--primary-color, #3b82f6) !important;
+        color: var(--primary-color) !important;
         cursor: pointer !important;
         display: inline-flex !important;
         align-items: center !important;
@@ -247,115 +222,142 @@
         margin-left: 10px !important;
     }
     .new_t-change-btn:hover {
-        color: var(--primary-dark, #2563eb) !important;
+        color: var(--primary-dark) !important;
     }
     .new_t-change-btn svg {
-        fill: var(--primary-color, #3b82f6) !important;
+        fill: var(--primary-color) !important;
     }
     .new_t-change-btn:hover svg {
-        fill: var(--primary-dark, #2563eb) !important;
+        fill: var(--primary-dark) !important;
+    }
+    .new_f-dropdown-body {
+        border-top: 3px solid var(--primary-color) !important;
+        border-radius: 8px !important;
+    }
+    .new_f-dropdown-item.selected {
+        background: var(--primary-color) !important;
+        color: white !important;
+    }
+    .new_f-dropdown-item:hover {
+        background: var(--primary-lighter) !important;
+        color: var(--primary-color) !important;
     }
 
     /* ========== АКТИВНА ВКЛАДКА В КАЛЕНДАРІ ДАТ ========== */
     .new_t-date-table .new_t-important {
-        color: var(--primary-color, #3b82f6) !important;
+        color: var(--primary-color) !important;
     }
     .new_t-date-col .new_weight-bold {
         color: #1a202c !important;
     }
 
-    /* ========== КНОПКА "ЗАСТОСУВАТИ" ========== */
-    .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-        border: none !important;
+    /* ========== СТИЛІ ДЛЯ ВИБОРУ ВІКУ ДІТЕЙ ========== */
+    .new_f-children-age-item {
+        transition: all 0.3s ease !important;
+        cursor: pointer !important;
         border-radius: 8px !important;
-        padding: 8px 16px !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
-    }
-    .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover {
-        background: var(--primary-dark, #2563eb) !important;
-        transform: translateY(-1px);
-    }
-
-    /* ========== ВИБІР КІЛЬКОСТІ ТУРИСТІВ ========== */
-    .new_f-people-item.active {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-        border-color: var(--primary-color, #3b82f6) !important;
-    }
-    .new_f-people-item {
-        transition: all 0.3s ease !important;
-        cursor: pointer !important;
-    }
-
-    /* ========== ПОВНІСТЮ ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ========== */
-    .new_t-order-btn-true,
-    .new_t-order-btn,
-    .new_t-order-table {
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        overflow: hidden !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-    }
-
-    .new_t-order-col {
-        position: relative;
-    }
-
-    .new_t-order-btn-true,
-    [class*="new_t-order"] {
-        display: none !important;
-    }
-
-    /* ========== СВІТЛИЙ ФОН ДЛЯ ЛІВИХ КОЛОНОК ========== */
-    .new_t-tour-tab-col-1 {
-        background: #f8f9fa !important;
-        border-radius: 12px !important;
-        padding: 12px !important;
-        margin-right: 15px !important;
-        transition: all 0.3s ease !important;
-    }
-
-    .new_t-tour-tab-col-1 svg {
-        fill: var(--primary-color, #3b82f6) !important;
-        width: 32px !important;
-        height: 32px !important;
-        margin-bottom: 8px !important;
-    }
-
-    .new_t-tour-tab-col-1-title {
-        color: #4a5568 !important;
-        font-size: 0.8rem !important;
-        font-weight: 500 !important;
+        margin: 4px !important;
+        padding: 8px 12px !important;
         text-align: center !important;
+        background: #f8f9fa !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+    .new_f-children-age-item:hover {
+        background: var(--primary-lighter) !important;
+        color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+    }
+    .new_f-children-age-item.active,
+    .new_f-children-age-item.selected {
+        background: var(--primary-color) !important;
+        color: white !important;
+        border-color: var(--primary-color) !important;
+    }
+    .new_f-children-accordion-body {
+        border-top: 2px solid var(--primary-color) !important;
+        border-radius: 8px !important;
+        padding: 10px !important;
+    }
+    .new_f-children-accordion-btn {
+        background: transparent !important;
+        color: var(--primary-color) !important;
+        border: 1px solid var(--primary-color) !important;
+        border-radius: 20px !important;
+        padding: 6px 16px !important;
+        transition: all 0.3s ease !important;
+        cursor: pointer !important;
+    }
+    .new_f-children-accordion-btn:hover {
+        background: var(--primary-color) !important;
+        color: white !important;
+    }
+    .new_f-children-list .new_f-children-item {
+        background: var(--primary-lighter) !important;
+        border-radius: 20px !important;
+        padding: 4px 12px !important;
+        margin: 4px !important;
+        display: inline-block !important;
+        font-size: 0.85rem !important;
+    }
+    .new_f-children-list .new_f-children-item .remove-child {
+        color: #dc2626 !important;
+        cursor: pointer !important;
+        margin-left: 8px !important;
     }
 
-    .new_t-tour-tab-col-1:hover {
-        background: var(--primary-lighter, #dbeafe) !important;
-        transform: translateY(-2px);
+    /* ========== ЗАГАЛЬНІ ПЕРЕВИЗНАЧЕННЯ ========== */
+    .new_t-order-btn,
+    .new_r-currency-switch span,
+    .new_f-dropdown-item.selected,
+    .new_f-people-item.active,
+    .new_t-change-btn span,
+    .new_t-change-btn svg,
+    .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply,
+    .new_t-modal-body-top,
+    .new_t-tab-content-top {
+        transition: all 0.3s ease;
     }
 
-    .new_t-tour-tab-col-1:hover .new_t-tour-tab-col-1-title {
-        color: var(--primary-color, #3b82f6) !important;
+    /* ========== ХОВАЄМО БЛОК РЕЙТИНГУ ========== */
+    .new_r-item-rating-container {
+        display: none !important;
     }
+
+    /* ========== ЗМІНА КОЛЬОРУ ФОРМИ ПОШУКУ ========== */
+    .new_f-title {
+        background: var(--primary-color) !important;
+        color: white !important;
+        padding: 12px 20px !important;
+        border-radius: 12px 12px 0 0 !important;
+        margin: -20px -24px 20px -24px !important;
+        font-size: 1.2rem !important;
+        font-weight: 600 !important;
+    }
+    /* ========== ПОВНІСТЮ ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ========== */
+.new_t-order-btn-true,
+.new_t-order-btn,
+.new_t-order-table {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Також ховаємо блок з ціною, якщо він містить тільки кнопку */
+.new_t-order-col {
+    position: relative;
+}
+
+/* Додатково ховаємо будь-які інші кнопки замовлення */
+.new_t-order-btn-true,
+[class*="new_t-order"] {
+    display: none !important;
+}
 </style>
-
-<!-- ========== НОВЕ ЯКІРНЕ МЕНЮ ========== -->
-<div class="container">
-    <div class="anchor-menu" style="display: flex; gap: 8px; background: white; padding: 12px 16px; border-radius: 60px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-wrap: wrap; position: sticky; top: 20px; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);">
-        <a href="#tour-block" style="padding: 8px 24px; background: #f0f0f0; border-radius: 40px; text-decoration: none; color: #2c3e50; font-weight: 500; transition: all 0.2s ease; font-size: 14px;">📋 Тур</a>
-        <a href="#desc-block" style="padding: 8px 24px; background: #f0f0f0; border-radius: 40px; text-decoration: none; color: #2c3e50; font-weight: 500; transition: all 0.2s ease; font-size: 14px;">📖 Опис</a>
-        <a href="#photo-block" style="padding: 8px 24px; background: #f0f0f0; border-radius: 40px; text-decoration: none; color: #2c3e50; font-weight: 500; transition: all 0.2s ease; font-size: 14px;">📸 Фото</a>
-        <a href="#map-block" style="padding: 8px 24px; background: #f0f0f0; border-radius: 40px; text-decoration: none; color: #2c3e50; font-weight: 500; transition: all 0.2s ease; font-size: 14px;">🗺️ Мапа</a>
-        <a href="#reviews-block" style="padding: 8px 24px; background: #f0f0f0; border-radius: 40px; text-decoration: none; color: #2c3e50; font-weight: 500; transition: all 0.2s ease; font-size: 14px;">⭐ Відгуки</a>
-    </div>
-</div>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" (без повідомлення) -->
 <div class="container my-3">
@@ -363,6 +365,17 @@
         <i class="fa-solid fa-arrow-left me-1"></i> ← Повернутися до результатів пошуку
     </a>
 </div>
+
+<!-- Видаляємо оригінальну кнопку через JavaScript -->
+<script>
+    setTimeout(function() {
+        const originalBackBtn = document.querySelector('.new_t-menu-back, .new_t-menu-back-link');
+        if (originalBackBtn) {
+            originalBackBtn.remove();
+            console.log('Оригінальна кнопка "Повернутися" видалена');
+        }
+    }, 500);
+</script>
 
 <!-- ========== БЛОК БРОНЮВАННЯ ========== -->
 <div class="row justify-content-center my-5">
@@ -430,7 +443,7 @@
                             <div class="mb-3">
                                 <textarea name="comment" id="bookingMessage" class="form-control" rows="3" placeholder="Ваші побажання (необов'язково)"></textarea>
                             </div>
-                            <button type="button" class="btn w-100" id="submitBookingBtn" style="background: var(--primary-color, #3b82f6); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">
+                            <button type="button" class="btn w-100" id="submitBookingBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">
                                 <i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур
                             </button>
                         </form>
@@ -443,122 +456,38 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== 1. ЯКІРНЕ МЕНЮ ТА ПЛАВНИЙ СКРОЛ ==========
-(function() {
-    function initAnchorMenu() {
-        // Знаходимо всі таб-контенти
-        const tourContent = document.querySelector('.new_t-tab-content.tour');
-        const descContent = document.querySelector('.new_t-tab-content.hotelInfo');
-        const photoContent = document.querySelector('.new_t-tab-content.photo');
-        const mapContent = document.querySelector('.new_t-tab-content.map');
-        const reviewsContent = document.querySelector('.new_t-tab-content.reviews');
-
-        // Додаємо ID кожному блоку, якщо їх ще немає
-        if (tourContent && !tourContent.id) tourContent.id = 'tour-block';
-        if (descContent && !descContent.id) descContent.id = 'desc-block';
-        if (photoContent && !photoContent.id) photoContent.id = 'photo-block';
-        if (mapContent && !mapContent.id) mapContent.id = 'map-block';
-        if (reviewsContent && !reviewsContent.id) reviewsContent.id = 'reviews-block';
-
-        // Переконуємось, що всі блоки видимі
-        const allTabs = document.querySelectorAll('.new_t-tab-content');
-        allTabs.forEach(tab => {
-            tab.style.display = 'block';
-        });
-
-        // Плавний скрол для всіх якірних посилань
-        document.querySelectorAll('.anchor-menu a').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-
-                if (targetElement) {
-                    const offset = 80;
-                    const elementPosition = targetElement.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        // Підсвічуємо активний пункт меню при скролі
-        const sections = [
-            { id: 'tour-block', selector: '.anchor-menu a[href="#tour-block"]' },
-            { id: 'desc-block', selector: '.anchor-menu a[href="#desc-block"]' },
-            { id: 'photo-block', selector: '.anchor-menu a[href="#photo-block"]' },
-            { id: 'map-block', selector: '.anchor-menu a[href="#map-block"]' },
-            { id: 'reviews-block', selector: '.anchor-menu a[href="#reviews-block"]' }
-        ];
-
-        function highlightCurrentSection() {
-            const scrollPos = window.scrollY + 100;
-
-            for (const section of sections) {
-                const element = document.getElementById(section.id);
-                if (element) {
-                    const sectionTop = element.offsetTop;
-                    const sectionBottom = sectionTop + element.offsetHeight;
-                    if (scrollPos >= sectionTop && scrollPos < sectionBottom) {
-                        document.querySelectorAll('.anchor-menu a').forEach(link => {
-                            link.style.background = '#f0f0f0';
-                            link.style.color = '#2c3e50';
-                        });
-                        const activeLink = document.querySelector(section.selector);
-                        if (activeLink) {
-                            activeLink.style.background = 'var(--primary-color, #3b82f6)';
-                            activeLink.style.color = 'white';
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        window.addEventListener('scroll', highlightCurrentSection);
-        highlightCurrentSection();
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initAnchorMenu);
-    } else {
-        initAnchorMenu();
-    }
-})();
-
-// ========== 2. ПЕРЕНАПРАВЛЕННЯ КНОПКИ "ЗАМОВИТИ ТУР" ДО ФОРМИ ==========
+// ========== 1. ПЕРЕНАПРАВЛЕННЯ КНОПКИ "ЗАМОВИТИ ТУР" ДО ФОРМИ ==========
 setTimeout(function() {
+    const orderBtn = document.querySelector('.new_t-order-btn-true, .new_t-order-btn');
     const orderBlock = document.querySelector('.new_t-order-table');
-    const consultationCard = document.getElementById('consultationCard');
 
-    if (consultationCard) {
+    if (orderBtn) {
+        orderBtn.style.display = 'none';
+        orderBtn.style.visibility = 'hidden';
+
         const myBtn = document.createElement('button');
         myBtn.className = 'btn btn-primary w-100 mt-3';
-        myBtn.style.cssText = 'background: var(--primary-color, #3b82f6); color: white; padding: 12px 20px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease;';
+        myBtn.style.cssText = 'background: var(--primary-color); color: white; padding: 12px 20px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease;';
         myBtn.innerHTML = '<i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур';
-        myBtn.onmouseover = function() { this.style.background = 'var(--primary-dark, #2563eb)'; };
-        myBtn.onmouseout = function() { this.style.background = 'var(--primary-color, #3b82f6)'; };
+        myBtn.onmouseover = function() { this.style.background = 'var(--primary-dark)'; };
+        myBtn.onmouseout = function() { this.style.background = 'var(--primary-color)'; };
         myBtn.onclick = function() {
-            consultationCard.scrollIntoView({ behavior: 'smooth' });
-            const nameField = document.getElementById('bookingName');
-            if (nameField) nameField.focus();
+            document.getElementById('consultationCard').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('bookingName').focus();
         };
 
         if (orderBlock) {
             orderBlock.appendChild(myBtn);
+        } else if (orderBtn.parentNode) {
+            orderBtn.parentNode.appendChild(myBtn);
         }
     }
 }, 2000);
 
-// ========== 3. ЗБИРАЄМО ДАНІ ТУРУ ==========
+// ========== 2. ЗБИРАЄМО ДАНІ ТУРУ ==========
 setTimeout(function() {
     const hotelName = document.querySelector('.new_t-header-title')?.innerText || '';
-    const priceElement = document.querySelector('.new_price-value');
-    const price = priceElement?.innerText || '';
+    const price = document.querySelector('.new_price-value')?.innerText || '';
     const dates = document.querySelectorAll('.new_t-important');
     let dateText = '';
     if (dates.length >= 2) {
@@ -566,15 +495,10 @@ setTimeout(function() {
     }
     const hid = new URLSearchParams(window.location.search).get('hid') || '';
 
-    const tourNameField = document.getElementById('tourName');
-    const tourPriceField = document.getElementById('tourPrice');
-    const tourDatesField = document.getElementById('tourDates');
-    const tourHidField = document.getElementById('tourHid');
-
-    if (tourNameField) tourNameField.value = hotelName;
-    if (tourPriceField) tourPriceField.value = price;
-    if (tourDatesField) tourDatesField.value = dateText;
-    if (tourHidField) tourHidField.value = hid;
+    if (document.getElementById('tourName')) document.getElementById('tourName').value = hotelName;
+    if (document.getElementById('tourPrice')) document.getElementById('tourPrice').value = price;
+    if (document.getElementById('tourDates')) document.getElementById('tourDates').value = dateText;
+    if (document.getElementById('tourHid')) document.getElementById('tourHid').value = hid;
 
     const messageField = document.getElementById('bookingMessage');
     if (messageField && hotelName) {
@@ -584,7 +508,7 @@ setTimeout(function() {
     console.log('Дані туру зібрано:', {hotelName, price, dateText, hid});
 }, 2500);
 
-// ========== 4. AJAX ВІДПРАВЛЕННЯ ФОРМИ В КОНСУЛЬТАЦІЇ ==========
+// ========== 3. AJAX ВІДПРАВЛЕННЯ ФОРМИ В КОНСУЛЬТАЦІЇ ==========
 (function() {
     const submitBtn = document.getElementById('submitBookingBtn');
     if (!submitBtn) return;
@@ -600,6 +524,7 @@ setTimeout(function() {
         const tourDates = document.getElementById('tourDates')?.value || '';
         const userComment = document.getElementById('bookingMessage')?.value || '';
 
+        // Формуємо коментар для консультації
         let fullComment = `Тур: ${tourName}\n`;
         if (tourPrice) fullComment += `Ціна: ${tourPrice}\n`;
         if (tourDates) fullComment += `Дати: ${tourDates}\n`;
@@ -666,7 +591,7 @@ setTimeout(function() {
     });
 })();
 
-// ========== 5. КНОПКА "ПОВЕРНУТИСЯ" (через localStorage) ==========
+// ========== 4. КНОПКА "ПОВЕРНУТИСЯ" (через localStorage) ==========
 const savedUrl = localStorage.getItem('lastSearchUrl');
 const backBtn = document.getElementById('customBackButton');
 
@@ -684,18 +609,9 @@ if (backBtn) {
     }
 }
 
-// ========== 6. ВИДАЛЯЄМО ОРИГІНАЛЬНУ КНОПКУ "ПОВЕРНУТИСЯ" ==========
-setTimeout(function() {
-    const originalBackBtn = document.querySelector('.new_t-menu-back, .new_t-menu-back-link');
-    if (originalBackBtn) {
-        originalBackBtn.remove();
-        console.log('Оригінальна кнопка "Повернутися" видалена');
-    }
-}, 500);
-
-// ========== 7. ДОДАЄМО CSS ДЛЯ АНІМАЦІЇ ==========
-const styleSheet = document.createElement('style');
-styleSheet.textContent = `
+// Додаємо CSS для анімації
+const style = document.createElement('style');
+style.textContent = `
     @keyframes slideIn {
         from { opacity: 0; transform: translateX(100%); }
         to { opacity: 1; transform: translateX(0); }
@@ -713,12 +629,7 @@ styleSheet.textContent = `
         z-index: 9999;
         animation: slideIn 0.3s ease;
     }
-    .anchor-menu a:hover {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-        transform: translateY(-2px);
-    }
 `;
-document.head.appendChild(styleSheet);
+document.head.appendChild(style);
 </script>
 {% endblock %}
