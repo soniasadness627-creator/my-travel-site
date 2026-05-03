@@ -54,7 +54,7 @@
 
 <!-- ========== СТИЛІ ========== -->
 <style>
-        /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
+    /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
     #otpusk-tour-module .new_f-ext-btn,
@@ -215,8 +215,30 @@
         font-size: 1rem !important;
     }
 
-    /* ========== НІЯКИХ СТИЛІВ ДЛЯ КНОПКИ "ЩЕ" - НЕ ЧІПАЄМО ========== */
-    /* Оригінальна кнопка залишається як є */
+    /* ========== ОРИГІНАЛЬНА КНОПКА "ЩЕ" - ПОКАЗУЄМО ЇЇ ========== */
+    .new_t-change-people {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 30px !important;
+        height: 30px !important;
+        background: #f1f5f9 !important;
+        border-radius: 50% !important;
+        cursor: pointer !important;
+        margin-left: 10px !important;
+    }
+
+    /* Ховаємо текст "Ще" */
+    .new_t-change-people span:not(svg) {
+        font-size: 0 !important;
+    }
+
+    /* Стилізуємо стрілку */
+    .new_t-change-people svg {
+        width: 14px !important;
+        height: 14px !important;
+        transform: rotate(90deg) !important;
+    }
 
     /* ========== ДАТА ========== */
     .new_t-date-table {
@@ -396,24 +418,6 @@
         font-weight: 700;
     }
 
-    /* ========== ВАША КНОПКА ========== */
-    .custom-tourist-btn-final {
-        background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-        border: none;
-        padding: 8px 24px;
-        border-radius: 30px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        color: #1e293b;
-    }
-
-    .custom-tourist-btn-final:hover {
-        background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
-        transform: translateY(-1px);
-    }
-
     @media (max-width: 768px) {
         .new_t-menu {
             gap: 8px !important;
@@ -458,114 +462,6 @@
             font-size: 1.4rem !important;
         }
     }
-    /* Стилі для модального вікна туристів */
-.tourist-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 100000;
-}
-
-/* Оригінальна кнопка - ховаємо, але залишаємо в DOM */
-.new_t-change-people {
-    display: none !important;
-}
-
-/* Ваша кнопка */
-.custom-tourist-btn-final {
-    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-    border: none;
-    padding: 8px 24px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    color: #1e293b;
-}
-
-.custom-tourist-btn-final:hover {
-    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
-    transform: translateY(-1px);
-}
-
-/* Стилі для клонованої форми */
-.new_f-dropdown-body {
-    font-family: inherit;
-}
-
-.new_f-people-item {
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.new_f-people-item:hover {
-    background: #e2e8f0 !important;
-}
-
-.new_f-children-age-item {
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.new_f-children-age-item:hover {
-    background: var(--primary-color, #3b82f6) !important;
-    color: white !important;
-}
-
-.remove-child {
-    cursor: pointer;
-    color: #dc2626;
-    margin-left: 5px;
-}
-    /* Стилі для простої модальної форми */
-.simple-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 100000;
-}
-
-.simple-tourist-modal {
-    font-family: inherit;
-}
-
-.simple-tourist-modal button {
-    transition: all 0.2s ease;
-}
-
-.simple-tourist-modal button:hover {
-    transform: scale(0.98);
-}
-
-/* Оригінальна кнопка - ховаємо */
-.new_t-change-people {
-    display: none !important;
-}
-
-/* Ваша кнопка */
-.custom-tourist-btn-final {
-    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-    border: none;
-    padding: 8px 24px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    color: #1e293b;
-}
-
-.custom-tourist-btn-final:hover {
-    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
-    transform: translateY(-1px);
-}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -657,7 +553,7 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== ПРОСТЕ РІШЕННЯ - ПОКАЗУЄМО ОРИГІНАЛЬНУ КНОПКУ ==========
+// ========== ПРОСТЕ РІШЕННЯ - ОРИГІНАЛЬНА КНОПКА "ЩЕ" ==========
 
 // 1. Оновлення ціни
 function updateCustomPrice() {
@@ -688,59 +584,22 @@ function startPriceWatcher() {
     updateCustomPrice();
 }
 
-// 3. ПОКАЗУЄМО ОРИГІНАЛЬНУ КНОПКУ "ЩЕ"
-function showOriginalButton() {
-    const touristBlock = document.querySelector('.tourist-table .new_t-tour-tab-col-2');
-    if (!touristBlock) { setTimeout(showOriginalButton, 500); return; }
-
-    // Знаходимо оригінальну кнопку
-    const originalBtn = touristBlock.querySelector('.new_t-change-people');
-    if (!originalBtn) {
-        console.log('Оригінальну кнопку не знайдено');
-        setTimeout(showOriginalButton, 500);
-        return;
+// 3. ПЕРЕКОНУЄМОСЬ, ЩО КНОПКА ВИДИМА
+function ensureButtonVisible() {
+    const originalBtn = document.querySelector('.new_t-change-people');
+    if (originalBtn) {
+        originalBtn.style.display = 'inline-flex';
+        console.log('✅ Кнопка "Ще" видима');
+    } else {
+        console.log('Кнопку не знайдено, повторюємо спробу');
+        setTimeout(ensureButtonVisible, 500);
     }
-
-    // Робимо кнопку видимою
-    originalBtn.style.display = 'inline-flex';
-    originalBtn.style.alignItems = 'center';
-    originalBtn.style.justifyContent = 'center';
-    originalBtn.style.width = '30px';
-    originalBtn.style.height = '30px';
-    originalBtn.style.background = '#f1f5f9';
-    originalBtn.style.borderRadius = '50%';
-    originalBtn.style.cursor = 'pointer';
-    originalBtn.style.marginLeft = '10px';
-
-    // Ховаємо текст "Ще", залишаємо тільки стрілку
-    const span = originalBtn.querySelector('span');
-    if (span) {
-        span.style.fontSize = '0';
-    }
-
-    // Робимо стрілку видимою
-    const svg = originalBtn.querySelector('svg');
-    if (svg) {
-        svg.style.width = '14px';
-        svg.style.height = '14px';
-        svg.style.transform = 'rotate(90deg)';
-    }
-
-    // Видаляємо кастомну кнопку, якщо є
-    const customBtn = touristBlock.querySelector('.custom-tourist-btn-final');
-    if (customBtn) customBtn.remove();
-
-    console.log('✅ Оригінальна кнопка "Ще" активована');
 }
 
 // 4. ЗАПУСК
 setTimeout(() => {
-    showOriginalButton();
+    ensureButtonVisible();
     startPriceWatcher();
 }, 2000);
-
-setTimeout(() => {
-    showOriginalButton();
-}, 4000);
 </script>
 {% endblock %}
