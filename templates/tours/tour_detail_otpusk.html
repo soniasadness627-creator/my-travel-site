@@ -458,6 +458,69 @@
             font-size: 1.4rem !important;
         }
     }
+    /* Стилі для модального вікна туристів */
+.tourist-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100000;
+}
+
+/* Оригінальна кнопка - ховаємо, але залишаємо в DOM */
+.new_t-change-people {
+    display: none !important;
+}
+
+/* Ваша кнопка */
+.custom-tourist-btn-final {
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    border: none;
+    padding: 8px 24px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    color: #1e293b;
+}
+
+.custom-tourist-btn-final:hover {
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+    transform: translateY(-1px);
+}
+
+/* Стилі для клонованої форми */
+.new_f-dropdown-body {
+    font-family: inherit;
+}
+
+.new_f-people-item {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.new_f-people-item:hover {
+    background: #e2e8f0 !important;
+}
+
+.new_f-children-age-item {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.new_f-children-age-item:hover {
+    background: var(--primary-color, #3b82f6) !important;
+    color: white !important;
+}
+
+.remove-child {
+    cursor: pointer;
+    color: #dc2626;
+    margin-left: 5px;
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -549,7 +612,7 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== СТВОРЮЄМО СВОЮ ФОРМУ ДЛЯ ТУРИСТІВ ==========
+// ========== КНОПКА "ОБРАТИ ТУРИСТІВ" З МОДАЛЬНИМ ВІКНОМ ==========
 
 // 1. Оновлення ціни
 function updateCustomPrice() {
@@ -580,23 +643,179 @@ function startPriceWatcher() {
     updateCustomPrice();
 }
 
-// 3. СТВОРЕННЯ КНОПКИ
-function createCustomTouristForm() {
-    const touristBlock = document.querySelector('.tourist-table .new_t-tour-tab-col-2');
-    if (!touristBlock) { setTimeout(createCustomTouristForm, 500); return; }
-
-    // Знаходимо оригінальну кнопку "Ще"
-    const originalBtn = touristBlock.querySelector('.new_t-change-people');
-    if (!originalBtn) {
-        console.log('Оригінальну кнопку не знайдено');
-        setTimeout(createCustomTouristForm, 500);
+// 3. ВІДКРИТТЯ ОРИГІНАЛЬНОЇ ФОРМИ В МОДАЛЬНОМУ ВІКНІ
+function openOriginalTouristModal() {
+    // Знаходимо оригінальний випадаючий список
+    const originalDropdown = document.querySelector('.new_f-dropdown-body');
+    if (!originalDropdown) {
+        console.log('Оригінальну форму не знайдено');
+        // Спробуємо знайти через батьківський елемент
+        const peopleBtn = document.querySelector('.new_t-change-people');
+        if (peopleBtn) {
+            const dropdown = peopleBtn.querySelector('.new_f-dropdown-body');
+            if (dropdown) {
+                openModalWithDropdown(dropdown);
+                return;
+            }
+        }
         return;
     }
 
-    // Переконуємось, що оригінальна кнопка видима
-    originalBtn.style.display = '';
-    originalBtn.style.visibility = '';
-    originalBtn.style.opacity = '';
+    openModalWithDropdown(originalDropdown);
+}
+
+function openModalWithDropdown(dropdown) {
+    // Клонуємо випадаючий список
+    const clonedDropdown = dropdown.cloneNode(true);
+
+    // Додаємо стилі для модального вікна
+    clonedDropdown.style.position = 'fixed';
+    clonedDropdown.style.top = '50%';
+    clonedDropdown.style.left = '50%';
+    clonedDropdown.style.transform = 'translate(-50%, -50%)';
+    clonedDropdown.style.zIndex = '100001';
+    clonedDropdown.style.width = '90%';
+    clonedDropdown.style.maxWidth = '450px';
+    clonedDropdown.style.maxHeight = '80vh';
+    clonedDropdown.style.overflowY = 'auto';
+    clonedDropdown.style.background = 'white';
+    clonedDropdown.style.borderRadius = '20px';
+    clonedDropdown.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
+    clonedDropdown.style.display = 'block';
+    clonedDropdown.style.border = 'none';
+
+    // Додаємо затемнення
+    const overlay = document.createElement('div');
+    overlay.className = 'tourist-modal-overlay';
+    overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100000;';
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(clonedDropdown);
+
+    // Функція закриття
+    const closeModal = () => {
+        clonedDropdown.remove();
+        overlay.remove();
+    };
+
+    // Закриття при кліку на затемнення
+    overlay.onclick = closeModal;
+
+    // Закриття через хрестик
+    const closeBtn = clonedDropdown.querySelector('.new_f-dropdown-body-close');
+    if (closeBtn) {
+        closeBtn.onclick = closeModal;
+    }
+
+    // Закриття через кнопку "Відміна"
+    const cancelBtn = clonedDropdown.querySelector('.new_f-dropdown-btn-cancel');
+    if (cancelBtn) {
+        cancelBtn.onclick = closeModal;
+    }
+
+    // Обробка кнопки "Застосувати"
+    const applyBtn = clonedDropdown.querySelector('.new_f-dropdown-btn-apply');
+    if (applyBtn) {
+        applyBtn.onclick = () => {
+            closeModal();
+            // Оновлюємо ціну після застосування
+            setTimeout(() => {
+                updateCustomPrice();
+            }, 500);
+        };
+    }
+
+    // Додаємо обробники для кліків на елементи форми
+    const peopleItems = clonedDropdown.querySelectorAll('.new_f-people-item');
+    peopleItems.forEach(item => {
+        item.onclick = (e) => {
+            e.stopPropagation();
+            // Видаляємо активний клас з усіх
+            peopleItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            // Оновлюємо значення в оригінальному dropdown
+            const originalPeopleItems = document.querySelectorAll('.new_f-people-item');
+            originalPeopleItems.forEach(origItem => {
+                if (origItem.innerText === item.innerText) {
+                    origItem.classList.add('active');
+                } else {
+                    origItem.classList.remove('active');
+                }
+            });
+        };
+    });
+
+    // Обробка додавання дітей
+    const addChildBtn = clonedDropdown.querySelector('.new_f-children-accordion-btn');
+    if (addChildBtn) {
+        addChildBtn.onclick = (e) => {
+            e.stopPropagation();
+            const body = clonedDropdown.querySelector('.new_f-children-accordion-body');
+            if (body) {
+                if (body.style.display === 'none' || body.style.display === '') {
+                    body.style.display = 'flex';
+                } else {
+                    body.style.display = 'none';
+                }
+            }
+        };
+    }
+
+    // Обробка вибору віку дитини
+    const ageItems = clonedDropdown.querySelectorAll('.new_f-children-age-item');
+    ageItems.forEach(ageItem => {
+        ageItem.onclick = (e) => {
+            e.stopPropagation();
+            // Додаємо вибраний вік до списку
+            const age = ageItem.dataset.value;
+            const childrenList = clonedDropdown.querySelector('.new_f-children-list');
+            if (childrenList) {
+                // Перевіряємо чи вже є такий вік
+                const existing = childrenList.querySelector(`[data-value="${age}"]`);
+                if (!existing) {
+                    const newChild = document.createElement('div');
+                    newChild.className = 'new_f-children-list-item';
+                    newChild.setAttribute('data-value', age);
+                    newChild.innerHTML = `${age} ${age == 1 ? 'рік' : 'років'} <span class="remove-child">×</span>`;
+                    childrenList.appendChild(newChild);
+
+                    // Додаємо обробник для видалення
+                    const removeBtn = newChild.querySelector('.remove-child');
+                    removeBtn.onclick = () => {
+                        newChild.remove();
+                        // Оновлюємо оригінальний список
+                        const originalChildrenList = document.querySelector('.new_f-children-list');
+                        if (originalChildrenList) {
+                            const origChild = originalChildrenList.querySelector(`[data-value="${age}"]`);
+                            if (origChild) origChild.remove();
+                        }
+                    };
+
+                    // Додаємо в оригінальний список
+                    const originalChildrenList = document.querySelector('.new_f-children-list');
+                    if (originalChildrenList) {
+                        const origNewChild = document.createElement('div');
+                        origNewChild.className = 'new_f-children-list-item';
+                        origNewChild.setAttribute('data-value', age);
+                        origNewChild.innerHTML = `${age} ${age == 1 ? 'рік' : 'років'} <span class="remove-child">×</span>`;
+                        originalChildrenList.appendChild(origNewChild);
+
+                        const origRemoveBtn = origNewChild.querySelector('.remove-child');
+                        origRemoveBtn.onclick = () => {
+                            origNewChild.remove();
+                            newChild.remove();
+                        };
+                    }
+                }
+            }
+        };
+    });
+}
+
+// 4. СТВОРЕННЯ КНОПКИ
+function createCustomTouristForm() {
+    const touristBlock = document.querySelector('.tourist-table .new_t-tour-tab-col-2');
+    if (!touristBlock) { setTimeout(createCustomTouristForm, 500); return; }
 
     // Видаляємо стару кастомну кнопку
     const oldBtn = touristBlock.querySelector('.custom-tourist-btn-final');
@@ -606,14 +825,20 @@ function createCustomTouristForm() {
     const newBtn = document.createElement('button');
     newBtn.className = 'custom-tourist-btn-final';
     newBtn.innerHTML = '👥 Обрати туристів';
+    newBtn.style.cssText = 'background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border: none; padding: 8px 24px; border-radius: 30px; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease; color: #1e293b;';
+    newBtn.onmouseover = () => newBtn.style.background = 'linear-gradient(135deg, #e2e8f0, #cbd5e1)';
+    newBtn.onmouseout = () => newBtn.style.background = 'linear-gradient(135deg, #f1f5f9, #e2e8f0)';
 
-    // Вставляємо кнопку
-    touristBlock.insertBefore(newBtn, originalBtn);
+    // При натисканні відкриваємо модальне вікно
+    newBtn.onclick = () => {
+        openOriginalTouristModal();
+    };
 
+    touristBlock.appendChild(newBtn);
     console.log('✅ Кнопка "Обрати туристів" створена');
 }
 
-// 4. ЗАПУСК
+// 5. ЗАПУСК
 setTimeout(() => {
     createCustomTouristForm();
     startPriceWatcher();
