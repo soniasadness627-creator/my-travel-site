@@ -92,10 +92,9 @@
         box-shadow: none !important;
     }
 
-    /* ========== ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ========== */
+    /* ========== ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" (АЛЕ ЗАЛИШАЄМО ЦІНУ) ========== */
     .new_t-order-btn-true,
-    .new_t-order-btn,
-    .new_t-order-table {
+    .new_t-order-btn {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
@@ -104,6 +103,71 @@
         padding: 0 !important;
         opacity: 0 !important;
         pointer-events: none !important;
+    }
+
+    /* Не ховаємо весь блок з ціною, тільки кнопки */
+    .new_t-order-content {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: absolute !important;
+        top: 0 !important;
+        right: 0 !important;
+        width: auto !important;
+        height: auto !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        z-index: 100 !important;
+    }
+
+    .new_t-order-table {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-end !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+    }
+
+    /* Ховаємо код і оператора */
+    .new_t-order-col span,
+    .new_t-order-code,
+    .new_t-order-code div,
+    .new_t-operator-name,
+    .new_t-order-col > span:first-child {
+        display: none !important;
+    }
+
+    /* Залишаємо тільки ціну */
+    .new_t-order-col {
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+    }
+
+    .new_t-order-price {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .new_t-order-price .new_price,
+    .new_t-order-price .new_price-value {
+        color: #dc2626 !important;
+        font-weight: 700 !important;
+        font-size: 1.5rem !important;
+    }
+
+    .new_t-order-price .currency {
+        color: #1a202c !important;
+        font-weight: 500 !important;
+        font-size: 1rem !important;
     }
 
     /* ========== ХОВАЄМО РЕЙТИНГ ========== */
@@ -216,7 +280,7 @@
         font-size: 1rem !important;
     }
 
-    /* ========== КРУГЛА КНОПКА "ЩЕ" З ТЕКСТОМ ========== */
+    /* ========== КРУГЛА КНОПКА "ЩЕ" ЗІ СТРІЛКОЮ ========== */
     .new_t-change-btn {
         width: 30px !important;
         height: 30px !important;
@@ -241,19 +305,8 @@
         justify-content: center !important;
         width: 100% !important;
         height: 100% !important;
-        font-size: 14px !important;
-        font-weight: 600 !important;
-        color: var(--primary-color, #3b82f6) !important;
     }
 
-    /* Ховаємо старий текст "Ще" і додаємо новий символ або текст */
-    .new_t-change-btn span:not(svg) {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-    /* Додаємо стрілку вниз замість тексту "Ще" */
     .new_t-change-btn span:not(svg) {
         font-size: 0 !important;
     }
@@ -277,21 +330,23 @@
         color: white !important;
     }
 
-    /* ========== ДАТА - БЛОК ТРИВАЛОСТІ ПРОЗОРИЙ ========== */
+    /* ========== ДАТА - ФІКСУЄМО БЛОК ТРИВАЛОСТІ ========== */
     .new_t-date-table {
         background: transparent !important;
         padding: 0 !important;
         border: none !important;
         display: flex !important;
-        flex-wrap: wrap !important;
+        flex-wrap: nowrap !important;
         gap: 16px !important;
         align-items: center !important;
+        justify-content: flex-start !important;
     }
 
     .new_t-date-col {
         background: transparent !important;
         padding: 0 !important;
         border: none !important;
+        flex-shrink: 0 !important;
     }
 
     .new_t-important {
@@ -300,13 +355,12 @@
         font-size: 1rem !important;
     }
 
-    /* Блок тривалості - прозорий, але з мінімальним виділенням */
+    /* Фіксуємо блок тривалості, щоб він не їздив */
     .new_t-date-col.new_t-duration-col {
         min-width: 130px !important;
         text-align: center !important;
         background: transparent !important;
-        padding: 8px 12px !important;
-        border-radius: 40px !important;
+        flex-shrink: 0 !important;
     }
 
     .new_t-duration-container {
@@ -457,23 +511,6 @@
         }
     }
 
-    /* ========== ПРИХОВУЄМО БЛОК З ЦІНОЮ ========== */
-    .new_t-order-content,
-    .new_t-order-table,
-    .new_t-order-col,
-    .new_t-content-col.new_t-order-content {
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        width: 0 !important;
-        overflow: hidden !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        position: absolute !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-    }
-
     /* ========== РОЗТЯГУЄМО ОСНОВНИЙ БЛОК ========== */
     .new_t-content-table {
         display: flex !important;
@@ -508,11 +545,20 @@
         overflow: hidden !important;
     }
 
-    .new_t-duration-icon::before,
-    .new_t-duration-icon::after,
-    .new_t-duration-icons::before,
-    .new_t-duration-icons::after {
-        display: none !important;
+    /* ========== ПОЗИЦІОНУЄМО БЛОК З ЦІНОЮ ЗВЕРХУ СПРАВА ========== */
+    .new_t-header-top {
+        position: relative !important;
+    }
+
+    .new_t-order-content {
+        position: absolute !important;
+        top: 0 !important;
+        right: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        width: auto !important;
+        z-index: 10 !important;
     }
 
     /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
@@ -549,8 +595,7 @@
         }
 
         .new_t-date-table {
-            flex-direction: column !important;
-            align-items: flex-start !important;
+            flex-wrap: wrap !important;
         }
 
         .new_t-date-col.new_t-duration-col {
@@ -579,57 +624,12 @@
             flex-direction: row !important;
             flex-wrap: wrap !important;
         }
+
+        .new_t-order-price .new_price,
+        .new_t-order-price .new_price-value {
+            font-size: 1.2rem !important;
+        }
     }
-    /* ========== ВИТЯГУЄМО ЦІНУ У ВЕРХНІЙ ПРАВИЙ КУТ ========== */
-
-/* Знаходимо контейнер з назвою туру і додаємо йому позиціонування */
-.new_t-header-top {
-    position: relative !important;
-}
-
-/* Створюємо блок для ціни у верхньому правому куті */
-.new_t-header-title-container {
-    position: relative !important;
-    padding-right: 150px !important;
-}
-
-/* Витягуємо ціну з прихованого блоку і показуємо її зверху справа */
-.new_t-order-price {
-    position: absolute !important;
-    top: 0 !important;
-    right: 0 !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    background: transparent !important;
-    padding: 0 !important;
-    text-align: right !important;
-}
-
-.new_t-order-price .new_price,
-.new_t-order-price .new_price-value {
-    color: #dc2626 !important;
-    font-weight: 700 !important;
-    font-size: 1.5rem !important;
-}
-
-.new_t-order-price .currency {
-    color: #1a202c !important;
-    font-weight: 500 !important;
-    font-size: 1rem !important;
-}
-
-/* Адаптація для мобільних */
-@media (max-width: 768px) {
-    .new_t-header-title-container {
-        padding-right: 100px !important;
-    }
-
-    .new_t-order-price .new_price,
-    .new_t-order-price .new_price-value {
-        font-size: 1.2rem !important;
-    }
-}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
