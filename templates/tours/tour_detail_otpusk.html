@@ -551,20 +551,65 @@
         display: none !important;
     }
 
-    /* Затемнення фону */
-    .form-overlay-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 9999998;
-    }
+    /* Переконуємось, що overlay і форма мають правильний порядок */
+.form-overlay-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 99999998;
+    backdrop-filter: blur(2px);
+}
 
-    body.modal-open {
-        overflow: hidden !important;
-    }
+/* Гарантія для оригінальної форми Otpusk */
+.new_f-dropdown-body {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 99999999 !important;
+    background: white !important;
+    border-radius: 24px !important;
+    width: 90% !important;
+    max-width: 500px !important;
+    pointer-events: auto !important;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4) !important;
+}
+
+/* ВСІ елементи всередині форми мають бути клікабельними */
+.new_f-dropdown-body * {
+    pointer-events: auto !important;
+}
+
+/* Кнопка "Ще" - кругла, стильна */
+.new_t-change-people {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 36px !important;
+    height: 36px !important;
+    background: #f1f5f9 !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+.new_t-change-people:hover {
+    background: #3b82f6 !important;
+    transform: scale(1.05);
+}
+
+.new_t-change-people svg {
+    width: 14px !important;
+    height: 14px !important;
+    transform: rotate(90deg) !important;
+    fill: #64748b !important;
+}
 
     /* Мобільна версія */
     @media (max-width: 768px) {
@@ -754,85 +799,155 @@ function removeOverlay() {
     document.body.style.overflow = '';
 }
 
-// 5. Ініціалізація
+// 5. Ініціалізація форми (ПРАВИЛЬНА ВЕРСІЯ - без лагів)
 function initPeopleButton() {
+    // Шукаємо оригінальну кнопку "Ще"
     const peopleBtn = document.querySelector('.new_t-change-people');
     if (!peopleBtn) {
         setTimeout(initPeopleButton, 500);
         return;
     }
 
-    const dropdown = peopleBtn.querySelector('.new_f-dropdown-body');
-    if (dropdown) {
-        dropdown.style.display = 'none';
+    // Знаходимо дропдаун (форму) всередині
+    let dropdown = peopleBtn.querySelector('.new_f-dropdown-body');
+    if (!dropdown) {
+        // Якщо дропдаун не знайдено, пробуємо ще раз пізніше
+        setTimeout(initPeopleButton, 300);
+        return;
+    }
 
-        const newBtn = peopleBtn.cloneNode(true);
-        peopleBtn.parentNode.replaceChild(newBtn, peopleBtn);
-        const newDropdown = newBtn.querySelector('.new_f-dropdown-body');
+    // Гарантуємо, що форма прихована початково
+    dropdown.style.display = 'none';
 
-        // Спостерігаємо за зміною стилю
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                    if (newDropdown.style.display === 'block') {
-                        addOverlay();
-                    } else {
-                        removeOverlay();
-                    }
-                }
-            });
-        });
-        observer.observe(newDropdown, { attributes: true });
+    // ДОДАЄМО ВАЖЛИВІ СТИЛІ ПРЯМО НА ДРОПДАУН
+    dropdown.style.position = 'fixed';
+    dropdown.style.top = '50%';
+    dropdown.style.left = '50%';
+    dropdown.style.transform = 'translate(-50%, -50%)';
+    dropdown.style.zIndex = '99999999';
+    dropdown.style.backgroundColor = 'white';
+    dropdown.style.borderRadius = '20px';
+    dropdown.style.width = '90%';
+    dropdown.style.maxWidth = '500px';
+    dropdown.style.minWidth = '320px';
+    dropdown.style.maxHeight = '85vh';
+    dropdown.style.overflowY = 'auto';
+    dropdown.style.pointerEvents = 'auto';       // 🔥 ВАЖЛИВО: форма клікабельна
+    dropdown.style.boxShadow = '0 25px 60px rgba(0,0,0,0.3)';
 
-        newBtn.onclick = function(e) {
+    // СТВОРЮЄМО overlay (затемнення)
+    let overlay = null;
+
+    function showOverlay() {
+        if (overlay) return;
+        overlay = document.createElement('div');
+        overlay.className = 'form-overlay-bg';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.right = '0';
+        overlay.style.bottom = '0';
+        overlay.style.backgroundColor = 'rgba(0,0,0,0.6)';
+        overlay.style.zIndex = '99999998';     // Нижче за форму
+        overlay.style.pointerEvents = 'auto';
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+
+        // Закриття при кліку на overlay
+        overlay.onclick = function(e) {
             e.stopPropagation();
-            e.preventDefault();
-            if (newDropdown.style.display === 'none' || newDropdown.style.display === '') {
-                newDropdown.style.display = 'block';
-            } else {
-                newDropdown.style.display = 'none';
-            }
-        };
-
-        const cancelBtn = newDropdown.querySelector('.new_f-dropdown-btn-cancel');
-        const applyBtn = newDropdown.querySelector('.new_f-dropdown-btn-apply');
-        const closeBtn = newDropdown.querySelector('.new_f-dropdown-body-close');
-
-        if (cancelBtn) {
-            cancelBtn.onclick = function(e) {
-                e.stopPropagation();
-                newDropdown.style.display = 'none';
-            };
-        }
-        if (applyBtn) {
-            applyBtn.onclick = function(e) {
-                e.stopPropagation();
-                newDropdown.style.display = 'none';
-                setTimeout(updateCustomPrice, 500);
-            };
-        }
-        if (closeBtn) {
-            closeBtn.onclick = function(e) {
-                e.stopPropagation();
-                newDropdown.style.display = 'none';
-            };
-        }
-
-        newDropdown.onclick = function(e) {
-            e.stopPropagation();
+            dropdown.style.display = 'none';
+            hideOverlay();
         };
     }
+
+    function hideOverlay() {
+        if (overlay) {
+            overlay.remove();
+            overlay = null;
+        }
+        document.body.style.overflow = '';
+    }
+
+    // КЛІК ПО КНОПЦІ "ЩЕ"
+    const newBtn = peopleBtn.cloneNode(true);
+    peopleBtn.parentNode.replaceChild(newBtn, peopleBtn);
+
+    // Знаходимо дропдаун вже в новій копії
+    dropdown = newBtn.querySelector('.new_f-dropdown-body');
+    if (!dropdown) return;
+
+    // Застосовуємо стилі ще раз до нового дропдауну
+    dropdown.style.cssText = `
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        z-index: 99999999 !important;
+        background: white !important;
+        border-radius: 20px !important;
+        width: 90% !important;
+        max-width: 500px !important;
+        min-width: 320px !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        pointer-events: auto !important;
+        display: none !important;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.3) !important;
+    `;
+
+    // Обробник для кнопки "Ще"
+    newBtn.onclick = function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+            dropdown.style.display = 'block';
+            showOverlay();
+        } else {
+            dropdown.style.display = 'none';
+            hideOverlay();
+        }
+    };
+
+    // ЗАКРИТТЯ ПО ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && dropdown.style.display === 'block') {
+            dropdown.style.display = 'none';
+            hideOverlay();
+        }
+    });
+
+    // Знаходимо кнопки всередині форми
+    const cancelBtn = dropdown.querySelector('.new_f-dropdown-btn-cancel');
+    const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
+    const closeBtn = dropdown.querySelector('.new_f-dropdown-body-close');
+
+    function closeDropdown() {
+        dropdown.style.display = 'none';
+        hideOverlay();
+        setTimeout(updateCustomPrice, 300);
+    }
+
+    if (cancelBtn) cancelBtn.onclick = function(e) {
+        e.stopPropagation();
+        closeDropdown();
+    };
+
+    if (applyBtn) applyBtn.onclick = function(e) {
+        e.stopPropagation();
+        closeDropdown();
+    };
+
+    if (closeBtn) closeBtn.onclick = function(e) {
+        e.stopPropagation();
+        closeDropdown();
+    };
+
+    // Важливо: при кліку всередині форми - не закривати
+    dropdown.onclick = function(e) {
+        e.stopPropagation();
+    };
 }
-
-// 6. ЗАПУСК
-setTimeout(() => {
-    ensureButtonVisible();
-    startPriceWatcher();
-    initPeopleButton();
-}, 1500);
-
-setTimeout(() => {
-    initPeopleButton();
-}, 3500);
 </script>
 {% endblock %}
