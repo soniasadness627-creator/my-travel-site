@@ -373,61 +373,9 @@
     /* ========== ФОРМА ВИБОРУ ТУРИСТІВ ========== */
     /* ========== ФОРМА ВИБОРУ ТУРИСТІВ - ПОВЕРХ ВСЬОГО ========== */
 
-/* Піднімаємо форму на максимальний z-index */
+/* Піднімаємо форму над усім */
 .new_f-dropdown-body {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
     z-index: 999999999 !important;
-    background: white !important;
-    border-radius: 16px !important;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-    display: none !important;
-    max-height: none !important;
-    overflow: visible !important;
-}
-
-.new_f-dropdown-body[style*="display: block"] {
-    display: block !important;
-}
-
-/* Всі інші блоки відправляємо на задній план */
-.new_t-container,
-.new_t-content,
-.new_t-content-table,
-.new_t-content-col,
-.new_t-tour-tab-table,
-.new_t-date-table,
-.new_t-tour-tab-table.food-table,
-.new_t-tour-tab-table.services-table,
-.new_t-header,
-.new_t-menu,
-.new_t-menu-wrap,
-.new_t-similar-viewed,
-.price-block-under-menu,
-#consultationCard,
-.container.my-5,
-.row.justify-content-center {
-    z-index: 1 !important;
-    position: relative !important;
-}
-
-/* Затемнення фону при відкритій формі */
-body.modal-open {
-    overflow: hidden !important;
-}
-
-/* Додаткове затемнення через псевдоелемент */
-.new_f-dropdown-body[style*="display: block"]::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: -1;
 }
 </style>
 
