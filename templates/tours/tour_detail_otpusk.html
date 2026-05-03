@@ -778,7 +778,7 @@
 
 // ========== ОСНОВНІ СКРИПТИ ==========
 <script>
-// ========== 1. ЗМІНА ПОРЯДКУ БЛОКІВ У ДАТІ ==========
+// ========== 1. ЗМІНА ПОРЯДКУ БЛОКІВ У ДАТІ (ПОВЕРНЕНО) ==========
 function reorderDateBlocks() {
     const dateTable = document.querySelector('.new_t-date-table');
     if (!dateTable) return;
@@ -788,9 +788,11 @@ function reorderDateBlocks() {
     const rightDate = dateTable.querySelector('.new_t-date-col.new_t-nostretch:last-child');
 
     if (leftDate && durationBlock && rightDate) {
+        // Перевіряємо чи порядок вже змінено
         const parent = leftDate.parentNode;
-        const currentOrder = parent.children;
-        if (currentOrder.length >= 3 && currentOrder[1] === durationBlock) {
+        const children = parent.children;
+        // Якщо тривалість між датами - міняємо
+        if (children[1] === durationBlock) {
             parent.innerHTML = '';
             parent.appendChild(leftDate.cloneNode(true));
             parent.appendChild(rightDate.cloneNode(true));
@@ -843,94 +845,107 @@ function updatePriceOnChange() {
     }
 }
 
-// ========== 5. ФІКС ДЛЯ КНОПКИ "ЩЕ" ТУРИСТИ ==========
-function fixPeopleDropdown() {
-    const changeBtn = document.querySelector('.new_t-change-people');
-    if (!changeBtn) {
-        console.log('Кнопка не знайдена, повторюємо спробу...');
-        setTimeout(fixPeopleDropdown, 500);
-        return;
-    }
-
-    console.log('Кнопка знайдена, додаємо обробник');
-
-    const dropdown = changeBtn.querySelector('.new_f-dropdown-body');
-    if (!dropdown) return;
-
-    const newBtn = changeBtn.cloneNode(true);
-    changeBtn.parentNode.replaceChild(newBtn, changeBtn);
-
-    newBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-
-        const dropdownEl = this.querySelector('.new_f-dropdown-body');
-        if (!dropdownEl) return;
-
-        if (dropdownEl.style.display === 'none' || dropdownEl.style.display === '') {
-            dropdownEl.style.display = 'block';
-            dropdownEl.style.position = 'fixed';
-            dropdownEl.style.top = '50%';
-            dropdownEl.style.left = '50%';
-            dropdownEl.style.transform = 'translate(-50%, -50%)';
-            dropdownEl.style.zIndex = '10001';
-            dropdownEl.style.width = '90%';
-            dropdownEl.style.maxWidth = '400px';
-            dropdownEl.style.maxHeight = '80vh';
-            dropdownEl.style.overflowY = 'auto';
-            dropdownEl.style.background = 'white';
-            dropdownEl.style.borderRadius = '20px';
-            dropdownEl.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
-
-            const overlay = document.createElement('div');
-            overlay.className = 'people-dropdown-overlay';
-            overlay.style.cssText = 'position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:10000;';
-            overlay.onclick = function() {
-                dropdownEl.style.display = 'none';
-                overlay.remove();
-            };
-            document.body.appendChild(overlay);
-        } else {
-            dropdownEl.style.display = 'none';
-            const overlay = document.querySelector('.people-dropdown-overlay');
-            if (overlay) overlay.remove();
-        }
+// ========== 5. ВІДНОВЛЕННЯ СТИЛІВ ДЛЯ БЛОКУ ДАТИ ==========
+function fixDateStyles() {
+    const dateCols = document.querySelectorAll('.new_t-date-col');
+    dateCols.forEach(col => {
+        col.style.flex = 'none';
+        col.style.width = 'auto';
     });
+
+    const durationCol = document.querySelector('.new_t-date-col.new_t-duration-col');
+    if (durationCol) {
+        durationCol.style.minWidth = '140px';
+        durationCol.style.textAlign = 'center';
+    }
 }
 
-// ========== 6. ЗАПУСК ВСІХ ФУНКЦІЙ ==========
+// ========== 6. СТВОРЕННЯ СВОЄЇ КНОПКИ ДЛЯ ТУРИСТІВ ==========
+function createCustomTouristButton() {
+    // Знаходимо блок з туристами
+    const touristBlock = document.querySelector('.tourist-table');
+    if (!touristBlock) return;
+
+    const col2 = touristBlock.querySelector('.new_t-tour-tab-col-2');
+    if (!col2) return;
+
+    // Отримуємо оригінальний випадаючий список
+    const originalDropdown = document.querySelector('.new_f-dropdown-body');
+    if (!originalDropdown) return;
+
+    // Ховаємо оригінальну кнопку
+    const originalBtn = col2.querySelector('.new_t-change-people');
+    if (originalBtn) originalBtn.style.display = 'none';
+
+    // Перевіряємо чи вже є наша кнопка
+    if (col2.querySelector('.custom-people-btn')) return;
+
+    // Створюємо нову кнопку
+    const customBtn = document.createElement('button');
+    customBtn.className = 'custom-people-btn';
+    customBtn.innerHTML = '👥 Обрати туристів';
+    customBtn.style.cssText = 'background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border: none; padding: 6px 20px; border-radius: 30px; cursor: pointer; font-size: 0.8rem; font-weight: 500; margin-left: 15px; transition: all 0.3s ease; color: #1e293b;';
+    customBtn.onmouseover = function() { this.style.background = 'linear-gradient(135deg, #e2e8f0, #cbd5e1)'; };
+    customBtn.onmouseout = function() { this.style.background = 'linear-gradient(135deg, #f1f5f9, #e2e8f0)'; };
+
+    customBtn.onclick = function() {
+        if (originalDropdown) {
+            if (originalDropdown.style.display === 'none' || originalDropdown.style.display === '') {
+                originalDropdown.style.display = 'block';
+                originalDropdown.style.position = 'fixed';
+                originalDropdown.style.top = '50%';
+                originalDropdown.style.left = '50%';
+                originalDropdown.style.transform = 'translate(-50%, -50%)';
+                originalDropdown.style.zIndex = '10001';
+                originalDropdown.style.width = '90%';
+                originalDropdown.style.maxWidth = '450px';
+                originalDropdown.style.maxHeight = '80vh';
+                originalDropdown.style.overflowY = 'auto';
+                originalDropdown.style.background = 'white';
+                originalDropdown.style.borderRadius = '20px';
+                originalDropdown.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
+                originalDropdown.style.border = 'none';
+
+                const overlay = document.createElement('div');
+                overlay.className = 'people-dropdown-overlay';
+                overlay.style.cssText = 'position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:10000;';
+                overlay.onclick = function() {
+                    originalDropdown.style.display = 'none';
+                    overlay.remove();
+                };
+                document.body.appendChild(overlay);
+            } else {
+                originalDropdown.style.display = 'none';
+                const overlay = document.querySelector('.people-dropdown-overlay');
+                if (overlay) overlay.remove();
+            }
+        }
+    };
+
+    col2.appendChild(customBtn);
+}
+
+// ========== 7. ЗАПУСК ВСІХ ФУНКЦІЙ ==========
 setTimeout(function() {
     reorderDateBlocks();
+    fixDateStyles();
     createPriceBlock();
     hideOriginalPriceBlock();
-    fixPeopleDropdown();
+    createCustomTouristButton();
 }, 1500);
 
 // Спостерігаємо за змінами
-const priceObserver = new MutationObserver(function(mutations) {
+const observer = new MutationObserver(function(mutations) {
     setTimeout(function() {
         reorderDateBlocks();
+        fixDateStyles();
         updatePriceOnChange();
-        fixPeopleDropdown();
+        createCustomTouristButton();
     }, 100);
 });
-priceObserver.observe(document.body, { childList: true, subtree: true, attributes: true });
+observer.observe(document.body, { childList: true, subtree: true, attributes: true });
 
-// Додаткові запуски для надійності
-setTimeout(fixPeopleDropdown, 3000);
-setTimeout(fixPeopleDropdown, 5000);
-
-// Спостерігаємо за появою кнопки
-const peopleObserver = new MutationObserver(function() {
-    const btn = document.querySelector('.new_t-change-people');
-    if (btn && !btn.hasAttribute('data-fixed')) {
-        btn.setAttribute('data-fixed', 'true');
-        fixPeopleDropdown();
-    }
-});
-peopleObserver.observe(document.body, { childList: true, subtree: true });
-
-// ========== 7. ЗБИРАЄМО ДАНІ ТУРУ ==========
+// ========== 8. ЗБИРАЄМО ДАНІ ТУРУ ==========
 setTimeout(function() {
     const hotelName = document.querySelector('.new_t-header-title')?.innerText || '';
     const priceElement = document.querySelector('.price-number');
@@ -955,7 +970,7 @@ setTimeout(function() {
     console.log('Дані туру зібрано:', {hotelName, price, dateText, hid});
 }, 2500);
 
-// ========== 8. AJAX ВІДПРАВЛЕННЯ ФОРМИ ==========
+// ========== 9. AJAX ВІДПРАВЛЕННЯ ФОРМИ ==========
 (function() {
     const submitBtn = document.getElementById('submitBookingBtn');
     if (!submitBtn) return;
@@ -1037,7 +1052,7 @@ setTimeout(function() {
     });
 })();
 
-// ========== 9. КНОПКА "ПОВЕРНУТИСЯ" ==========
+// ========== 10. КНОПКА "ПОВЕРНУТИСЯ" ==========
 const savedUrl = localStorage.getItem('lastSearchUrl');
 const backBtn = document.getElementById('customBackButton');
 
@@ -1053,7 +1068,7 @@ if (backBtn) {
     }
 }
 
-// ========== 10. CSS ДЛЯ АНІМАЦІЇ ==========
+// ========== 11. CSS ДЛЯ АНІМАЦІЇ ==========
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
