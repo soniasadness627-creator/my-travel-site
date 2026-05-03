@@ -518,9 +518,7 @@ body.modal-open {
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== ОРИГІНАЛЬНА КНОПКА "ЩЕ" ==========
-
-let activeOverlay = null;
+// ========== ОРИГІНАЛЬНА КНОПКА "ЩЕ" (БЕЗ ЗАТЕМНЕННЯ) ==========
 
 // 1. Оновлення ціни
 function updateCustomPrice() {
@@ -550,7 +548,7 @@ function ensureButtonVisible() {
     else setTimeout(ensureButtonVisible, 500);
 }
 
-// 4. ГОЛОВНА ФУНКЦІЯ ДЛЯ КНОПКИ
+// 4. ГОЛОВНА ФУНКЦІЯ ДЛЯ КНОПКИ (БЕЗ ЗАТЕМНЕННЯ)
 function initPeopleButton() {
     const peopleBtn = document.querySelector('.new_t-change-people');
     if (!peopleBtn) {
@@ -569,17 +567,7 @@ function initPeopleButton() {
     const newDropdown = newBtn.querySelector('.new_f-dropdown-body');
 
     function showDropdown() {
-        // СПОЧАТКУ додаємо затемнення (воно буде ПІД формою)
-        if (activeOverlay) activeOverlay.remove();
-        activeOverlay = document.createElement('div');
-        activeOverlay.className = 'people-dropdown-overlay';
-        activeOverlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999999;';
-        activeOverlay.onclick = function() {
-            hideDropdown();
-        };
-        document.body.appendChild(activeOverlay);
-
-        // ПОТІМ показуємо форму (вона буде НАД затемненням)
+        // Показуємо форму (без затемнення)
         newDropdown.style.display = 'block';
         newDropdown.style.position = 'fixed';
         newDropdown.style.top = '50%';
@@ -598,19 +586,10 @@ function initPeopleButton() {
         newDropdown.onclick = function(e) {
             e.stopPropagation();
         };
-
-        document.body.classList.add('modal-open');
-        document.body.style.overflow = 'hidden';
     }
 
     function hideDropdown() {
         newDropdown.style.display = 'none';
-        if (activeOverlay) {
-            activeOverlay.remove();
-            activeOverlay = null;
-        }
-        document.body.classList.remove('modal-open');
-        document.body.style.overflow = '';
     }
 
     newBtn.onclick = function(e) {
@@ -623,7 +602,7 @@ function initPeopleButton() {
         }
     };
 
-    // Закриття через кнопки форми - ВАЖЛИВО: зберігаємо посилання на newDropdown
+    // Закриття через кнопки форми
     const cancelBtn = newDropdown.querySelector('.new_f-dropdown-btn-cancel');
     const applyBtn = newDropdown.querySelector('.new_f-dropdown-btn-apply');
     const closeBtn = newDropdown.querySelector('.new_f-dropdown-body-close');
