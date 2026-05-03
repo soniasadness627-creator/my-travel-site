@@ -54,7 +54,7 @@
 
 <!-- ========== СТИЛІ ========== -->
 <style>
-    /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
+        /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
     #otpusk-tour-module .new_f-ext-btn,
@@ -92,7 +92,7 @@
         box-shadow: none !important;
     }
 
-    /* ========== ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" (АЛЕ ЗАЛИШАЄМО ЦІНУ) ========== */
+    /* ========== ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ========== */
     .new_t-order-btn-true,
     .new_t-order-btn {
         display: none !important;
@@ -265,16 +265,30 @@
         color: white !important;
     }
 
-    /* ========== ДАТА - ФІКСУЄМО БЛОК ТРИВАЛОСТІ ========== */
+    /* ========== ДАТА - ЗМІНА ПОРЯДКУ БЛОКІВ ========== */
     .new_t-date-table {
         background: transparent !important;
         padding: 0 !important;
         border: none !important;
         display: flex !important;
-        flex-wrap: nowrap !important;
+        flex-wrap: wrap !important;
         gap: 16px !important;
         align-items: center !important;
         justify-content: flex-start !important;
+    }
+
+    /* Міняємо порядок: дати спочатку, потім тривалість */
+    .new_t-date-col.new_t-duration-col {
+        order: 3 !important;
+        margin-left: 0 !important;
+    }
+
+    /* Фіксуємо блок тривалості */
+    .new_t-date-col.new_t-duration-col {
+        min-width: 140px !important;
+        text-align: center !important;
+        background: transparent !important;
+        flex-shrink: 0 !important;
     }
 
     .new_t-date-col {
@@ -288,15 +302,6 @@
         font-weight: 700 !important;
         color: var(--primary-color, #3b82f6) !important;
         font-size: 1rem !important;
-    }
-
-    /* Фіксуємо блок тривалості, щоб він не їздив */
-    .new_t-date-col.new_t-duration-col {
-        min-width: 140px !important;
-        width: 140px !important;
-        text-align: center !important;
-        background: transparent !important;
-        flex-shrink: 0 !important;
     }
 
     .new_t-duration-container {
@@ -483,51 +488,46 @@
         overflow: hidden !important;
     }
 
-    /* ========== ПОЗИЦІОНУЄМО БЛОК З ЦІНОЮ ЗВЕРХУ СПРАВА ========== */
-    .new_t-header-top {
-        position: relative !important;
-    }
-
+    /* ========== ЦІНА - ТІЛЬКИ ЦИФРА, ПІД МЕНЮ ========== */
     .new_t-order-content {
-        position: absolute !important;
-        top: 0 !important;
-        right: 0 !important;
+        display: block !important;
         background: transparent !important;
         border: none !important;
-        box-shadow: none !important;
-        width: auto !important;
-        z-index: 10 !important;
+        margin: 10px 0 20px 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
     }
 
     .new_t-order-table {
         background: transparent !important;
         padding: 0 !important;
         margin: 0 !important;
-        display: block !important;
+        display: flex !important;
+        justify-content: flex-end !important;
     }
 
-    /* Ховаємо зайве, залишаємо тільки ціну */
-    .new_t-order-col:first-child {
+    /* Ховаємо "Разом:", код, кнопку */
+    .new_t-order-col:first-child span:first-child,
+    .new_t-order-col:last-child,
+    .new_t-order-col span.currency,
+    .new_t-order-col .new_t-order-price-descr {
+        display: none !important;
+    }
+
+    .new_t-order-price {
         background: transparent !important;
         padding: 0 !important;
         margin: 0 !important;
-    }
-
-    .new_t-order-col:last-child {
-        display: none !important;
     }
 
     .new_t-order-price .new_price,
     .new_t-order-price .new_price-value {
         color: #dc2626 !important;
         font-weight: 700 !important;
-        font-size: 1.3rem !important;
-    }
-
-    .new_t-order-price .currency {
-        color: #1a202c !important;
-        font-weight: 500 !important;
-        font-size: 0.9rem !important;
+        font-size: 1.8rem !important;
     }
 
     /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
@@ -570,6 +570,7 @@
         .new_t-date-col.new_t-duration-col {
             min-width: auto !important;
             width: 100% !important;
+            order: 0 !important;
         }
 
         .new_t-duration-container {
@@ -596,7 +597,7 @@
 
         .new_t-order-price .new_price,
         .new_t-order-price .new_price-value {
-            font-size: 1.1rem !important;
+            font-size: 1.5rem !important;
         }
     }
 </style>
