@@ -92,23 +92,6 @@
         box-shadow: none !important;
     }
 
-    /* ========== ЦІНА ========== */
-    .new_t-order-price .new_price,
-    .new_t-order-price .new_price-value,
-    .new_price-value,
-    .new_price {
-        color: #dc2626 !important;
-        font-weight: 700 !important;
-        font-size: 1.5rem !important;
-    }
-
-    .new_t-order-price .currency,
-    .currency {
-        color: #1a202c !important;
-        font-weight: 500 !important;
-        font-size: 1rem !important;
-    }
-
     /* ========== ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ========== */
     .new_t-order-btn-true,
     .new_t-order-btn,
@@ -197,12 +180,14 @@
         background: transparent !important;
     }
 
-    /* Ліва колонка з іконкою */
+    /* ========== ВІДСТУПИ ДЛЯ ЛІВИХ ІКОНОК - ФІКСУЄМО ШИРИНУ ========== */
     .new_t-tour-tab-col-1 {
         background: #f8fafc !important;
-        padding: 12px 18px !important;
+        padding: 12px 20px !important;
         border-radius: 16px !important;
-        min-width: 110px !important;
+        flex: 0 0 140px !important;
+        min-width: 140px !important;
+        max-width: 140px !important;
         display: flex !important;
         align-items: center !important;
         gap: 12px !important;
@@ -218,20 +203,23 @@
         height: 24px !important;
         margin: 0 !important;
         fill: var(--primary-color, #3b82f6) !important;
+        flex-shrink: 0 !important;
     }
 
     .new_t-tour-tab-col-1-title {
-        font-size: 0.85rem !important;
+        font-size: 0.8rem !important;
         font-weight: 600 !important;
         color: #475569 !important;
         margin: 0 !important;
+        line-height: 1.3 !important;
     }
 
-    /* Права колонка з контентом */
+    /* Права колонка з контентом - розтягується на всю ширину */
     .new_t-tour-tab-col-2 {
         background: transparent !important;
         padding: 0 !important;
         flex: 1 !important;
+        min-width: 200px !important;
     }
 
     /* Текст "2 дорослих" */
@@ -469,6 +457,30 @@
         width: 100% !important;
     }
 
+    /* ========== ПРИБИРАЄМО ЛІТАЧКИ ТА ЛІНІЮ В БЛОЦІ ДАТИ ========== */
+    .new_t-duration-icons {
+        display: none !important;
+    }
+
+    .new_t-duration-icons,
+    .new_t-duration-icon,
+    .new_t-duration-icon-left,
+    .new_t-duration-icon-right,
+    .new_t-air {
+        display: none !important;
+        visibility: hidden !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .new_t-duration-icon::before,
+    .new_t-duration-icon::after,
+    .new_t-duration-icons::before,
+    .new_t-duration-icons::after {
+        display: none !important;
+    }
+
     /* Мобільна версія */
     @media (max-width: 768px) {
         .new_t-menu {
@@ -488,8 +500,11 @@
         }
 
         .new_t-tour-tab-col-1 {
+            flex: 0 0 auto !important;
             min-width: auto !important;
-            justify-content: center !important;
+            max-width: none !important;
+            width: 100% !important;
+            justify-content: flex-start !important;
         }
 
         .new_t-date-table {
@@ -501,32 +516,11 @@
             flex-direction: column !important;
             gap: 12px !important;
         }
+
+        .new_t-tour-tab-col-2 {
+            min-width: auto !important;
+        }
     }
-    /* ========== ПРИБИРАЄМО ЛІТАЧКИ ТА ЛІНІЮ В БЛОЦІ ДАТИ ========== */
-.new_t-duration-icons {
-    display: none !important;
-}
-
-/* Додатково - прибираємо лінію/розділювач, якщо є */
-.new_t-duration-icons,
-.new_t-duration-icon,
-.new_t-duration-icon-left,
-.new_t-duration-icon-right,
-.new_t-air {
-    display: none !important;
-    visibility: hidden !important;
-    width: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
-}
-
-/* Якщо є лінія між літачками - теж ховаємо */
-.new_t-duration-icon::before,
-.new_t-duration-icon::after,
-.new_t-duration-icons::before,
-.new_t-duration-icons::after {
-    display: none !important;
-}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
