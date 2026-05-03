@@ -54,7 +54,7 @@
 
 <!-- ========== СТИЛІ ========== -->
 <style>
-       /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
+    /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
     #otpusk-tour-module .new_f-ext-btn,
@@ -103,71 +103,6 @@
         padding: 0 !important;
         opacity: 0 !important;
         pointer-events: none !important;
-    }
-
-    /* Не ховаємо весь блок з ціною, тільки кнопки */
-    .new_t-order-content {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        position: absolute !important;
-        top: 0 !important;
-        right: 0 !important;
-        width: auto !important;
-        height: auto !important;
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        z-index: 100 !important;
-    }
-
-    .new_t-order-table {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: flex-end !important;
-        background: transparent !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        border: none !important;
-    }
-
-    /* Ховаємо код і оператора */
-    .new_t-order-col span,
-    .new_t-order-code,
-    .new_t-order-code div,
-    .new_t-operator-name,
-    .new_t-order-col > span:first-child {
-        display: none !important;
-    }
-
-    /* Залишаємо тільки ціну */
-    .new_t-order-col {
-        background: transparent !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        border: none !important;
-    }
-
-    .new_t-order-price {
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-        background: transparent !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    .new_t-order-price .new_price,
-    .new_t-order-price .new_price-value {
-        color: #dc2626 !important;
-        font-weight: 700 !important;
-        font-size: 1.5rem !important;
-    }
-
-    .new_t-order-price .currency {
-        color: #1a202c !important;
-        font-weight: 500 !important;
-        font-size: 1rem !important;
     }
 
     /* ========== ХОВАЄМО РЕЙТИНГ ========== */
@@ -357,7 +292,8 @@
 
     /* Фіксуємо блок тривалості, щоб він не їздив */
     .new_t-date-col.new_t-duration-col {
-        min-width: 130px !important;
+        min-width: 140px !important;
+        width: 140px !important;
         text-align: center !important;
         background: transparent !important;
         flex-shrink: 0 !important;
@@ -368,11 +304,12 @@
         padding: 6px 0 !important;
         font-weight: 600 !important;
         color: #1e293b !important;
-        font-size: 0.95rem !important;
+        font-size: 0.9rem !important;
         display: inline-block !important;
         width: auto !important;
         text-align: center !important;
         border-bottom: 1px dashed #e2e8f0 !important;
+        white-space: nowrap !important;
     }
 
     .new_t-duration-text {
@@ -382,6 +319,7 @@
         text-align: center !important;
         display: block !important;
         width: 100% !important;
+        white-space: nowrap !important;
     }
 
     .new_t-date-col .new_weight-bold {
@@ -561,6 +499,37 @@
         z-index: 10 !important;
     }
 
+    .new_t-order-table {
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: block !important;
+    }
+
+    /* Ховаємо зайве, залишаємо тільки ціну */
+    .new_t-order-col:first-child {
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .new_t-order-col:last-child {
+        display: none !important;
+    }
+
+    .new_t-order-price .new_price,
+    .new_t-order-price .new_price-value {
+        color: #dc2626 !important;
+        font-weight: 700 !important;
+        font-size: 1.3rem !important;
+    }
+
+    .new_t-order-price .currency {
+        color: #1a202c !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem !important;
+    }
+
     /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
     @media (max-width: 768px) {
         .new_t-menu {
@@ -627,7 +596,7 @@
 
         .new_t-order-price .new_price,
         .new_t-order-price .new_price-value {
-            font-size: 1.2rem !important;
+            font-size: 1.1rem !important;
         }
     }
 </style>
@@ -727,7 +696,28 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== 1. ПЕРЕНАПРАВЛЕННЯ КНОПКИ "ЗАМОВИТИ ТУР" ДО ФОРМИ ==========
+// ========== 1. ПРИМУСОВО ПОКАЗУЄМО ЦІНУ ==========
+setTimeout(function() {
+    const orderContent = document.querySelector('.new_t-order-content');
+    if (orderContent) {
+        orderContent.style.display = 'block';
+        orderContent.style.visibility = 'visible';
+        orderContent.style.opacity = '1';
+    }
+}, 100);
+
+// Слідкуємо за змінами (коли змінюється кількість туристів)
+const observer = new MutationObserver(function(mutations) {
+    const orderContent = document.querySelector('.new_t-order-content');
+    if (orderContent && (orderContent.style.display === 'none' || orderContent.style.visibility === 'hidden')) {
+        orderContent.style.display = 'block';
+        orderContent.style.visibility = 'visible';
+        orderContent.style.opacity = '1';
+    }
+});
+observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+
+// ========== 2. ПЕРЕНАПРАВЛЕННЯ КНОПКИ "ЗАМОВИТИ ТУР" ДО ФОРМИ ==========
 setTimeout(function() {
     const orderBtn = document.querySelector('.new_t-order-btn-true, .new_t-order-btn');
     const orderBlock = document.querySelector('.new_t-order-table');
@@ -755,10 +745,11 @@ setTimeout(function() {
     }
 }, 2000);
 
-// ========== 2. ЗБИРАЄМО ДАНІ ТУРУ ==========
+// ========== 3. ЗБИРАЄМО ДАНІ ТУРУ ==========
 setTimeout(function() {
     const hotelName = document.querySelector('.new_t-header-title')?.innerText || '';
-    const price = document.querySelector('.new_price-value')?.innerText || '';
+    const priceElement = document.querySelector('.new_price-value');
+    const price = priceElement?.innerText || '';
     const dates = document.querySelectorAll('.new_t-important');
     let dateText = '';
     if (dates.length >= 2) {
@@ -779,7 +770,7 @@ setTimeout(function() {
     console.log('Дані туру зібрано:', {hotelName, price, dateText, hid});
 }, 2500);
 
-// ========== 3. AJAX ВІДПРАВЛЕННЯ ФОРМИ ==========
+// ========== 4. AJAX ВІДПРАВЛЕННЯ ФОРМИ ==========
 (function() {
     const submitBtn = document.getElementById('submitBookingBtn');
     if (!submitBtn) return;
@@ -861,7 +852,7 @@ setTimeout(function() {
     });
 })();
 
-// ========== 4. КНОПКА "ПОВЕРНУТИСЯ" ==========
+// ========== 5. КНОПКА "ПОВЕРНУТИСЯ" ==========
 const savedUrl = localStorage.getItem('lastSearchUrl');
 const backBtn = document.getElementById('customBackButton');
 
@@ -877,7 +868,7 @@ if (backBtn) {
     }
 }
 
-// ========== 5. CSS ДЛЯ АНІМАЦІЇ ==========
+// ========== 6. CSS ДЛЯ АНІМАЦІЇ ==========
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
