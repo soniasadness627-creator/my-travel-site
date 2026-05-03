@@ -370,97 +370,163 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== ОРИГІНАЛЬНА ФОРМА ВИБОРУ ТУРИСТІВ - ЗАКРИТА ЗА ЗАМОВЧУВАННЯМ ========== */
-    .new_f-dropdown-body {
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        z-index: 1000000 !important;
-        background: white !important;
-        border-radius: 20px !important;
-        box-shadow: 0 25px 60px rgba(0,0,0,0.3) !important;
-        display: none !important;
-        width: 90% !important;
-        max-width: 500px !important;
-        min-width: 320px !important;
-        max-height: 85vh !important;
-        overflow-y: auto !important;
-    }
+    /* ========== ФОРМА ТУРИСТІВ - ПРИМУСОВО ВИДИМА ========== */
 
-    /* Стилі для кнопок форми */
-    .new_f-people-item {
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-    }
+/* Коли форма відкрита - вона має бути видимою */
+.new_f-dropdown-body {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 9999999 !important;
+    background: white !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+    width: 400px !important;
+    max-width: 90vw !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 1px solid #e0e0e0 !important;
+}
 
-    .new_f-people-item:hover {
-        background: #e2e8f0 !important;
-    }
+/* Внутрішній вміст форми */
+.new_f-dropdown-body-wrap {
+    background: white !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+}
 
-    .new_f-people-item.active {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-    }
+/* Заголовок форми */
+.new_f-dropdown-body-top {
+    background: var(--primary-color, #7a219e) !important;
+    padding: 15px 20px !important;
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
 
-    .new_f-dropdown-bottom-btn {
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-    }
+/* Кнопка закриття */
+.new_f-dropdown-body-close {
+    cursor: pointer !important;
+    font-size: 24px !important;
+    color: white !important;
+}
 
-    .new_f-dropdown-bottom-btn:hover {
-        transform: scale(0.98);
-    }
+/* Контейнер для списку дорослих */
+.new_f-people-container {
+    padding: 20px !important;
+}
 
-    .price-block-under-menu {
-        text-align: right;
-        margin: 15px 0 25px 0;
-        padding: 0;
-    }
+/* Список вибору дорослих */
+.new_f-people-list {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-top: 10px !important;
+}
 
-    .price-number {
-        color: #dc2626;
-        font-size: 1.8rem;
-        font-weight: 700;
-    }
+.new_f-people-item {
+    flex: 1 !important;
+    text-align: center !important;
+    padding: 10px !important;
+    border: 1px solid #ddd !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    background: white !important;
+    transition: all 0.2s ease !important;
+}
 
-    .new_t-duration-icons {
-        display: none !important;
-    }
+.new_f-people-item.active {
+    background: var(--primary-color, #7a219e) !important;
+    color: white !important;
+    border-color: var(--primary-color, #7a219e) !important;
+}
 
-    @media (max-width: 768px) {
-        .new_t-menu {
-            gap: 8px !important;
-            padding: 8px 12px !important;
-        }
-        .new_t-menu-item {
-            padding: 6px 16px !important;
-            font-size: 12px !important;
-        }
-        .new_t-tour-tab-table {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            padding: 16px !important;
-        }
-        .new_t-tour-tab-col-1-title {
-            white-space: normal !important;
-            margin-bottom: 8px !important;
-        }
-        .new_t-tour-tab-col-2 {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-        }
-        .new_t-date-table {
-            flex-wrap: wrap !important;
-        }
-        .price-number {
-            font-size: 1.4rem !important;
-        }
-        .new_f-dropdown-body {
-            width: 95% !important;
-            min-width: 280px !important;
-        }
-    }
+.new_f-people-item:hover {
+    background: #f0f0f0 !important;
+}
+
+/* Контейнер для дітей */
+.new_f-children-container {
+    padding: 0 20px 20px 20px !important;
+}
+
+.new_f-children-accordion-btn {
+    background: #f5f5f5 !important;
+    padding: 8px 16px !important;
+    border-radius: 30px !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+    margin: 10px 0 !important;
+    border: none !important;
+}
+
+.new_f-children-accordion-body {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-top: 10px !important;
+}
+
+.new_f-children-age-item {
+    padding: 8px 12px !important;
+    background: #f5f5f5 !important;
+    border-radius: 30px !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+}
+
+.new_f-children-age-item:hover {
+    background: var(--primary-color, #7a219e) !important;
+    color: white !important;
+}
+
+.new_f-children-list {
+    margin-top: 15px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+}
+
+/* Нижня частина з кнопками */
+.new_f-dropdown-body-bottom {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+    padding: 15px 20px !important;
+    border-top: 1px solid #eee !important;
+    background: #fafafa !important;
+}
+
+.new_f-dropdown-bottom-btn {
+    padding: 8px 20px !important;
+    border-radius: 30px !important;
+    cursor: pointer !important;
+    border: none !important;
+    font-weight: 500 !important;
+}
+
+.new_f-dropdown-btn-cancel {
+    background: #e0e0e0 !important;
+    color: #333 !important;
+}
+
+.new_f-dropdown-btn-apply {
+    background: var(--primary-color, #7a219e) !important;
+    color: white !important;
+}
+
+/* Заголовок "Кількість дорослих" та "Діти" */
+.new_f-people-title {
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+    color: #333 !important;
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -656,5 +722,17 @@ setTimeout(() => {
 setTimeout(() => {
     initPeopleButton();
 }, 3500);
+    // Додаткова перевірка - показуємо форму при кліку
+function fixDropdownVisibility() {
+    const dropdown = document.querySelector('.new_f-dropdown-body');
+    if (dropdown) {
+        console.log('Форма знайдена, стиль display:', dropdown.style.display);
+        if (dropdown.style.display === 'block') {
+            console.log('Форма має бути видимою');
+        }
+    }
+}
+
+setInterval(fixDropdownVisibility, 1000);
 </script>
 {% endblock %}
