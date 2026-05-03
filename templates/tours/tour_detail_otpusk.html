@@ -776,7 +776,7 @@
     </div>
 </div>
 
-<!-- ========== ОСНОВНІ СКРИПТИ ========== -->
+// ========== ОСНОВНІ СКРИПТИ ==========
 <script>
 // ========== 1. ЗМІНА ПОРЯДКУ БЛОКІВ У ДАТІ ==========
 function reorderDateBlocks() {
@@ -843,37 +843,57 @@ function updatePriceOnChange() {
     }
 }
 
-// ========== 5. ВИПРАВЛЕННЯ ДЛЯ КНОПКИ "ЩЕ" (ТУРИСТИ) ==========
+// ========== 5. ФІКС ДЛЯ КНОПКИ "ЩЕ" ТУРИСТИ ==========
 function fixPeopleDropdown() {
     const changeBtn = document.querySelector('.new_t-change-people');
-    if (!changeBtn) return;
+    if (!changeBtn) {
+        console.log('Кнопка не знайдена, повторюємо спробу...');
+        setTimeout(fixPeopleDropdown, 500);
+        return;
+    }
 
-    // Видаляємо старі обробники, щоб не дублювати
+    console.log('Кнопка знайдена, додаємо обробник');
+
+    const dropdown = changeBtn.querySelector('.new_f-dropdown-body');
+    if (!dropdown) return;
+
     const newBtn = changeBtn.cloneNode(true);
     changeBtn.parentNode.replaceChild(newBtn, changeBtn);
 
     newBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         e.preventDefault();
-        const dropdown = this.querySelector('.new_f-dropdown-body');
-        if (dropdown) {
-            if (dropdown.style.display === 'none' || dropdown.style.display === '') {
-                dropdown.style.display = 'block';
-                // Додаємо затемнення
-                const overlay = document.createElement('div');
-                overlay.className = 'dropdown-overlay';
-                overlay.style.cssText = 'position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999;';
-                overlay.onclick = function() {
-                    dropdown.style.display = 'none';
-                    overlay.remove();
-                };
-                document.body.appendChild(overlay);
-                dropdown.style.zIndex = '10000';
-            } else {
-                dropdown.style.display = 'none';
-                const overlay = document.querySelector('.dropdown-overlay');
-                if (overlay) overlay.remove();
-            }
+
+        const dropdownEl = this.querySelector('.new_f-dropdown-body');
+        if (!dropdownEl) return;
+
+        if (dropdownEl.style.display === 'none' || dropdownEl.style.display === '') {
+            dropdownEl.style.display = 'block';
+            dropdownEl.style.position = 'fixed';
+            dropdownEl.style.top = '50%';
+            dropdownEl.style.left = '50%';
+            dropdownEl.style.transform = 'translate(-50%, -50%)';
+            dropdownEl.style.zIndex = '10001';
+            dropdownEl.style.width = '90%';
+            dropdownEl.style.maxWidth = '400px';
+            dropdownEl.style.maxHeight = '80vh';
+            dropdownEl.style.overflowY = 'auto';
+            dropdownEl.style.background = 'white';
+            dropdownEl.style.borderRadius = '20px';
+            dropdownEl.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
+
+            const overlay = document.createElement('div');
+            overlay.className = 'people-dropdown-overlay';
+            overlay.style.cssText = 'position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:10000;';
+            overlay.onclick = function() {
+                dropdownEl.style.display = 'none';
+                overlay.remove();
+            };
+            document.body.appendChild(overlay);
+        } else {
+            dropdownEl.style.display = 'none';
+            const overlay = document.querySelector('.people-dropdown-overlay');
+            if (overlay) overlay.remove();
         }
     });
 }
@@ -886,7 +906,7 @@ setTimeout(function() {
     fixPeopleDropdown();
 }, 1500);
 
-// Спостерігаємо за змінами (оновлення ціни)
+// Спостерігаємо за змінами
 const priceObserver = new MutationObserver(function(mutations) {
     setTimeout(function() {
         reorderDateBlocks();
@@ -895,6 +915,20 @@ const priceObserver = new MutationObserver(function(mutations) {
     }, 100);
 });
 priceObserver.observe(document.body, { childList: true, subtree: true, attributes: true });
+
+// Додаткові запуски для надійності
+setTimeout(fixPeopleDropdown, 3000);
+setTimeout(fixPeopleDropdown, 5000);
+
+// Спостерігаємо за появою кнопки
+const peopleObserver = new MutationObserver(function() {
+    const btn = document.querySelector('.new_t-change-people');
+    if (btn && !btn.hasAttribute('data-fixed')) {
+        btn.setAttribute('data-fixed', 'true');
+        fixPeopleDropdown();
+    }
+});
+peopleObserver.observe(document.body, { childList: true, subtree: true });
 
 // ========== 7. ЗБИРАЄМО ДАНІ ТУРУ ==========
 setTimeout(function() {
