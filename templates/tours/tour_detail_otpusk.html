@@ -833,90 +833,106 @@ function updatePrice() {
     if (priceBlock) priceBlock.innerHTML = `<span class="price-number">${priceValue.innerText}</span>`;
 }
 
-// ========== 4. ПРОСТЕ РІШЕННЯ ДЛЯ ВІДКРИТТЯ ФОРМИ ==========
-function fixPeopleButton() {
-    // Знаходимо кнопку
-    const btn = document.querySelector('.new_t-change-people');
-    if (!btn) {
-        setTimeout(fixPeopleButton, 500);
+// ========== 4. СВОЯ ФОРМА ДЛЯ ТУРИСТІВ (працює через API Otpusk) ==========
+function createCustomTouristModal() {
+    // Знаходимо блок з туристами
+    const touristBlock = document.querySelector('.tourist-table');
+    if (!touristBlock) {
+        setTimeout(createCustomTouristModal, 500);
         return;
     }
 
-    console.log('Кнопка знайдена');
+    const col2 = touristBlock.querySelector('.new_t-tour-tab-col-2');
+    if (!col2) return;
 
-    // Знаходимо випадаючий список
-    const dropdown = btn.querySelector('.new_f-dropdown-body');
-    if (!dropdown) {
-        console.log('Dropdown не знайдено');
-        setTimeout(fixPeopleButton, 500);
-        return;
+    // Отримуємо поточний текст
+    const weightSpan = col2.querySelector('.new_weight-bold');
+    let currentAdults = 2;
+    let currentChildren = [];
+
+    if (weightSpan) {
+        const text = weightSpan.innerText;
+        const adultsMatch = text.match(/(\d+)\s*дорослих/);
+        if (adultsMatch) currentAdults = parseInt(adultsMatch[1]);
     }
 
-    // Видаляємо всі стилі, які ховають форму
-    dropdown.style.display = 'none';
-    dropdown.style.position = 'fixed';
-    dropdown.style.top = '50%';
-    dropdown.style.left = '50%';
-    dropdown.style.transform = 'translate(-50%, -50%)';
-    dropdown.style.zIndex = '100000';
-    dropdown.style.width = '90%';
-    dropdown.style.maxWidth = '450px';
-    dropdown.style.background = 'white';
-    dropdown.style.borderRadius = '20px';
-    dropdown.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
+    // Ховаємо оригінальну кнопку
+    const originalBtn = col2.querySelector('.new_t-change-people');
+    if (originalBtn) originalBtn.style.display = 'none';
 
-    // Клік по кнопці
-    btn.onclick = function(e) {
-        e.stopPropagation();
-        e.preventDefault();
+    // Видаляємо стару кастомну кнопку
+    const oldBtn = col2.querySelector('.custom-tourist-final');
+    if (oldBtn) oldBtn.remove();
 
-        if (dropdown.style.display === 'none' || dropdown.style.display === '') {
-            dropdown.style.display = 'block';
+    // Створюємо нову кнопку
+    const customBtn = document.createElement('button');
+    customBtn.className = 'custom-tourist-final';
+    customBtn.innerHTML = '👥 Обрати туристів';
+    customBtn.style.cssText = 'background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border: none; padding: 6px 20px; border-radius: 30px; cursor: pointer; font-size: 0.8rem; font-weight: 500; margin-left: 15px; transition: all 0.3s ease; color: #1e293b;';
+
+    customBtn.onmouseover = () => customBtn.style.background = 'linear-gradient(135deg, #e2e8f0, #cbd5e1)';
+    customBtn.onmouseout = () => customBtn.style.background = 'linear-gradient(135deg, #f1f5f9, #e2e8f0)';
+
+    // Створюємо модальне вікно
+    customBtn.onclick = () => {
+        // Отримуємо доступ до оригінального випадаючого списку
+        const originalDropdown = document.querySelector('.new_f-dropdown-body');
+
+        if (originalDropdown) {
+            // Якщо оригінальна форма існує - показуємо її
+            originalDropdown.style.display = 'block';
+            originalDropdown.style.position = 'fixed';
+            originalDropdown.style.top = '50%';
+            originalDropdown.style.left = '50%';
+            originalDropdown.style.transform = 'translate(-50%, -50%)';
+            originalDropdown.style.zIndex = '100001';
+            originalDropdown.style.width = '90%';
+            originalDropdown.style.maxWidth = '450px';
+            originalDropdown.style.background = 'white';
+            originalDropdown.style.borderRadius = '20px';
+            originalDropdown.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
 
             // Затемнення
-            const overlay = document.createElement('div');
-            overlay.className = 'people-overlay';
-            overlay.style.cssText = 'position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:99999;';
-            overlay.onclick = function() {
-                dropdown.style.display = 'none';
-                overlay.remove();
+            const ov = document.createElement('div');
+            ov.className = 'custom-modal-overlay';
+            ov.style.cssText = 'position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100000;';
+            ov.onclick = () => {
+                originalDropdown.style.display = 'none';
+                ov.remove();
             };
-            document.body.appendChild(overlay);
+            document.body.appendChild(ov);
 
-            // Додаємо обробник для кнопок в формі
-            setTimeout(function() {
-                const cancelBtn = dropdown.querySelector('.new_f-dropdown-btn-cancel');
-                const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
-                const closeBtn = dropdown.querySelector('.new_f-dropdown-body-close');
+            // Закриття форми після застосування
+            setTimeout(() => {
+                const applyBtn = originalDropdown.querySelector('.new_f-dropdown-btn-apply');
+                const cancelBtn = originalDropdown.querySelector('.new_f-dropdown-btn-cancel');
+                const closeBtn = originalDropdown.querySelector('.new_f-dropdown-body-close');
 
-                const closeForm = function() {
-                    dropdown.style.display = 'none';
-                    const ov = document.querySelector('.people-overlay');
-                    if (ov) ov.remove();
+                const closeModal = () => {
+                    originalDropdown.style.display = 'none';
+                    const ovl = document.querySelector('.custom-modal-overlay');
+                    if (ovl) ovl.remove();
+                    setTimeout(() => updatePrice(), 500);
                 };
 
-                if (cancelBtn) cancelBtn.onclick = closeForm;
-                if (applyBtn) {
-                    applyBtn.onclick = function() {
-                        closeForm();
-                        setTimeout(function() {
-                            updatePrice();
-                        }, 500);
-                    };
-                }
-                if (closeBtn) closeBtn.onclick = closeForm;
+                if (applyBtn) applyBtn.onclick = closeModal;
+                if (cancelBtn) cancelBtn.onclick = closeModal;
+                if (closeBtn) closeBtn.onclick = closeModal;
             }, 100);
+        } else {
+            alert('Форма тимчасово недоступна. Будь ласка, оновіть сторінку.');
         }
     };
 
-    console.log('Кнопка активована');
+    col2.appendChild(customBtn);
+    console.log('Кнопка "Обрати туристів" додана');
 }
 
 // ========== 5. ЗАПУСК ==========
 setTimeout(function() {
     reorderDateBlocks();
     createPriceBlock();
-    fixPeopleButton();
+    createCustomTouristModal();
 }, 2000);
 
 // Спостерігач
@@ -924,6 +940,8 @@ const observer = new MutationObserver(function() {
     setTimeout(function() {
         reorderDateBlocks();
         updatePrice();
+        const btn = document.querySelector('.custom-tourist-final');
+        if (!btn) createCustomTouristModal();
     }, 100);
 });
 observer.observe(document.body, { childList: true, subtree: true, attributes: true });
