@@ -154,7 +154,6 @@
 
     /* ========== СТИЛЬНІ КАРТКИ ДЛЯ БЛОКУ "ТУР" ========== */
 
-    /* Кожен блок окрема стильна картка */
     .new_t-tour-tab-table {
         background: white !important;
         border-radius: 20px !important;
@@ -192,7 +191,6 @@
         margin: 0 !important;
     }
 
-    /* Заголовок лівої колонки */
     .new_t-tour-tab-col-1-title {
         font-size: 0.85rem !important;
         font-weight: 600 !important;
@@ -201,7 +199,6 @@
         white-space: nowrap !important;
     }
 
-    /* Права колонка з контентом - розтягується на всю ширину */
     .new_t-tour-tab-col-2 {
         background: transparent !important;
         padding: 0 !important;
@@ -213,20 +210,18 @@
         gap: 10px !important;
     }
 
-    /* Текст "2 дорослих" */
     .new_weight-bold {
         font-weight: 600 !important;
         color: #1e293b !important;
         font-size: 1rem !important;
     }
 
-    /* ========== КРУГЛА КНОПКА "ЩЕ" - 30x30, справа, стрілка вниз ========== */
+    /* ========== КРУГЛА КНОПКА "ЩЕ" - СТВОРЮЄМО СТРІЛКУ ЧЕРЕЗ CSS ========== */
     .new_t-change-btn {
         width: 30px !important;
         height: 30px !important;
         min-width: 30px !important;
         max-width: 30px !important;
-        padding: 0 !important;
         margin: 0 !important;
         margin-left: auto !important;
         background: #f1f5f9 !important;
@@ -237,6 +232,12 @@
         cursor: pointer !important;
         transition: all 0.3s ease !important;
         flex-shrink: 0 !important;
+        position: relative !important;
+    }
+
+    /* Ховаємо старий текст "Ще" */
+    .new_t-change-btn span:not(svg) {
+        display: none !important;
     }
 
     .new_t-change-btn span {
@@ -247,18 +248,13 @@
         height: 100% !important;
     }
 
-    /* Ховаємо текст "Ще", залишаємо тільки стрілку */
-    .new_t-change-btn span:not(svg) {
-        display: none !important;
-    }
-
-    .new_t-change-btn svg {
-        width: 14px !important;
-        height: 14px !important;
-        margin: 0 !important;
-        fill: var(--primary-color, #3b82f6) !important;
+    /* Створюємо стрілку вниз через CSS */
+    .new_t-change-btn span::after {
+        content: "▼" !important;
+        font-size: 12px !important;
+        color: var(--primary-color, #3b82f6) !important;
         transition: all 0.3s ease !important;
-        transform: rotate(90deg) !important;
+        display: inline-block !important;
     }
 
     .new_t-change-btn:hover {
@@ -266,8 +262,13 @@
         transform: scale(1.05);
     }
 
-    .new_t-change-btn:hover svg {
-        fill: white !important;
+    .new_t-change-btn:hover span::after {
+        color: white !important;
+    }
+
+    /* Прибираємо старий SVG якщо є */
+    .new_t-change-btn svg {
+        display: none !important;
     }
 
     /* ========== ДАТА ========== */
@@ -293,22 +294,21 @@
         font-size: 1rem !important;
     }
 
-    /* Блок тривалості - збільшений */
+    /* Блок тривалості - виправлений */
     .new_t-date-col.new_t-duration-col {
-        min-width: 130px !important;
+        min-width: 140px !important;
         text-align: center !important;
     }
 
     .new_t-duration-container {
         background: #f1f5f9 !important;
-        padding: 8px 24px !important;
+        padding: 8px 20px !important;
         border-radius: 40px !important;
         font-weight: 600 !important;
         color: #1e293b !important;
         font-size: 0.9rem !important;
         display: inline-block !important;
         width: auto !important;
-        min-width: 100px !important;
         text-align: center !important;
         white-space: nowrap !important;
     }
@@ -319,6 +319,8 @@
         margin-top: 6px !important;
         text-align: center !important;
         white-space: nowrap !important;
+        display: block !important;
+        width: 100% !important;
     }
 
     .new_t-date-col .new_weight-bold {
@@ -433,7 +435,6 @@
         color: white !important;
     }
 
-    /* Анімація */
     .new_t-tour-tab-table {
         animation: fadeUp 0.3s ease forwards;
     }
@@ -449,7 +450,7 @@
         }
     }
 
-    /* ========== ПРИХОВУЄМО БЛОК З ЦІНОЮ (ПОВНІСТЮ) ========== */
+    /* ========== ПРИХОВУЄМО БЛОК З ЦІНОЮ ========== */
     .new_t-order-content,
     .new_t-order-table,
     .new_t-order-col,
@@ -466,7 +467,7 @@
         pointer-events: none !important;
     }
 
-    /* ========== РОЗТЯГУЄМО ОСНОВНИЙ БЛОК НА ВСЮ ШИРИНУ ========== */
+    /* ========== РОЗТЯГУЄМО ОСНОВНИЙ БЛОК ========== */
     .new_t-content-table {
         display: flex !important;
         flex-direction: column !important;
@@ -479,12 +480,11 @@
         flex: 1 1 100% !important;
     }
 
-    /* Додатково - прибираємо будь-які обмеження */
     .new_t-content {
         width: 100% !important;
     }
 
-    /* ========== ПРИБИРАЄМО ЛІТАЧКИ ТА ЛІНІЮ В БЛОЦІ ДАТИ ========== */
+    /* ========== ПРИБИРАЄМО ЛІТАЧКИ ========== */
     .new_t-duration-icons {
         display: none !important;
     }
@@ -508,7 +508,7 @@
         display: none !important;
     }
 
-    /* Мобільна версія */
+    /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
     @media (max-width: 768px) {
         .new_t-menu {
             gap: 8px !important;
@@ -555,7 +555,6 @@
             white-space: normal !important;
             text-align: center !important;
             padding: 8px 16px !important;
-            min-width: auto !important;
             width: 100% !important;
         }
 
