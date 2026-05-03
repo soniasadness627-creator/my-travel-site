@@ -108,6 +108,26 @@
         font-weight: 700 !important;
         color: #dc2626 !important;
     }
+    /* Примусове перевизначення стилів вкладок */
+.new_t-menu-item {
+    background: transparent !important;
+    color: #4a5568 !important;
+}
+
+.new_t-menu-item:hover {
+    background: rgba(var(--primary-color-rgb), 0.1) !important;
+    color: var(--primary-color) !important;
+}
+
+.new_t-menu-item.selected,
+.new_t-tab-tour.selected,
+.new_t-tab-desc.selected,
+.new_t-tab-photos.selected,
+.new_t-tab-map.selected,
+.new_t-tab-rev.selected {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" (без повідомлення) -->
