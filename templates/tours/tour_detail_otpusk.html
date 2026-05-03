@@ -54,7 +54,7 @@
 
 <!-- ========== СТИЛІ ========== -->
 <style>
-    /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
+        /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
     #otpusk-tour-module .new_f-ext-btn,
@@ -220,7 +220,7 @@
         font-size: 1rem !important;
     }
 
-    /* ========== КРУГЛА КНОПКА "ЩЕ" - 30x30, справа ========== */
+    /* ========== КРУГЛА КНОПКА "ЩЕ" - 30x30, справа, стрілка вниз ========== */
     .new_t-change-btn {
         width: 30px !important;
         height: 30px !important;
@@ -257,7 +257,8 @@
         height: 14px !important;
         margin: 0 !important;
         fill: var(--primary-color, #3b82f6) !important;
-        transition: fill 0.3s ease !important;
+        transition: all 0.3s ease !important;
+        transform: rotate(90deg) !important;
     }
 
     .new_t-change-btn:hover {
@@ -292,19 +293,32 @@
         font-size: 1rem !important;
     }
 
+    /* Блок тривалості - збільшений */
+    .new_t-date-col.new_t-duration-col {
+        min-width: 130px !important;
+        text-align: center !important;
+    }
+
     .new_t-duration-container {
         background: #f1f5f9 !important;
-        padding: 8px 20px !important;
+        padding: 8px 24px !important;
         border-radius: 40px !important;
         font-weight: 600 !important;
         color: #1e293b !important;
         font-size: 0.9rem !important;
+        display: inline-block !important;
+        width: auto !important;
+        min-width: 100px !important;
+        text-align: center !important;
+        white-space: nowrap !important;
     }
 
     .new_t-duration-text {
-        font-size: 0.75rem !important;
+        font-size: 0.7rem !important;
         color: #64748b !important;
-        margin-top: 4px !important;
+        margin-top: 6px !important;
+        text-align: center !important;
+        white-space: nowrap !important;
     }
 
     .new_t-date-col .new_weight-bold {
@@ -532,6 +546,24 @@
             align-items: flex-start !important;
         }
 
+        .new_t-date-col.new_t-duration-col {
+            min-width: auto !important;
+            width: 100% !important;
+        }
+
+        .new_t-duration-container {
+            white-space: normal !important;
+            text-align: center !important;
+            padding: 8px 16px !important;
+            min-width: auto !important;
+            width: 100% !important;
+        }
+
+        .new_t-duration-text {
+            white-space: normal !important;
+            text-align: center !important;
+        }
+
         .new_t-tour-tab-table.food-table .new_t-tour-tab-col-2 {
             flex-direction: column !important;
             gap: 12px !important;
@@ -543,10 +575,6 @@
             flex-wrap: wrap !important;
         }
     }
-    /* Стрілка вниз замість стрілки вправо */
-.new_t-change-btn svg {
-    transform: rotate(90deg) !important;
-}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
