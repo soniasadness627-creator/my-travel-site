@@ -54,7 +54,7 @@
 
 <!-- ========== СТИЛІ ========== -->
 <style>
-    /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
+        /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
     #otpusk-tour-module .new_f-ext-btn,
@@ -205,8 +205,8 @@
         display: flex !important;
         flex-wrap: wrap !important;
         align-items: center !important;
-        justify-content: space-between !important;
-        gap: 10px !important;
+        justify-content: flex-start !important;
+        gap: 15px !important;
     }
 
     .new_weight-bold {
@@ -215,57 +215,8 @@
         font-size: 1rem !important;
     }
 
-    /* ========== КРУГЛА КНОПКА "ЩЕ" ========== */
-    .new_t-change-btn {
-        width: 30px !important;
-        height: 30px !important;
-        min-width: 30px !important;
-        max-width: 30px !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        margin-left: auto !important;
-        background: #f1f5f9 !important;
-        border-radius: 50% !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
-        flex-shrink: 0 !important;
-        position: relative !important;
-        z-index: 5 !important;
-    }
-
-    .new_t-change-btn span {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 100% !important;
-        height: 100% !important;
-    }
-
-    .new_t-change-btn span:not(svg) {
-        font-size: 0 !important;
-    }
-
-    .new_t-change-btn span:not(svg)::before {
-        content: "▼" !important;
-        font-size: 12px !important;
-        color: var(--primary-color, #3b82f6) !important;
-    }
-
-    .new_t-change-btn svg {
-        display: none !important;
-    }
-
-    .new_t-change-btn:hover {
-        background: var(--primary-color, #3b82f6) !important;
-        transform: scale(1.05);
-    }
-
-    .new_t-change-btn:hover span::before {
-        color: white !important;
-    }
+    /* ========== НІЯКИХ СТИЛІВ ДЛЯ КНОПКИ "ЩЕ" - НЕ ЧІПАЄМО ========== */
+    /* Оригінальна кнопка залишається як є */
 
     /* ========== ДАТА ========== */
     .new_t-date-table {
@@ -390,162 +341,12 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== ВИПАДАЮЧА ФОРМА ДЛЯ ТУРИСТІВ ========== */
+    /* ========== ВИПАДАЮЧА ФОРМА ========== */
     .new_f-dropdown-body {
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        width: 90% !important;
-        max-width: 450px !important;
-        max-height: 80vh !important;
-        overflow-y: auto !important;
-        background: white !important;
-        border-radius: 20px !important;
-        box-shadow: 0 25px 50px rgba(0,0,0,0.3) !important;
-        z-index: 99999 !important;
-        display: none !important;
-    }
-
-    .new_f-dropdown-body[style*="display: block"] {
-        display: block !important;
-    }
-
-    .new_f-dropdown-body-wrap {
-        border-radius: 20px !important;
-        overflow: hidden !important;
-    }
-
-    .new_f-dropdown-body-top {
-        background: var(--primary-color, #3b82f6) !important;
-        padding: 15px 20px !important;
-        color: white !important;
-        font-weight: 600 !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-    }
-
-    .new_f-dropdown-body-close {
-        cursor: pointer !important;
-        font-size: 24px !important;
-    }
-
-    .new_f-people-container {
-        padding: 15px 20px 0 20px !important;
-    }
-
-    .new_f-people-title {
-        font-weight: 600 !important;
-        margin-bottom: 10px !important;
-    }
-
-    .new_f-people-list {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 12px !important;
-        overflow: hidden;
-        margin-bottom: 15px !important;
-    }
-
-    .new_f-people-item {
-        flex: 1 !important;
-        text-align: center !important;
-        padding: 12px 0 !important;
-        cursor: pointer !important;
-        border-right: 1px solid #e2e8f0 !important;
-        background: white !important;
-        transition: all 0.2s ease !important;
-    }
-
-    .new_f-people-item:last-child {
-        border-right: none !important;
-    }
-
-    .new_f-people-item.active {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-    }
-
-    .new_f-people-item:hover {
-        background: #e2e8f0 !important;
-    }
-
-    .new_f-children-container {
-        padding: 0 20px 15px 20px !important;
-    }
-
-    .new_f-children-accordion-btn {
-        background: #f1f5f9 !important;
-        padding: 8px 16px !important;
-        border-radius: 30px !important;
-        cursor: pointer !important;
-        display: inline-block !important;
-        margin: 10px 0 !important;
-    }
-
-    .new_f-children-accordion-body {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 8px !important;
-        margin-top: 10px !important;
-    }
-
-    .new_f-children-age-item {
-        display: inline-block !important;
-        padding: 8px 14px !important;
-        background: #f1f5f9 !important;
-        border-radius: 30px !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-    }
-
-    .new_f-children-age-item:hover,
-    .new_f-children-age-item.selected {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-    }
-
-    .new_f-children-list {
-        margin-top: 15px !important;
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 8px !important;
-    }
-
-    .new_f-children-list-item {
-        background: #e2e8f0 !important;
-        padding: 4px 12px !important;
-        border-radius: 20px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 8px !important;
-    }
-
-    .new_f-dropdown-body-bottom {
-        display: flex !important;
-        gap: 10px !important;
-        justify-content: flex-end !important;
-        padding: 15px 20px !important;
-        border-top: 1px solid #e2e8f0 !important;
-    }
-
-    .new_f-dropdown-bottom-btn {
-        padding: 8px 24px !important;
-        border-radius: 30px !important;
-        cursor: pointer !important;
-        font-weight: 500 !important;
-    }
-
-    .new_f-dropdown-btn-cancel {
-        background: #e2e8f0 !important;
-        color: #475569 !important;
-    }
-
-    .new_f-dropdown-btn-apply {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+        border: none !important;
+        z-index: 10000 !important;
     }
 
     .new_t-tour-tab-table {
@@ -595,6 +396,24 @@
         font-weight: 700;
     }
 
+    /* ========== ВАША КНОПКА ========== */
+    .custom-tourist-btn-final {
+        background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+        border: none;
+        padding: 8px 24px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        color: #1e293b;
+    }
+
+    .custom-tourist-btn-final:hover {
+        background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+        transform: translateY(-1px);
+    }
+
     @media (max-width: 768px) {
         .new_t-menu {
             gap: 8px !important;
@@ -615,11 +434,7 @@
         }
         .new_t-tour-tab-col-2 {
             flex-direction: column !important;
-            align-items: stretch !important;
-        }
-        .new_t-change-btn {
-            margin-left: 0 !important;
-            align-self: flex-end !important;
+            align-items: flex-start !important;
         }
         .new_t-date-table {
             flex-wrap: wrap !important;
@@ -642,70 +457,7 @@
         .price-number {
             font-size: 1.4rem !important;
         }
-        .new_f-people-list {
-            flex-direction: column !important;
-        }
-        .new_f-people-item {
-            border-right: none !important;
-            border-bottom: 1px solid #e2e8f0 !important;
-        }
     }
-/* ========== СТИЛІ ДЛЯ КНОПКИ ВИБОРУ ТУРИСТІВ ========== */
-/* Оригінальна кнопка - видима, але ми її відсунули */
-.new_t-change-people {
-    display: inline-flex !important;
-    position: absolute !important;
-    right: 0 !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    width: 30px !important;
-    height: 30px !important;
-    background: #f1f5f9 !important;
-    border-radius: 50% !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    z-index: 10 !important;
-}
-
-/* Сховати текст "Ще" в оригінальній кнопці */
-.new_t-change-people span:not(svg) {
-    display: none !important;
-}
-
-/* Показати стрілку */
-.new_t-change-people svg {
-    width: 14px !important;
-    height: 14px !important;
-    transform: rotate(90deg) !important;
-}
-
-/* Ваша красива кнопка */
-.custom-tourist-btn-final {
-    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-    border: none;
-    padding: 8px 24px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    color: #1e293b;
-}
-
-.custom-tourist-btn-final:hover {
-    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
-    transform: translateY(-1px);
-}
-
-/* Контейнер для кнопок */
-.new_t-tour-tab-col-2 {
-    position: relative !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-}
-
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -797,7 +549,7 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== КНОПКА "ОБРАТИ ТУРИСТІВ" ==========
+// ========== СТВОРЮЄМО СВОЮ ФОРМУ ДЛЯ ТУРИСТІВ ==========
 
 // 1. Оновлення ціни
 function updateCustomPrice() {
@@ -841,34 +593,24 @@ function createCustomTouristForm() {
         return;
     }
 
-    // Робимо оригінальну кнопку ВИДИМОЮ, але зсуваємо її в сторону
-    originalBtn.style.display = 'inline-flex';
-    originalBtn.style.position = 'absolute';
-    originalBtn.style.right = '0';
-    originalBtn.style.opacity = '1';
-    originalBtn.style.visibility = 'visible';
-    originalBtn.style.width = '30px';
-    originalBtn.style.height = '30px';
-    originalBtn.style.margin = '0';
-    originalBtn.style.zIndex = '10';
+    // Переконуємось, що оригінальна кнопка видима
+    originalBtn.style.display = '';
+    originalBtn.style.visibility = '';
+    originalBtn.style.opacity = '';
 
     // Видаляємо стару кастомну кнопку
     const oldBtn = touristBlock.querySelector('.custom-tourist-btn-final');
     if (oldBtn) oldBtn.remove();
 
-    // Створюємо нову кнопку поряд
+    // Створюємо нову кнопку
     const newBtn = document.createElement('button');
     newBtn.className = 'custom-tourist-btn-final';
     newBtn.innerHTML = '👥 Обрати туристів';
-    newBtn.style.cssText = 'background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border: none; padding: 8px 24px; border-radius: 30px; cursor: pointer; font-size: 0.9rem; font-weight: 500; margin-right: 15px; transition: all 0.3s ease; color: #1e293b; z-index: 5; position: relative;';
-    newBtn.onmouseover = () => newBtn.style.background = 'linear-gradient(135deg, #e2e8f0, #cbd5e1)';
-    newBtn.onmouseout = () => newBtn.style.background = 'linear-gradient(135deg, #f1f5f9, #e2e8f0)';
 
-    // Вставляємо кнопку перед оригінальною
+    // Вставляємо кнопку
     touristBlock.insertBefore(newBtn, originalBtn);
 
     console.log('✅ Кнопка "Обрати туристів" створена');
-    console.log('Оригінальна кнопка тепер видима справа');
 }
 
 // 4. ЗАПУСК
