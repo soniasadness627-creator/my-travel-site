@@ -376,13 +376,13 @@
         top: 50% !important;
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
-        z-index: 999999999 !important;
+        z-index: 1000000 !important;
         background: white !important;
         border-radius: 20px !important;
         box-shadow: 0 25px 60px rgba(0,0,0,0.3) !important;
         display: none !important;
         width: 90% !important;
-        max-width: 500px !important;
+        max-width: 450px !important;
         min-width: 320px !important;
         max-height: 80vh !important;
         overflow-y: auto !important;
@@ -392,7 +392,26 @@
         display: block !important;
     }
 
-    /* Стилі для вмісту форми */
+    /* Затемнення - під формою */
+    .people-dropdown-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 999999;
+    }
+
+    /* Стилі для кнопок форми */
+    .new_f-dropdown-body button,
+    .new_f-dropdown-body .new_f-people-item,
+    .new_f-dropdown-body .new_f-dropdown-bottom-btn,
+    .new_f-dropdown-body .new_f-dropdown-body-close {
+        cursor: pointer !important;
+        pointer-events: auto !important;
+    }
+
     .new_f-people-list {
         display: flex !important;
         flex-wrap: wrap !important;
@@ -407,6 +426,8 @@
         border: 1px solid #e2e8f0 !important;
         border-radius: 8px !important;
         cursor: pointer !important;
+        background: white !important;
+        transition: all 0.2s ease !important;
     }
 
     .new_f-people-item.active {
@@ -414,12 +435,59 @@
         color: white !important;
     }
 
+    .new_f-people-item:hover {
+        background: #e2e8f0 !important;
+    }
+
     .new_f-dropdown-body-bottom {
         display: flex !important;
         justify-content: flex-end !important;
         gap: 10px !important;
-        padding: 15px !important;
+        padding: 15px 20px !important;
         border-top: 1px solid #e2e8f0 !important;
+    }
+
+    .new_f-dropdown-bottom-btn {
+        padding: 8px 24px !important;
+        border-radius: 30px !important;
+        cursor: pointer !important;
+        border: none !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .new_f-dropdown-bottom-btn:hover {
+        transform: scale(0.98);
+    }
+
+    .new_f-dropdown-btn-cancel {
+        background: #e2e8f0 !important;
+        color: #475569 !important;
+    }
+
+    .new_f-dropdown-btn-apply {
+        background: var(--primary-color, #3b82f6) !important;
+        color: white !important;
+    }
+
+    body.modal-open {
+        overflow: hidden !important;
+    }
+
+    .price-block-under-menu {
+        text-align: right;
+        margin: 15px 0 25px 0;
+        padding: 0;
+    }
+
+    .price-number {
+        color: #dc2626;
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    .new_t-duration-icons {
+        display: none !important;
     }
 
     .new_t-tour-tab-table {
@@ -453,27 +521,6 @@
         width: 100% !important;
     }
 
-    .new_t-duration-icons {
-        display: none !important;
-    }
-
-    .price-block-under-menu {
-        text-align: right;
-        margin: 15px 0 25px 0;
-        padding: 0;
-    }
-
-    .price-number {
-        color: #dc2626;
-        font-size: 1.8rem;
-        font-weight: 700;
-    }
-
-    /* Затемнення фону */
-    body.modal-open {
-        overflow: hidden !important;
-    }
-
     /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
     @media (max-width: 768px) {
         .new_t-menu {
@@ -500,21 +547,6 @@
         .new_t-date-table {
             flex-wrap: wrap !important;
         }
-        .new_t-date-col.new_t-nostretch:first-child,
-        .new_t-date-col.new_t-nostretch:last-child {
-            min-width: 100% !important;
-            width: 100% !important;
-        }
-        .new_t-date-col.new_t-duration-col {
-            min-width: 100% !important;
-            width: 100% !important;
-        }
-        .new_t-duration-container {
-            white-space: normal !important;
-        }
-        .new_t-duration-text {
-            white-space: normal !important;
-        }
         .price-number {
             font-size: 1.4rem !important;
         }
@@ -523,47 +555,13 @@
             min-width: 280px !important;
             max-height: 85vh !important;
         }
+        .new_f-people-list {
+            flex-direction: column !important;
+        }
+        .new_f-people-item {
+            margin-bottom: 5px !important;
+        }
     }
-    /* ========== ПРИМУСОВЕ ВІДОБРАЖЕННЯ ФОРМИ ========== */
-.new_f-dropdown-body {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    z-index: 999999999 !important;
-    background: #fff !important;
-    border-radius: 12px !important;
-    display: block !important;
-    width: 400px !important;
-    max-width: 90vw !important;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
-}
-
-/* Спочатку ховаємо */
-.new_f-dropdown-body {
-    display: none !important;
-}
-
-/* Показуємо коли є атрибут style */
-.new_f-dropdown-body[style*="display: block"] {
-    display: block !important;
-}
-
-/* Затемнення */
-.people-dropdown-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 99999998;
-}
-
-/* Для кнопки "Ще" */
-.new_t-change-people {
-    cursor: pointer !important;
-}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -655,13 +653,12 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== СВОЯ ФОРМА ДЛЯ ТУРИСТІВ З ПЕРЕЗАВАНТАЖЕННЯМ ==========
+// ========== ОРИГІНАЛЬНА КНОПКА "ЩЕ" ==========
 
-// Глобальні змінні
-let selectedAdults = 2;
-let selectedChildren = [];
+let activeOverlay = null;
+let activeDropdown = null;
 
-// 1. Оновлення ціни (тільки для відображення з URL)
+// 1. Оновлення ціни
 function updateCustomPrice() {
     const originalPriceBlock = document.querySelector('.new_t-order-price');
     const customPriceBlock = document.querySelector('.price-number');
@@ -675,198 +672,142 @@ function updateCustomPrice() {
     }
 }
 
-// 2. Отримуємо параметри з URL
-function getParamsFromURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const adults = urlParams.get('adults');
-    const children = urlParams.get('children');
-
-    if (adults) selectedAdults = parseInt(adults);
-    if (children) {
-        selectedChildren = children.split(',').map(a => parseInt(a));
-    }
+// 2. Спостерігач за ціною
+function startPriceWatcher() {
+    const observer = new MutationObserver(() => updateCustomPrice());
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true });
+    updateCustomPrice();
+    console.log('✅ Спостерігач за ціною запущено');
 }
 
-// 3. Оновлюємо текст на сторінці згідно з URL
-function updateDisplayFromURL() {
-    const weightSpan = document.querySelector('.tourist-table .new_weight-bold');
-    if (weightSpan) {
-        let childrenText = '';
-        if (selectedChildren.length > 0) {
-            childrenText = `, ${selectedChildren.length} ${selectedChildren.length === 1 ? 'дитина' : 'дітей'}`;
-        }
-        weightSpan.innerText = `${selectedAdults} дорослих${childrenText}`;
-    }
-}
-
-// 4. Показуємо кнопку "Ще"
+// 3. Показуємо кнопку
 function ensureButtonVisible() {
     const btn = document.querySelector('.new_t-change-people');
-    if (btn) btn.style.display = 'inline-flex';
-    else setTimeout(ensureButtonVisible, 500);
+    if (btn) {
+        btn.style.display = 'inline-flex';
+        console.log('✅ Кнопка "Ще" видима');
+    } else {
+        setTimeout(ensureButtonVisible, 500);
+    }
 }
 
-// 5. СТВОРЕННЯ ФОРМИ
-function createCustomModal() {
+// 4. ГОЛОВНА ФУНКЦІЯ ДЛЯ КНОПКИ
+function initPeopleButton() {
     const peopleBtn = document.querySelector('.new_t-change-people');
     if (!peopleBtn) {
-        setTimeout(createCustomModal, 500);
+        setTimeout(initPeopleButton, 500);
         return;
     }
 
-    // Отримуємо поточне значення з URL
-    getParamsFromURL();
-    updateDisplayFromURL();
+    console.log('✅ Кнопка знайдена, налаштовуємо');
 
-    const weightSpan = document.querySelector('.tourist-table .new_weight-bold');
+    const dropdown = peopleBtn.querySelector('.new_f-dropdown-body');
+    if (!dropdown) return;
 
-    // Видаляємо старий обробник
+    // Видаляємо старі обробники
     const newBtn = peopleBtn.cloneNode(true);
     peopleBtn.parentNode.replaceChild(newBtn, peopleBtn);
+    const newDropdown = newBtn.querySelector('.new_f-dropdown-body');
+
+    // Зберігаємо посилання
+    activeDropdown = newDropdown;
+
+    function showDropdown() {
+        // Показуємо форму
+        newDropdown.style.display = 'block';
+        newDropdown.style.position = 'fixed';
+        newDropdown.style.top = '50%';
+        newDropdown.style.left = '50%';
+        newDropdown.style.transform = 'translate(-50%, -50%)';
+        newDropdown.style.zIndex = '1000000';
+        newDropdown.style.background = 'white';
+        newDropdown.style.borderRadius = '20px';
+        newDropdown.style.width = '90%';
+        newDropdown.style.maxWidth = '450px';
+        newDropdown.style.maxHeight = '80vh';
+        newDropdown.style.overflowY = 'auto';
+        newDropdown.style.boxShadow = '0 25px 60px rgba(0,0,0,0.3)';
+
+        // Додаємо затемнення
+        if (activeOverlay) activeOverlay.remove();
+        activeOverlay = document.createElement('div');
+        activeOverlay.className = 'people-dropdown-overlay';
+        activeOverlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999999;';
+        activeOverlay.onclick = function() {
+            hideDropdown();
+        };
+        document.body.appendChild(activeOverlay);
+
+        document.body.classList.add('modal-open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function hideDropdown() {
+        newDropdown.style.display = 'none';
+        if (activeOverlay) {
+            activeOverlay.remove();
+            activeOverlay = null;
+        }
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+    }
 
     newBtn.onclick = function(e) {
-        e.preventDefault();
         e.stopPropagation();
-
-        // Видаляємо старе вікно
-        const oldModal = document.querySelector('.custom-tourist-modal-window');
-        if (oldModal) oldModal.remove();
-        const oldOverlay = document.querySelector('.custom-tourist-overlay');
-        if (oldOverlay) oldOverlay.remove();
-
-        let tempAdults = selectedAdults;
-        let tempChildren = [...selectedChildren];
-
-        const modalHtml = `
-            <div class="custom-tourist-modal-window" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000000; background: white; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;">
-                <div style="background: var(--primary-color, #7a219e); padding: 15px 20px; color: white; font-weight: 600; font-size: 18px; display: flex; justify-content: space-between; align-items: center;">
-                    <span>👥 Вибір туристів</span>
-                    <span class="close-custom-modal" style="cursor: pointer; font-size: 28px; line-height: 1;">&times;</span>
-                </div>
-                <div style="padding: 20px;">
-                    <div style="margin-bottom: 20px;">
-                        <label style="font-weight: 600; display: block; margin-bottom: 10px;">Кількість дорослих:</label>
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            ${[1,2,3,4,5,6,7,8].map(n => `<button class="custom-adult-opt" data-val="${n}" style="flex:1; padding: 12px; border: 1px solid #ddd; border-radius: 10px; background: ${tempAdults === n ? 'var(--primary-color, #7a219e)' : '#f5f5f5'}; color: ${tempAdults === n ? 'white' : '#333'}; cursor: pointer;">${n}</button>`).join('')}
-                        </div>
-                    </div>
-                    <div>
-                        <label style="font-weight: 600; display: block; margin-bottom: 10px;">Діти:</label>
-                        <button class="custom-add-child" style="background: #f0f0f0; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer;">+ Додати дитину</button>
-                        <div class="custom-children-list" style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
-                    </div>
-                </div>
-                <div style="padding: 15px 20px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px;">
-                    <button class="custom-cancel-btn" style="background: #e0e0e0; border: none; padding: 10px 25px; border-radius: 30px; cursor: pointer;">Відміна</button>
-                    <button class="custom-apply-btn" style="background: var(--primary-color, #7a219e); border: none; padding: 10px 25px; border-radius: 30px; cursor: pointer; color: white;">Застосувати</button>
-                </div>
-            </div>
-            <div class="custom-tourist-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999999;"></div>
-        `;
-
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
-
-        const modal = document.querySelector('.custom-tourist-modal-window');
-        const overlay = document.querySelector('.custom-tourist-overlay');
-
-        const closeModal = () => {
-            modal.remove();
-            overlay.remove();
-        };
-
-        overlay.onclick = closeModal;
-        modal.querySelector('.close-custom-modal')?.addEventListener('click', closeModal);
-        modal.querySelector('.custom-cancel-btn')?.addEventListener('click', closeModal);
-
-        // Вибір дорослих
-        modal.querySelectorAll('.custom-adult-opt').forEach(btn => {
-            btn.onclick = () => {
-                tempAdults = parseInt(btn.dataset.val);
-                modal.querySelectorAll('.custom-adult-opt').forEach(b => {
-                    b.style.background = '#f5f5f5';
-                    b.style.color = '#333';
-                    if (parseInt(b.dataset.val) === tempAdults) {
-                        b.style.background = 'var(--primary-color, #7a219e)';
-                        b.style.color = 'white';
-                    }
-                });
-            };
-        });
-
-        const updateChildrenList = () => {
-            const container = modal.querySelector('.custom-children-list');
-            container.innerHTML = '';
-            tempChildren.forEach((age, idx) => {
-                const childDiv = document.createElement('div');
-                childDiv.style.cssText = 'background: #f0f0f0; padding: 5px 15px; border-radius: 30px; display: inline-flex; align-items: center; gap: 10px;';
-                childDiv.innerHTML = `<span>${age} ${age === 1 ? 'рік' : 'років'}</span><span class="remove-child-custom" data-idx="${idx}" style="cursor: pointer; color: red;">&times;</span>`;
-                container.appendChild(childDiv);
-            });
-            modal.querySelectorAll('.remove-child-custom').forEach(btn => {
-                btn.onclick = () => {
-                    const idx = parseInt(btn.dataset.idx);
-                    tempChildren.splice(idx, 1);
-                    updateChildrenList();
-                };
-            });
-        };
-
-        modal.querySelector('.custom-add-child')?.addEventListener('click', () => {
-            const selectHtml = `
-                <div class="child-selector-custom" style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
-                    <select style="padding: 10px; border-radius: 30px; border: 1px solid #ddd;">
-                        ${[...Array(16)].map((_, i) => `<option value="${i+1}">${i+1} ${i+1 === 1 ? 'рік' : 'років'}</option>`).join('')}
-                    </select>
-                    <button class="confirm-child-custom" style="background: var(--primary-color, #7a219e); color: white; border: none; padding: 8px 20px; border-radius: 30px; cursor: pointer;">Додати</button>
-                </div>
-            `;
-            const container = modal.querySelector('.custom-children-list');
-            container.insertAdjacentHTML('beforeend', selectHtml);
-            const confirmBtn = container.querySelector('.confirm-child-custom:last-child');
-            confirmBtn.onclick = () => {
-                const select = confirmBtn.parentElement.querySelector('select');
-                const age = parseInt(select.value);
-                tempChildren.push(age);
-                updateChildrenList();
-                confirmBtn.parentElement.remove();
-            };
-        });
-
-        updateChildrenList();
-
-        // Застосування - ПЕРЕЗАВАНТАЖУЄМО СТОРІНКУ
-        modal.querySelector('.custom-apply-btn')?.addEventListener('click', () => {
-            selectedAdults = tempAdults;
-            selectedChildren = tempChildren;
-            closeModal();
-
-            // Формуємо новий URL з параметрами
-            const url = new URL(window.location.href);
-            url.searchParams.set('adults', selectedAdults);
-            if (selectedChildren.length > 0) {
-                url.searchParams.set('children', selectedChildren.join(','));
-            } else {
-                url.searchParams.delete('children');
-            }
-            // Перезавантажуємо сторінку
-            window.location.href = url.toString();
-        });
+        e.preventDefault();
+        if (newDropdown.style.display === 'none' || newDropdown.style.display === '') {
+            showDropdown();
+        } else {
+            hideDropdown();
+        }
     };
 
-    console.log('✅ Кнопка "Ще" налаштована');
+    // Закриття через кнопки форми
+    const cancelBtn = newDropdown.querySelector('.new_f-dropdown-btn-cancel');
+    const applyBtn = newDropdown.querySelector('.new_f-dropdown-btn-apply');
+    const closeBtn = newDropdown.querySelector('.new_f-dropdown-body-close');
+
+    if (cancelBtn) {
+        cancelBtn.onclick = function(e) {
+            e.stopPropagation();
+            hideDropdown();
+        };
+    }
+    if (applyBtn) {
+        applyBtn.onclick = function(e) {
+            e.stopPropagation();
+            hideDropdown();
+            setTimeout(updateCustomPrice, 500);
+        };
+    }
+    if (closeBtn) {
+        closeBtn.onclick = function(e) {
+            e.stopPropagation();
+            hideDropdown();
+        };
+    }
+
+    // Запобігаємо закриттю при кліку всередині форми
+    newDropdown.onclick = function(e) {
+        e.stopPropagation();
+    };
+
+    console.log('✅ Кнопка "Ще" повністю налаштована');
 }
 
-// 6. ЗАПУСК
+// 5. ЗАПУСК
 setTimeout(() => {
-    getParamsFromURL();
-    updateDisplayFromURL();
     ensureButtonVisible();
-    createCustomModal();
-    updateCustomPrice();
+    startPriceWatcher();
+    initPeopleButton();
 }, 1500);
 
 setTimeout(() => {
-    createCustomModal();
-}, 4000);
+    initPeopleButton();
+}, 3500);
+
+setTimeout(() => {
+    initPeopleButton();
+}, 5500);
 </script>
 {% endblock %}
