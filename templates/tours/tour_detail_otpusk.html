@@ -777,36 +777,6 @@
 </div>
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
-<script>
-// ========== СТВОРЮЄМО СВОЮ ФОРМУ ДЛЯ ТУРИСТІВ ==========
-
-// Глобальні змінні
-let selectedAdults = 2;
-let selectedChildren = [];
-
-// 1. Оновлення ціни (спостерігаємо за оригінальним блоком)
-function updateCustomPrice() {
-    const originalPrice = document.querySelector('.new_t-order-price .new_price-value');
-    const customPriceBlock = document.querySelector('.price-number');
-    if (originalPrice && customPriceBlock) {
-        const newPrice = originalPrice.innerText;
-        if (customPriceBlock.innerText !== newPrice) {
-            customPriceBlock.innerText = newPrice;
-            const tourPriceField = document.getElementById('tourPrice');
-            if (tourPriceField) tourPriceField.value = newPrice;
-        }
-    }
-}
-
-// 2. Спостерігаємо за ціною
-function startPriceWatcher() {
-    const priceContainer = document.querySelector('.new_t-order-price');
-    if (!priceContainer) { setTimeout(startPriceWatcher, 500); return; }
-    const observer = new MutationObserver(() => updateCustomPrice());
-    observer.observe(priceContainer, { childList: true, subtree: true, characterData: true });
-    updateCustomPrice();
-}
-
 // 3. СТВОРЕННЯ СВОЄЇ ФОРМИ
 function createCustomTouristForm() {
     const touristBlock = document.querySelector('.tourist-table .new_t-tour-tab-col-2');
@@ -833,6 +803,20 @@ function createCustomTouristForm() {
 
     // Створюємо HTML форми
     newBtn.onclick = () => {
+        // Зберігаємо поточні значення з оригінальної форми
+        const originalPeopleBtn = document.querySelector('.new_t-change-people');
+        let originalAdults = 2;
+        let originalChildren = [];
+
+        if (originalPeopleBtn) {
+            const adultItems = originalPeopleBtn.querySelectorAll('.new_f-people-item');
+            adultItems.forEach(item => {
+                if (item.classList.contains('active')) {
+                    originalAdults = parseInt(item.innerText);
+                }
+            });
+        }
+
         const modalHtml = `
             <div class="custom-tourist-modal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100000; width: 90%; max-width: 400px; background: white; border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); overflow: hidden;">
                 <div style="background: var(--primary-color, #3b82f6); padding: 15px 20px; color: white; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
@@ -927,10 +911,12 @@ function createCustomTouristForm() {
         });
         updateChildrenDisplay();
 
-        // Застосування
+        // Застосування - ОНОВЛЮЄМО ЦІНУ ЧЕРЕЗ ОРИГІНАЛЬНИЙ API
         document.querySelector('.apply-modal-btn')?.addEventListener('click', () => {
             selectedAdults = tempAdults;
             selectedChildren = tempChildren;
+
+            // Оновлюємо текст на сторінці
             if (weightSpan) {
                 let childrenText = '';
                 if (selectedChildren.length > 0) childrenText = `, ${selectedChildren.length} ${selectedChildren.length === 1 ? 'дитина' : 'дітей'}`;
@@ -938,24 +924,64 @@ function createCustomTouristForm() {
             }
             closeModal();
 
-            // ОНОВЛЕННЯ ЦІНИ - знаходимо оригінальну кнопку і клікаємо
-            setTimeout(() => {
-                const originalApplyBtn = document.querySelector('.new_f-dropdown-btn-apply');
-                if (originalApplyBtn) {
-                    originalApplyBtn.click();
+            // Знаходимо оригінальний випадаючий список туристів
+            const originalDropdown = document.querySelector('.new_f-dropdown-body');
+            if (originalDropdown) {
+                // Оновлюємо кількість дорослих в оригінальній формі
+                const adultItems = originalDropdown.querySelectorAll('.new_f-people-item');
+                adultItems.forEach(item => {
+                    const val = parseInt(item.innerText);
+                    if (val === selectedAdults) {
+                        // Імітуємо клік для вибору
+                        item.click();
+                    }
+                });
+
+                // Очищаємо і додаємо дітей
+                const childrenList = originalDropdown.querySelector('.new_f-children-list');
+                if (childrenList) {
+                    // Видаляємо всіх дітей
+                    const existingChildren = childrenList.querySelectorAll('.new_f-children-list-item');
+                    existingChildren.forEach(child => {
+                        const removeBtn = child.querySelector('.remove-child');
+                        if (removeBtn) removeBtn.click();
+                    });
+
+                    // Додаємо нових дітей
+                    selectedChildren.forEach(age => {
+                        const addChildBtn = originalDropdown.querySelector('.new_f-children-accordion-btn');
+                        if (addChildBtn) {
+                            addChildBtn.click();
+                            setTimeout(() => {
+                                const ageItems = originalDropdown.querySelectorAll('.new_f-children-age-item');
+                                ageItems.forEach(ageItem => {
+                                    if (parseInt(ageItem.dataset.value) === age) {
+                                        ageItem.click();
+                                    }
+                                });
+                                const applyChildBtn = originalDropdown.querySelector('.new_f-dropdown-btn-apply');
+                                if (applyChildBtn) applyChildBtn.click();
+                            }, 100);
+                        }
+                    });
                 }
+
+                // Імітуємо натискання на кнопку "Застосувати" в оригінальній формі
+                setTimeout(() => {
+                    const originalApplyBtn = originalDropdown.querySelector('.new_f-dropdown-btn-apply');
+                    if (originalApplyBtn) {
+                        originalApplyBtn.click();
+                    }
+                    // Оновлюємо ціну в нашому блоці
+                    setTimeout(() => updateCustomPrice(), 500);
+                }, 300);
+            } else {
+                // Якщо не знайшли оригінальну форму - просто оновлюємо ціну через спостерігача
                 setTimeout(() => updateCustomPrice(), 500);
-            }, 100);
+            }
         });
     };
     touristBlock.appendChild(newBtn);
     console.log('✅ Своя форма створена');
 }
-
-// 4. Запуск
-setTimeout(() => {
-    createCustomTouristForm();
-    startPriceWatcher();
-}, 1500);
-</script>
 {% endblock %}
