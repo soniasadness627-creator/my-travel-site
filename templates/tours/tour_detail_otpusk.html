@@ -783,90 +783,31 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== ВИПРАВЛЕННЯ: КНОПКА "ОБРАТИ ТУРИСТІВ" З ОНОВЛЕННЯМ ЦІНИ ==========
+// ========== ПРОСТЕ РІШЕННЯ: КНОПКА + ОНОВЛЕННЯ ЦІНИ ==========
 
-// 1. Функція для показу оригінальної форми
-function showOriginalTouristForm() {
-    // Знаходимо приховану оригінальну кнопку "Ще"
-    const originalBtn = document.querySelector('.new_t-change-people');
-
-    if (originalBtn) {
-        console.log('Оригінальна кнопка знайдена, викликаємо...');
-        // Програмно клікаємо по оригінальній кнопці
-        originalBtn.click();
-    } else {
-        console.log('Кнопку не знайдено, спробуємо ще раз');
-        setTimeout(showOriginalTouristForm, 500);
-    }
-}
-
-// 2. Функція для оновлення ціни в нашому блоці
+// 1. Функція для оновлення ціни в нашому блоку
 function updateCustomPrice() {
-    const originalPrice = document.querySelector('.new_t-order-price .new_price-value');
+    const originalPriceElement = document.querySelector('.new_t-order-price .new_price-value');
     const customPriceBlock = document.querySelector('.price-number');
 
-    if (originalPrice && customPriceBlock) {
-        const newPrice = originalPrice.innerText;
+    if (originalPriceElement && customPriceBlock) {
+        const newPrice = originalPriceElement.innerText;
         if (customPriceBlock.innerText !== newPrice) {
             console.log('Оновлюємо ціну:', newPrice);
             customPriceBlock.innerText = newPrice;
 
-            // Оновлюємо приховане поле форми
+            // Оновлюємо приховане поле форми бронювання
             const tourPriceField = document.getElementById('tourPrice');
             if (tourPriceField) tourPriceField.value = newPrice;
         }
     }
 }
 
-// 3. Замінюємо функцію кнопки "Обрати туристів"
-function fixTouristButton() {
-    const touristBtn = document.querySelector('.tourist-select-btn');
-    if (!touristBtn) {
-        setTimeout(fixTouristButton, 500);
-        return;
-    }
-
-    console.log('Виправляємо кнопку "Обрати туристів"');
-
-    // Зберігаємо старий обробник і замінюємо
-    const newBtn = touristBtn.cloneNode(true);
-    touristBtn.parentNode.replaceChild(newBtn, touristBtn);
-
-    newBtn.onclick = function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        // Викликаємо оригінальну форму Otpusk
-        showOriginalTouristForm();
-    };
-}
-
-// 4. Спостерігаємо за зміною ціни після вибору туристів
-function watchPriceChanges() {
-    const originalPriceElement = document.querySelector('.new_t-order-price .new_price-value');
-    if (!originalPriceElement) {
-        setTimeout(watchPriceChanges, 500);
-        return;
-    }
-
-    // Спостерігаємо за змінами в блоці ціни
-    const observer = new MutationObserver(function() {
-        updateCustomPrice();
-    });
-
-    observer.observe(originalPriceElement, {
-        childList: true,
-        subtree: true,
-        characterData: true
-    });
-
-    console.log('Спостерігаємо за зміною ціни');
-}
-
-// 5. Також оновлюємо ціну коли змінюється блок .new_t-order-price
-function observePriceContainer() {
+// 2. Спостерігаємо за зміною ціни в оригінальному блоці (оновлює нашу)
+function startPriceWatcher() {
     const priceContainer = document.querySelector('.new_t-order-price');
     if (!priceContainer) {
-        setTimeout(observePriceContainer, 500);
+        setTimeout(startPriceWatcher, 500);
         return;
     }
 
@@ -880,19 +821,74 @@ function observePriceContainer() {
         characterData: true,
         attributes: true
     });
+
+    console.log('Спостерігач за ціною запущено');
+    updateCustomPrice(); // Оновлюємо одразу
 }
 
-// 6. ЗАПУСК
-setTimeout(function() {
-    fixTouristButton();
-    watchPriceChanges();
-    observePriceContainer();
-}, 2000);
+// 3. ГОЛОВНА ФУНКЦІЯ: створюємо нову кнопку та підключаємо її до оригінальної логіки
+function setupTouristSelector() {
+    // Шукаємо батьківський контейнер для кнопки
+    const touristBlock = document.querySelector('.tourist-table .new_t-tour-tab-col-2');
+    if (!touristBlock) {
+        setTimeout(setupTouristSelector, 300);
+        return;
+    }
 
-// Додатковий запуск через 5 секунд для надійності
-setTimeout(function() {
-    fixTouristButton();
+    // Знаходимо ПРИХОВАНУ оригінальну кнопку "Ще" (вона є в DOM)
+    const originalButton = touristBlock.querySelector('.new_t-change-people');
+    if (!originalButton) {
+        console.log('Оригінальну кнопку не знайдено, повторюємо спробу');
+        setTimeout(setupTouristSelector, 300);
+        return;
+    }
+
+    // Видаляємо стару кнопку, якщо вона є, щоб уникнути дублювання
+    const oldCustomBtn = touristBlock.querySelector('.custom-tourist-btn-fixed');
+    if (oldCustomBtn) oldCustomBtn.remove();
+
+    // СТВОРЮЄМО НОВУ КРАСИВУ КНОПКУ
+    const newButton = document.createElement('button');
+    newButton.className = 'custom-tourist-btn-fixed';
+    newButton.innerHTML = '👥 Обрати туристів';
+    newButton.style.cssText = `
+        background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+        border: none;
+        padding: 6px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-left: 15px;
+        transition: all 0.3s ease;
+        color: #1e293b;
+    `;
+    newButton.onmouseover = () => newButton.style.background = 'linear-gradient(135deg, #e2e8f0, #cbd5e1)';
+    newButton.onmouseout = () => newButton.style.background = 'linear-gradient(135deg, #f1f5f9, #e2e8f0)';
+
+    // ПРИ НАТИСКАННІ - ІМІТУЄМО КЛІК ПО ОРИГІНАЛЬНІЙ КНОПЦІ
+    newButton.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Клік по новій кнопці, викликаємо оригінальну...');
+        originalButton.click(); // <--- Це чарівний рядок, який відкриває правильну форму
+    };
+
+    // Вставляємо кнопку в потрібне місце
+    touristBlock.appendChild(newButton);
+    console.log('✅ Нова кнопка успішно створена та підключена');
+}
+
+// 4. Запускаємо всі наші функції з невеликою затримкою, щоб DOM встиг завантажитись
+setTimeout(() => {
+    setupTouristSelector();
+    startPriceWatcher();
+}, 1500);
+
+// Дублюємо запуск через 3 секунди для надійності (на випадок, якщо щось пішло не так)
+setTimeout(() => {
+    setupTouristSelector();
     updateCustomPrice();
-}, 5000);
+}, 3000);
 </script>
 {% endblock %}
