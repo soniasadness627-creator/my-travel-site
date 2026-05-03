@@ -580,38 +580,49 @@
             flex-wrap: wrap !important;
         }
     }
-    /* ========== ВИТЯГУЄМО ЦІНУ У ВЕРХНІЙ ПРАВИЙ КУТ (АЛЬТЕРНАТИВНИЙ) ========== */
+    /* ========== ВИТЯГУЄМО ЦІНУ У ВЕРХНІЙ ПРАВИЙ КУТ ========== */
 
-/* Прибираємо приховування тільки для ціни */
-.new_t-order-content {
-    display: none !important;
-}
-
-.new_t-order-price {
-    position: absolute !important;
-    top: 20px !important;
-    right: 0 !important;
-    display: block !important;
-    background: transparent !important;
-    padding: 0 !important;
-    z-index: 10 !important;
-}
-
-/* Контейнер для назви туру */
-.new_t-header-title-container {
-    position: relative !important;
-}
-
-/* Додаємо відносне позиціонування для хедера */
+/* Знаходимо контейнер з назвою туру і додаємо йому позиціонування */
 .new_t-header-top {
     position: relative !important;
 }
 
-/* Адаптація */
+/* Створюємо блок для ціни у верхньому правому куті */
+.new_t-header-title-container {
+    position: relative !important;
+    padding-right: 150px !important;
+}
+
+/* Витягуємо ціну з прихованого блоку і показуємо її зверху справа */
+.new_t-order-price {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    text-align: right !important;
+}
+
+.new_t-order-price .new_price,
+.new_t-order-price .new_price-value {
+    color: #dc2626 !important;
+    font-weight: 700 !important;
+    font-size: 1.5rem !important;
+}
+
+.new_t-order-price .currency {
+    color: #1a202c !important;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+}
+
+/* Адаптація для мобільних */
 @media (max-width: 768px) {
-    .new_t-order-price {
-        top: 10px !important;
-        right: 0 !important;
+    .new_t-header-title-container {
+        padding-right: 100px !important;
     }
 
     .new_t-order-price .new_price,
