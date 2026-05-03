@@ -681,6 +681,45 @@
             border-bottom: none !important;
         }
     }
+    /* ========== СТИЛІ ДЛЯ ФОРМИ ТУРИСТІВ ========== */
+.new_f-dropdown-body {
+    display: none !important;
+}
+
+.new_f-dropdown-body[style*="display: block"] {
+    display: block !important;
+}
+
+/* Стилі для елементів форми */
+.new_f-people-item {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.new_f-people-item:hover {
+    background: var(--primary-color, #3b82f6) !important;
+    color: white !important;
+}
+
+.new_f-children-age-item {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.new_f-children-age-item:hover {
+    background: var(--primary-color, #3b82f6) !important;
+    color: white !important;
+}
+
+.new_f-dropdown-bottom-btn {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.new_f-dropdown-bottom-btn:hover {
+    opacity: 0.9;
+    transform: scale(0.98);
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -864,14 +903,32 @@ function fixDateStyles() {
 function createCustomTouristButton() {
     // Знаходимо блок з туристами
     const touristBlock = document.querySelector('.tourist-table');
-    if (!touristBlock) return;
+    if (!touristBlock) {
+        console.log('Блок туристів не знайдено');
+        return;
+    }
 
     const col2 = touristBlock.querySelector('.new_t-tour-tab-col-2');
-    if (!col2) return;
+    if (!col2) {
+        console.log('Колонка туристів не знайдена');
+        return;
+    }
 
-    // Отримуємо оригінальний випадаючий список
-    const originalDropdown = document.querySelector('.new_f-dropdown-body');
-    if (!originalDropdown) return;
+    // Шукаємо випадаючий список різними способами
+    let originalDropdown = document.querySelector('.new_t-change-people-dropdown');
+    if (!originalDropdown) {
+        originalDropdown = document.querySelector('.new_f-dropdown-body');
+    }
+    if (!originalDropdown) {
+        originalDropdown = document.querySelector('[data-role="body"]');
+    }
+
+    console.log('Знайдено випадаючий список:', originalDropdown);
+
+    if (!originalDropdown) {
+        console.log('Випадаючий список не знайдено');
+        return;
+    }
 
     // Ховаємо оригінальну кнопку
     const originalBtn = col2.querySelector('.new_t-change-people');
@@ -888,9 +945,14 @@ function createCustomTouristButton() {
     customBtn.onmouseover = function() { this.style.background = 'linear-gradient(135deg, #e2e8f0, #cbd5e1)'; };
     customBtn.onmouseout = function() { this.style.background = 'linear-gradient(135deg, #f1f5f9, #e2e8f0)'; };
 
-    customBtn.onclick = function() {
+    customBtn.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Клік по кнопці "Обрати туристів"');
+
         if (originalDropdown) {
             if (originalDropdown.style.display === 'none' || originalDropdown.style.display === '') {
+                console.log('Показуємо форму');
                 originalDropdown.style.display = 'block';
                 originalDropdown.style.position = 'fixed';
                 originalDropdown.style.top = '50%';
@@ -906,6 +968,7 @@ function createCustomTouristButton() {
                 originalDropdown.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
                 originalDropdown.style.border = 'none';
 
+                // Додаємо затемнення фону
                 const overlay = document.createElement('div');
                 overlay.className = 'people-dropdown-overlay';
                 overlay.style.cssText = 'position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:10000;';
@@ -915,15 +978,37 @@ function createCustomTouristButton() {
                 };
                 document.body.appendChild(overlay);
             } else {
+                console.log('Ховаємо форму');
                 originalDropdown.style.display = 'none';
                 const overlay = document.querySelector('.people-dropdown-overlay');
                 if (overlay) overlay.remove();
             }
+        } else {
+            console.log('Випадаючий список не знайдено!');
+            alert('Форма вибору туристів тимчасово недоступна. Будь ласка, оновіть сторінку.');
         }
     };
 
     col2.appendChild(customBtn);
+    console.log('Кнопка "Обрати туристів" додана');
 }
+
+// Додаткова функція для пошуку випадаючого списку через деякий час
+function findAndFixDropdown() {
+    const dropdown = document.querySelector('.new_f-dropdown-body');
+    if (dropdown) {
+        console.log('Випадаючий список знайдено пізніше');
+        // Прибираємо стиль display none якщо він є
+        if (dropdown.style.display === 'none') {
+            // Залишаємо як є, головне що ми його знайшли
+        }
+    } else {
+        setTimeout(findAndFixDropdown, 500);
+    }
+}
+
+// Запускаємо пошук
+setTimeout(findAndFixDropdown, 1000);
 
 // ========== 7. ЗАПУСК ВСІХ ФУНКЦІЙ ==========
 setTimeout(function() {
