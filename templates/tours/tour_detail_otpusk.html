@@ -317,22 +317,69 @@
     .new_t-tab-content-top {
         transition: all 0.3s ease;
     }
-    /* Робимо рейтинг квадратним */
+    /* ========== РЕЙТИНГ - КВАДРАТНИЙ (як на сторінці результатів пошуку) ========== */
 .new_r-item-rating-container,
 .new_r-p8,
 .new_r-p7,
 .new_r-p6,
 .new_r-p5 {
-    border-radius: 10px !important;  /* 0px = повністю квадратний, 10px = злегка округлений */
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    z-index: 10 !important;
+    width: 65px !important;
+    height: 65px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: white !important;
+    border-radius: 10px !important;
+    border-width: 2px !important;
+    border-style: solid !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Ховаємо всі круглі елементи (круги, діаграми) */
+.new_r-item-rating-value {
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    margin: 0 0 3px 0 !important;
+    line-height: 1 !important;
+}
+
+.new_r-item-rating-rev {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    font-size: 0.5rem !important;
+    color: #666 !important;
+    line-height: 1.1 !important;
+}
+
+.new_r-item-rating-rev span {
+    font-weight: 700 !important;
+    font-size: 0.7rem !important;
+    color: #555 !important;
+}
+
+/* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ (діаграми, круги) */
+.new_r-item-rating-container::before,
 .new_r-item-rating-container .slice,
+.new_r-item-rating-container .bar,
+.new_r-item-rating-container .fill,
 .new_r-item-rating-container svg,
 .new_r-item-rating-container circle,
 .new_r-item-rating-container path {
     display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
 }
+
+/* Колір рамки залежно від оцінки */
+.new_r-p8 { border-color: #22c55e !important; }
+.new_r-p7 { border-color: #eab308 !important; }
+.new_r-p6 { border-color: #eab308 !important; }
+.new_r-p5 { border-color: #ef4444 !important; }
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" (без повідомлення) -->
