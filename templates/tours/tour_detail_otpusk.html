@@ -784,102 +784,184 @@ function updatePrice() {
     if (priceBlock) priceBlock.innerHTML = `<span class="price-number">${priceValue.innerText}</span>`;
 }
 
-// 4. ГОЛОВНА ФУНКЦІЯ - ВІДКРИТТЯ ФОРМИ ТУРИСТІВ
-function initTouristForm() {
-    // Знаходимо кнопку "Ще"
-    const targetNode = document.querySelector('.new_t-tour-tab-table.tourist-table .new_t-change-people');
-    if (!targetNode) {
-        setTimeout(initTouristForm, 500);
+// 4. СТВОРЕННЯ СВОЄЇ ФОРМИ ДЛЯ ТУРИСТІВ
+function createCustomTouristForm() {
+    // Знаходимо блок з туристами
+    const touristBlock = document.querySelector('.tourist-table');
+    if (!touristBlock) {
+        setTimeout(createCustomTouristForm, 500);
         return;
     }
 
-    // Знаходимо випадаючий блок
-    const dropdown = targetNode.querySelector('.new_f-dropdown-body');
-    if (!dropdown) {
-        setTimeout(initTouristForm, 500);
-        return;
+    const col2 = touristBlock.querySelector('.new_t-tour-tab-col-2');
+    if (!col2) return;
+
+    // Отримуємо поточний текст
+    let currentAdults = 2;
+    let currentChildren = [];
+
+    // Шукаємо поточне значення
+    const weightSpan = col2.querySelector('.new_weight-bold');
+    if (weightSpan) {
+        const text = weightSpan.innerText;
+        const adultsMatch = text.match(/(\d+)\s*дорослих/);
+        if (adultsMatch) currentAdults = parseInt(adultsMatch[1]);
     }
 
-    console.log('Форма знайдена, додаємо обробник');
+    // Ховаємо оригінальну кнопку
+    const originalBtn = col2.querySelector('.new_t-change-people');
+    if (originalBtn) originalBtn.style.display = 'none';
 
-    // Очищаємо старі обробники - видаляємо всі клони і створюємо нову кнопку
-    const parent = targetNode.parentNode;
-    const textSpan = parent.querySelector('.new_weight-bold');
-
-    // Видаляємо стару кнопку
-    if (targetNode) targetNode.remove();
+    // Перевіряємо чи вже є наша кнопка
+    if (col2.querySelector('.custom-tourist-btn')) return;
 
     // Створюємо нову кнопку
-    const newBtn = document.createElement('span');
-    newBtn.className = 'new_t-change-btn new_t-change-people';
-    newBtn.style.cssText = 'width: 30px; height: 30px; min-width: 30px; background: #f1f5f9; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 15px;';
-    newBtn.innerHTML = '<span style="font-size: 0;">▼</span>';
+    const customBtn = document.createElement('button');
+    customBtn.className = 'custom-tourist-btn';
+    customBtn.innerHTML = '👥 Обрати туристів';
+    customBtn.style.cssText = 'background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border: none; padding: 6px 20px; border-radius: 30px; cursor: pointer; font-size: 0.8rem; font-weight: 500; margin-left: 15px; transition: all 0.3s ease; color: #1e293b;';
+    customBtn.onmouseover = function() { this.style.background = 'linear-gradient(135deg, #e2e8f0, #cbd5e1)'; };
+    customBtn.onmouseout = function() { this.style.background = 'linear-gradient(135deg, #f1f5f9, #e2e8f0)'; };
 
-    // Вставляємо кнопку після тексту
-    if (textSpan) {
-        textSpan.after(newBtn);
-    } else {
-        parent.appendChild(newBtn);
-    }
+    // Створюємо HTML для форми
+    customBtn.onclick = function() {
+        // Створюємо форму
+        const modalHtml = `
+            <div class="custom-tourist-modal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100001; width: 90%; max-width: 400px; background: white; border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); overflow: hidden;">
+                <div style="background: var(--primary-color, #3b82f6); padding: 15px 20px; color: white; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
+                    <span>👥 Вибір туристів</span>
+                    <span class="close-modal" style="cursor: pointer; font-size: 24px;">&times;</span>
+                </div>
+                <div style="padding: 20px;">
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-weight: 600; display: block; margin-bottom: 10px;">Кількість дорослих:</label>
+                        <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                            ${[1,2,3,4,5,6,7,8].map(n => `<button class="adult-count" data-value="${n}" style="flex:1; padding: 10px; border: 1px solid #e2e8f0; background: ${currentAdults === n ? 'var(--primary-color, #3b82f6)' : 'white'}; color: ${currentAdults === n ? 'white' : '#1e293b'}; border-radius: 8px; cursor: pointer;">${n}</button>`).join('')}
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-weight: 600; display: block; margin-bottom: 10px;">Діти:</label>
+                        <button id="add-child-btn" style="background: #f1f5f9; border: none; padding: 8px 16px; border-radius: 30px; cursor: pointer;">+ Додати дитину</button>
+                        <div id="children-list" style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                    </div>
+                </div>
+                <div style="padding: 15px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button class="cancel-modal" style="background: #e2e8f0; border: none; padding: 8px 24px; border-radius: 30px; cursor: pointer;">Відміна</button>
+                    <button class="apply-modal" style="background: var(--primary-color, #3b82f6); border: none; padding: 8px 24px; border-radius: 30px; cursor: pointer; color: white;">Застосувати</button>
+                </div>
+            </div>
+            <div class="custom-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100000;"></div>
+        `;
 
-    // Додаємо обробник кліку
-    newBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        e.preventDefault();
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-        if (dropdown.style.display === 'none' || dropdown.style.display === '') {
-            // Показуємо форму
-            dropdown.style.display = 'block';
-            dropdown.style.position = 'fixed';
-            dropdown.style.top = '50%';
-            dropdown.style.left = '50%';
-            dropdown.style.transform = 'translate(-50%, -50%)';
-            dropdown.style.zIndex = '100000';
-            dropdown.style.width = '90%';
-            dropdown.style.maxWidth = '450px';
-            dropdown.style.maxHeight = '80vh';
-            dropdown.style.overflowY = 'auto';
-            dropdown.style.background = 'white';
-            dropdown.style.borderRadius = '20px';
-            dropdown.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
+        const modal = document.querySelector('.custom-tourist-modal');
+        const overlay = document.querySelector('.custom-overlay');
 
-            // Затемнення
-            const overlay = document.createElement('div');
-            overlay.className = 'tourist-overlay';
-            overlay.style.cssText = 'position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:99999;';
-            overlay.onclick = function() {
-                dropdown.style.display = 'none';
-                overlay.remove();
-            };
-            document.body.appendChild(overlay);
-        } else {
-            dropdown.style.display = 'none';
-            const overlay = document.querySelector('.tourist-overlay');
-            if (overlay) overlay.remove();
+        // Закриття
+        const closeModal = function() {
+            modal.remove();
+            overlay.remove();
+        };
+
+        document.querySelector('.close-modal')?.addEventListener('click', closeModal);
+        document.querySelector('.cancel-modal')?.addEventListener('click', closeModal);
+        overlay.addEventListener('click', closeModal);
+
+        // Вибір кількості дорослих
+        let selectedAdults = currentAdults;
+        let selectedChildren = [...currentChildren];
+
+        document.querySelectorAll('.adult-count').forEach(btn => {
+            btn.addEventListener('click', function() {
+                selectedAdults = parseInt(this.dataset.value);
+                document.querySelectorAll('.adult-count').forEach(b => {
+                    b.style.background = 'white';
+                    b.style.color = '#1e293b';
+                    if (parseInt(b.dataset.value) === selectedAdults) {
+                        b.style.background = 'var(--primary-color, #3b82f6)';
+                        b.style.color = 'white';
+                    }
+                });
+            });
+        });
+
+        // Додавання дитини
+        const childAges = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+        document.getElementById('add-child-btn')?.addEventListener('click', function() {
+            const ageHtml = `
+                <div class="child-age-select" style="margin-top: 10px;">
+                    <select style="padding: 8px; border-radius: 30px; border: 1px solid #e2e8f0;">
+                        ${childAges.map(age => `<option value="${age}">${age} ${age === 1 ? 'рік' : 'років'}</option>`).join('')}
+                    </select>
+                    <button class="add-age-btn" style="background: var(--primary-color, #3b82f6); color: white; border: none; padding: 8px 16px; border-radius: 30px; margin-left: 10px; cursor: pointer;">Додати</button>
+                </div>
+            `;
+            const container = document.getElementById('children-list');
+            container.insertAdjacentHTML('beforeend', ageHtml);
+            const addBtn = container.querySelector('.add-age-btn:last-child');
+            addBtn.addEventListener('click', function() {
+                const select = this.parentElement.querySelector('select');
+                const age = parseInt(select.value);
+                selectedChildren.push(age);
+                updateChildrenDisplay();
+                this.parentElement.remove();
+            });
+        });
+
+        function updateChildrenDisplay() {
+            const container = document.getElementById('children-list');
+            const btns = container.querySelectorAll('.child-item');
+            btns.forEach(btn => btn.remove());
+
+            selectedChildren.forEach((age, index) => {
+                const childHtml = `
+                    <div class="child-item" style="background: #e2e8f0; padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 8px;">
+                        <span>${age} ${age === 1 ? 'рік' : 'років'}</span>
+                        <span class="remove-child" data-index="${index}" style="cursor: pointer; color: #dc2626;">&times;</span>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', childHtml);
+            });
+
+            document.querySelectorAll('.remove-child').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const idx = parseInt(this.dataset.index);
+                    selectedChildren.splice(idx, 1);
+                    updateChildrenDisplay();
+                });
+            });
         }
-    });
 
-    // Закриття через кнопки всередині форми
-    const cancelBtn = dropdown.querySelector('.new_f-dropdown-btn-cancel');
-    const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
-    const closeBtn = dropdown.querySelector('.new_f-dropdown-body-close');
+        updateChildrenDisplay();
 
-    const closeForm = function() {
-        dropdown.style.display = 'none';
-        const overlay = document.querySelector('.tourist-overlay');
-        if (overlay) overlay.remove();
+        // Застосування
+        document.querySelector('.apply-modal')?.addEventListener('click', function() {
+            let childrenText = '';
+            if (selectedChildren.length > 0) {
+                childrenText = `, ${selectedChildren.length} ${selectedChildren.length === 1 ? 'дитина' : 'дітей'}`;
+            }
+            if (weightSpan) {
+                weightSpan.innerText = `${selectedAdults} дорослих${childrenText}`;
+            }
+            closeModal();
+
+            // Тут можна додати логіку оновлення ціни
+            setTimeout(() => {
+                updatePrice();
+            }, 500);
+        });
     };
 
-    if (cancelBtn) cancelBtn.addEventListener('click', closeForm);
-    if (applyBtn) applyBtn.addEventListener('click', closeForm);
-    if (closeBtn) closeBtn.addEventListener('click', closeForm);
+    col2.appendChild(customBtn);
+    console.log('Кнопка "Обрати туристів" додана');
 }
 
 // 5. ЗАПУСК
 setTimeout(function() {
     reorderDateBlocks();
     createPriceBlock();
-    initTouristForm();
+    createCustomTouristForm();
 }, 2000);
 
 // Спостерігач за змінами
@@ -887,8 +969,8 @@ const observer = new MutationObserver(function() {
     setTimeout(function() {
         reorderDateBlocks();
         updatePrice();
-        const btn = document.querySelector('.new_t-tour-tab-table.tourist-table .new_t-change-people');
-        if (!btn) initTouristForm();
+        const btn = document.querySelector('.custom-tourist-btn');
+        if (!btn) createCustomTouristForm();
     }, 100);
 });
 observer.observe(document.body, { childList: true, subtree: true, attributes: true });
