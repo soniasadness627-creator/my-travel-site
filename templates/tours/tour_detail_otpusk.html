@@ -333,6 +333,30 @@
         font-size: 1.2rem !important;
         font-weight: 600 !important;
     }
+    /* ========== ПОВНІСТЮ ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ========== */
+.new_t-order-btn-true,
+.new_t-order-btn,
+.new_t-order-table {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Також ховаємо блок з ціною, якщо він містить тільки кнопку */
+.new_t-order-col {
+    position: relative;
+}
+
+/* Додатково ховаємо будь-які інші кнопки замовлення */
+.new_t-order-btn-true,
+[class*="new_t-order"] {
+    display: none !important;
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" (без повідомлення) -->
