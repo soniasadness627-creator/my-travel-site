@@ -54,7 +54,7 @@
 
 <!-- ========== СТИЛІ ========== -->
 <style>
-    /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
+       /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
     #otpusk-tour-module .new_f-ext-btn,
@@ -154,7 +154,6 @@
 
     /* ========== СТИЛЬНІ КАРТКИ ДЛЯ БЛОКУ "ТУР" ========== */
 
-    /* Кожен блок окрема стильна картка */
     .new_t-tour-tab-table {
         background: white !important;
         border-radius: 20px !important;
@@ -192,7 +191,6 @@
         margin: 0 !important;
     }
 
-    /* Заголовок лівої колонки */
     .new_t-tour-tab-col-1-title {
         font-size: 0.85rem !important;
         font-weight: 600 !important;
@@ -201,7 +199,6 @@
         white-space: nowrap !important;
     }
 
-    /* Права колонка з контентом - розтягується на всю ширину */
     .new_t-tour-tab-col-2 {
         background: transparent !important;
         padding: 0 !important;
@@ -213,14 +210,13 @@
         gap: 10px !important;
     }
 
-    /* Текст "2 дорослих" */
     .new_weight-bold {
         font-weight: 600 !important;
         color: #1e293b !important;
         font-size: 1rem !important;
     }
 
-    /* ========== КРУГЛА КНОПКА "ЩЕ" - 30x30, справа ========== */
+    /* ========== КРУГЛА КНОПКА "ЩЕ" З ТЕКСТОМ ========== */
     .new_t-change-btn {
         width: 30px !important;
         height: 30px !important;
@@ -245,19 +241,31 @@
         justify-content: center !important;
         width: 100% !important;
         height: 100% !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: var(--primary-color, #3b82f6) !important;
     }
 
-    /* Ховаємо текст "Ще", залишаємо тільки стрілку */
+    /* Ховаємо старий текст "Ще" і додаємо новий символ або текст */
     .new_t-change-btn span:not(svg) {
-        display: none !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Додаємо стрілку вниз замість тексту "Ще" */
+    .new_t-change-btn span:not(svg) {
+        font-size: 0 !important;
+    }
+
+    .new_t-change-btn span:not(svg)::before {
+        content: "▼" !important;
+        font-size: 12px !important;
+        color: var(--primary-color, #3b82f6) !important;
     }
 
     .new_t-change-btn svg {
-        width: 14px !important;
-        height: 14px !important;
-        margin: 0 !important;
-        fill: var(--primary-color, #3b82f6) !important;
-        transition: fill 0.3s ease !important;
+        display: none !important;
     }
 
     .new_t-change-btn:hover {
@@ -265,11 +273,11 @@
         transform: scale(1.05);
     }
 
-    .new_t-change-btn:hover svg {
-        fill: white !important;
+    .new_t-change-btn:hover span::before {
+        color: white !important;
     }
 
-    /* ========== ДАТА ========== */
+    /* ========== ДАТА - БЛОК ТРИВАЛОСТІ ПРОЗОРИЙ ========== */
     .new_t-date-table {
         background: transparent !important;
         padding: 0 !important;
@@ -292,19 +300,34 @@
         font-size: 1rem !important;
     }
 
-    .new_t-duration-container {
-        background: #f1f5f9 !important;
-        padding: 8px 20px !important;
+    /* Блок тривалості - прозорий, але з мінімальним виділенням */
+    .new_t-date-col.new_t-duration-col {
+        min-width: 130px !important;
+        text-align: center !important;
+        background: transparent !important;
+        padding: 8px 12px !important;
         border-radius: 40px !important;
+    }
+
+    .new_t-duration-container {
+        background: transparent !important;
+        padding: 6px 0 !important;
         font-weight: 600 !important;
         color: #1e293b !important;
-        font-size: 0.9rem !important;
+        font-size: 0.95rem !important;
+        display: inline-block !important;
+        width: auto !important;
+        text-align: center !important;
+        border-bottom: 1px dashed #e2e8f0 !important;
     }
 
     .new_t-duration-text {
-        font-size: 0.75rem !important;
+        font-size: 0.7rem !important;
         color: #64748b !important;
         margin-top: 4px !important;
+        text-align: center !important;
+        display: block !important;
+        width: 100% !important;
     }
 
     .new_t-date-col .new_weight-bold {
@@ -419,7 +442,6 @@
         color: white !important;
     }
 
-    /* Анімація */
     .new_t-tour-tab-table {
         animation: fadeUp 0.3s ease forwards;
     }
@@ -435,7 +457,7 @@
         }
     }
 
-    /* ========== ПРИХОВУЄМО БЛОК З ЦІНОЮ (ПОВНІСТЮ) ========== */
+    /* ========== ПРИХОВУЄМО БЛОК З ЦІНОЮ ========== */
     .new_t-order-content,
     .new_t-order-table,
     .new_t-order-col,
@@ -452,7 +474,7 @@
         pointer-events: none !important;
     }
 
-    /* ========== РОЗТЯГУЄМО ОСНОВНИЙ БЛОК НА ВСЮ ШИРИНУ ========== */
+    /* ========== РОЗТЯГУЄМО ОСНОВНИЙ БЛОК ========== */
     .new_t-content-table {
         display: flex !important;
         flex-direction: column !important;
@@ -465,12 +487,11 @@
         flex: 1 1 100% !important;
     }
 
-    /* Додатково - прибираємо будь-які обмеження */
     .new_t-content {
         width: 100% !important;
     }
 
-    /* ========== ПРИБИРАЄМО ЛІТАЧКИ ТА ЛІНІЮ В БЛОЦІ ДАТИ ========== */
+    /* ========== ПРИБИРАЄМО ЛІТАЧКИ ========== */
     .new_t-duration-icons {
         display: none !important;
     }
@@ -494,7 +515,7 @@
         display: none !important;
     }
 
-    /* Мобільна версія */
+    /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
     @media (max-width: 768px) {
         .new_t-menu {
             gap: 8px !important;
@@ -532,6 +553,22 @@
             align-items: flex-start !important;
         }
 
+        .new_t-date-col.new_t-duration-col {
+            min-width: auto !important;
+            width: 100% !important;
+        }
+
+        .new_t-duration-container {
+            white-space: normal !important;
+            text-align: center !important;
+            width: 100% !important;
+        }
+
+        .new_t-duration-text {
+            white-space: normal !important;
+            text-align: center !important;
+        }
+
         .new_t-tour-tab-table.food-table .new_t-tour-tab-col-2 {
             flex-direction: column !important;
             gap: 12px !important;
@@ -543,7 +580,6 @@
             flex-wrap: wrap !important;
         }
     }
-
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
