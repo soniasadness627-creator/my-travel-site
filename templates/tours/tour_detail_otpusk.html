@@ -302,12 +302,6 @@
         white-space: nowrap !important;
     }
 
-    .new_t-date-col .new_weight-bold {
-        color: #64748b !important;
-        font-weight: 500 !important;
-        font-size: 0.85rem !important;
-    }
-
     /* ========== ХАРЧУВАННЯ ========== */
     .new_t-tour-tab-table.food-table .new_t-tour-tab-col-2 {
         display: flex !important;
@@ -370,19 +364,19 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== ФОРМА ВИБОРУ ТУРИСТІВ - ПОВЕРХ ВСЬОГО ========== */
+    /* ========== ФОРМА ВИБОРУ ТУРИСТІВ ========== */
     .new_f-dropdown-body {
         position: fixed !important;
         top: 50% !important;
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
-        z-index: 1000000 !important;
+        z-index: 999999999 !important;
         background: white !important;
         border-radius: 20px !important;
         box-shadow: 0 25px 60px rgba(0,0,0,0.3) !important;
         display: none !important;
         width: 90% !important;
-        max-width: 450px !important;
+        max-width: 500px !important;
         min-width: 320px !important;
         max-height: 80vh !important;
         overflow-y: auto !important;
@@ -392,176 +386,48 @@
         display: block !important;
     }
 
-    /* Затемнення - під формою */
-    .people-dropdown-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 999999;
-    }
+    /* ========== ВИПРАВЛЕННЯ ДЛЯ ФОРМИ ========== */
 
-    /* Стилі для кнопок форми */
-    .new_f-dropdown-body button,
-    .new_f-dropdown-body .new_f-people-item,
-    .new_f-dropdown-body .new_f-dropdown-bottom-btn,
-    .new_f-dropdown-body .new_f-dropdown-body-close {
-        cursor: pointer !important;
-        pointer-events: auto !important;
-    }
+/* Затемнення має бути ПІД формою */
+.people-dropdown-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999999;
+}
 
-    .new_f-people-list {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 10px !important;
-        padding: 15px !important;
-    }
+/* Форма має бути НАД затемненням */
+.new_f-dropdown-body {
+    z-index: 1000000 !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    background: white !important;
+    border-radius: 20px !important;
+    width: 90% !important;
+    max-width: 450px !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.3) !important;
+}
 
-    .new_f-people-item {
-        flex: 1 !important;
-        text-align: center !important;
-        padding: 10px !important;
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 8px !important;
-        cursor: pointer !important;
-        background: white !important;
-        transition: all 0.2s ease !important;
-    }
+/* Стилі для кнопок форми, щоб вони були клікабельні */
+.new_f-dropdown-body button,
+.new_f-dropdown-body .new_f-people-item,
+.new_f-dropdown-body .new_f-dropdown-bottom-btn,
+.new_f-dropdown-body .new_f-dropdown-body-close {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
 
-    .new_f-people-item.active {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-    }
-
-    .new_f-people-item:hover {
-        background: #e2e8f0 !important;
-    }
-
-    .new_f-dropdown-body-bottom {
-        display: flex !important;
-        justify-content: flex-end !important;
-        gap: 10px !important;
-        padding: 15px 20px !important;
-        border-top: 1px solid #e2e8f0 !important;
-    }
-
-    .new_f-dropdown-bottom-btn {
-        padding: 8px 24px !important;
-        border-radius: 30px !important;
-        cursor: pointer !important;
-        border: none !important;
-        font-weight: 500 !important;
-        transition: all 0.2s ease !important;
-    }
-
-    .new_f-dropdown-bottom-btn:hover {
-        transform: scale(0.98);
-    }
-
-    .new_f-dropdown-btn-cancel {
-        background: #e2e8f0 !important;
-        color: #475569 !important;
-    }
-
-    .new_f-dropdown-btn-apply {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-    }
-
-    body.modal-open {
-        overflow: hidden !important;
-    }
-
-    .price-block-under-menu {
-        text-align: right;
-        margin: 15px 0 25px 0;
-        padding: 0;
-    }
-
-    .price-number {
-        color: #dc2626;
-        font-size: 1.8rem;
-        font-weight: 700;
-    }
-
-    .new_t-duration-icons {
-        display: none !important;
-    }
-
-    .new_t-tour-tab-table {
-        animation: fadeUp 0.3s ease forwards;
-    }
-
-    @keyframes fadeUp {
-        from {
-            opacity: 0;
-            transform: translateY(15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .new_t-content-table {
-        display: flex !important;
-        flex-direction: column !important;
-        width: 100% !important;
-    }
-
-    .new_t-content-col.new_t-tabs-content {
-        width: 100% !important;
-        max-width: 100% !important;
-        flex: 1 1 100% !important;
-    }
-
-    .new_t-content {
-        width: 100% !important;
-    }
-
-    /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
-    @media (max-width: 768px) {
-        .new_t-menu {
-            gap: 8px !important;
-            padding: 8px 12px !important;
-        }
-        .new_t-menu-item {
-            padding: 6px 16px !important;
-            font-size: 12px !important;
-        }
-        .new_t-tour-tab-table {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            padding: 16px !important;
-        }
-        .new_t-tour-tab-col-1-title {
-            white-space: normal !important;
-            margin-bottom: 8px !important;
-        }
-        .new_t-tour-tab-col-2 {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-        }
-        .new_t-date-table {
-            flex-wrap: wrap !important;
-        }
-        .price-number {
-            font-size: 1.4rem !important;
-        }
-        .new_f-dropdown-body {
-            width: 95% !important;
-            min-width: 280px !important;
-            max-height: 85vh !important;
-        }
-        .new_f-people-list {
-            flex-direction: column !important;
-        }
-        .new_f-people-item {
-            margin-bottom: 5px !important;
-        }
-    }
+/* Блокуємо прокрутку фону */
+body.modal-open {
+    overflow: hidden !important;
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -653,6 +519,7 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
+<script>
 // ========== ОРИГІНАЛЬНА КНОПКА "ЩЕ" ==========
 
 let activeOverlay = null;
@@ -677,18 +544,13 @@ function startPriceWatcher() {
     const observer = new MutationObserver(() => updateCustomPrice());
     observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true });
     updateCustomPrice();
-    console.log('✅ Спостерігач за ціною запущено');
 }
 
 // 3. Показуємо кнопку
 function ensureButtonVisible() {
     const btn = document.querySelector('.new_t-change-people');
-    if (btn) {
-        btn.style.display = 'inline-flex';
-        console.log('✅ Кнопка "Ще" видима');
-    } else {
-        setTimeout(ensureButtonVisible, 500);
-    }
+    if (btn) btn.style.display = 'inline-flex';
+    else setTimeout(ensureButtonVisible, 500);
 }
 
 // 4. ГОЛОВНА ФУНКЦІЯ ДЛЯ КНОПКИ
@@ -699,7 +561,7 @@ function initPeopleButton() {
         return;
     }
 
-    console.log('✅ Кнопка знайдена, налаштовуємо');
+    console.log('✅ Кнопка знайдена');
 
     const dropdown = peopleBtn.querySelector('.new_f-dropdown-body');
     if (!dropdown) return;
@@ -713,7 +575,7 @@ function initPeopleButton() {
     activeDropdown = newDropdown;
 
     function showDropdown() {
-        // Показуємо форму
+        // Спочатку показуємо форму
         newDropdown.style.display = 'block';
         newDropdown.style.position = 'fixed';
         newDropdown.style.top = '50%';
@@ -728,7 +590,7 @@ function initPeopleButton() {
         newDropdown.style.overflowY = 'auto';
         newDropdown.style.boxShadow = '0 25px 60px rgba(0,0,0,0.3)';
 
-        // Додаємо затемнення
+        // Потім додаємо затемнення ПІД форму
         if (activeOverlay) activeOverlay.remove();
         activeOverlay = document.createElement('div');
         activeOverlay.className = 'people-dropdown-overlay';
@@ -767,32 +629,17 @@ function initPeopleButton() {
     const applyBtn = newDropdown.querySelector('.new_f-dropdown-btn-apply');
     const closeBtn = newDropdown.querySelector('.new_f-dropdown-body-close');
 
-    if (cancelBtn) {
-        cancelBtn.onclick = function(e) {
-            e.stopPropagation();
-            hideDropdown();
-        };
-    }
-    if (applyBtn) {
-        applyBtn.onclick = function(e) {
-            e.stopPropagation();
-            hideDropdown();
-            setTimeout(updateCustomPrice, 500);
-        };
-    }
-    if (closeBtn) {
-        closeBtn.onclick = function(e) {
-            e.stopPropagation();
-            hideDropdown();
-        };
-    }
+    if (cancelBtn) cancelBtn.onclick = hideDropdown;
+    if (applyBtn) applyBtn.onclick = function() {
+        hideDropdown();
+        setTimeout(updateCustomPrice, 500);
+    };
+    if (closeBtn) closeBtn.onclick = hideDropdown;
 
-    // Запобігаємо закриттю при кліку всередині форми
+    // Закриття при кліку всередині форми не повинно закривати
     newDropdown.onclick = function(e) {
         e.stopPropagation();
     };
-
-    console.log('✅ Кнопка "Ще" повністю налаштована');
 }
 
 // 5. ЗАПУСК
@@ -805,9 +652,6 @@ setTimeout(() => {
 setTimeout(() => {
     initPeopleButton();
 }, 3500);
-
-setTimeout(() => {
-    initPeopleButton();
-}, 5500);
+</script>
 </script>
 {% endblock %}
