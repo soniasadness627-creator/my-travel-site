@@ -215,7 +215,7 @@
         font-size: 1rem !important;
     }
 
-    /* ========== КНОПКА "ЩЕ" - ОРИГІНАЛЬНА, АЛЕ КРАСИВА ========== */
+    /* ========== КНОПКА "ЩЕ" - ОРИГІНАЛЬНА, КРАСИВА ========== */
     .new_t-change-people {
         display: inline-flex !important;
         align-items: center !important;
@@ -370,13 +370,13 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== ОРИГІНАЛЬНА ФОРМА ВИБОРУ ТУРИСТІВ - ПРАВИЛЬНІ СТИЛІ ========== */
+    /* ========== ФОРМА ТУРИСТІВ - ПЕРЕДНІЙ ПЛАН ========== */
     .new_f-dropdown-body {
         position: fixed !important;
         top: 50% !important;
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
-        z-index: 1000000 !important;
+        z-index: 9999999 !important;
         background: white !important;
         border-radius: 20px !important;
         box-shadow: 0 25px 60px rgba(0,0,0,0.3) !important;
@@ -547,6 +547,7 @@
         display: none !important;
     }
 
+    /* Мобільна версія */
     @media (max-width: 768px) {
         .new_t-menu {
             gap: 8px !important;
@@ -578,6 +579,9 @@
         .new_f-dropdown-body {
             width: 95% !important;
             min-width: 280px !important;
+        }
+        .new_f-people-list {
+            flex-direction: column !important;
         }
     }
 </style>
@@ -673,6 +677,8 @@
 <script>
 // ========== ТІЛЬКИ ОРИГІНАЛЬНА ФОРМА ==========
 
+let activeOverlay = null;
+
 // 1. Оновлення ціни
 function updateCustomPrice() {
     const originalPriceBlock = document.querySelector('.new_t-order-price');
@@ -701,7 +707,33 @@ function ensureButtonVisible() {
     else setTimeout(ensureButtonVisible, 500);
 }
 
-// 4. Ініціалізація - тільки для оригінальної форми
+// 4. Додаємо overlay затемнення
+function addOverlay() {
+    if (activeOverlay) return;
+    activeOverlay = document.createElement('div');
+    activeOverlay.className = 'form-overlay-bg';
+    activeOverlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999998;';
+    document.body.appendChild(activeOverlay);
+    document.body.classList.add('modal-open');
+    document.body.style.overflow = 'hidden';
+
+    activeOverlay.onclick = function() {
+        const dropdown = document.querySelector('.new_f-dropdown-body');
+        if (dropdown) dropdown.style.display = 'none';
+        removeOverlay();
+    };
+}
+
+function removeOverlay() {
+    if (activeOverlay) {
+        activeOverlay.remove();
+        activeOverlay = null;
+    }
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+}
+
+// 5. Ініціалізація
 function initPeopleButton() {
     const peopleBtn = document.querySelector('.new_t-change-people');
     if (!peopleBtn) {
@@ -709,20 +741,30 @@ function initPeopleButton() {
         return;
     }
 
-    console.log('✅ Оригінальна кнопка "Ще" готова');
+    console.log('✅ Кнопка "Ще" готова');
 
-    // Отримуємо оригінальний випадаючий список
     const dropdown = peopleBtn.querySelector('.new_f-dropdown-body');
     if (dropdown) {
-        // Закриваємо форму за замовчуванням
         dropdown.style.display = 'none';
 
-        // Видаляємо старі обробники
         const newBtn = peopleBtn.cloneNode(true);
         peopleBtn.parentNode.replaceChild(newBtn, peopleBtn);
         const newDropdown = newBtn.querySelector('.new_f-dropdown-body');
 
-        // Додаємо обробник кліку
+        // Спостерігаємо за зміною стилю
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    if (newDropdown.style.display === 'block') {
+                        addOverlay();
+                    } else {
+                        removeOverlay();
+                    }
+                }
+            });
+        });
+        observer.observe(newDropdown, { attributes: true });
+
         newBtn.onclick = function(e) {
             e.stopPropagation();
             e.preventDefault();
@@ -733,7 +775,6 @@ function initPeopleButton() {
             }
         };
 
-        // Закриття через кнопки форми
         const cancelBtn = newDropdown.querySelector('.new_f-dropdown-btn-cancel');
         const applyBtn = newDropdown.querySelector('.new_f-dropdown-btn-apply');
         const closeBtn = newDropdown.querySelector('.new_f-dropdown-body-close');
@@ -758,14 +799,13 @@ function initPeopleButton() {
             };
         }
 
-        // Запобігаємо закриттю при кліку всередині форми
         newDropdown.onclick = function(e) {
             e.stopPropagation();
         };
     }
 }
 
-// 5. ЗАПУСК
+// 6. ЗАПУСК
 setTimeout(() => {
     ensureButtonVisible();
     startPriceWatcher();
