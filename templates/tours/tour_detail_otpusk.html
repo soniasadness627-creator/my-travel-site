@@ -580,6 +580,45 @@
             flex-wrap: wrap !important;
         }
     }
+    /* ========== ВИТЯГУЄМО ЦІНУ У ВЕРХНІЙ ПРАВИЙ КУТ (АЛЬТЕРНАТИВНИЙ) ========== */
+
+/* Прибираємо приховування тільки для ціни */
+.new_t-order-content {
+    display: none !important;
+}
+
+.new_t-order-price {
+    position: absolute !important;
+    top: 20px !important;
+    right: 0 !important;
+    display: block !important;
+    background: transparent !important;
+    padding: 0 !important;
+    z-index: 10 !important;
+}
+
+/* Контейнер для назви туру */
+.new_t-header-title-container {
+    position: relative !important;
+}
+
+/* Додаємо відносне позиціонування для хедера */
+.new_t-header-top {
+    position: relative !important;
+}
+
+/* Адаптація */
+@media (max-width: 768px) {
+    .new_t-order-price {
+        top: 10px !important;
+        right: 0 !important;
+    }
+
+    .new_t-order-price .new_price,
+    .new_t-order-price .new_price-value {
+        font-size: 1.2rem !important;
+    }
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
