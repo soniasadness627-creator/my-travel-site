@@ -265,7 +265,7 @@
         color: white !important;
     }
 
-    /* ========== ДАТА - БАЗОВІ СТИЛІ ========== */
+    /* ========== ДАТА - ВИПРАВЛЕНО ========== */
     .new_t-date-table {
         background: transparent !important;
         padding: 0 !important;
@@ -290,11 +290,20 @@
         font-size: 1rem !important;
     }
 
+    /* Ліва дата */
+    .new_t-date-col.new_t-nostretch:first-child {
+        min-width: 160px !important;
+    }
+
+    /* Права дата */
+    .new_t-date-col.new_t-nostretch:last-child {
+        min-width: 160px !important;
+    }
+
+    /* Блок тривалості */
     .new_t-date-col.new_t-duration-col {
         min-width: 140px !important;
         text-align: center !important;
-        background: transparent !important;
-        flex-shrink: 0 !important;
     }
 
     .new_t-duration-container {
@@ -303,9 +312,6 @@
         font-weight: 600 !important;
         color: #1e293b !important;
         font-size: 0.9rem !important;
-        display: inline-block !important;
-        width: auto !important;
-        text-align: center !important;
         border-bottom: 1px dashed #e2e8f0 !important;
         white-space: nowrap !important;
     }
@@ -314,9 +320,6 @@
         font-size: 0.7rem !important;
         color: #64748b !important;
         margin-top: 4px !important;
-        text-align: center !important;
-        display: block !important;
-        width: 100% !important;
         white-space: nowrap !important;
     }
 
@@ -388,12 +391,8 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== ВИПАДАЮЧІ СПИСКИ ========== */
+    /* ========== ВИПАДАЮЧІ СПИСКИ - ВИПРАВЛЕНО ========== */
     .new_f-dropdown-body {
-        border-radius: 16px !important;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
-        border: none !important;
-        z-index: 1000 !important;
         position: fixed !important;
         top: 50% !important;
         left: 50% !important;
@@ -402,41 +401,136 @@
         max-width: 400px !important;
         max-height: 80vh !important;
         overflow-y: auto !important;
+        background: white !important;
+        border-radius: 20px !important;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.3) !important;
+        z-index: 10000 !important;
+        display: none !important;
     }
 
     .new_f-dropdown-body-wrap {
-        border-radius: 16px !important;
+        border-radius: 20px !important;
         overflow: hidden !important;
     }
 
     .new_f-dropdown-body-top {
         background: var(--primary-color, #3b82f6) !important;
-        padding: 12px 20px !important;
+        padding: 15px 20px !important;
+        color: white !important;
         font-weight: 600 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    .new_f-dropdown-body-close {
+        cursor: pointer !important;
+        font-size: 24px !important;
+        line-height: 1 !important;
     }
 
     .new_f-people-list {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0 !important;
         border: 1px solid #e2e8f0 !important;
         border-radius: 12px !important;
         overflow: hidden;
+        margin: 10px 0 !important;
     }
 
     .new_f-people-item {
+        flex: 1 !important;
+        text-align: center !important;
         padding: 10px 0 !important;
-        font-weight: 500 !important;
+        cursor: pointer !important;
+        border-right: 1px solid #e2e8f0 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .new_f-people-item:last-child {
+        border-right: none !important;
     }
 
     .new_f-people-item.active {
         background: var(--primary-color, #3b82f6) !important;
+        color: white !important;
+    }
+
+    .new_f-children-container {
+        margin-top: 15px !important;
+    }
+
+    .new_f-children-accordion-btn {
+        background: #f1f5f9 !important;
+        padding: 8px 16px !important;
+        border-radius: 30px !important;
+        cursor: pointer !important;
+        display: inline-block !important;
+        margin: 10px 0 !important;
+    }
+
+    .new_f-children-accordion-body {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        margin-top: 10px !important;
     }
 
     .new_f-children-age-item {
+        display: inline-block !important;
+        padding: 8px 12px !important;
+        margin: 4px !important;
+        background: #f1f5f9 !important;
         border-radius: 30px !important;
-        background: #f8fafc !important;
+        cursor: pointer !important;
         transition: all 0.2s ease !important;
     }
 
-    .new_f-children-age-item:hover {
+    .new_f-children-age-item:hover,
+    .new_f-children-age-item.selected {
+        background: var(--primary-color, #3b82f6) !important;
+        color: white !important;
+    }
+
+    .new_f-children-list {
+        margin-top: 10px !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+    }
+
+    .new_f-children-list-item {
+        background: #e2e8f0 !important;
+        padding: 4px 12px !important;
+        border-radius: 20px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    .new_f-dropdown-body-bottom {
+        display: flex !important;
+        gap: 10px !important;
+        justify-content: flex-end !important;
+        padding: 15px 20px !important;
+        border-top: 1px solid #e2e8f0 !important;
+        margin-top: 15px !important;
+    }
+
+    .new_f-dropdown-bottom-btn {
+        padding: 8px 20px !important;
+        border-radius: 30px !important;
+        cursor: pointer !important;
+        font-weight: 500 !important;
+    }
+
+    .new_f-dropdown-btn-cancel {
+        background: #e2e8f0 !important;
+        color: #475569 !important;
+    }
+
+    .new_f-dropdown-btn-apply {
         background: var(--primary-color, #3b82f6) !important;
         color: white !important;
     }
@@ -540,20 +634,23 @@
             flex-wrap: wrap !important;
         }
 
+        .new_t-date-col.new_t-nostretch:first-child,
+        .new_t-date-col.new_t-nostretch:last-child {
+            min-width: 100% !important;
+            width: 100% !important;
+        }
+
         .new_t-date-col.new_t-duration-col {
-            min-width: auto !important;
+            min-width: 100% !important;
             width: 100% !important;
         }
 
         .new_t-duration-container {
             white-space: normal !important;
-            text-align: center !important;
-            width: 100% !important;
         }
 
         .new_t-duration-text {
             white-space: normal !important;
-            text-align: center !important;
         }
 
         .new_t-tour-tab-table.food-table .new_t-tour-tab-col-2 {
@@ -569,6 +666,19 @@
 
         .price-number {
             font-size: 1.4rem !important;
+        }
+
+        .new_f-people-list {
+            flex-direction: column !important;
+        }
+
+        .new_f-people-item {
+            border-right: none !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+
+        .new_f-people-item:last-child {
+            border-bottom: none !important;
         }
     }
 </style>
@@ -678,11 +788,9 @@ function reorderDateBlocks() {
     const rightDate = dateTable.querySelector('.new_t-date-col.new_t-nostretch:last-child');
 
     if (leftDate && durationBlock && rightDate) {
-        // Перевіряємо чи вже змінено порядок
         const parent = leftDate.parentNode;
         const currentOrder = parent.children;
-        if (currentOrder[0] === leftDate && currentOrder[1] === durationBlock) {
-            // Створюємо новий порядок
+        if (currentOrder.length >= 3 && currentOrder[1] === durationBlock) {
             parent.innerHTML = '';
             parent.appendChild(leftDate.cloneNode(true));
             parent.appendChild(rightDate.cloneNode(true));
@@ -693,33 +801,26 @@ function reorderDateBlocks() {
 
 // ========== 2. СТВОРЕННЯ БЛОКУ ЦІНИ ПІД МЕНЮ ==========
 function createPriceBlock() {
-    // Знаходимо оригінальну ціну
     const originalPrice = document.querySelector('.new_t-order-price');
     if (!originalPrice) return;
 
-    // Отримуємо значення ціни
     const priceValue = originalPrice.querySelector('.new_price, .new_price-value');
     if (!priceValue) return;
 
     const priceText = priceValue.innerText;
-
-    // Шукаємо меню
     const menu = document.querySelector('.new_t-menu');
     if (!menu || !menu.parentNode) return;
 
-    // Перевіряємо чи вже існує наш блок
     if (document.querySelector('.price-block-under-menu')) return;
 
-    // Створюємо новий блок ціни
     const priceBlock = document.createElement('div');
     priceBlock.className = 'price-block-under-menu';
     priceBlock.innerHTML = `<span class="price-number">${priceText}</span>`;
 
-    // Вставляємо після меню
     menu.parentNode.insertBefore(priceBlock, menu.nextSibling);
 }
 
-// ========== 3. ХОВАЄМО ОРИГІНАЛЬНИЙ БЛОК ЦІНИ (щоб не дублювався) ==========
+// ========== 3. ХОВАЄМО ОРИГІНАЛЬНИЙ БЛОК ЦІНИ ==========
 function hideOriginalPriceBlock() {
     const originalPriceContainer = document.querySelector('.new_t-order-content');
     if (originalPriceContainer) {
@@ -727,22 +828,7 @@ function hideOriginalPriceBlock() {
     }
 }
 
-// ========== 4. ПРИБИРАЄМО КОД ТА КНОПКУ З ОРИГІНАЛУ ==========
-function cleanupOriginalElements() {
-    // Ховаємо оригінальну кнопку бронювання
-    const orderTable = document.querySelector('.new_t-order-table');
-    if (orderTable) {
-        orderTable.style.display = 'none';
-    }
-
-    // Ховаємо код
-    const codeElement = document.querySelector('.new_t-order-code');
-    if (codeElement) {
-        codeElement.style.display = 'none';
-    }
-}
-
-// ========== 5. ОНОВЛЕННЯ ЦІНИ ПРИ ЗМІНІ ==========
+// ========== 4. ОНОВЛЕННЯ ЦІНИ ПРИ ЗМІНІ ==========
 function updatePriceOnChange() {
     const originalPrice = document.querySelector('.new_t-order-price');
     if (!originalPrice) return;
@@ -757,12 +843,47 @@ function updatePriceOnChange() {
     }
 }
 
+// ========== 5. ВИПРАВЛЕННЯ ДЛЯ КНОПКИ "ЩЕ" (ТУРИСТИ) ==========
+function fixPeopleDropdown() {
+    const changeBtn = document.querySelector('.new_t-change-people');
+    if (!changeBtn) return;
+
+    // Видаляємо старі обробники, щоб не дублювати
+    const newBtn = changeBtn.cloneNode(true);
+    changeBtn.parentNode.replaceChild(newBtn, changeBtn);
+
+    newBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const dropdown = this.querySelector('.new_f-dropdown-body');
+        if (dropdown) {
+            if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+                dropdown.style.display = 'block';
+                // Додаємо затемнення
+                const overlay = document.createElement('div');
+                overlay.className = 'dropdown-overlay';
+                overlay.style.cssText = 'position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999;';
+                overlay.onclick = function() {
+                    dropdown.style.display = 'none';
+                    overlay.remove();
+                };
+                document.body.appendChild(overlay);
+                dropdown.style.zIndex = '10000';
+            } else {
+                dropdown.style.display = 'none';
+                const overlay = document.querySelector('.dropdown-overlay');
+                if (overlay) overlay.remove();
+            }
+        }
+    });
+}
+
 // ========== 6. ЗАПУСК ВСІХ ФУНКЦІЙ ==========
 setTimeout(function() {
     reorderDateBlocks();
     createPriceBlock();
     hideOriginalPriceBlock();
-    cleanupOriginalElements();
+    fixPeopleDropdown();
 }, 1500);
 
 // Спостерігаємо за змінами (оновлення ціни)
@@ -770,6 +891,7 @@ const priceObserver = new MutationObserver(function(mutations) {
     setTimeout(function() {
         reorderDateBlocks();
         updatePriceOnChange();
+        fixPeopleDropdown();
     }, 100);
 });
 priceObserver.observe(document.body, { childList: true, subtree: true, attributes: true });
