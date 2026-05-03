@@ -52,7 +52,7 @@
     </div>
 </div>
 
-<!-- ========== СТИЛІ ДЛЯ ПРИХОВУВАННЯ ФОРМИ ПОШУКУ ТА ОРИГІНАЛЬНИХ ЕЛЕМЕНТІВ ========== -->
+<!-- ========== СТИЛІ ========== -->
 <style>
     /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
     #otpusk-tour-module .new_f-ext-container,
@@ -78,49 +78,12 @@
         padding: 0 !important;
     }
 
-    /* ========== ХОВАЄМО ОРИГІНАЛЬНЕ МЕНЮ ТАБІВ ========== */
-    .new_t-menu-wrap {
-        display: none !important;
-    }
-
-    /* ========== ЗАЛИШАЄМО ТІЛЬКИ КОНТЕНТ ТУРУ ========== */
+    /* ========== ЗАЛИШАЄМО КОНТЕЙНЕР ВИДИМИМ ========== */
     #otpusk-tour-module .new_t-container {
         display: block !important;
     }
 
-    /* ========== ЗАБЕЗПЕЧУЄМО ВИДИМІСТЬ ВСІХ БЛОКІВ ========== */
-    .new_t-tab-content {
-        display: block !important;
-        margin-bottom: 50px;
-        scroll-margin-top: 80px;
-    }
-
-    /* Додаємо візуальний розділювач між секціями */
-    .new_t-tab-content:not(:last-child) {
-        border-bottom: 1px solid #e2e8f0;
-        padding-bottom: 40px;
-    }
-
-    /* ========== Адаптація контенту ========== */
-    .new_t-tab-content.photo img {
-        max-width: 100%;
-        height: auto;
-        margin: 10px 0;
-        border-radius: 12px;
-    }
-
-    #new_os-map {
-        height: 400px !important;
-        width: 100% !important;
-        border-radius: 16px;
-    }
-
-    .new_t-tab-content.reviews .grayInner1 {
-        max-width: 100%;
-        overflow-x: auto;
-    }
-
-    /* ========== ОЧИЩАЄМО ФОН І РАМКИ МОДУЛЯ ========== */
+    /* ========== ОЧИЩАЄМО ФОН ========== */
     #otpusk-tour-module {
         background: transparent !important;
         border: none !important;
@@ -146,7 +109,7 @@
         font-size: 1rem !important;
     }
 
-    /* ========== ПОВНІСТЮ ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ========== */
+    /* ========== ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ========== */
     .new_t-order-btn-true,
     .new_t-order-btn,
     .new_t-order-table {
@@ -158,11 +121,6 @@
         padding: 0 !important;
         opacity: 0 !important;
         pointer-events: none !important;
-    }
-
-    .new_t-order-btn-true,
-    [class*="new_t-order"] {
-        display: none !important;
     }
 
     /* ========== СВІТЛИЙ ФОН ДЛЯ ЛІВИХ КОЛОНОК ========== */
@@ -197,18 +155,82 @@
     .new_r-item-rating-container {
         display: none !important;
     }
-</style>
 
-<!-- ========== НОВЕ ЯКІРНЕ МЕНЮ (з'являється після заголовка туру) ========== -->
-<div class="container">
-    <div class="anchor-menu" style="display: flex; gap: 8px; background: white; padding: 12px 16px; border-radius: 60px; margin: 20px 0 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-wrap: wrap; position: sticky; top: 20px; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);">
-        <a href="#tour-block" style="padding: 8px 24px; background: #f0f0f0; border-radius: 40px; text-decoration: none; color: #2c3e50; font-weight: 500; transition: all 0.2s ease; font-size: 14px;">📋 Тур</a>
-        <a href="#desc-block" style="padding: 8px 24px; background: #f0f0f0; border-radius: 40px; text-decoration: none; color: #2c3e50; font-weight: 500; transition: all 0.2s ease; font-size: 14px;">📖 Опис</a>
-        <a href="#photo-block" style="padding: 8px 24px; background: #f0f0f0; border-radius: 40px; text-decoration: none; color: #2c3e50; font-weight: 500; transition: all 0.2s ease; font-size: 14px;">📸 Фото</a>
-        <a href="#map-block" style="padding: 8px 24px; background: #f0f0f0; border-radius: 40px; text-decoration: none; color: #2c3e50; font-weight: 500; transition: all 0.2s ease; font-size: 14px;">🗺️ Мапа</a>
-        <a href="#reviews-block" style="padding: 8px 24px; background: #f0f0f0; border-radius: 40px; text-decoration: none; color: #2c3e50; font-weight: 500; transition: all 0.2s ease; font-size: 14px;">⭐ Відгуки</a>
-    </div>
-</div>
+    /* ========== СТИЛІ ДЛЯ ВСІХ БЛОКІВ КОНТЕНТУ - РОБИМО ВИДИМИМИ ========== */
+    .new_t-tab-content {
+        display: block !important;
+        margin-bottom: 50px;
+        scroll-margin-top: 80px;
+    }
+
+    /* Розділювач між блоками */
+    .new_t-tab-content:not(:last-child) {
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 40px;
+        margin-bottom: 40px;
+    }
+
+    /* Адаптація фото */
+    .new_t-tab-content.photo img {
+        max-width: 100%;
+        height: auto;
+        margin: 10px 0;
+        border-radius: 12px;
+    }
+
+    /* Адаптація карти */
+    #new_os-map {
+        height: 400px !important;
+        width: 100% !important;
+        border-radius: 16px;
+    }
+
+    /* Адаптація відгуків */
+    .new_t-tab-content.reviews .grayInner1 {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    /* ========== СТИЛІ ДЛЯ ОРИГІНАЛЬНОГО МЕНЮ ========== */
+    .new_t-menu {
+        display: flex !important;
+        gap: 8px !important;
+        background: white !important;
+        padding: 12px 16px !important;
+        border-radius: 60px !important;
+        margin: 20px 0 30px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        flex-wrap: wrap !important;
+        position: sticky !important;
+        top: 20px !important;
+        z-index: 100 !important;
+        background: rgba(255,255,255,0.95) !important;
+        backdrop-filter: blur(8px) !important;
+    }
+
+    .new_t-menu-item {
+        padding: 8px 24px !important;
+        background: #f0f0f0 !important;
+        border-radius: 40px !important;
+        color: #2c3e50 !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+        font-size: 14px !important;
+        cursor: pointer !important;
+        display: inline-block !important;
+    }
+
+    .new_t-menu-item:hover {
+        background: var(--primary-color, #3b82f6) !important;
+        color: white !important;
+        transform: translateY(-2px);
+    }
+
+    .new_t-menu-item.selected {
+        background: var(--primary-color, #3b82f6) !important;
+        color: white !important;
+    }
+</style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
 <div class="container my-3">
@@ -295,83 +317,131 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== 1. ДОДАЄМО ID БЛОКАМ ТА НАЛАШТОВУЄМО ЯКІРНЕ МЕНЮ ==========
+// ========== 1. ПЕРЕТВОРЕННЯ ТАБІВ У ЯКІРНЕ МЕНЮ ==========
 (function() {
-    function initAnchorMenu() {
-        // Знаходимо всі таб-контенти
-        const tourContent = document.querySelector('.new_t-tab-content.tour');
-        const descContent = document.querySelector('.new_t-tab-content.hotelInfo');
-        const photoContent = document.querySelector('.new_t-tab-content.photo');
-        const mapContent = document.querySelector('.new_t-tab-content.map');
-        const reviewsContent = document.querySelector('.new_t-tab-content.reviews');
+    function initAnchorTabs() {
+        // Знаходимо всі блоки контенту
+        const tourBlock = document.querySelector('.new_t-tab-content.tour');
+        const descBlock = document.querySelector('.new_t-tab-content.hotelInfo');
+        const photoBlock = document.querySelector('.new_t-tab-content.photo');
+        const mapBlock = document.querySelector('.new_t-tab-content.map');
+        const reviewsBlock = document.querySelector('.new_t-tab-content.reviews');
 
         // Додаємо ID кожному блоку
-        if (tourContent && !tourContent.id) tourContent.id = 'tour-block';
-        if (descContent && !descContent.id) descContent.id = 'desc-block';
-        if (photoContent && !photoContent.id) photoContent.id = 'photo-block';
-        if (mapContent && !mapContent.id) mapContent.id = 'map-block';
-        if (reviewsContent && !reviewsContent.id) reviewsContent.id = 'reviews-block';
+        if (tourBlock && !tourBlock.id) tourBlock.id = 'tour-section';
+        if (descBlock && !descBlock.id) descBlock.id = 'desc-section';
+        if (photoBlock && !photoBlock.id) photoBlock.id = 'photo-section';
+        if (mapBlock && !mapBlock.id) mapBlock.id = 'map-section';
+        if (reviewsBlock && !reviewsBlock.id) reviewsBlock.id = 'reviews-section';
 
-        // Плавний скрол для якірних посилань
-        document.querySelectorAll('.anchor-menu a').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-
-                if (targetElement) {
-                    const offset = 80;
-                    const elementPosition = targetElement.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            });
+        // Робимо всі блоки видимими
+        const allTabs = document.querySelectorAll('.new_t-tab-content');
+        allTabs.forEach(tab => {
+            tab.style.display = 'block';
         });
 
-        // Підсвітка активного пункту меню
-        const sections = [
-            { id: 'tour-block', selector: '.anchor-menu a[href="#tour-block"]' },
-            { id: 'desc-block', selector: '.anchor-menu a[href="#desc-block"]' },
-            { id: 'photo-block', selector: '.anchor-menu a[href="#photo-block"]' },
-            { id: 'map-block', selector: '.anchor-menu a[href="#map-block"]' },
-            { id: 'reviews-block', selector: '.anchor-menu a[href="#reviews-block"]' }
-        ];
+        // Знаходимо всі пункти меню
+        const tourMenuItem = document.querySelector('.new_t-tab-tour');
+        const descMenuItem = document.querySelector('.new_t-tab-desc');
+        const photoMenuItem = document.querySelector('.new_t-tab-photos');
+        const mapMenuItem = document.querySelector('.new_t-tab-map');
+        const reviewsMenuItem = document.querySelector('.new_t-tab-rev');
 
+        // Функція для плавного скролу
+        function scrollToElement(element, offset = 80) {
+            if (!element) return;
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+
+        // Прибираємо клас selected з усіх пунктів меню
+        function removeSelectedClass() {
+            const allItems = [tourMenuItem, descMenuItem, photoMenuItem, mapMenuItem, reviewsMenuItem];
+            allItems.forEach(item => {
+                if (item) item.classList.remove('selected');
+            });
+        }
+
+        // Додаємо обробники кліків
+        if (tourMenuItem) {
+            tourMenuItem.addEventListener('click', function(e) {
+                e.preventDefault();
+                removeSelectedClass();
+                this.classList.add('selected');
+                scrollToElement(tourBlock);
+            });
+        }
+
+        if (descMenuItem) {
+            descMenuItem.addEventListener('click', function(e) {
+                e.preventDefault();
+                removeSelectedClass();
+                this.classList.add('selected');
+                scrollToElement(descBlock);
+            });
+        }
+
+        if (photoMenuItem) {
+            photoMenuItem.addEventListener('click', function(e) {
+                e.preventDefault();
+                removeSelectedClass();
+                this.classList.add('selected');
+                scrollToElement(photoBlock);
+            });
+        }
+
+        if (mapMenuItem) {
+            mapMenuItem.addEventListener('click', function(e) {
+                e.preventDefault();
+                removeSelectedClass();
+                this.classList.add('selected');
+                scrollToElement(mapBlock);
+            });
+        }
+
+        if (reviewsMenuItem) {
+            reviewsMenuItem.addEventListener('click', function(e) {
+                e.preventDefault();
+                removeSelectedClass();
+                this.classList.add('selected');
+                scrollToElement(reviewsBlock);
+            });
+        }
+
+        // Підсвічуємо активний пункт меню при скролі
         function highlightCurrentSection() {
             const scrollPos = window.scrollY + 100;
+            const sections = [
+                { block: tourBlock, menuItem: tourMenuItem },
+                { block: descBlock, menuItem: descMenuItem },
+                { block: photoBlock, menuItem: photoMenuItem },
+                { block: mapBlock, menuItem: mapMenuItem },
+                { block: reviewsBlock, menuItem: reviewsMenuItem }
+            ];
+
             let activeFound = false;
 
             for (const section of sections) {
-                const element = document.getElementById(section.id);
-                if (element) {
-                    const sectionTop = element.offsetTop;
-                    const sectionBottom = sectionTop + element.offsetHeight;
+                if (section.block) {
+                    const sectionTop = section.block.offsetTop;
+                    const sectionBottom = sectionTop + section.block.offsetHeight;
                     if (scrollPos >= sectionTop && scrollPos < sectionBottom) {
-                        document.querySelectorAll('.anchor-menu a').forEach(link => {
-                            link.style.background = '#f0f0f0';
-                            link.style.color = '#2c3e50';
-                        });
-                        const activeLink = document.querySelector(section.selector);
-                        if (activeLink) {
-                            activeLink.style.background = 'var(--primary-color, #3b82f6)';
-                            activeLink.style.color = 'white';
-                        }
+                        removeSelectedClass();
+                        if (section.menuItem) section.menuItem.classList.add('selected');
                         activeFound = true;
                         break;
                     }
                 }
             }
 
-            // Якщо жодна секція не активна - знімаємо підсвітку
-            if (!activeFound) {
-                document.querySelectorAll('.anchor-menu a').forEach(link => {
-                    link.style.background = '#f0f0f0';
-                    link.style.color = '#2c3e50';
-                });
+            // Якщо вгорі сторінки - підсвічуємо Тур
+            if (!activeFound && tourMenuItem) {
+                removeSelectedClass();
+                tourMenuItem.classList.add('selected');
             }
         }
 
@@ -380,9 +450,9 @@
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initAnchorMenu);
+        document.addEventListener('DOMContentLoaded', initAnchorTabs);
     } else {
-        initAnchorMenu();
+        initAnchorTabs();
     }
 })();
 
@@ -392,7 +462,6 @@ setTimeout(function() {
     const originalPriceBlock = document.querySelector('.new_t-order-col:first-child');
 
     if (consultationCard && originalPriceBlock) {
-        // Додаємо кнопку після ціни
         const myBtn = document.createElement('button');
         myBtn.className = 'btn btn-primary w-100 mt-3';
         myBtn.style.cssText = 'background: var(--primary-color, #3b82f6); color: white; padding: 12px 20px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; margin-top: 15px;';
@@ -557,11 +626,6 @@ styleSheet.textContent = `
     }
     #customBackButton:hover {
         transform: translateX(-3px);
-    }
-    .anchor-menu a:hover {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-        transform: translateY(-2px);
     }
 `;
 document.head.appendChild(styleSheet);
