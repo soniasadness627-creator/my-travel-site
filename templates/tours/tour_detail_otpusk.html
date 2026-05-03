@@ -434,6 +434,41 @@
         }
     }
 
+    /* ========== ПРИХОВУЄМО БЛОК З ЦІНОЮ (ПОВНІСТЮ) ========== */
+    .new_t-order-content,
+    .new_t-order-table,
+    .new_t-order-col,
+    .new_t-content-col.new_t-order-content {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        position: absolute !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+
+    /* ========== РОЗТЯГУЄМО ОСНОВНИЙ БЛОК НА ВСЮ ШИРИНУ ========== */
+    .new_t-content-table {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+
+    .new_t-content-col.new_t-tabs-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 1 1 100% !important;
+    }
+
+    /* Додатково - прибираємо будь-які обмеження */
+    .new_t-content {
+        width: 100% !important;
+    }
+
     /* Мобільна версія */
     @media (max-width: 768px) {
         .new_t-menu {
