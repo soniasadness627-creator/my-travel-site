@@ -232,6 +232,40 @@
         border-radius: 8px;
         margin-bottom: 20px;
     }
+    /* ========== ЗМІНА ОРАНЖЕВИХ КОЛЬОРІВ НА КОЛІР АГЕНТА ========== */
+
+/* Колір ціни (основний оранжевий) */
+.new_price-value,
+.new_price-value .currency,
+.new_price-value + .currency,
+.new_price .currency {
+    color: var(--primary-color) !important;
+}
+
+/* Колір тексту "за двох" та інших підписів, якщо вони оранжеві */
+.new_price-desc,
+.new_r-item-price .new_price-desc {
+    color: var(--primary-color) !important;
+}
+
+/* Якщо є оранжеві кнопки або посилання */
+.new_r-item-price a,
+.new_r-item .btn-link,
+.new_r-item .btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.new_r-item-price a:hover,
+.new_r-item .btn-link:hover {
+    color: var(--primary-dark) !important;
+}
+
+/* Якщо є оранжева іконка або svg */
+.new_r-item-price svg,
+.new_r-item svg {
+    fill: var(--primary-color) !important;
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
