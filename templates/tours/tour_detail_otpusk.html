@@ -425,18 +425,8 @@
     }
 
     /* ========== СІТКА ДЛЯ ФОТО – ТІЛЬКИ ДЛЯ АКТИВНОЇ ВКЛАДКИ ========== */
-/* Не чіпаємо display блоку – залишаємо як є */
-/* Але коли блок видимий (Otpusk встановлює display: block), застосовуємо сітку */
-.new_t-tab-content.photo[style*="display: block"],
-.new_t-tab-content.photo[style*="display: block"] img {
-    /* стилі діють тільки для активної вкладки */
-}
-
-.new_t-tab-content.photo {
-    display: block !important; /* не змінюємо display, але гарантуємо, що наші стилі не поламають видимість */
-}
-
-/* Стилі для сітки (діють, коли блок видимий) */
+/* Не чіпаємо display блоку – Otpusk сам встановлює block/none */
+/* Коли блок видимий, застосовуємо сітку */
 .new_t-tab-content.photo[style*="display: block"] {
     display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
