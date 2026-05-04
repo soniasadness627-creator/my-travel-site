@@ -110,7 +110,6 @@
         outline: none !important;
     }
 
-    /* Видаляємо будь-які псевдоелементи, які могли б створювати лінію */
     .new_t-menu-wrap::before,
     .new_t-menu-wrap::after,
     .new_t-menu::before,
@@ -125,17 +124,14 @@
         gap: 8px !important;
     }
 
-    /* Активний пункт меню – білий фон, фіолетовий текст, без голубої рамки (за бажанням можна залишити фіолетову нижню рамку) */
     .new_t-menu-item.selected {
         background: white !important;
         color: #7a219e !important;
-        /* Якщо хочете прибрати ВСІ нижні рамки – закоментуйте наступний рядок */
         border-bottom: 3px solid #7a219e !important;
         border-radius: 0 !important;
         box-shadow: none !important;
     }
 
-    /* Якщо голуба рамка з'являється через інший елемент, прибираємо її */
     .new_t-menu-item.selected {
         border-top: none !important;
         border-left: none !important;
@@ -151,7 +147,6 @@
         content: none !important;
     }
 
-    /* Неактивні пункти меню */
     .new_t-menu-item {
         background: #f1f5f9 !important;
         color: #64748b !important;
@@ -204,8 +199,6 @@
         fill: #7a219e !important;
     }
 
-
-
     .new_f-dropdown-btn-apply:hover {
         background: #5a1675 !important;
     }
@@ -232,40 +225,64 @@
         border-radius: 8px;
         margin-bottom: 20px;
     }
+
     /* ========== ЗМІНА ОРАНЖЕВИХ КОЛЬОРІВ НА КОЛІР АГЕНТА ========== */
+    .new_price-value,
+    .new_price-value .currency,
+    .new_price-value + .currency,
+    .new_price .currency {
+        color: var(--primary-color) !important;
+    }
 
-/* Колір ціни (основний оранжевий) */
-.new_price-value,
-.new_price-value .currency,
-.new_price-value + .currency,
-.new_price .currency {
-    color: var(--primary-color) !important;
-}
+    .new_price-desc,
+    .new_r-item-price .new_price-desc {
+        color: var(--primary-color) !important;
+    }
 
-/* Колір тексту "за двох" та інших підписів, якщо вони оранжеві */
-.new_price-desc,
-.new_r-item-price .new_price-desc {
-    color: var(--primary-color) !important;
-}
+    .new_r-item-price a,
+    .new_r-item .btn-link,
+    .new_r-item .btn-outline-primary {
+        color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+    }
 
-/* Якщо є оранжеві кнопки або посилання */
-.new_r-item-price a,
-.new_r-item .btn-link,
-.new_r-item .btn-outline-primary {
-    color: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
-}
+    .new_r-item-price a:hover,
+    .new_r-item .btn-link:hover {
+        color: var(--primary-dark) !important;
+    }
 
-.new_r-item-price a:hover,
-.new_r-item .btn-link:hover {
-    color: var(--primary-dark) !important;
-}
+    .new_r-item-price svg,
+    .new_r-item svg {
+        fill: var(--primary-color) !important;
+    }
 
-/* Якщо є оранжева іконка або svg */
-.new_r-item-price svg,
-.new_r-item svg {
-    fill: var(--primary-color) !important;
-}
+    /* ========== ЗМІНА ФОНУ ОРАНЖЕВИХ БЛОКІВ (наприклад, при наведенні) ========== */
+    .new_r-item-price {
+        background: transparent !important;
+    }
+
+    /* Якщо є оранжевий фон у блоку ціни при наведенні */
+    .new_r-item-price:hover,
+    .new_r-item-col .new_r-item-price:hover {
+        background: var(--primary-color) !important;
+        color: white !important;
+        transition: all 0.3s ease;
+    }
+
+    /* Додатково: зміна фону кнопки "Детальніше" або подібних */
+    .new_r-item .btn,
+    .new_r-item .btn-primary,
+    .new_r-item .btn-outline-primary {
+        background: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        color: white !important;
+    }
+
+    .new_r-item .btn:hover,
+    .new_r-item .btn-primary:hover {
+        background: var(--primary-dark) !important;
+        border-color: var(--primary-dark) !important;
+    }
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -371,14 +388,12 @@ function getHotelName() {
 function showMessage(message, type) {
     let messageDiv = document.getElementById('formMessage');
     if (!messageDiv) {
-        // Шукаємо батьківський елемент (картку)
         const cardBody = document.querySelector('#consultationCard .card-body');
         if (cardBody) {
             const newDiv = document.createElement('div');
             newDiv.id = 'formMessage';
             newDiv.className = 'alert';
             newDiv.style.display = 'none';
-            // Вставляємо після заголовка
             const title = cardBody.querySelector('h5');
             if (title && title.nextSibling) {
                 cardBody.insertBefore(newDiv, title.nextSibling);
@@ -394,22 +409,17 @@ function showMessage(message, type) {
     messageDiv.className = `alert alert-${type}`;
     messageDiv.innerHTML = message + '<button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>';
     messageDiv.style.display = 'block';
-
-    // Автоматично ховаємо через 5 секунд
     setTimeout(() => {
         if (messageDiv) messageDiv.style.display = 'none';
     }, 5000);
 }
 
-// Чекаємо завантаження DOM
 document.addEventListener('DOMContentLoaded', function() {
-    // AJAX відправка форми
     const submitBtn = document.getElementById('submitBookingBtn');
     if (submitBtn) {
         submitBtn.addEventListener('click', function(e) {
             e.preventDefault();
 
-            // Отримуємо дані з форми
             const name = document.getElementById('bookingName').value.trim();
             const email = document.getElementById('bookingEmail').value.trim();
             const phone = document.getElementById('bookingPhone').value.trim();
@@ -421,7 +431,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const tourUrl = window.location.href;
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-            // Валідація
             if (!name) {
                 showMessage('Будь ласка, введіть ваше ім\'я', 'danger');
                 return;
@@ -432,13 +441,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // Показуємо індикатор завантаження
             const btn = submitBtn;
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fa-regular fa-spinner fa-spin me-2"></i> Відправка...';
             btn.disabled = true;
 
-            // Відправляємо AJAX запит з правильними заголовками
             fetch(window.location.href, {
                 method: 'POST',
                 headers: {
@@ -462,9 +469,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => {
                 console.log('Response status:', response.status);
-                if (!response.ok) {
-                    throw new Error(`HTTP error ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error ${response.status}`);
                 return response.json();
             })
             .then(data => {
@@ -490,7 +495,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.warn('Кнопка #submitBookingBtn не знайдена');
     }
 
-    // Скрипт для відкриття форми вибору туристів
     setTimeout(function() {
         const btn = document.querySelector('.new_t-change-people');
         if (btn) {
