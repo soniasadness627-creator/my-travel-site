@@ -240,7 +240,7 @@
         border-color: var(--primary-dark) !important;
     }
 
-    /* ========== КАРУСЕЛЬ "ПЕРЕГЛЯНУТІ ТУРИ" – КНОПКИ ЗЛІВА ТА СПРАВА ========== */
+    /* ========== КАРУСЕЛЬ "ПЕРЕГЛЯНУТІ ТУРИ" – КНОПКИ ЗЛІВА ТА СПРАВА ЗІ СТРІЛКАМИ ========== */
     .new_t-similar-viewed {
         position: relative;
     }
@@ -265,14 +265,29 @@
         background: rgba(0,0,0,0.5) !important;
         border-radius: 50% !important;
         color: white !important;
-        font-size: 24px !important;
-        font-family: monospace;
         text-align: center !important;
-        line-height: 38px !important;
         cursor: pointer !important;
         pointer-events: auto !important;
         transition: all 0.2s ease !important;
         z-index: 10;
+        font-size: 0 !important;
+        line-height: 40px !important;
+    }
+
+    .new_t-similar-viewed .owl-prev::before,
+    .new_t-similar-viewed .owl-next::before {
+        font-family: monospace;
+        font-size: 32px;
+        display: block;
+        line-height: 40px;
+    }
+
+    .new_t-similar-viewed .owl-prev::before {
+        content: "‹";
+    }
+
+    .new_t-similar-viewed .owl-next::before {
+        content: "›";
     }
 
     .new_t-similar-viewed .owl-prev {
@@ -389,16 +404,16 @@
             left: -10px !important;
             width: 32px !important;
             height: 32px !important;
-            font-size: 20px !important;
-            line-height: 30px !important;
         }
-
         .new_t-similar-viewed .owl-next {
             right: -10px !important;
             width: 32px !important;
             height: 32px !important;
-            font-size: 20px !important;
-            line-height: 30px !important;
+        }
+        .new_t-similar-viewed .owl-prev::before,
+        .new_t-similar-viewed .owl-next::before {
+            font-size: 24px;
+            line-height: 32px;
         }
     }
 </style>
