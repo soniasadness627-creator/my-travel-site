@@ -110,6 +110,16 @@
         box-shadow: none !important;
     }
 
+    /* ПРИБИРАЄМО СТРІЛОЧКУ НА АКТИВНОМУ ПУНКТІ (БЕЗПЕЧНО) */
+    .new_t-menu-item.selected::before,
+    .new_t-menu-item.selected::after,
+    .new_t-menu-item.selected .arrow,
+    .new_t-menu-item.selected .indicator,
+    .new_t-menu-item.selected svg {
+        display: none !important;
+        content: none !important;
+    }
+
     /* НЕактивні пункти меню - СІРИЙ фон */
     .new_t-menu-item {
         background: #f1f5f9 !important;
