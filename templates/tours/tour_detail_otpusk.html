@@ -58,7 +58,6 @@
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
     #otpusk-tour-module .new_f-ext-btn,
-    #otpusk-tour-module .new_f-dropdown-body-top,
     #otpusk-tour-module .new_r-item-wrap,
     #otpusk-tour-module .new_r-currency-switch,
     #otpusk-tour-module .new_f-form {
@@ -110,16 +109,115 @@
         display: none !important;
     }
 
-    /* ========== ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЩЕ" І ПОКАЗУЄМО ФОРМУ ========== */
-    .new_t-change-people {
+    /* ========== СТИЛІ ДЛЯ МЕНЮ ========== */
+    .new_t-menu {
+        display: flex !important;
+        gap: 12px !important;
+        background: rgba(255,255,255,0.96) !important;
+        padding: 8px 20px !important;
+        border-radius: 60px !important;
+        margin: 20px 0 30px !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08) !important;
+        flex-wrap: wrap !important;
+        backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255,255,255,0.3) !important;
+    }
+
+    .new_t-menu-item {
+        padding: 10px 28px !important;
+        background: #f1f5f9 !important;
+        border-radius: 50px !important;
+        color: #334155 !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        letter-spacing: 0.3px !important;
+        cursor: pointer !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+
+    .new_t-menu-item:hover {
+        background: var(--primary-color, #3b82f6) !important;
+        color: white !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(59,130,246,0.25) !important;
+    }
+
+    .new_t-menu-item.selected {
+        background: var(--primary-color, #3b82f6) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(59,130,246,0.35) !important;
+    }
+
+    /* ========== СТИЛЬНІ КАРТКИ ДЛЯ БЛОКУ "ТУР" ========== */
+    .new_t-tour-tab-table {
+        background: white !important;
+        border-radius: 20px !important;
+        padding: 20px 24px !important;
+        margin-bottom: 16px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03) !important;
+        border: 1px solid #f0f2f5 !important;
+        transition: all 0.3s ease !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 20px !important;
+    }
+
+    .new_t-tour-tab-table:hover {
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08) !important;
+        transform: translateY(-2px);
+        border-color: #e2e8f0 !important;
+    }
+
+    .new_t-tour-tab-col {
+        border: none !important;
+        background: transparent !important;
+    }
+
+    /* ========== ПРИБИРАЄМО ІКОНКИ ========== */
+    .new_t-tour-tab-col-1 svg {
         display: none !important;
     }
 
-    /* РОБИМО ОРИГІНАЛЬНУ ФОРМУ ЗАВЖДИ ВИДИМОЮ */
+    .new_t-tour-tab-col-1 {
+        min-width: auto !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .new_t-tour-tab-col-1-title {
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        color: #64748b !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+    }
+
+    .new_t-tour-tab-col-2 {
+        background: transparent !important;
+        padding: 0 !important;
+        flex: 1 !important;
+        display: block !important;
+    }
+
+    .new_weight-bold {
+        font-weight: 600 !important;
+        color: #1e293b !important;
+        font-size: 1rem !important;
+        display: block !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* ========== ОРИГІНАЛЬНА ФОРМА OTPUSK - РОЗМІЩУЄМО ВИДИМОЮ ========== */
     .new_f-dropdown-body {
         position: relative !important;
         top: auto !important;
         left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
         transform: none !important;
         display: block !important;
         visibility: visible !important;
@@ -129,14 +227,15 @@
         background: #f8fafc !important;
         border-radius: 20px !important;
         margin-top: 15px !important;
+        margin-bottom: 0 !important;
         box-shadow: none !important;
         border: 1px solid #e2e8f0 !important;
-        overflow: hidden !important;
+        overflow: visible !important;
         pointer-events: auto !important;
         z-index: auto !important;
     }
 
-    /* Стилі для оригінальних елементів форми */
+    /* Стилі для оригінальних кнопок форми */
     .new_f-dropdown-body-wrap {
         border-radius: 20px !important;
         overflow: hidden !important;
@@ -157,7 +256,6 @@
         cursor: pointer !important;
         font-size: 24px !important;
         color: white !important;
-        display: none !important;
     }
 
     .new_f-people-container {
@@ -169,6 +267,7 @@
         font-weight: 600 !important;
         margin-bottom: 12px !important;
         color: #1e293b !important;
+        font-size: 0.95rem !important;
     }
 
     .new_f-people-list {
@@ -187,6 +286,7 @@
         cursor: pointer !important;
         background: white !important;
         transition: all 0.2s ease !important;
+        min-width: 50px !important;
     }
 
     .new_f-people-item.active {
@@ -213,6 +313,7 @@
         margin: 10px 0 !important;
         border: none !important;
         font-weight: 500 !important;
+        transition: all 0.2s ease !important;
     }
 
     .new_f-children-accordion-btn:hover {
@@ -235,6 +336,7 @@
         cursor: pointer !important;
         display: inline-block !important;
         font-size: 0.9rem !important;
+        transition: all 0.2s ease !important;
     }
 
     .new_f-children-age-item:hover {
@@ -300,108 +402,6 @@
 
     .new_f-dropdown-btn-apply:hover {
         background: #2563eb !important;
-    }
-
-    /* ========== СТИЛІ ДЛЯ МЕНЮ ========== */
-    .new_t-menu {
-        display: flex !important;
-        gap: 12px !important;
-        background: rgba(255,255,255,0.96) !important;
-        padding: 8px 20px !important;
-        border-radius: 60px !important;
-        margin: 20px 0 30px !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08) !important;
-        flex-wrap: wrap !important;
-        backdrop-filter: blur(10px) !important;
-        border: 1px solid rgba(255,255,255,0.3) !important;
-    }
-
-    .new_t-menu-item {
-        padding: 10px 28px !important;
-        background: #f1f5f9 !important;
-        border-radius: 50px !important;
-        color: #334155 !important;
-        font-weight: 600 !important;
-        font-size: 14px !important;
-        letter-spacing: 0.3px !important;
-        cursor: pointer !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        position: relative !important;
-        overflow: hidden !important;
-    }
-
-    .new_t-menu-item:hover {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 14px rgba(59,130,246,0.25) !important;
-    }
-
-    .new_t-menu-item.selected {
-        background: var(--primary-color, #3b82f6) !important;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(59,130,246,0.35) !important;
-    }
-
-    /* ========== СТИЛЬНІ КАРТКИ ДЛЯ БЛОКУ "ТУР" ========== */
-    .new_t-tour-tab-table {
-        background: white !important;
-        border-radius: 20px !important;
-        padding: 20px 24px !important;
-        margin-bottom: 16px !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03) !important;
-        border: 1px solid #f0f2f5 !important;
-        transition: all 0.3s ease !important;
-        display: flex !important;
-        flex-wrap: wrap !important;
-        align-items: flex-start !important;
-        gap: 20px !important;
-    }
-
-    .new_t-tour-tab-table:hover {
-        box-shadow: 0 8px 25px rgba(0,0,0,0.08) !important;
-        transform: translateY(-2px);
-        border-color: #e2e8f0 !important;
-    }
-
-    .new_t-tour-tab-col {
-        border: none !important;
-        background: transparent !important;
-    }
-
-    /* ========== ПРИБИРАЄМО ІКОНКИ ========== */
-    .new_t-tour-tab-col-1 svg {
-        display: none !important;
-    }
-
-    .new_t-tour-tab-col-1 {
-        min-width: auto !important;
-        background: transparent !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    .new_t-tour-tab-col-1-title {
-        font-size: 0.85rem !important;
-        font-weight: 600 !important;
-        color: #64748b !important;
-        margin: 0 !important;
-        white-space: nowrap !important;
-    }
-
-    .new_t-tour-tab-col-2 {
-        background: transparent !important;
-        padding: 0 !important;
-        flex: 1 !important;
-        display: block !important;
-    }
-
-    .new_weight-bold {
-        font-weight: 600 !important;
-        color: #1e293b !important;
-        font-size: 1rem !important;
-        display: block !important;
-        margin-bottom: 10px !important;
     }
 
     /* ========== ДАТА ========== */
@@ -698,13 +698,13 @@ function showOriginalPeopleForm() {
     dropdown.style.border = '1px solid #e2e8f0';
     dropdown.style.backgroundColor = '#f8fafc';
 
-    // Додаємо обробник для кнопки "Застосувати"
+    // Оновлюємо ціну після натискання "Застосувати"
     const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
     if (applyBtn) {
         const originalClick = applyBtn.onclick;
         applyBtn.onclick = function(e) {
             if (originalClick) originalClick.call(this, e);
-            setTimeout(updateCustomPrice, 500);
+            setTimeout(updateCustomPrice, 600);
         };
     }
 
