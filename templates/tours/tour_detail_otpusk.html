@@ -312,112 +312,123 @@ function getHotelName() {
     return 'Назва не вказана';
 }
 
-// AJAX відправка форми
-document.getElementById('submitBookingBtn').addEventListener('click', function(e) {
-    e.preventDefault();
-
-    // Отримуємо дані з форми
-    const name = document.getElementById('bookingName').value.trim();
-    const email = document.getElementById('bookingEmail').value.trim();
-    const phone = document.getElementById('bookingPhone').value.trim();
-    const countryCode = document.querySelector('select[name="country_code"]').value;
-    const comment = document.getElementById('bookingMessage').value.trim();
-    const tourName = getHotelName();
-    const tourPrice = document.querySelector('.new_t-order-price .new_price')?.innerText || '';
-    const tourDates = document.getElementById('tourDates').value;
-    const tourUrl = window.location.href;
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-    // Валідація
-    if (!name) {
-        showMessage('Будь ласка, введіть ваше ім\'я', 'danger');
-        return;
-    }
-
-    if (!phone) {
-        showMessage('Будь ласка, введіть номер телефону', 'danger');
-        return;
-    }
-
-    // Показуємо індикатор завантаження
-    const btn = document.getElementById('submitBookingBtn');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fa-regular fa-spinner fa-spin me-2"></i> Відправка...';
-    btn.disabled = true;
-
-    // Відправляємо AJAX запит з правильними заголовками
-    fetch(window.location.href, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': csrfToken,
-            'X-Requested-With': 'XMLHttpRequest'   // ← ВАЖЛИВО: додано!
-        },
-        body: new URLSearchParams({
-            'consultation_submit': '1',
-            'name': name,
-            'email': email,
-            'phone': phone,
-            'country_code': countryCode,
-            'comment': comment,
-            'tour_name': tourName,
-            'tour_price': tourPrice,
-            'tour_dates': tourDates,
-            'tour_url': tourUrl,
-            'csrfmiddlewaretoken': csrfToken
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            showMessage(data.message, 'success');
-            document.getElementById('bookingForm').reset();
-            // Оновлюємо ціну в прихованому полі
-            document.getElementById('tourName').value = tourName;
-            document.getElementById('tourPrice').value = tourPrice;
-        } else {
-            showMessage(data.error || 'Сталася помилка. Спробуйте пізніше.', 'danger');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showMessage('Помилка з\'єднання. Спробуйте пізніше.', 'danger');
-    })
-    .finally(() => {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    });
-});
-
-// Функція для показу повідомлень
+// Функція для показу повідомлень (з перевіркою наявності елемента)
 function showMessage(message, type) {
     const messageDiv = document.getElementById('formMessage');
+    if (!messageDiv) {
+        console.error('Елемент #formMessage не знайдено!');
+        return;
+    }
     messageDiv.className = `alert alert-${type}`;
     messageDiv.innerHTML = message + '<button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>';
     messageDiv.style.display = 'block';
 
     // Автоматично ховаємо через 5 секунд
     setTimeout(() => {
-        messageDiv.style.display = 'none';
+        if (messageDiv) messageDiv.style.display = 'none';
     }, 5000);
 }
 
-// Скрипт для відкриття форми вибору туристів
-setTimeout(function() {
-    const btn = document.querySelector('.new_t-change-people');
-    if (btn) {
-        btn.click();
-        console.log('Клік по кнопці "Ще" виконано');
+// Чекаємо завантаження DOM
+document.addEventListener('DOMContentLoaded', function() {
+    // AJAX відправка форми
+    const submitBtn = document.getElementById('submitBookingBtn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Отримуємо дані з форми
+            const name = document.getElementById('bookingName').value.trim();
+            const email = document.getElementById('bookingEmail').value.trim();
+            const phone = document.getElementById('bookingPhone').value.trim();
+            const countryCode = document.querySelector('select[name="country_code"]').value;
+            const comment = document.getElementById('bookingMessage').value.trim();
+            const tourName = getHotelName();
+            const tourPrice = document.querySelector('.new_t-order-price .new_price')?.innerText || '';
+            const tourDates = document.getElementById('tourDates').value;
+            const tourUrl = window.location.href;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            // Валідація
+            if (!name) {
+                showMessage('Будь ласка, введіть ваше ім\'я', 'danger');
+                return;
+            }
+
+            if (!phone) {
+                showMessage('Будь ласка, введіть номер телефону', 'danger');
+                return;
+            }
+
+            // Показуємо індикатор завантаження
+            const btn = submitBtn;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-regular fa-spinner fa-spin me-2"></i> Відправка...';
+            btn.disabled = true;
+
+            // Відправляємо AJAX запит з правильними заголовками
+            fetch(window.location.href, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new URLSearchParams({
+                    'consultation_submit': '1',
+                    'name': name,
+                    'email': email,
+                    'phone': phone,
+                    'country_code': countryCode,
+                    'comment': comment,
+                    'tour_name': tourName,
+                    'tour_price': tourPrice,
+                    'tour_dates': tourDates,
+                    'tour_url': tourUrl,
+                    'csrfmiddlewaretoken': csrfToken
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    document.getElementById('bookingForm').reset();
+                    document.getElementById('tourName').value = tourName;
+                    document.getElementById('tourPrice').value = tourPrice;
+                } else {
+                    showMessage(data.error || 'Сталася помилка. Спробуйте пізніше.', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Помилка з\'єднання. Спробуйте пізніше.', 'danger');
+            })
+            .finally(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        });
     } else {
-        console.log('Кнопку "Ще" не знайдено, повторюємо...');
-        setTimeout(arguments.callee, 1000);
+        console.warn('Кнопка #submitBookingBtn не знайдена');
     }
-}, 2000);
+
+    // Скрипт для відкриття форми вибору туристів
+    setTimeout(function() {
+        const btn = document.querySelector('.new_t-change-people');
+        if (btn) {
+            btn.click();
+            console.log('Клік по кнопці "Ще" виконано');
+        } else {
+            console.log('Кнопку "Ще" не знайдено, повторюємо...');
+            setTimeout(arguments.callee, 1000);
+        }
+    }, 2000);
+});
 </script>
 
 {% endblock %}
