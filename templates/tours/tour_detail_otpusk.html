@@ -7,12 +7,14 @@
 <div class="container my-5">
     <div id="otpusk-tour-module">
         <script>
+            // 1. Отримуємо параметри туру з рядка запиту URL
             const urlParams = new URLSearchParams(window.location.search);
             const hid = urlParams.get('hid');
             const oid = urlParams.get('oid');
             const od = urlParams.get('od');
             const ol = urlParams.get('ol');
 
+            // 2. Глобальні змінні для модуля Otpusk (обов'язкові)
             var osGeo = '';
             var osDefaultDeparture = '';
             var osDefaultDuration = '';
@@ -30,6 +32,7 @@
             var osCurrency = 'converted';
             var osAutoStart = false;
 
+            // 3. Завантажуємо конкретний тур
             if (hid && oid && od && ol) {
                 window.location.hash = `#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}&page=tour`;
                 console.log('Завантаження туру:', window.location.hash);
@@ -38,6 +41,7 @@
             }
         </script>
 
+        <!-- Підключаємо оригінальні скрипти Otpusk -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
         <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
         <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
@@ -48,32 +52,40 @@
     </div>
 </div>
 
+<!-- ========== СТИЛІ ========== -->
 <style>
     /* ========== ХОВАЄМО ЗАЙВЕ ========== */
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
     #otpusk-tour-module .new_f-ext-btn,
+    #otpusk-tour-module .new_f-dropdown-body-top,
+    #otpusk-tour-module .new_r-item-wrap,
+    #otpusk-tour-module .new_r-currency-switch,
     #otpusk-tour-module .new_f-form {
         display: none !important;
     }
 
-    #otpusk-tour-module .new_t-menu-back {
+    /* Ховаємо оригінальну кнопку "Повернутися" */
+    #otpusk-tour-module .new_t-menu-back,
+    #otpusk-tour-module .new_t-menu-back-link,
+    .new_t-menu-back,
+    .new_t-menu-back-link {
         display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     /* ХОВАЄМО РЕЙТИНГ */
-    .new_r-item-rating-container,
-    .new_r-item-rating-value,
-    .new_r-item-rating-rev,
-    [class*="new_r-p"],
-    .slice {
+    .new_r-item-rating-container {
         display: none !important;
     }
 
-    /* ХОВАЄМО КНОПКУ "ЗАМОВИТИ ТУР" */
+    /* ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ВІД OTPUSK */
     .new_t-order-btn-true,
-    .new_t-order-btn,
-    .new_t-order-btn-false {
+    .new_t-order-btn {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
@@ -84,12 +96,18 @@
         pointer-events: none !important;
     }
 
+    /* Робимо контейнер видимим */
     #otpusk-tour-module .new_t-container {
         display: block !important;
     }
 
+    /* Очищаємо фон */
     #otpusk-tour-module {
         background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
     }
 
     /* ========== СТИЛІ ДЛЯ МЕНЮ ========== */
@@ -104,6 +122,8 @@
         border-bottom: none !important;
         padding: 0 !important;
         gap: 8px !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
     }
 
     .new_t-menu-item.selected {
@@ -127,6 +147,11 @@
         background: #f1f5f9 !important;
         color: #64748b !important;
         border: none !important;
+        padding: 10px 28px !important;
+        border-radius: 50px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        cursor: pointer !important;
     }
 
     .new_t-menu-item:hover {
@@ -144,6 +169,10 @@
         box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
         margin-bottom: 16px !important;
         padding: 20px 24px !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 20px !important;
     }
 
     .new_t-tour-tab-col-2,
@@ -154,40 +183,121 @@
         background: transparent !important;
     }
 
-    /* ========== ФІРМОВІ КОЛЬОРИ (ФІОЛЕТОВИЙ) ========== */
-    .new_f-people-item.active,
-    .new_f-dropdown-btn-apply,
-    .new_f-dropdown-body-top,
-    .new_t-change-people:hover,
-    .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
-        background: #7a219e !important;
-        border-color: #7a219e !important;
+    /* ========== ПРИБИРАЄМО ІКОНКИ ========== */
+    .new_t-tour-tab-col-1 svg {
+        display: none !important;
     }
 
-    .new_t-important,
-    .new_t-header-geo a,
-    .new_r-item-geo:hover,
-    .new_r-item-hotel:hover {
+    /* ========== ДАТА ========== */
+    .new_t-date-table {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 16px !important;
+        align-items: center !important;
+    }
+
+    .new_t-important {
+        font-weight: 700 !important;
         color: #7a219e !important;
+        font-size: 1rem !important;
     }
 
-    .new_r-item-geo svg,
-    .new_t-header-geo svg {
-        fill: #7a219e !important;
+    .new_t-duration-container {
+        background: transparent !important;
+        padding: 6px 0 !important;
+        font-weight: 600 !important;
+        color: #1e293b !important;
+        font-size: 0.9rem !important;
+        border-bottom: 1px dashed #e2e8f0 !important;
+    }
+
+    .new_t-duration-text {
+        font-size: 0.7rem !important;
+        color: #64748b !important;
+        margin-top: 4px !important;
+    }
+
+    /* ========== ПОСЛУГИ ========== */
+    .new_t-service-item {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 8px 18px !important;
+        background: #f1f5f9 !important;
+        border-radius: 40px !important;
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
+        color: #1e293b !important;
+    }
+
+    /* ========== ОРИГІНАЛЬНА ФОРМА ТУРИСТІВ ========== */
+    .new_f-dropdown-body {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        z-index: 99999999 !important;
+        background: white !important;
+        border-radius: 24px !important;
+        width: 90% !important;
+        max-width: 550px !important;
+        min-width: 320px !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.4) !important;
+        pointer-events: auto !important;
+    }
+
+    .new_f-dropdown-body * {
+        pointer-events: auto !important;
+    }
+
+    .form-overlay-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 99999998;
+        pointer-events: auto;
+    }
+
+    .new_t-change-people {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 36px !important;
+        height: 36px !important;
+        background: #f1f5f9 !important;
+        border-radius: 50% !important;
+        cursor: pointer !important;
+        margin-left: 10px !important;
+        transition: all 0.2s ease !important;
+        border: none !important;
+    }
+
+    .new_t-change-people:hover {
+        background: #7a219e !important;
+        transform: scale(1.05);
     }
 
     .new_t-change-people:hover svg {
         fill: white !important;
     }
 
-    .new_f-dropdown-btn-apply:hover {
-        background: #5a1675 !important;
+    .new_t-change-people svg {
+        width: 14px !important;
+        height: 14px !important;
+        transform: rotate(90deg) !important;
+        fill: #64748b !important;
     }
 
-    .new_t-order-price .new_price {
-        color: #dc2626 !important;
+    .new_t-duration-icons {
+        display: none !important;
     }
 
+    /* Стилі для повідомлень */
     .alert-success {
         background-color: #d4edda;
         border-color: #c3e6cb;
@@ -197,31 +307,58 @@
         margin-bottom: 20px;
     }
 
-    .alert-danger {
-        background-color: #f8d7da;
-        border-color: #f5c6cb;
-        color: #721c24;
-        padding: 12px 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
+    /* Мобільна версія */
+    @media (max-width: 768px) {
+        .new_t-menu {
+            gap: 8px !important;
+            padding: 8px 12px !important;
+        }
+        .new_t-menu-item {
+            padding: 6px 16px !important;
+            font-size: 12px !important;
+        }
+        .new_t-tour-tab-table {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            padding: 16px !important;
+        }
+        .new_f-dropdown-body {
+            width: 95% !important;
+            min-width: 280px !important;
+        }
+        .new_f-people-list {
+            flex-direction: column !important;
+        }
     }
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
 <div class="container my-3">
     <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
-        ← Повернутися до результатів пошуку
+        <i class="fa-solid fa-arrow-left me-1"></i> ← Повернутися до результатів пошуку
     </a>
 </div>
+
+<script>
+    setTimeout(function() {
+        const originalBackBtn = document.querySelector('.new_t-menu-back, .new_t-menu-back-link');
+        if (originalBackBtn) originalBackBtn.remove();
+    }, 500);
+</script>
 
 <!-- ========== БЛОК БРОНЮВАННЯ ========== -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
         <div class="card border-0 shadow-sm" id="consultationCard">
-            <div class="card-body p-4 p-md-5">
-                <h5 class="fw-bold mb-3">Забронювати тур</h5>
-                <p class="text-muted mb-4">Заповніть форму, щоб забронювати цей тур</p>
+            <div class="card-body p-4 p-md-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">
+                    Забронювати тур
+                </h5>
+                <p class="text-muted mb-0">
+                    Заповніть форму, щоб забронювати цей тур
+                </p>
 
+                <!-- Повідомлення про успішне відправлення -->
                 {% if messages %}
                     {% for message in messages %}
                         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -233,22 +370,25 @@
 
                 <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
                     <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
-                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
+                             style="width: 40px; height: 40px;">
                             <i class="fa-regular fa-user text-secondary"></i>
                         </div>
                         <div>
-                            <div class="fw-bold" style="color: #7a219e;">
+                            <div class="fw-bold" style="font-size: 0.95rem; color: #7a219e;">
                                 {% if agent_site %}
                                     {{ agent_site.user.get_full_name|default:agent_site.user.username }}
                                 {% else %}
                                     {{ random_agent.get_full_name|default:random_agent.username }}
                                 {% endif %}
                             </div>
-                            <div class="text-muted" style="font-size: 0.8rem;">9 років досвіду в туризмі</div>
+                            <div class="text-muted" style="font-size: 0.8rem;">
+                                9 років досвіду в туризмі
+                            </div>
                         </div>
                     </div>
                     <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
-                        <form id="bookingForm" method="post" action="">
+                        <form id="bookingForm" method="POST" action="">
                             {% csrf_token %}
                             <input type="hidden" name="consultation_submit" value="1">
                             <input type="hidden" name="tour_hid" id="tourHid" value="{{ hid }}">
@@ -256,13 +396,13 @@
                             <input type="hidden" name="tour_name" id="tourName" value="">
                             <input type="hidden" name="tour_price" id="tourPrice" value="">
                             <input type="hidden" name="tour_dates" id="tourDates" value="{{ od }} - {{ ol }} ночей">
-                            <input type="hidden" name="tour_link" id="tourLink" value="{{ request.build_absolute_uri }}">
+                            <input type="hidden" name="tour_url" id="tourUrl" value="{{ request.build_absolute_uri }}">
 
                             <div class="mb-3">
                                 <input type="text" name="name" id="bookingName" class="form-control" placeholder="Ваше ім'я" required>
                             </div>
                             <div class="mb-3">
-                                <input type="text" name="email" id="bookingEmail" class="form-control" placeholder="Ваш email (необов'язково)">
+                                <input type="email" name="email" id="bookingEmail" class="form-control" placeholder="Ваш email (необов'язково)">
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-4">
@@ -276,14 +416,16 @@
                                     </select>
                                 </div>
                                 <div class="col-8">
-                                    <input type="tel" name="phone" id="bookingPhone" class="form-control" placeholder="XXXXXXXXX" required pattern="[0-9]+" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)">
+                                    <input type="tel" name="phone" id="bookingPhone" class="form-control" placeholder="XXXXXXXXX" required
+                                           pattern="[0-9]+"
+                                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)">
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <textarea name="comment" id="bookingMessage" class="form-control" rows="3" placeholder="Ваші побажання (необов'язково)"></textarea>
                             </div>
-                            <button type="submit" class="btn w-100" id="submitBookingBtn" style="background: #7a219e; color: white; font-weight: 500; height: 45px; border-radius: 6px; border: none;">
-                                <i class="fa-regular fa-calendar-check me-2"></i> Відправити запит
+                            <button type="submit" class="btn w-100" id="submitBookingBtn" style="background: #7a219e; color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px; border: none;">
+                                <i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур
                             </button>
                         </form>
                     </div>
@@ -293,35 +435,162 @@
     </div>
 </div>
 
+<!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-function getHotelName() {
+// ========== АВТОМАТИЧНЕ ЗАПОВНЕННЯ ДАНИХ ПРО ТУР ==========
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    // Отримуємо назву готелю
     const hotelTitle = document.querySelector('.new_t-header-title');
     if (hotelTitle) {
-        return hotelTitle.innerText.trim();
+        document.getElementById('tourName').value = hotelTitle.innerText.trim();
     }
-    return 'Назва не вказана';
-}
 
-document.getElementById('bookingForm').addEventListener('submit', function(e) {
-    const hotelName = getHotelName();
-    document.getElementById('tourName').value = hotelName;
-
+    // Отримуємо ціну
     const priceBlock = document.querySelector('.new_t-order-price .new_price');
     if (priceBlock) {
         document.getElementById('tourPrice').value = priceBlock.innerText;
     }
 });
 
-setTimeout(function() {
-    const btn = document.querySelector('.new_t-change-people');
-    if (btn) {
-        btn.click();
-        console.log('Клік по кнопці "Ще" виконано');
-    } else {
-        console.log('Кнопку "Ще" не знайдено, повторюємо...');
-        setTimeout(arguments.callee, 1000);
+// ========== РОБОТА З ОРИГІНАЛЬНОЮ ФОРМОЮ ТУРИСТІВ ==========
+
+// 1. Оновлення ціни
+function updateCustomPrice() {
+    const originalPriceBlock = document.querySelector('.new_t-order-price');
+    const priceNumber = document.querySelector('.price-number');
+    if (originalPriceBlock && priceNumber) {
+        const priceSpan = originalPriceBlock.querySelector('.new_price, .new_price-value');
+        if (priceSpan) {
+            const newPrice = priceSpan.innerText;
+            if (priceNumber.innerText !== newPrice) {
+                priceNumber.innerText = newPrice;
+                const tourPriceField = document.getElementById('tourPrice');
+                if (tourPriceField) tourPriceField.value = newPrice;
+            }
+        }
     }
-}, 2000);
+}
+
+// 2. Спостерігач за ціною
+function startPriceWatcher() {
+    const observer = new MutationObserver(function() {
+        updateCustomPrice();
+    });
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true });
+    updateCustomPrice();
+}
+
+// 3. Ініціалізація оригінальної форми туристів
+function initPeopleButton() {
+    const peopleBtn = document.querySelector('.new_t-change-people');
+    if (!peopleBtn) {
+        setTimeout(initPeopleButton, 500);
+        return;
+    }
+
+    if (peopleBtn.getAttribute('data-initialized') === 'true') return;
+    peopleBtn.setAttribute('data-initialized', 'true');
+
+    let dropdown = peopleBtn.querySelector('.new_f-dropdown-body');
+    if (!dropdown) {
+        setTimeout(initPeopleButton, 300);
+        return;
+    }
+
+    dropdown.style.display = 'none';
+    dropdown.style.position = 'fixed';
+    dropdown.style.top = '50%';
+    dropdown.style.left = '50%';
+    dropdown.style.transform = 'translate(-50%, -50%)';
+    dropdown.style.zIndex = '99999999';
+    dropdown.style.pointerEvents = 'auto';
+
+    let overlay = null;
+
+    function showOverlay() {
+        if (overlay) return;
+        overlay = document.createElement('div');
+        overlay.className = 'form-overlay-bg';
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+    }
+
+    function hideOverlay() {
+        if (overlay) {
+            overlay.remove();
+            overlay = null;
+        }
+        document.body.style.overflow = '';
+    }
+
+    function closeDropdown() {
+        dropdown.style.display = 'none';
+        hideOverlay();
+        setTimeout(updateCustomPrice, 300);
+    }
+
+    peopleBtn.onclick = function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (dropdown.style.display === 'none') {
+            dropdown.style.display = 'block';
+            showOverlay();
+        } else {
+            closeDropdown();
+        }
+        return false;
+    };
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && dropdown.style.display === 'block') {
+            closeDropdown();
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (dropdown.style.display === 'block') {
+            if (!dropdown.contains(e.target) && e.target !== peopleBtn && !peopleBtn.contains(e.target)) {
+                if (e.target === overlay || overlay?.contains(e.target)) {
+                    closeDropdown();
+                }
+            }
+        }
+    });
+
+    const cancelBtn = dropdown.querySelector('.new_f-dropdown-btn-cancel');
+    const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
+    const closeBtn = dropdown.querySelector('.new_f-dropdown-body-close');
+
+    if (cancelBtn) {
+        cancelBtn.onclick = function(e) {
+            e.stopPropagation();
+            closeDropdown();
+        };
+    }
+
+    if (applyBtn) {
+        applyBtn.onclick = function(e) {
+            e.stopPropagation();
+            closeDropdown();
+        };
+    }
+
+    if (closeBtn) {
+        closeBtn.onclick = function(e) {
+            e.stopPropagation();
+            closeDropdown();
+        };
+    }
+
+    console.log('✅ Форма туристів ініціалізована');
+}
+
+// 4. Запуск
+setTimeout(function() {
+    startPriceWatcher();
+    initPeopleButton();
+}, 1500);
 </script>
 
 {% endblock %}
