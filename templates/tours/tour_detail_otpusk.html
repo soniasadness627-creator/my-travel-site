@@ -110,11 +110,6 @@
         display: none !important;
     }
 
-    /* ========== ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЩЕ" ДЛЯ ТУРИСТІВ ========== */
-    .new_t-change-people {
-        display: none !important;
-    }
-
     /* ========== СТИЛІ ДЛЯ МЕНЮ ========== */
     .new_t-menu {
         display: flex !important;
@@ -217,6 +212,44 @@
         font-weight: 600 !important;
         color: #1e293b !important;
         font-size: 1rem !important;
+    }
+
+    /* ========== КНОПКА "ЩЕ" ========== */
+    .new_t-change-people {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 36px !important;
+        height: 36px !important;
+        background: #f1f5f9 !important;
+        border-radius: 50% !important;
+        cursor: pointer !important;
+        margin-left: 10px !important;
+        transition: all 0.2s ease !important;
+        border: none !important;
+        position: relative !important;
+        z-index: 10 !important;
+    }
+
+    .new_t-change-people:hover {
+        background: #3b82f6 !important;
+        transform: scale(1.05);
+    }
+
+    .new_t-change-people:hover svg {
+        fill: white !important;
+    }
+
+    .new_t-change-people span:not(svg) {
+        font-size: 0 !important;
+    }
+
+    .new_t-change-people svg {
+        width: 14px !important;
+        height: 14px !important;
+        transform: rotate(90deg) !important;
+        fill: #64748b !important;
+        transition: fill 0.2s ease !important;
     }
 
     /* ========== ДАТА ========== */
@@ -336,95 +369,28 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== КАСТОМНА ФОРМА ДЛЯ ТУРИСТІВ (ЗАВЖДИ ВИДИМА) ========== */
-    .custom-people-selector {
-        background: #f8fafc;
-        border-radius: 16px;
-        padding: 16px 20px;
-        margin-top: 10px;
-        border: 1px solid #e2e8f0;
+    /* ========== ОРИГІНАЛЬНА ФОРМА ТУРИСТІВ - ВИПРАВЛЕНО ========== */
+    .new_f-dropdown-body {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        z-index: 99999999 !important;
+        background: white !important;
+        border-radius: 24px !important;
+        width: 90% !important;
+        max-width: 550px !important;
+        min-width: 320px !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.4) !important;
+        pointer-events: auto !important;
     }
 
-    .custom-people-title {
-        font-weight: 600;
-        color: #1e293b;
-        margin-bottom: 12px;
-        font-size: 0.9rem;
-    }
-
-    .custom-people-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-    }
-
-    .custom-people-btn {
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 40px;
-        padding: 8px 20px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        color: #334155;
-    }
-
-    .custom-people-btn:hover {
-        background: #3b82f6;
-        color: white;
-        border-color: #3b82f6;
-    }
-
-    .custom-people-btn.active {
-        background: #3b82f6;
-        color: white;
-        border-color: #3b82f6;
-    }
-
-    .custom-children-section {
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px dashed #e2e8f0;
-    }
-
-    .custom-children-btn {
-        background: #f1f5f9;
-        border: none;
-        border-radius: 30px;
-        padding: 6px 16px;
-        cursor: pointer;
-        font-size: 0.85rem;
-        margin-right: 8px;
-        margin-bottom: 8px;
-    }
-
-    .custom-children-btn:hover {
-        background: #3b82f6;
-        color: white;
-    }
-
-    .custom-children-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 10px;
-    }
-
-    .custom-child-tag {
-        background: #e2e8f0;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .custom-child-remove {
-        cursor: pointer;
-        color: #dc2626;
-        font-weight: bold;
+    /* ВСІ елементи форми клікабельні */
+    .new_f-dropdown-body * {
+        pointer-events: auto !important;
+        cursor: pointer !important;
     }
 
     .new_t-duration-icons {
@@ -457,8 +423,13 @@
         .new_t-date-table {
             flex-wrap: wrap !important;
         }
-        .custom-people-buttons {
-            flex-wrap: wrap;
+        .new_f-dropdown-body {
+            width: 95% !important;
+            max-width: none !important;
+            min-width: 280px !important;
+        }
+        .new_f-people-list {
+            flex-direction: column !important;
         }
     }
 </style>
@@ -515,8 +486,6 @@
                             <input type="hidden" name="tour_name" id="tourName" value="">
                             <input type="hidden" name="tour_price" id="tourPrice" value="">
                             <input type="hidden" name="tour_dates" id="tourDates" value="">
-                            <input type="hidden" name="adults" id="selectedAdults" value="2">
-                            <input type="hidden" name="children" id="selectedChildren" value="">
 
                             <div class="mb-3">
                                 <input type="text" name="name" id="bookingName" class="form-control" placeholder="Ваше ім'я" required>
@@ -552,167 +521,11 @@
     </div>
 </div>
 
-<!-- ========== ДОДАЄМО КАСТОМНИЙ БЛОК ВИБОРУ ТУРИСТІВ ПІСЛЯ ЗАВАНТАЖЕННЯ ========== -->
+<!-- ========== ОСНОВНІ СКРИПТИ (ВИПРАВЛЕНО) ========== -->
 <script>
-// Функція для додавання кастомного вибору туристів
-function addCustomPeopleSelector() {
-    // Шукаємо оригінальний блок Туристи
-    const touristTable = document.querySelector('.tourist-table');
-    if (!touristTable) {
-        setTimeout(addCustomPeopleSelector, 500);
-        return;
-    }
+// ========== РОБОТА З ОРИГІНАЛЬНОЮ ФОРМОЮ ТУРИСТІВ ==========
 
-    // Знаходимо колонку з інформацією про туристів
-    const col2 = touristTable.querySelector('.new_t-tour-tab-col-2');
-    if (!col2) return;
-
-    // Перевіряємо, чи вже додали
-    if (document.querySelector('.custom-people-selector')) return;
-
-    // Отримуємо поточну кількість дорослих
-    let currentAdults = 2;
-    const adultsSpan = col2.querySelector('.new_weight-bold');
-    if (adultsSpan) {
-        const match = adultsSpan.innerText.match(/(\d+)\s+дорослих/);
-        if (match) currentAdults = parseInt(match[1]);
-    }
-
-    // Створюємо кастомний селектор
-    const customSelector = document.createElement('div');
-    customSelector.className = 'custom-people-selector';
-    customSelector.innerHTML = `
-        <div class="custom-people-title">👥 Кількість туристів:</div>
-        <div class="custom-people-buttons">
-            ${[1,2,3,4,5,6,7,8].map(num => `<button class="custom-people-btn ${num === currentAdults ? 'active' : ''}" data-adults="${num}">${num} ${num === 1 ? 'дорослий' : 'дорослих'}</button>`).join('')}
-        </div>
-        <div class="custom-children-section">
-            <div class="custom-people-title">👶 Діти (додайте за потреби):</div>
-            <div>
-                ${[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16].map(age =>
-                    `<button class="custom-children-btn" data-age="${age}">${age} ${getAgeText(age)}</button>`
-                ).join('')}
-            </div>
-            <div class="custom-children-list" id="childrenList"></div>
-        </div>
-    `;
-
-    // Додаємо селектор після оригінального тексту
-    col2.appendChild(customSelector);
-
-    // Масив для зберігання дітей
-    let childrenAges = [];
-
-    function getAgeText(age) {
-        if (age === 1) return 'рік';
-        if (age >= 2 && age <= 4) return 'роки';
-        return 'років';
-    }
-
-    function updateChildrenList() {
-        const container = document.getElementById('childrenList');
-        if (!container) return;
-
-        if (childrenAges.length === 0) {
-            container.innerHTML = '<div style="color: #94a3b8; font-size: 0.8rem;">Немає дітей</div>';
-        } else {
-            container.innerHTML = childrenAges.map(age => `
-                <div class="custom-child-tag">
-                    Дитина ${age} ${getAgeText(age)}
-                    <span class="custom-child-remove" data-age="${age}">✕</span>
-                </div>
-            `).join('');
-
-            // Додаємо обробники для видалення
-            document.querySelectorAll('.custom-child-remove').forEach(btn => {
-                btn.onclick = function(e) {
-                    e.stopPropagation();
-                    const age = parseInt(this.dataset.age);
-                    childrenAges = childrenAges.filter(a => a !== age);
-                    updateChildrenList();
-                    updateOtpuskPeople();
-                };
-            });
-        }
-    }
-
-    function updateOtpuskPeople() {
-        // Оновлюємо оригінальні приховані поля Otpusk
-        const adults = parseInt(document.querySelector('.custom-people-btn.active')?.dataset.adults || 2);
-        const childrenStr = childrenAges.join(',');
-
-        // Оновлюємо текст в оригінальному блоці
-        if (adultsSpan) {
-            let text = `${adults} дорослих`;
-            if (childrenAges.length > 0) {
-                text += `, ${childrenAges.length} дітей`;
-            }
-            adultsSpan.innerText = text;
-        }
-
-        // Оновлюємо приховані поля форми
-        document.getElementById('selectedAdults').value = adults;
-        document.getElementById('selectedChildren').value = childrenStr;
-
-        // Оновлюємо URL параметри для Otpusk
-        updateUrlParams(adults, childrenAges);
-
-        // Оновлюємо ціну
-        setTimeout(updateCustomPrice, 500);
-    }
-
-    function updateUrlParams(adults, children) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('adults', adults);
-        if (children.length > 0) {
-            url.searchParams.set('children', children.join(','));
-        } else {
-            url.searchParams.delete('children');
-        }
-        window.history.replaceState({}, '', url);
-
-        // Оновлюємо hash для Otpusk
-        if (window.location.hash) {
-            const hash = window.location.hash;
-            const newHash = hash.replace(/&adults=\d+/, '').replace(/&children=[^&]*/, '');
-            window.location.hash = `${newHash}&adults=${adults}${children.length > 0 ? `&children=${children.join(',')}` : ''}`;
-        }
-
-        // Перезавантажуємо ціну через Otpusk API
-        if (typeof window.refreshTourPrice === 'function') {
-            window.refreshTourPrice();
-        }
-    }
-
-    // Обробники для кнопок дорослих
-    document.querySelectorAll('.custom-people-btn').forEach(btn => {
-        btn.onclick = function(e) {
-            e.stopPropagation();
-            document.querySelectorAll('.custom-people-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            updateOtpuskPeople();
-        };
-    });
-
-    // Обробники для кнопок дітей
-    document.querySelectorAll('.custom-children-btn').forEach(btn => {
-        btn.onclick = function(e) {
-            e.stopPropagation();
-            const age = parseInt(this.dataset.age);
-            childrenAges.push(age);
-            childrenAges.sort((a,b) => a - b);
-            updateChildrenList();
-            updateOtpuskPeople();
-        };
-    });
-
-    // Ініціалізуємо список дітей
-    updateChildrenList();
-
-    console.log('✅ Кастомний вибір туристів додано');
-}
-
-// Функція оновлення ціни
+// 1. Оновлення ціни
 function updateCustomPrice() {
     const originalPriceBlock = document.querySelector('.new_t-order-price');
     const priceNumber = document.querySelector('.price-number');
@@ -729,17 +542,66 @@ function updateCustomPrice() {
     }
 }
 
-// Запуск
-setTimeout(function() {
-    addCustomPeopleSelector();
-
-    // Спостерігач за ціною
+// 2. Спостерігач за ціною
+function startPriceWatcher() {
     const observer = new MutationObserver(function() {
         updateCustomPrice();
     });
     observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true });
     updateCustomPrice();
-}, 2000);
+}
+
+// 3. Ініціалізація ОРИГІНАЛЬНОЇ форми туристів (просте виправлення)
+function initPeopleButton() {
+    // Шукаємо оригінальну кнопку "Ще"
+    const peopleBtn = document.querySelector('.new_t-change-people');
+    if (!peopleBtn) {
+        setTimeout(initPeopleButton, 500);
+        return;
+    }
+
+    // Знаходимо оригінальний дропдаун Otpusk
+    let dropdown = peopleBtn.querySelector('.new_f-dropdown-body');
+    if (!dropdown) {
+        setTimeout(initPeopleButton, 300);
+        return;
+    }
+
+    // Просто додаємо стилі для правильної позиції та клікабельності
+    dropdown.style.position = 'fixed';
+    dropdown.style.top = '50%';
+    dropdown.style.left = '50%';
+    dropdown.style.transform = 'translate(-50%, -50%)';
+    dropdown.style.zIndex = '99999999';
+    dropdown.style.backgroundColor = 'white';
+    dropdown.style.borderRadius = '24px';
+    dropdown.style.boxShadow = '0 30px 60px rgba(0,0,0,0.4)';
+    dropdown.style.pointerEvents = 'auto';
+
+    // Переконуємось, що всі внутрішні елементи клікабельні
+    const allElements = dropdown.querySelectorAll('*');
+    allElements.forEach(el => {
+        el.style.pointerEvents = 'auto';
+    });
+
+    // Оновлюємо ціну після змін
+    const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
+    if (applyBtn) {
+        const originalClick = applyBtn.onclick;
+        applyBtn.onclick = function(e) {
+            if (originalClick) originalClick.call(this, e);
+            setTimeout(updateCustomPrice, 500);
+        };
+    }
+
+    console.log('✅ Оригінальна форма туристів виправлена');
+}
+
+// 4. Запуск
+setTimeout(function() {
+    startPriceWatcher();
+    initPeopleButton();
+}, 1500);
 </script>
 
 {% endblock %}
