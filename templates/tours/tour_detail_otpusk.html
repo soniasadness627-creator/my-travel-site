@@ -210,185 +210,169 @@
         width: 100% !important;
     }
 
-    /* ========== БЛОК ВИБОРУ ТУРИСТІВ ========== */
+    /* ========== КАСТОМНИЙ БЛОК ВИБОРУ ТУРИСТІВ ========== */
     .custom-tourist-block {
         margin-top: 15px;
         width: 100%;
     }
 
-    .new_f-dropdown-body-wrap {
-        border-radius: 16px !important;
-        overflow: hidden !important;
-        border: 1px solid #e2e8f0 !important;
+    .tourist-selector-wrap {
+        background: #f8fafc;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
     }
 
-    .new_f-dropdown-body-top {
-        background: #3b82f6 !important;
-        color: white !important;
-        padding: 12px 20px !important;
-        font-weight: 600 !important;
-        font-size: 16px !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
+    .tourist-header {
+        background: #3b82f6;
+        color: white;
+        padding: 12px 20px;
+        font-weight: 600;
+        font-size: 16px;
     }
 
-    .new_f-dropdown-body-close {
-        cursor: pointer !important;
-        font-size: 24px !important;
-        color: white !important;
-        opacity: 0.8;
+    .tourist-section {
+        padding: 20px;
+        background: white;
+        border-bottom: 1px solid #e2e8f0;
     }
 
-    .new_f-dropdown-body-close:hover {
-        opacity: 1;
+    .tourist-section:last-child {
+        border-bottom: none;
     }
 
-    .new_f-people-container {
-        padding: 20px !important;
-        background: white !important;
+    .tourist-section-title {
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: #1e293b;
+        font-size: 0.95rem;
     }
 
-    .new_f-people-title {
-        font-weight: 600 !important;
-        margin-bottom: 12px !important;
-        color: #1e293b !important;
-        font-size: 0.95rem !important;
+    .adults-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
-    .new_f-people-list {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 10px !important;
-        margin-bottom: 20px !important;
+    .adult-btn {
+        padding: 10px 20px;
+        border: 1px solid #e2e8f0;
+        border-radius: 40px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 500;
+        min-width: 50px;
     }
 
-    .new_f-people-item {
-        flex: 0 0 auto !important;
-        text-align: center !important;
-        padding: 10px 20px !important;
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 40px !important;
-        cursor: pointer !important;
-        background: white !important;
-        transition: all 0.2s ease !important;
-        min-width: 50px !important;
+    .adult-btn:hover {
+        background: #e2e8f0;
     }
 
-    .new_f-people-item.active {
-        background: #3b82f6 !important;
-        color: white !important;
-        border-color: #3b82f6 !important;
+    .adult-btn.active {
+        background: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
     }
 
-    .new_f-people-item:hover {
-        background: #e2e8f0 !important;
+    .add-child-btn {
+        background: #f1f5f9;
+        padding: 8px 20px;
+        border-radius: 40px;
+        cursor: pointer;
+        display: inline-block;
+        border: none;
+        font-weight: 500;
+        margin-bottom: 15px;
     }
 
-    .new_f-children-container {
-        padding: 0 20px 20px 20px !important;
-        background: white !important;
+    .add-child-btn:hover {
+        background: #3b82f6;
+        color: white;
     }
 
-    .new_f-children-accordion-btn {
-        background: #f1f5f9 !important;
-        padding: 8px 20px !important;
-        border-radius: 40px !important;
-        cursor: pointer !important;
-        display: inline-block !important;
-        margin: 10px 0 !important;
-        border: none !important;
-        font-weight: 500 !important;
-        transition: all 0.2s ease !important;
+    .age-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 15px;
+        display: none;
     }
 
-    .new_f-children-accordion-btn:hover {
-        background: #3b82f6 !important;
-        color: white !important;
+    .age-buttons.show {
+        display: flex;
     }
 
-    .new_f-children-accordion-body {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 8px !important;
-        margin-top: 15px !important;
-        margin-bottom: 15px !important;
+    .age-btn {
+        padding: 6px 14px;
+        background: #f1f5f9;
+        border-radius: 30px;
+        cursor: pointer;
+        border: none;
+        font-size: 0.85rem;
     }
 
-    .new_f-children-age-item {
-        padding: 6px 14px !important;
-        background: #f1f5f9 !important;
-        border-radius: 30px !important;
-        cursor: pointer !important;
-        display: inline-block !important;
-        font-size: 0.85rem !important;
-        transition: all 0.2s ease !important;
-        text-align: center !important;
+    .age-btn:hover {
+        background: #3b82f6;
+        color: white;
     }
 
-    .new_f-children-age-item:hover {
-        background: #3b82f6 !important;
-        color: white !important;
+    .children-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
     }
 
-    .new_f-children-list {
-        margin-top: 15px !important;
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 8px !important;
-    }
-
-    .new_f-children-list-item {
-        background: #e2e8f0 !important;
-        padding: 5px 12px !important;
-        border-radius: 30px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 8px !important;
-        font-size: 0.8rem !important;
+    .child-tag {
+        background: #e2e8f0;
+        padding: 5px 12px;
+        border-radius: 30px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
     }
 
     .remove-child {
-        cursor: pointer !important;
-        color: #dc2626 !important;
-        margin-left: 5px !important;
-        font-weight: bold !important;
+        cursor: pointer;
+        color: #dc2626;
+        font-weight: bold;
     }
 
-    .new_f-dropdown-body-bottom {
-        display: flex !important;
-        justify-content: flex-end !important;
-        gap: 12px !important;
-        padding: 15px 20px !important;
-        border-top: 1px solid #e2e8f0 !important;
-        background: white !important;
+    .tourist-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 15px 20px;
+        background: white;
+        border-top: 1px solid #e2e8f0;
     }
 
-    .new_f-dropdown-bottom-btn {
-        padding: 8px 25px !important;
-        border-radius: 40px !important;
-        cursor: pointer !important;
-        border: none !important;
-        font-weight: 600 !important;
-        transition: all 0.2s ease !important;
+    .cancel-btn, .apply-btn {
+        padding: 8px 25px;
+        border-radius: 40px;
+        cursor: pointer;
+        border: none;
+        font-weight: 600;
     }
 
-    .new_f-dropdown-btn-cancel {
-        background: #e2e8f0 !important;
-        color: #475569 !important;
+    .cancel-btn {
+        background: #e2e8f0;
+        color: #475569;
     }
 
-    .new_f-dropdown-btn-cancel:hover {
-        background: #cbd5e1 !important;
+    .cancel-btn:hover {
+        background: #cbd5e1;
     }
 
-    .new_f-dropdown-btn-apply {
-        background: #3b82f6 !important;
-        color: white !important;
+    .apply-btn {
+        background: #3b82f6;
+        color: white;
     }
 
-    .new_f-dropdown-btn-apply:hover {
-        background: #2563eb !important;
+    .apply-btn:hover {
+        background: #2563eb;
     }
 
     /* ========== ДАТА ========== */
@@ -433,15 +417,6 @@
         white-space: nowrap !important;
     }
 
-    /* ========== ХАРЧУВАННЯ ========== */
-    .new_t-tour-tab-table.food-table .new_t-tour-tab-col-2 {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 20px !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-    }
-
     /* ========== ПОСЛУГИ ========== */
     .new_t-service-item {
         display: inline-flex !important;
@@ -467,7 +442,6 @@
         display: none !important;
     }
 
-    /* Мобільна версія */
     @media (max-width: 768px) {
         .new_t-menu {
             gap: 8px !important;
@@ -482,12 +456,8 @@
             align-items: stretch !important;
             padding: 16px !important;
         }
-        .new_f-people-list {
-            flex-direction: column !important;
-        }
-        .new_f-children-accordion-body {
-            max-height: 200px !important;
-            overflow-y: auto !important;
+        .adults-buttons {
+            flex-wrap: wrap;
         }
         .price-number {
             font-size: 1.4rem !important;
@@ -582,93 +552,188 @@
     </div>
 </div>
 
-<!-- ========== ВСТАВЛЯЄМО ОРИГІНАЛЬНИЙ БЛОК ВИБОРУ ТУРИСТІВ ========== -->
+<!-- ========== ВСТАВЛЯЄМО БЛОК ВИБОРУ ТУРИСТІВ ========== -->
 <script>
-// Функція для вставки блоку вибору туристів
+// Змінні для зберігання вибору
+let selectedAdults = 2;
+let childrenAges = [];
+
+// Функція оновлення ціни через зміну URL
+function updatePriceFromOtpusk() {
+    // Оновлюємо URL параметри
+    const url = new URL(window.location.href);
+    url.searchParams.set('adults', selectedAdults);
+    if (childrenAges.length > 0) {
+        url.searchParams.set('children', childrenAges.join(','));
+    } else {
+        url.searchParams.delete('children');
+    }
+    window.history.replaceState({}, '', url);
+
+    // Оновлюємо hash для Otpusk
+    if (window.location.hash) {
+        let hash = window.location.hash;
+        hash = hash.replace(/&adults=\d+/, '').replace(/&children=[^&]*/, '');
+        window.location.hash = `${hash}&adults=${selectedAdults}${childrenAges.length > 0 ? `&children=${childrenAges.join(',')}` : ''}`;
+    }
+
+    // Оновлюємо текст в оригінальному блоці
+    const adultsSpan = document.querySelector('.tourist-table .new_weight-bold');
+    if (adultsSpan) {
+        let text = `${selectedAdults} дорослих`;
+        if (childrenAges.length > 0) {
+            text += `, ${childrenAges.length} ${childrenAges.length === 1 ? 'дитина' : 'дітей'}`;
+        }
+        adultsSpan.innerText = text;
+    }
+
+    // Чекаємо трохи і оновлюємо ціну з оригінального блоку
+    setTimeout(function() {
+        const originalPriceBlock = document.querySelector('.new_t-order-price');
+        const priceNumber = document.querySelector('.price-number');
+        if (originalPriceBlock && priceNumber) {
+            const priceSpan = originalPriceBlock.querySelector('.new_price, .new_price-value');
+            if (priceSpan) {
+                priceNumber.innerText = priceSpan.innerText;
+                document.getElementById('tourPrice').value = priceSpan.innerText;
+            }
+        }
+    }, 500);
+}
+
+// Функція вставки блоку
 function insertTouristBlock() {
-    // Шукаємо блок "Туристи"
     const touristTable = document.querySelector('.tourist-table');
     if (!touristTable) {
         setTimeout(insertTouristBlock, 500);
         return;
     }
 
-    // Знаходимо колонку з контентом
     const col2 = touristTable.querySelector('.new_t-tour-tab-col-2');
     if (!col2) return;
 
-    // Перевіряємо, чи вже додали блок
     if (document.querySelector('.custom-tourist-block')) return;
 
-    // Оригінальний HTML блоку вибору туристів
-    const touristBlockHTML = `
+    // Отримуємо поточне значення з оригінального блоку
+    const adultsSpan = touristTable.querySelector('.new_weight-bold');
+    if (adultsSpan) {
+        const match = adultsSpan.innerText.match(/(\d+)\s+дорослих/);
+        if (match) selectedAdults = parseInt(match[1]);
+    }
+
+    const blockHTML = `
         <div class="custom-tourist-block">
-            <div class="new_f-dropdown-body-wrap">
-                <div class="new_f-dropdown-body-top">
-                    Туристи
-                    <div class="new_f-dropdown-body-close" data-role="close">×</div>
-                </div>
-                <div class="new_f-dropdown-list">
-                    <div class="new_f-people-container">
-                        <div class="new_f-people-title">Кількість дорослих:</div>
-                        <div class="new_f-people-list clearfix" data-value="2">
-                            <div data-value="1" class="new_f-people-item people-1">1</div>
-                            <div data-value="2" class="new_f-people-item people-2 active">2</div>
-                            <div data-value="3" class="new_f-people-item people-3">3</div>
-                            <div data-value="4" class="new_f-people-item people-4">4</div>
-                            <div data-value="5" class="new_f-people-item people-5">5</div>
-                            <div data-value="6" class="new_f-people-item people-6">6</div>
-                            <div data-value="7" class="new_f-people-item people-7">7</div>
-                            <div data-value="8" class="new_f-people-item people-8">8</div>
-                        </div>
-                    </div>
-                    <div class="new_f-children-container">
-                        <div class="new_f-people-title">Діти:</div>
-                        <div class="new_f-children-accordion-wrap">
-                            <div class="new_f-children-accordion-btn">+ Додати дитину</div>
-                            <div class="new_f-children-accordion-body clearfix" style="display: none;">
-                                <div class="new_f-children-age-item new_f-children-age-item-1" data-value="1">1 рік</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-2" data-value="2">2 роки</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-3" data-value="3">3 роки</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-4" data-value="4">4 роки</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-5" data-value="5">5 років</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-6" data-value="6">6 років</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-7" data-value="7">7 років</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-8" data-value="8">8 років</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-9" data-value="9">9 років</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-10" data-value="10">10 років</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-11" data-value="11">11 років</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-12" data-value="12">12 років</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-13" data-value="13">13 років</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-14" data-value="14">14 років</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-15" data-value="15">15 років</div>
-                                <div class="new_f-children-age-item new_f-children-age-item-16" data-value="16">16 років</div>
-                            </div>
-                        </div>
-                        <div class="new_f-children-list clearfix" data-value="" data-count="0"></div>
+            <div class="tourist-selector-wrap">
+                <div class="tourist-header">👥 Вибір туристів</div>
+
+                <div class="tourist-section">
+                    <div class="tourist-section-title">Кількість дорослих:</div>
+                    <div class="adults-buttons" id="adultsButtons">
+                        ${[1,2,3,4,5,6,7,8].map(a => `
+                            <button class="adult-btn ${a === selectedAdults ? 'active' : ''}" data-adults="${a}">${a} ${a === 1 ? 'дорослий' : 'дорослих'}</button>
+                        `).join('')}
                     </div>
                 </div>
-                <div class="new_f-dropdown-body-bottom">
-                    <div class="new_f-dropdown-bottom-btn new_f-dropdown-btn-cancel new_not-label-change" data-role="close">Відміна</div>
-                    <div class="new_f-dropdown-bottom-btn new_f-dropdown-btn-apply new_not-label-change" data-role="item">Застосувати</div>
+
+                <div class="tourist-section">
+                    <div class="tourist-section-title">👶 Діти:</div>
+                    <button class="add-child-btn" id="addChildBtn">+ Додати дитину</button>
+                    <div class="age-buttons" id="ageButtons">
+                        ${[...Array(16)].map((_, i) => {
+                            const age = i + 1;
+                            const text = age === 1 ? 'рік' : (age >= 2 && age <= 4 ? 'роки' : 'років');
+                            return `<button class="age-btn" data-age="${age}">${age} ${text}</button>`;
+                        }).join('')}
+                    </div>
+                    <div class="children-list" id="childrenList"></div>
+                </div>
+
+                <div class="tourist-footer">
+                    <button class="cancel-btn" id="cancelBtn">Відміна</button>
+                    <button class="apply-btn" id="applyBtn">Застосувати</button>
                 </div>
             </div>
         </div>
     `;
 
-    // Вставляємо блок
-    col2.insertAdjacentHTML('beforeend', touristBlockHTML);
+    col2.insertAdjacentHTML('beforeend', blockHTML);
 
-    // Оновлюємо ціну після натискання "Застосувати"
-    const applyBtn = document.querySelector('.new_f-dropdown-btn-apply');
-    if (applyBtn) {
-        applyBtn.addEventListener('click', function() {
-            setTimeout(function() {
-                updateCustomPrice();
-            }, 500);
-        });
+    // Функція оновлення списку дітей
+    function updateChildrenList() {
+        const container = document.getElementById('childrenList');
+        if (!container) return;
+
+        if (childrenAges.length === 0) {
+            container.innerHTML = '<div style="color: #94a3b8; font-size: 0.85rem;">Немає дітей</div>';
+        } else {
+            container.innerHTML = childrenAges.map((age, idx) => {
+                const text = age === 1 ? 'рік' : (age >= 2 && age <= 4 ? 'роки' : 'років');
+                return `<div class="child-tag">Дитина ${age} ${text}<span class="remove-child" data-index="${idx}">✕</span></div>`;
+            }).join('');
+
+            document.querySelectorAll('.remove-child').forEach(btn => {
+                btn.onclick = function() {
+                    const idx = parseInt(this.dataset.index);
+                    childrenAges.splice(idx, 1);
+                    updateChildrenList();
+                };
+            });
+        }
     }
 
+    // Кнопки дорослих
+    document.querySelectorAll('.adult-btn').forEach(btn => {
+        btn.onclick = function() {
+            document.querySelectorAll('.adult-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            selectedAdults = parseInt(this.dataset.adults);
+        };
+    });
+
+    // Додати дитину
+    const addBtn = document.getElementById('addChildBtn');
+    const ageBtnsDiv = document.getElementById('ageButtons');
+
+    addBtn.onclick = function() {
+        ageBtnsDiv.classList.toggle('show');
+    };
+
+    // Вибір віку дитини
+    document.querySelectorAll('.age-btn').forEach(btn => {
+        btn.onclick = function() {
+            const age = parseInt(this.dataset.age);
+            childrenAges.push(age);
+            childrenAges.sort((a,b) => a - b);
+            updateChildrenList();
+            ageBtnsDiv.classList.remove('show');
+        };
+    });
+
+    // Кнопка Застосувати
+    const applyBtn = document.getElementById('applyBtn');
+    applyBtn.onclick = function() {
+        updatePriceFromOtpusk();
+        ageBtnsDiv.classList.remove('show');
+    };
+
+    // Кнопка Відміна
+    const cancelBtn = document.getElementById('cancelBtn');
+    cancelBtn.onclick = function() {
+        // Скидаємо до початкових значень
+        selectedAdults = 2;
+        childrenAges = [];
+
+        document.querySelectorAll('.adult-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (parseInt(btn.dataset.adults) === 2) btn.classList.add('active');
+        });
+
+        updateChildrenList();
+        ageBtnsDiv.classList.remove('show');
+        updatePriceFromOtpusk();
+    };
+
+    updateChildrenList();
     console.log('✅ Блок вибору туристів додано');
 }
 
@@ -679,12 +744,9 @@ function updateCustomPrice() {
     if (originalPriceBlock && priceNumber) {
         const priceSpan = originalPriceBlock.querySelector('.new_price, .new_price-value');
         if (priceSpan) {
-            const newPrice = priceSpan.innerText;
-            if (priceNumber.innerText !== newPrice) {
-                priceNumber.innerText = newPrice;
-                const tourPriceField = document.getElementById('tourPrice');
-                if (tourPriceField) tourPriceField.value = newPrice;
-            }
+            priceNumber.innerText = priceSpan.innerText;
+            const tourPriceField = document.getElementById('tourPrice');
+            if (tourPriceField) tourPriceField.value = priceSpan.innerText;
         }
     }
 }
