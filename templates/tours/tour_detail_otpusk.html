@@ -424,33 +424,29 @@
         }
     }
 
-    /* ========== СІТКА ДЛЯ ФОТО – ТІЛЬКИ ДЛЯ АКТИВНОЇ ВКЛАДКИ ========== */
-/* Не чіпаємо display блоку – Otpusk сам встановлює block/none */
-/* Коли блок видимий, застосовуємо сітку */
+    /* ========== СІТКА ДЛЯ ФОТО – ТІЛЬКИ КОЛИ ВКЛАДКА АКТИВНА ========== */
 .new_t-tab-content.photo[style*="display: block"] {
     display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
     gap: 20px !important;
     padding: 20px !important;
-    background: transparent !important;
 }
 
 .new_t-tab-content.photo[style*="display: block"] img {
     width: 100% !important;
     height: 200px !important;
     object-fit: cover !important;
-    border-radius: 16px !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-    cursor: pointer !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    transition: transform 0.2s ease !important;
 }
 
 .new_t-tab-content.photo[style*="display: block"] img:hover {
     transform: scale(1.02) !important;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
 }
 
-/* Адаптація */
+/* Адаптація для планшетів */
 @media (max-width: 992px) {
     .new_t-tab-content.photo[style*="display: block"] {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
@@ -459,11 +455,13 @@
         height: 160px !important;
     }
 }
+
+/* Адаптація для мобільних */
 @media (max-width: 768px) {
     .new_t-tab-content.photo[style*="display: block"] {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
         gap: 12px !important;
         padding: 12px !important;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
     }
     .new_t-tab-content.photo[style*="display: block"] img {
         height: 120px !important;
