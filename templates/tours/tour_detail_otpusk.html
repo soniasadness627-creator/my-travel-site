@@ -52,9 +52,9 @@
     </div>
 </div>
 
-<!-- ========== МІНІМАЛЬНІ СТИЛІ ========== -->
+<!-- ========== СТИЛІ ========== -->
 <style>
-    /* Ховаємо тільки зайве */
+    /* ========== ХОВАЄМО ЗАЙВЕ ========== */
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
     #otpusk-tour-module .new_f-ext-btn,
@@ -75,6 +75,54 @@
     /* Очищаємо фон */
     #otpusk-tour-module {
         background: transparent !important;
+    }
+
+    /* ========== ФІРМОВІ КОЛЬОРИ АГЕНТА (ФІОЛЕТОВИЙ #7a219e) ========== */
+
+    /* Головний колір для всіх елементів */
+    .new_t-menu-item:hover,
+    .new_t-menu-item.selected,
+    .new_f-people-item.active,
+    .new_f-dropdown-btn-apply,
+    .new_f-dropdown-body-top,
+    .new_t-change-people:hover,
+    .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
+        background: #7a219e !important;
+        border-color: #7a219e !important;
+    }
+
+    /* Колір для важливих дат та посилань */
+    .new_t-important,
+    .new_t-header-geo a,
+    .new_r-item-geo:hover,
+    .new_r-item-hotel:hover {
+        color: #7a219e !important;
+    }
+
+    /* Колір для іконок */
+    .new_r-item-geo svg,
+    .new_t-header-geo svg {
+        fill: #7a219e !important;
+    }
+
+    /* Кнопка "Ще" при наведенні */
+    .new_t-change-people:hover svg {
+        fill: white !important;
+    }
+
+    /* Затемнення при наведенні на кнопку "Застосувати" */
+    .new_f-dropdown-btn-apply:hover {
+        background: #5a1675 !important;
+    }
+
+    /* Рейтинг (якщо залишиться видимим) */
+    .new_r-item-rating-value {
+        color: #7a219e !important;
+    }
+
+    /* Ціна залишається червоною */
+    .new_t-order-price .new_price {
+        color: #dc2626 !important;
     }
 </style>
 
@@ -139,8 +187,8 @@
                             <div class="mb-3">
                                 <textarea name="comment" id="bookingMessage" class="form-control" rows="3" placeholder="Ваші побажання (необов'язково)"></textarea>
                             </div>
-                            <button type="button" class="btn w-100" id="submitBookingBtn" style="background: #3b82f6; color: white; font-weight: 500; height: 45px; border-radius: 6px;">
-                                Забронювати тур
+                            <button type="button" class="btn w-100" id="submitBookingBtn" style="background: #7a219e; color: white; font-weight: 500; height: 45px; border-radius: 6px; border: none;">
+                                <i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур
                             </button>
                         </form>
                     </div>
@@ -150,7 +198,7 @@
     </div>
 </div>
 
-<!-- ========== ПРОСТИЙ СКРИПТ ========== -->
+<!-- ========== СКРИПТ ДЛЯ ВІДКРИТТЯ ФОРМИ ========== -->
 <script>
 // Простий скрипт для відкриття форми
 setTimeout(function() {
