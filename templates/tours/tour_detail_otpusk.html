@@ -71,8 +71,25 @@
     .new_r-item-rating-container,
     .new_r-item-rating-value,
     .new_r-item-rating-rev,
-    [class*="new_r-p"] {
+    [class*="new_r-p"],
+    .slice {
         display: none !important;
+    }
+
+    /* ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ВІД OTPUSK */
+    .new_t-order-btn-true,
+    .new_t-order-btn,
+    .new_t-order-btn-false,
+    .new_t-order-btn-true:hover,
+    .new_t-order-btn:hover {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
     }
 
     /* Робимо контейнер видимим */
@@ -136,7 +153,7 @@
     </a>
 </div>
 
-<!-- ========== БЛОК БРОНЮВАННЯ ========== -->
+<!-- ========== БЛОК БРОНЮВАННЯ (ТІЛЬКИ ВАШ АГЕНТ) ========== -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
         <div class="card border-0 shadow-sm" id="consultationCard">
@@ -150,7 +167,7 @@
                             <i class="fa-regular fa-user text-secondary"></i>
                         </div>
                         <div>
-                            <div class="fw-bold">
+                            <div class="fw-bold" style="color: #7a219e;">
                                 {% if agent_site %}
                                     {{ agent_site.user.get_full_name|default:agent_site.user.username }}
                                 {% else %}
@@ -191,7 +208,7 @@
                                 <textarea name="comment" id="bookingMessage" class="form-control" rows="3" placeholder="Ваші побажання (необов'язково)"></textarea>
                             </div>
                             <button type="button" class="btn w-100" id="submitBookingBtn" style="background: #7a219e; color: white; font-weight: 500; height: 45px; border-radius: 6px; border: none;">
-                                <i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур
+                                <i class="fa-regular fa-calendar-check me-2"></i> Відправити запит
                             </button>
                         </form>
                     </div>
