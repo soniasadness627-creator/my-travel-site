@@ -7,14 +7,12 @@
 <div class="container my-5">
     <div id="otpusk-tour-module">
         <script>
-            // 1. Отримуємо параметри туру з рядка запиту URL
             const urlParams = new URLSearchParams(window.location.search);
             const hid = urlParams.get('hid');
             const oid = urlParams.get('oid');
             const od = urlParams.get('od');
             const ol = urlParams.get('ol');
 
-            // 2. Глобальні змінні для модуля Otpusk (обов'язкові)
             var osGeo = '';
             var osDefaultDeparture = '';
             var osDefaultDuration = '';
@@ -32,7 +30,6 @@
             var osCurrency = 'converted';
             var osAutoStart = false;
 
-            // 3. Завантажуємо конкретний тур
             if (hid && oid && od && ol) {
                 window.location.hash = `#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}&page=tour`;
                 console.log('Завантаження туру:', window.location.hash);
@@ -41,7 +38,6 @@
             }
         </script>
 
-        <!-- Підключаємо оригінальні скрипти Otpusk -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
         <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
         <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
@@ -52,7 +48,6 @@
     </div>
 </div>
 
-<!-- ========== СТИЛІ ========== -->
 <style>
     /* ========== ХОВАЄМО ЗАЙВЕ ========== */
     #otpusk-tour-module .new_f-ext-container,
@@ -62,12 +57,11 @@
         display: none !important;
     }
 
-    /* Ховаємо оригінальну кнопку "Повернутися" */
     #otpusk-tour-module .new_t-menu-back {
         display: none !important;
     }
 
-    /* ХОВАЄМО РЕЙТИНГ ПОВНІСТЮ */
+    /* ХОВАЄМО РЕЙТИНГ */
     .new_r-item-rating-container,
     .new_r-item-rating-value,
     .new_r-item-rating-rev,
@@ -76,7 +70,7 @@
         display: none !important;
     }
 
-    /* ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ВІД OTPUSK */
+    /* ХОВАЄМО КНОПКУ "ЗАМОВИТИ ТУР" */
     .new_t-order-btn-true,
     .new_t-order-btn,
     .new_t-order-btn-false {
@@ -90,12 +84,10 @@
         pointer-events: none !important;
     }
 
-    /* Робимо контейнер видимим */
     #otpusk-tour-module .new_t-container {
         display: block !important;
     }
 
-    /* Очищаємо фон */
     #otpusk-tour-module {
         background: transparent !important;
     }
@@ -162,7 +154,7 @@
         background: transparent !important;
     }
 
-    /* ========== ФІРМОВІ КОЛЬОРИ АГЕНТА (ФІОЛЕТОВИЙ #7a219e) ========== */
+    /* ========== ФІРМОВІ КОЛЬОРИ (ФІОЛЕТОВИЙ) ========== */
     .new_f-people-item.active,
     .new_f-dropdown-btn-apply,
     .new_f-dropdown-body-top,
@@ -195,6 +187,24 @@
     .new_t-order-price .new_price {
         color: #dc2626 !important;
     }
+
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -204,13 +214,22 @@
     </a>
 </div>
 
-<!-- ========== БЛОК БРОНЮВАННЯ (ТІЛЬКИ ВАШ АГЕНТ) ========== -->
+<!-- ========== БЛОК БРОНЮВАННЯ ========== -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
         <div class="card border-0 shadow-sm" id="consultationCard">
             <div class="card-body p-4 p-md-5">
                 <h5 class="fw-bold mb-3">Забронювати тур</h5>
                 <p class="text-muted mb-4">Заповніть форму, щоб забронювати цей тур</p>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
 
                 <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
                     <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
@@ -229,7 +248,7 @@
                         </div>
                     </div>
                     <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
-                        <form id="bookingForm" method="post" action="{% url 'submit_consultation' %}">
+                        <form id="bookingForm" method="post" action="">
                             {% csrf_token %}
                             <input type="hidden" name="consultation_submit" value="1">
                             <input type="hidden" name="tour_hid" id="tourHid" value="{{ hid }}">
@@ -243,7 +262,7 @@
                                 <input type="text" name="name" id="bookingName" class="form-control" placeholder="Ваше ім'я" required>
                             </div>
                             <div class="mb-3">
-                                <input type="email" name="email" id="bookingEmail" class="form-control" placeholder="Ваш email" required>
+                                <input type="text" name="email" id="bookingEmail" class="form-control" placeholder="Ваш email (необов'язково)">
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-4">
@@ -274,9 +293,7 @@
     </div>
 </div>
 
-<!-- ========== СКРИПТ ДЛЯ ВІДКРИТТЯ ФОРМИ ========== -->
 <script>
-// Функція для отримання назви готелю
 function getHotelName() {
     const hotelTitle = document.querySelector('.new_t-header-title');
     if (hotelTitle) {
@@ -285,19 +302,16 @@ function getHotelName() {
     return 'Назва не вказана';
 }
 
-// Функція для оновлення прихованих полів перед відправкою
 document.getElementById('bookingForm').addEventListener('submit', function(e) {
     const hotelName = getHotelName();
     document.getElementById('tourName').value = hotelName;
 
-    // Отримуємо актуальну ціну
     const priceBlock = document.querySelector('.new_t-order-price .new_price');
     if (priceBlock) {
         document.getElementById('tourPrice').value = priceBlock.innerText;
     }
 });
 
-// Скрипт для відкриття форми вибору туристів
 setTimeout(function() {
     const btn = document.querySelector('.new_t-change-people');
     if (btn) {
