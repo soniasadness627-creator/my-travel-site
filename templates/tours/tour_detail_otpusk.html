@@ -97,12 +97,26 @@
         background: transparent !important;
     }
 
-    /* ========== СТИЛІ ДЛЯ МЕНЮ ========== */
+    /* ========== СТИЛІ ДЛЯ МЕНЮ (ПРИБРАНО ГОЛУБІ ЛІНІЇ ТА ФОНИ) ========== */
     .new_t-menu-wrap,
     .new_t-menu {
         background: transparent !important;
         border: none !important;
+        border-bottom: none !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
         box-shadow: none !important;
+        outline: none !important;
+    }
+
+    /* Видаляємо будь-які псевдоелементи, які могли б створювати лінію */
+    .new_t-menu-wrap::before,
+    .new_t-menu-wrap::after,
+    .new_t-menu::before,
+    .new_t-menu::after {
+        display: none !important;
+        content: none !important;
     }
 
     .new_t-menu {
@@ -111,12 +125,21 @@
         gap: 8px !important;
     }
 
+    /* Активний пункт меню – білий фон, фіолетовий текст, без голубої рамки (за бажанням можна залишити фіолетову нижню рамку) */
     .new_t-menu-item.selected {
         background: white !important;
         color: #7a219e !important;
+        /* Якщо хочете прибрати ВСІ нижні рамки – закоментуйте наступний рядок */
         border-bottom: 3px solid #7a219e !important;
         border-radius: 0 !important;
         box-shadow: none !important;
+    }
+
+    /* Якщо голуба рамка з'являється через інший елемент, прибираємо її */
+    .new_t-menu-item.selected {
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
     }
 
     .new_t-menu-item.selected::before,
@@ -128,6 +151,7 @@
         content: none !important;
     }
 
+    /* Неактивні пункти меню */
     .new_t-menu-item {
         background: #f1f5f9 !important;
         color: #64748b !important;
@@ -269,7 +293,7 @@
                                 <input type="text" name="name" id="bookingName" class="form-control" placeholder="Ваше ім'я" required>
                             </div>
                             <div class="mb-3">
-                                <input type="email" name="email" id="bookingEmail" class="form-control" placeholder="Ваш email (необов'язково)">
+                                <input type="email" name="email" id="bookingEmail" class="form-control" placeholder="Ваш email">
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-4">
