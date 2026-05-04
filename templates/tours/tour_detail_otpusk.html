@@ -97,7 +97,7 @@
         background: transparent !important;
     }
 
-    /* ========== СТИЛІ ДЛЯ МЕНЮ (ПРИБРАНО ГОЛУБІ ЛІНІЇ ТА ФОНИ) ========== */
+    /* ========== СТИЛІ ДЛЯ МЕНЮ ========== */
     .new_t-menu-wrap,
     .new_t-menu {
         background: transparent !important;
@@ -178,7 +178,7 @@
         background: transparent !important;
     }
 
-    /* ========== ФІРМОВІ КОЛЬОРИ (ФІОЛЕТОВИЙ) ========== */
+    /* ========== ФІРМОВІ КОЛЬОРИ (КОЛІР АГЕНТА) ========== */
     .new_f-people-item.active,
     .new_f-dropdown-btn-apply,
     .new_f-dropdown-body-top,
@@ -231,57 +231,20 @@
     .new_price-value .currency,
     .new_price-value + .currency,
     .new_price .currency {
-        color: var(--primary-color) !important;
+        color: var(--primary-color, #7a219e) !important;
     }
 
     .new_price-desc,
     .new_r-item-price .new_price-desc {
-        color: var(--primary-color) !important;
+        color: var(--primary-color, #7a219e) !important;
     }
 
-    .new_r-item-price a,
-    .new_r-item .btn-link,
-    .new_r-item .btn-outline-primary {
-        color: var(--primary-color) !important;
-        border-color: var(--primary-color) !important;
-    }
-
-    .new_r-item-price a:hover,
-    .new_r-item .btn-link:hover {
-        color: var(--primary-dark) !important;
-    }
-
-    .new_r-item-price svg,
-    .new_r-item svg {
-        fill: var(--primary-color) !important;
-    }
-
-    /* ========== ЗМІНА ФОНУ ОРАНЖЕВИХ БЛОКІВ (наприклад, при наведенні) ========== */
-    .new_r-item-price {
-        background: transparent !important;
-    }
-
-    /* Якщо є оранжевий фон у блоку ціни при наведенні */
-    .new_r-item-price:hover,
-    .new_r-item-col .new_r-item-price:hover {
-        background: var(--primary-color) !important;
-        color: white !important;
-        transition: all 0.3s ease;
-    }
-
-    /* Додатково: зміна фону кнопки "Детальніше" або подібних */
-    .new_r-item .btn,
-    .new_r-item .btn-primary,
-    .new_r-item .btn-outline-primary {
-        background: var(--primary-color) !important;
-        border-color: var(--primary-color) !important;
-        color: white !important;
-    }
-
-    .new_r-item .btn:hover,
-    .new_r-item .btn-primary:hover {
-        background: var(--primary-dark) !important;
-        border-color: var(--primary-dark) !important;
+    /* ========== ЕФЕКТ ПРИ НАВЕДЕННІ НА БЛОК ЦІНИ ========== */
+    .new_r-item-price:hover .new_price-value,
+    .new_r-item-price:hover .new_price-desc,
+    .new_r-item-price:hover .currency {
+        color: #ffffff !important;
+        transition: color 0.2s ease;
     }
 </style>
 
@@ -304,7 +267,6 @@
                     Заповніть форму, щоб забронювати цей тур
                 </p>
 
-                <!-- Контейнер для повідомлень -->
                 <div id="formMessage" style="display: none;" class="alert"></div>
 
                 <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
@@ -384,7 +346,7 @@ function getHotelName() {
     return 'Назва не вказана';
 }
 
-// Безпечна функція показу повідомлень (створить контейнер, якщо його немає)
+// Безпечна функція показу повідомлень
 function showMessage(message, type) {
     let messageDiv = document.getElementById('formMessage');
     if (!messageDiv) {
@@ -435,7 +397,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 showMessage('Будь ласка, введіть ваше ім\'я', 'danger');
                 return;
             }
-
             if (!phone) {
                 showMessage('Будь ласка, введіть номер телефону', 'danger');
                 return;
@@ -468,7 +429,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             })
             .then(response => {
-                console.log('Response status:', response.status);
                 if (!response.ok) throw new Error(`HTTP error ${response.status}`);
                 return response.json();
             })
@@ -476,8 +436,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     showMessage(data.message, 'success');
                     document.getElementById('bookingForm').reset();
-                    document.getElementById('tourName').value = tourName;
-                    document.getElementById('tourPrice').value = tourPrice;
                 } else {
                     showMessage(data.error || 'Сталася помилка. Спробуйте пізніше.', 'danger');
                 }
