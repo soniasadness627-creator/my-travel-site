@@ -227,7 +227,17 @@
     }
 
     /* ========== ЗМІНА ОРАНЖЕВИХ КОЛЬОРІВ НА КОЛІР АГЕНТА ========== */
+    .new_price-value,
+    .new_price-value .currency,
+    .new_price-value + .currency,
+    .new_price .currency {
+        color: var(--primary-color) !important;
+    }
 
+    .new_price-desc,
+    .new_r-item-price .new_price-desc {
+        color: var(--primary-color) !important;
+    }
 
     .new_r-item-price a,
     .new_r-item .btn-link,
@@ -255,7 +265,6 @@
     .new_r-item-price:hover,
     .new_r-item-col .new_r-item-price:hover {
         background: var(--primary-color) !important;
-        color: white !important;
         transition: all 0.3s ease;
     }
 
