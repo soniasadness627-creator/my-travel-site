@@ -231,6 +231,10 @@
                 <p class="text-muted mb-0">
                     Заповніть форму, щоб забронювати цей тур
                 </p>
+
+                <!-- Повідомлення -->
+                <div id="formMessage" style="display: none;" class="alert"></div>
+
                 <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
                     <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
                         <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
@@ -238,7 +242,7 @@
                             <i class="fa-regular fa-user text-secondary"></i>
                         </div>
                         <div>
-                            <div class="fw-bold" style="font-size: 0.95rem;">
+                            <div class="fw-bold" style="font-size: 0.95rem; color: #7a219e;">
                                 {% if agent_site %}
                                     {{ agent_site.user.get_full_name|default:agent_site.user.username }}
                                 {% else %}
@@ -251,16 +255,21 @@
                         </div>
                     </div>
                     <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
-                        <form id="bookingForm" novalidate>
+                        <form id="bookingForm" method="POST" action="">
                             {% csrf_token %}
                             <input type="hidden" name="consultation_submit" value="1">
-                            <input type="hidden" name="tour_hid" id="tourHid" value="">
+                            <input type="hidden" name="tour_hid" id="tourHid" value="{{ hid }}">
+                            <input type="hidden" name="tour_oid" id="tourOid" value="{{ oid }}">
                             <input type="hidden" name="tour_name" id="tourName" value="">
                             <input type="hidden" name="tour_price" id="tourPrice" value="">
-                            <input type="hidden" name="tour_dates" id="tourDates" value="">
+                            <input type="hidden" name="tour_dates" id="tourDates" value="{{ od }} - {{ ol }} ночей">
+                            <input type="hidden" name="tour_url" id="tourUrl" value="{{ request.build_absolute_uri }}">
 
                             <div class="mb-3">
                                 <input type="text" name="name" id="bookingName" class="form-control" placeholder="Ваше ім'я" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="email" name="email" id="bookingEmail" class="form-control" placeholder="Ваш email (необов'язково)">
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-4">
@@ -282,7 +291,7 @@
                             <div class="mb-3">
                                 <textarea name="comment" id="bookingMessage" class="form-control" rows="3" placeholder="Ваші побажання (необов'язково)"></textarea>
                             </div>
-                            <button type="button" class="btn w-100" id="submitBookingBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">
+                            <button type="submit" class="btn w-100" id="submitBookingBtn" style="background: #7a219e; color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px; border: none;">
                                 <i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур
                             </button>
                         </form>
@@ -306,6 +315,7 @@ function getHotelName() {
 
 // Функція для оновлення прихованих полів перед відправкою
 document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    // Не відключаємо стандартну відправку!
     const hotelName = getHotelName();
     document.getElementById('tourName').value = hotelName;
 
@@ -314,6 +324,8 @@ document.getElementById('bookingForm').addEventListener('submit', function(e) {
     if (priceBlock) {
         document.getElementById('tourPrice').value = priceBlock.innerText;
     }
+
+    console.log('Форма відправляється! Ім\'я:', document.getElementById('bookingName').value);
 });
 
 // Скрипт для відкриття форми вибору туристів
