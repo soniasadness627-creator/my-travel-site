@@ -7,14 +7,12 @@
 <div class="container my-5">
     <div id="otpusk-tour-module">
         <script>
-            // 1. Отримуємо параметри туру з рядка запиту URL
             const urlParams = new URLSearchParams(window.location.search);
             const hid = urlParams.get('hid');
             const oid = urlParams.get('oid');
             const od = urlParams.get('od');
             const ol = urlParams.get('ol');
 
-            // 2. Глобальні змінні для модуля Otpusk (обов'язкові)
             var osGeo = '';
             var osDefaultDeparture = '';
             var osDefaultDuration = '';
@@ -32,7 +30,6 @@
             var osCurrency = 'converted';
             var osAutoStart = false;
 
-            // 3. Завантажуємо конкретний тур
             if (hid && oid && od && ol) {
                 window.location.hash = `#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}&page=tour`;
                 console.log('Завантаження туру:', window.location.hash);
@@ -41,7 +38,6 @@
             }
         </script>
 
-        <!-- Підключаємо оригінальні скрипти Otpusk -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
         <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
         <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
@@ -52,7 +48,6 @@
     </div>
 </div>
 
-<!-- ========== СТИЛІ ========== -->
 <style>
     /* ========== ХОВАЄМО ЗАЙВЕ ========== */
     #otpusk-tour-module .new_f-ext-container,
@@ -66,7 +61,6 @@
         display: none !important;
     }
 
-    /* ХОВАЄМО РЕЙТИНГ */
     .new_r-item-rating-container,
     .new_r-item-rating-value,
     .new_r-item-rating-rev,
@@ -75,7 +69,6 @@
         display: none !important;
     }
 
-    /* ХОВАЄМО КНОПКУ "ЗАМОВИТИ ТУР" */
     .new_t-order-btn-true,
     .new_t-order-btn,
     .new_t-order-btn-false {
@@ -97,7 +90,7 @@
         background: transparent !important;
     }
 
-    /* ========== СТИЛІ ДЛЯ МЕНЮ (ПРИБРАНО ГОЛУБІ ЛІНІЇ ТА ФОНИ) ========== */
+    /* ========== СТИЛІ ДЛЯ МЕНЮ ========== */
     .new_t-menu-wrap,
     .new_t-menu {
         background: transparent !important;
@@ -207,6 +200,46 @@
         color: #dc2626 !important;
     }
 
+    /* ========== ЗМІНА ОРАНЖЕВОГО КОЛЬОРУ В БЛОКАХ ЦІНИ (основні та "Переглянуті тури") ========== */
+    .new_price-value,
+    .new_price .currency,
+    .new_price-value .currency,
+    .new_r-item-price .new_price-value,
+    .new_r-item-price .currency,
+    .new_t-similar-viewed .new_price-value,
+    .new_t-similar-viewed .currency,
+    .new_price-desc,
+    .new_r-item-price .new_price-desc,
+    .new_t-similar-viewed .new_price-desc {
+        color: var(--primary-color) !important;
+    }
+
+    /* Ефект при наведенні – темно-сірий (завжди контрастний) */
+    .new_r-item-price:hover .new_price-value,
+    .new_r-item-price:hover .currency,
+    .new_r-item-price:hover .new_price-desc,
+    .new_t-similar-viewed .new_r-item-price:hover .new_price-value,
+    .new_t-similar-viewed .new_r-item-price:hover .currency,
+    .new_t-similar-viewed .new_r-item-price:hover .new_price-desc {
+        color: #1f2937 !important;
+        transition: color 0.2s ease;
+    }
+
+    /* Додатково: кнопки "Детальніше" */
+    .new_r-item .btn,
+    .new_r-item .btn-primary,
+    .new_r-item .btn-outline-primary {
+        background: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        color: white !important;
+    }
+
+    .new_r-item .btn:hover,
+    .new_r-item .btn-primary:hover {
+        background: var(--primary-dark) !important;
+        border-color: var(--primary-dark) !important;
+    }
+
     /* Стилі для повідомлень */
     .alert-success {
         background-color: #d4edda;
@@ -225,59 +258,6 @@
         border-radius: 8px;
         margin-bottom: 20px;
     }
-
-    /* ========== ЗМІНА ОРАНЖЕВИХ КОЛЬОРІВ НА КОЛІР АГЕНТА ========== */
-    .new_price-value,
-    .new_price-value .currency,
-    .new_price-value + .currency,
-    .new_price .currency {
-        color: var(--primary-color) !important;
-    }
-
-    .new_price-desc,
-    .new_r-item-price .new_price-desc {
-        color: var(--primary-color) !important;
-    }
-
-    .new_r-item-price a,
-    .new_r-item .btn-link,
-    .new_r-item .btn-outline-primary {
-        color: var(--primary-color) !important;
-        border-color: var(--primary-color) !important;
-    }
-
-    .new_r-item-price a:hover,
-    .new_r-item .btn-link:hover {
-        color: var(--primary-dark) !important;
-    }
-
-    .new_r-item-price svg,
-    .new_r-item svg {
-        fill: var(--primary-color) !important;
-    }
-
-    /* ========== ЕФЕКТ ПРИ НАВЕДЕННІ НА БЛОК ЦІНИ (ТІЛЬКИ ТЕКСТ, БЕЗ ФОНУ) ========== */
-    .new_r-item-price:hover .new_price-value,
-    .new_r-item-price:hover .new_price-desc,
-    .new_r-item-price:hover .currency {
-        color: #1f2937 !important;   /* темно-сірий, майже чорний – завжди читається */
-        transition: color 0.2s ease;
-    }
-
-    /* Додатково: зміна фону кнопки "Детальніше" або подібних */
-    .new_r-item .btn,
-    .new_r-item .btn-primary,
-    .new_r-item .btn-outline-primary {
-        background: var(--primary-color) !important;
-        border-color: var(--primary-color) !important;
-        color: white !important;
-    }
-
-    .new_r-item .btn:hover,
-    .new_r-item .btn-primary:hover {
-        background: var(--primary-dark) !important;
-        border-color: var(--primary-dark) !important;
-    }
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -287,19 +267,13 @@
     </a>
 </div>
 
-<!-- ========== БЛОК БРОНЮВАННЯ З AJAX ========== -->
+<!-- ========== БЛОК БРОНЮВАННЯ ========== -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
         <div class="card border-0 shadow-sm" id="consultationCard">
             <div class="card-body p-4 p-md-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">
-                    Забронювати тур
-                </h5>
-                <p class="text-muted mb-0">
-                    Заповніть форму, щоб забронювати цей тур
-                </p>
-
-                <!-- Контейнер для повідомлень -->
+                <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">Забронювати тур</h5>
+                <p class="text-muted mb-0">Заповніть форму, щоб забронювати цей тур</p>
                 <div id="formMessage" style="display: none;" class="alert"></div>
 
                 <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
@@ -316,9 +290,7 @@
                                     {{ random_agent.get_full_name|default:random_agent.username }}
                                 {% endif %}
                             </div>
-                            <div class="text-muted" style="font-size: 0.8rem;">
-                                9 років досвіду в туризмі
-                            </div>
+                            <div class="text-muted" style="font-size: 0.8rem;">9 років досвіду в туризмі</div>
                         </div>
                     </div>
                     <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
@@ -370,16 +342,11 @@
 </div>
 
 <script>
-// Функція для отримання назви готелю
 function getHotelName() {
     const hotelTitle = document.querySelector('.new_t-header-title');
-    if (hotelTitle) {
-        return hotelTitle.innerText.trim();
-    }
-    return 'Назва не вказана';
+    return hotelTitle ? hotelTitle.innerText.trim() : 'Назва не вказана';
 }
 
-// Безпечна функція показу повідомлень (створить контейнер, якщо його немає)
 function showMessage(message, type) {
     let messageDiv = document.getElementById('formMessage');
     if (!messageDiv) {
@@ -404,9 +371,7 @@ function showMessage(message, type) {
     messageDiv.className = `alert alert-${type}`;
     messageDiv.innerHTML = message + '<button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>';
     messageDiv.style.display = 'block';
-    setTimeout(() => {
-        if (messageDiv) messageDiv.style.display = 'none';
-    }, 5000);
+    setTimeout(() => { if (messageDiv) messageDiv.style.display = 'none'; }, 5000);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -426,14 +391,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const tourUrl = window.location.href;
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-            if (!name) {
-                showMessage('Будь ласка, введіть ваше ім\'я', 'danger');
-                return;
-            }
-            if (!phone) {
-                showMessage('Будь ласка, введіть номер телефону', 'danger');
-                return;
-            }
+            if (!name) return showMessage('Будь ласка, введіть ваше ім\'я', 'danger');
+            if (!phone) return showMessage('Будь ласка, введіть номер телефону', 'danger');
 
             const btn = submitBtn;
             const originalText = btn.innerHTML;
@@ -462,7 +421,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             })
             .then(response => {
-                console.log('Response status:', response.status);
                 if (!response.ok) throw new Error(`HTTP error ${response.status}`);
                 return response.json();
             })
@@ -470,8 +428,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     showMessage(data.message, 'success');
                     document.getElementById('bookingForm').reset();
-                    document.getElementById('tourName').value = tourName;
-                    document.getElementById('tourPrice').value = tourPrice;
                 } else {
                     showMessage(data.error || 'Сталася помилка. Спробуйте пізніше.', 'danger');
                 }
@@ -485,18 +441,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 btn.disabled = false;
             });
         });
-    } else {
-        console.warn('Кнопка #submitBookingBtn не знайдена');
     }
 
-    setTimeout(function() {
+    setTimeout(function findAndClick() {
         const btn = document.querySelector('.new_t-change-people');
         if (btn) {
             btn.click();
             console.log('Клік по кнопці "Ще" виконано');
         } else {
-            console.log('Кнопку "Ще" не знайдено, повторюємо...');
-            setTimeout(arguments.callee, 1000);
+            setTimeout(findAndClick, 1000);
         }
     }, 2000);
 });
