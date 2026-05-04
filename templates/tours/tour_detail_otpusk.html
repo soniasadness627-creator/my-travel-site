@@ -7,12 +7,14 @@
 <div class="container my-5">
     <div id="otpusk-tour-module">
         <script>
+            // 1. Отримуємо параметри туру з рядка запиту URL
             const urlParams = new URLSearchParams(window.location.search);
             const hid = urlParams.get('hid');
             const oid = urlParams.get('oid');
             const od = urlParams.get('od');
             const ol = urlParams.get('ol');
 
+            // 2. Глобальні змінні для модуля Otpusk (обов'язкові)
             var osGeo = '';
             var osDefaultDeparture = '';
             var osDefaultDuration = '';
@@ -30,6 +32,7 @@
             var osCurrency = 'converted';
             var osAutoStart = false;
 
+            // 3. Завантажуємо конкретний тур
             if (hid && oid && od && ol) {
                 window.location.hash = `#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}&page=tour`;
                 console.log('Завантаження туру:', window.location.hash);
@@ -38,6 +41,7 @@
             }
         </script>
 
+        <!-- Підключаємо оригінальні скрипти Otpusk -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
         <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
         <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
@@ -48,6 +52,7 @@
     </div>
 </div>
 
+<!-- ========== СТИЛІ ========== -->
 <style>
     /* ========== ХОВАЄМО ЗАЙВЕ ========== */
     #otpusk-tour-module .new_f-ext-container,
@@ -57,11 +62,12 @@
         display: none !important;
     }
 
+    /* Ховаємо оригінальну кнопку "Повернутися" */
     #otpusk-tour-module .new_t-menu-back {
         display: none !important;
     }
 
-    /* ХОВАЄМО РЕЙТИНГ */
+    /* ХОВАЄМО РЕЙТИНГ ПОВНІСТЮ */
     .new_r-item-rating-container,
     .new_r-item-rating-value,
     .new_r-item-rating-rev,
@@ -70,7 +76,7 @@
         display: none !important;
     }
 
-    /* ХОВАЄМО КНОПКУ "ЗАМОВИТИ ТУР" OTPUSK */
+    /* ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ВІД OTPUSK */
     .new_t-order-btn-true,
     .new_t-order-btn,
     .new_t-order-btn-false {
@@ -89,12 +95,12 @@
         display: block !important;
     }
 
+    /* Очищаємо фон */
     #otpusk-tour-module {
         background: transparent !important;
     }
 
     /* ========== СТИЛІ ДЛЯ МЕНЮ ========== */
-    /* ПРИБИРАЄМО ГОЛУБУ РИСОЧКУ ПОВНІСТЮ */
     .new_t-menu-wrap,
     .new_t-menu {
         background: transparent !important;
@@ -108,7 +114,6 @@
         gap: 8px !important;
     }
 
-    /* Активний пункт */
     .new_t-menu-item.selected {
         background: white !important;
         color: #7a219e !important;
@@ -117,7 +122,6 @@
         box-shadow: none !important;
     }
 
-    /* Прибираємо стрілочку */
     .new_t-menu-item.selected::before,
     .new_t-menu-item.selected::after,
     .new_t-menu-item.selected .arrow,
@@ -127,7 +131,6 @@
         content: none !important;
     }
 
-    /* Неактивні пункти */
     .new_t-menu-item {
         background: #f1f5f9 !important;
         color: #64748b !important;
@@ -159,7 +162,7 @@
         background: transparent !important;
     }
 
-    /* ========== ФІРМОВІ КОЛЬОРИ (ФІОЛЕТОВИЙ) ========== */
+    /* ========== ФІРМОВІ КОЛЬОРИ АГЕНТА (ФІОЛЕТОВИЙ #7a219e) ========== */
     .new_f-people-item.active,
     .new_f-dropdown-btn-apply,
     .new_f-dropdown-body-top,
@@ -201,7 +204,7 @@
     </a>
 </div>
 
-<!-- ========== БЛОК БРОНЮВАННЯ ========== -->
+<!-- ========== БЛОК БРОНЮВАННЯ (ТІЛЬКИ ВАШ АГЕНТ) ========== -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
         <div class="card border-0 shadow-sm" id="consultationCard">
@@ -226,16 +229,21 @@
                         </div>
                     </div>
                     <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
-                        <form id="bookingForm" novalidate>
+                        <form id="bookingForm" method="post" action="{% url 'submit_consultation' %}">
                             {% csrf_token %}
                             <input type="hidden" name="consultation_submit" value="1">
-                            <input type="hidden" name="tour_hid" id="tourHid" value="">
+                            <input type="hidden" name="tour_hid" id="tourHid" value="{{ hid }}">
+                            <input type="hidden" name="tour_oid" id="tourOid" value="{{ oid }}">
                             <input type="hidden" name="tour_name" id="tourName" value="">
                             <input type="hidden" name="tour_price" id="tourPrice" value="">
-                            <input type="hidden" name="tour_dates" id="tourDates" value="">
+                            <input type="hidden" name="tour_dates" id="tourDates" value="{{ od }} - {{ ol }} ночей">
+                            <input type="hidden" name="tour_link" id="tourLink" value="{{ request.build_absolute_uri }}">
 
                             <div class="mb-3">
                                 <input type="text" name="name" id="bookingName" class="form-control" placeholder="Ваше ім'я" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="email" name="email" id="bookingEmail" class="form-control" placeholder="Ваш email" required>
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-4">
@@ -255,7 +263,7 @@
                             <div class="mb-3">
                                 <textarea name="comment" id="bookingMessage" class="form-control" rows="3" placeholder="Ваші побажання (необов'язково)"></textarea>
                             </div>
-                            <button type="button" class="btn w-100" id="submitBookingBtn" style="background: #7a219e; color: white; font-weight: 500; height: 45px; border-radius: 6px; border: none;">
+                            <button type="submit" class="btn w-100" id="submitBookingBtn" style="background: #7a219e; color: white; font-weight: 500; height: 45px; border-radius: 6px; border: none;">
                                 <i class="fa-regular fa-calendar-check me-2"></i> Відправити запит
                             </button>
                         </form>
@@ -266,8 +274,30 @@
     </div>
 </div>
 
-<!-- ========== СКРИПТ ========== -->
+<!-- ========== СКРИПТ ДЛЯ ВІДКРИТТЯ ФОРМИ ========== -->
 <script>
+// Функція для отримання назви готелю
+function getHotelName() {
+    const hotelTitle = document.querySelector('.new_t-header-title');
+    if (hotelTitle) {
+        return hotelTitle.innerText.trim();
+    }
+    return 'Назва не вказана';
+}
+
+// Функція для оновлення прихованих полів перед відправкою
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    const hotelName = getHotelName();
+    document.getElementById('tourName').value = hotelName;
+
+    // Отримуємо актуальну ціну
+    const priceBlock = document.querySelector('.new_t-order-price .new_price');
+    if (priceBlock) {
+        document.getElementById('tourPrice').value = priceBlock.innerText;
+    }
+});
+
+// Скрипт для відкриття форми вибору туристів
 setTimeout(function() {
     const btn = document.querySelector('.new_t-change-people');
     if (btn) {
