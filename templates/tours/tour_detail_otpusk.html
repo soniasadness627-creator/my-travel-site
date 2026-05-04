@@ -425,52 +425,107 @@
     }
 
     /* ========== СІТКА ДЛЯ ФОТО – ТІЛЬКИ КОЛИ ВКЛАДКА АКТИВНА ========== */
-.new_t-tab-content.photo[style*="display: block"] {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
-    gap: 20px !important;
-    padding: 20px !important;
-}
-
-.new_t-tab-content.photo[style*="display: block"] img {
-    width: 100% !important;
-    height: 200px !important;
-    object-fit: cover !important;
-    border-radius: 12px !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-    transition: transform 0.2s ease !important;
-}
-
-.new_t-tab-content.photo[style*="display: block"] img:hover {
-    transform: scale(1.02) !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-}
-
-/* Адаптація для планшетів */
-@media (max-width: 992px) {
     .new_t-tab-content.photo[style*="display: block"] {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+        gap: 20px !important;
+        padding: 20px !important;
     }
-    .new_t-tab-content.photo[style*="display: block"] img {
-        height: 160px !important;
-    }
-}
 
-/* Адаптація для мобільних */
-@media (max-width: 768px) {
-    .new_t-tab-content.photo[style*="display: block"] {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
-        gap: 12px !important;
-        padding: 12px !important;
-    }
     .new_t-tab-content.photo[style*="display: block"] img {
-        height: 120px !important;
+        width: 100% !important;
+        height: 200px !important;
+        object-fit: cover !important;
+        border-radius: 12px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        transition: transform 0.2s ease !important;
     }
-}
+
+    .new_t-tab-content.photo[style*="display: block"] img:hover {
+        transform: scale(1.02) !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    }
+
+    /* Адаптація для планшетів */
+    @media (max-width: 992px) {
+        .new_t-tab-content.photo[style*="display: block"] {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+        }
+        .new_t-tab-content.photo[style*="display: block"] img {
+            height: 160px !important;
+        }
+    }
+
+    /* Адаптація для мобільних */
+    @media (max-width: 768px) {
+        .new_t-tab-content.photo[style*="display: block"] {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+            gap: 12px !important;
+            padding: 12px !important;
+        }
+        .new_t-tab-content.photo[style*="display: block"] img {
+            height: 120px !important;
+        }
+    }
+
     /* Змінює фон основного блоку туру з сірого на білий */
-.new_t-content {
-    background-color: #ffffff !important;
-}
+    .new_t-content {
+        background-color: #ffffff !important;
+    }
+
+    /* ========== НОВІ СТИЛІ ДЛЯ БЛОКУ "ПОШУК ТУРУ" / "РЕЗУЛЬТАТ ТУРУ" ========== */
+    /* Фон блоку – колір агента */
+    .new_f-wrapper {
+        background-color: var(--primary-color) !important;
+        border-radius: 12px !important;
+        padding: 20px !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* Заголовок та всі тексти всередині – білі */
+    .new_f-wrapper .new_f-title,
+    .new_f-wrapper .new_f-form-field .new_f-dropdown-btn,
+    .new_f-wrapper .new_f-form-field .new_f-dropdown-btn *,
+    .new_f-wrapper .new_f-ext-btn-text,
+    .new_f-wrapper .new_f-ext-btn-filters-num,
+    .new_f-wrapper label,
+    .new_f-wrapper .new_f-people-title,
+    .new_f-wrapper .new_f-children-accordion-btn {
+        color: #ffffff !important;
+    }
+
+    /* Кнопка "Знайти" – біла з кольоровим текстом */
+    .new_f-wrapper .new_f-form-submit {
+        background-color: #ffffff !important;
+        color: var(--primary-color) !important;
+        border: none !important;
+    }
+    .new_f-wrapper .new_f-form-submit:hover {
+        background-color: #f8f9fa !important;
+    }
+
+    /* SVG-іконки – білі */
+    .new_f-wrapper svg,
+    .new_f-wrapper .new_f-datepicker-wrap svg,
+    .new_f-wrapper .new_f-dropdown-btn svg {
+        filter: brightness(0) invert(1);
+    }
+
+    /* Випадаючі списки залишаємо світлими для зручності читання */
+    .new_f-wrapper .new_f-dropdown-body,
+    .new_f-wrapper .new_f-dropdown-body * {
+        background-color: #ffffff !important;
+        color: #333333 !important;
+    }
+    .new_f-wrapper .new_f-dropdown-body svg {
+        filter: none !important;
+    }
+
+    /* Додаткові елементи, які можуть бути в блоці */
+    .new_f-wrapper .new_f-dropdown-body-top {
+        background-color: var(--primary-color) !important;
+        color: #ffffff !important;
+    }
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
@@ -588,6 +643,23 @@ function showMessage(message, type) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Зміна тексту "Пошук туру" на "Результат туру"
+    const titleElement = document.querySelector('.new_f-wrapper .new_f-title');
+    if (titleElement && titleElement.innerText === 'Пошук туру') {
+        titleElement.innerText = 'Результат туру';
+    } else {
+        // Якщо елемент з'являється динамічно
+        const observer = new MutationObserver(function() {
+            const el = document.querySelector('.new_f-wrapper .new_f-title');
+            if (el && el.innerText === 'Пошук туру') {
+                el.innerText = 'Результат туру';
+                observer.disconnect();
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+        setTimeout(() => observer.disconnect(), 5000);
+    }
+
     const submitBtn = document.getElementById('submitBookingBtn');
     if (submitBtn) {
         submitBtn.addEventListener('click', function(e) {
@@ -666,16 +738,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 2000);
 });
-  // ========== ПЕРЕГЛЯД ФОТО ПРИ НАТИСКАННІ ==========
+
+// ========== ПЕРЕГЛЯД ФОТО ПРИ НАТИСКАННІ ==========
 function initLightbox() {
-    // Шукаємо всі фото у вкладці "Фото"
     const photos = document.querySelectorAll('.new_t-tab-content.photo img');
     if (photos.length === 0) {
         setTimeout(initLightbox, 500);
         return;
     }
 
-    // Створюємо модальне вікно
     const modal = document.createElement('div');
     modal.id = 'lightbox-modal';
     modal.style.cssText = `
@@ -705,21 +776,18 @@ function initLightbox() {
     modal.appendChild(modalImg);
     document.body.appendChild(modal);
 
-    // Функція відкриття
     function openLightbox(src) {
         modalImg.src = src;
         modal.style.opacity = '1';
         modal.style.visibility = 'visible';
     }
 
-    // Закриття по кліку
     modal.addEventListener('click', function() {
         modal.style.opacity = '0';
         modal.style.visibility = 'hidden';
         modalImg.src = '';
     });
 
-    // Додаємо обробники кліків на фото
     photos.forEach(img => {
         img.style.cursor = 'pointer';
         img.addEventListener('click', (e) => {
@@ -729,10 +797,8 @@ function initLightbox() {
     });
 }
 
-// Запускаємо після завантаження DOM
 document.addEventListener('DOMContentLoaded', function() {
-    // Ваш існуючий код...
-    setTimeout(initLightbox, 1000); // затримка, щоб Otpusk встиг завантажити фото
+    setTimeout(initLightbox, 1000);
 });
 </script>
 
