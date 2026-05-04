@@ -214,7 +214,7 @@
         font-size: 1rem !important;
     }
 
-    /* ========== КНОПКА "ЩЕ" - ОРИГІНАЛЬНА ========== */
+    /* ========== КНОПКА "ЩЕ" ========== */
     .new_t-change-people {
         display: inline-flex !important;
         align-items: center !important;
@@ -369,7 +369,7 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== ОРИГІНАЛЬНА ФОРМА ТУРИСТІВ - ТІЛЬКИ СТИЛІ ========== */
+    /* ========== ОРИГІНАЛЬНА ФОРМА ТУРИСТІВ ========== */
     .new_f-dropdown-body {
         position: fixed !important;
         top: 50% !important;
@@ -387,18 +387,12 @@
         pointer-events: auto !important;
     }
 
-    /* Гарантія клікабельності всіх елементів форми */
-    .new_f-dropdown-body *,
-    .new_f-dropdown-body .new_f-people-item,
-    .new_f-dropdown-body .new_f-dropdown-bottom-btn,
-    .new_f-dropdown-body .new_f-children-age-item,
-    .new_f-dropdown-body .new_f-children-accordion-btn,
-    .new_f-dropdown-body .new_f-dropdown-body-close {
+    /* Переконуємось, що форма та всі її елементи клікабельні */
+    .new_f-dropdown-body * {
         pointer-events: auto !important;
-        cursor: pointer !important;
     }
 
-    /* Затемнення фону */
+    /* Затемнення фону - НЕ ПОВИННО ПЕРЕХОПЛЮВАТИ КЛІКИ НА ФОРМІ */
     .form-overlay-bg {
         position: fixed;
         top: 0;
@@ -408,17 +402,6 @@
         background: rgba(0,0,0,0.5);
         z-index: 99999998;
         pointer-events: auto;
-    }
-
-    body.modal-open {
-        overflow: hidden !important;
-    }
-
-    /* Ціна */
-    .price-number {
-        color: #dc2626;
-        font-size: 1.8rem;
-        font-weight: 700;
     }
 
     .new_t-duration-icons {
@@ -450,9 +433,6 @@
         }
         .new_t-date-table {
             flex-wrap: wrap !important;
-        }
-        .price-number {
-            font-size: 1.4rem !important;
         }
         .new_f-dropdown-body {
             width: 95% !important;
@@ -582,7 +562,7 @@ function startPriceWatcher() {
     updateCustomPrice();
 }
 
-// 3. Ініціалізація оригінальної форми туристів
+// 3. Ініціалізація оригінальної форми туристів (ПРАВИЛЬНА ВЕРСІЯ)
 function initPeopleButton() {
     // Шукаємо оригінальну кнопку "Ще"
     const peopleBtn = document.querySelector('.new_t-change-people');
@@ -602,10 +582,18 @@ function initPeopleButton() {
         return;
     }
 
-    // Зберігаємо оригінальний display
+    // Зберігаємо початковий стан
     dropdown.style.display = 'none';
 
-    // Створюємо overlay для затемнення
+    // Додаємо стилі для правильної позиції
+    dropdown.style.position = 'fixed';
+    dropdown.style.top = '50%';
+    dropdown.style.left = '50%';
+    dropdown.style.transform = 'translate(-50%, -50%)';
+    dropdown.style.zIndex = '99999999';
+    dropdown.style.pointerEvents = 'auto';
+
+    // Створюємо overlay
     let overlay = null;
 
     function showOverlay() {
@@ -613,12 +601,7 @@ function initPeopleButton() {
         overlay = document.createElement('div');
         overlay.className = 'form-overlay-bg';
         document.body.appendChild(overlay);
-        document.body.classList.add('modal-open');
-
-        overlay.addEventListener('click', function(e) {
-            e.stopPropagation();
-            closeDropdown();
-        });
+        document.body.style.overflow = 'hidden';
     }
 
     function hideOverlay() {
@@ -626,7 +609,7 @@ function initPeopleButton() {
             overlay.remove();
             overlay = null;
         }
-        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
     }
 
     function closeDropdown() {
@@ -635,7 +618,7 @@ function initPeopleButton() {
         setTimeout(updateCustomPrice, 300);
     }
 
-    // Новий обробник для кнопки "Ще" (без дублювання)
+    // Обробник для кнопки "Ще"
     peopleBtn.onclick = function(e) {
         e.stopPropagation();
         e.preventDefault();
@@ -656,19 +639,44 @@ function initPeopleButton() {
         }
     });
 
-    // Кнопки закриття всередині форми
-    const closeButtons = dropdown.querySelectorAll('.new_f-dropdown-btn-cancel, .new_f-dropdown-btn-apply, .new_f-dropdown-body-close');
-    closeButtons.forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            closeDropdown();
-        });
+    // Закриття при кліку на overlay (ТІЛЬКИ якщо клік НЕ на формі)
+    document.addEventListener('click', function(e) {
+        if (dropdown.style.display === 'block') {
+            // Перевіряємо, чи клік був поза формою
+            if (!dropdown.contains(e.target) && e.target !== peopleBtn && !peopleBtn.contains(e.target)) {
+                // Якщо клік на overlay - закриваємо
+                if (e.target === overlay || overlay?.contains(e.target)) {
+                    closeDropdown();
+                }
+            }
+        }
     });
 
-    // Запобігаємо закриттю при кліку всередині форми
-    dropdown.addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
+    // Кнопки закриття всередині форми
+    const cancelBtn = dropdown.querySelector('.new_f-dropdown-btn-cancel');
+    const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
+    const closeBtn = dropdown.querySelector('.new_f-dropdown-body-close');
+
+    if (cancelBtn) {
+        cancelBtn.onclick = function(e) {
+            e.stopPropagation();
+            closeDropdown();
+        };
+    }
+
+    if (applyBtn) {
+        applyBtn.onclick = function(e) {
+            e.stopPropagation();
+            closeDropdown();
+        };
+    }
+
+    if (closeBtn) {
+        closeBtn.onclick = function(e) {
+            e.stopPropagation();
+            closeDropdown();
+        };
+    }
 
     console.log('✅ Оригінальна форма туристів Otpusk ініціалізована');
 }
