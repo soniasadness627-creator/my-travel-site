@@ -214,7 +214,7 @@
         font-size: 1rem !important;
     }
 
-    /* ========== КНОПКА "ЩЕ" ========== */
+    /* ========== КНОПКА "ЩЕ" - ЯК ДЛЯ ДАТИ ========== */
     .new_t-change-people {
         display: inline-flex !important;
         align-items: center !important;
@@ -227,8 +227,6 @@
         margin-left: 10px !important;
         transition: all 0.2s ease !important;
         border: none !important;
-        position: relative !important;
-        z-index: 10 !important;
     }
 
     .new_t-change-people:hover {
@@ -249,7 +247,6 @@
         height: 14px !important;
         transform: rotate(90deg) !important;
         fill: #64748b !important;
-        transition: fill 0.2s ease !important;
     }
 
     /* ========== ДАТА ========== */
@@ -369,13 +366,13 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== ОРИГІНАЛЬНА ФОРМА ТУРИСТІВ ========== */
+    /* ========== ОРИГІНАЛЬНА ФОРМА ТУРИСТІВ - БЕЗ ЗАТЕМНЕННЯ, ЯК ДАТА ========== */
     .new_f-dropdown-body {
         position: fixed !important;
         top: 50% !important;
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
-        z-index: 99999999 !important;
+        z-index: 99999 !important;
         background: white !important;
         border-radius: 24px !important;
         width: 90% !important;
@@ -383,25 +380,58 @@
         min-width: 320px !important;
         max-height: 85vh !important;
         overflow-y: auto !important;
-        box-shadow: 0 30px 60px rgba(0,0,0,0.4) !important;
-        pointer-events: auto !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
+        border: 1px solid #e2e8f0 !important;
     }
 
-    /* Переконуємось, що форма та всі її елементи клікабельні */
-    .new_f-dropdown-body * {
-        pointer-events: auto !important;
+    /* Стилі для кнопки "Ще" - як у дати */
+    .new_t-change-date {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 36px !important;
+        height: 36px !important;
+        background: #f1f5f9 !important;
+        border-radius: 50% !important;
+        cursor: pointer !important;
+        margin-left: 10px !important;
+        transition: all 0.2s ease !important;
     }
 
-    /* Затемнення фону - НЕ ПОВИННО ПЕРЕХОПЛЮВАТИ КЛІКИ НА ФОРМІ */
-    .form-overlay-bg {
+    .new_t-change-date:hover {
+        background: #3b82f6 !important;
+    }
+
+    .new_t-change-date:hover svg {
+        fill: white !important;
+    }
+
+    .new_t-change-date svg {
+        width: 14px !important;
+        height: 14px !important;
+        transform: rotate(90deg) !important;
+        fill: #64748b !important;
+    }
+
+    /* Стилі для модального вікна дати (вже є в Otpusk, просто переконуємось) */
+    .new_t-modal-body-item.date {
+        display: none;
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 99999998;
-        pointer-events: auto;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 100000;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        width: 90%;
+        max-width: 800px;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+
+    .new_t-modal-body-item.date[style*="display: block"] {
+        display: block !important;
     }
 
     .new_t-duration-icons {
@@ -534,7 +564,7 @@
 
 <!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== РОБОТА З ОРИГІНАЛЬНОЮ ФОРМОЮ ТУРИСТІВ ==========
+// ========== РОБОТА З ОРИГІНАЛЬНОЮ ФОРМОЮ ТУРИСТІВ (БЕЗ ЗАТЕМНЕННЯ) ==========
 
 // 1. Оновлення ціни
 function updateCustomPrice() {
@@ -562,7 +592,7 @@ function startPriceWatcher() {
     updateCustomPrice();
 }
 
-// 3. Ініціалізація оригінальної форми туристів (ПРАВИЛЬНА ВЕРСІЯ)
+// 3. Ініціалізація форми туристів (БЕЗ ЗАТЕМНЕННЯ - ЯК ВІКНО ДАТИ)
 function initPeopleButton() {
     // Шукаємо оригінальну кнопку "Ще"
     const peopleBtn = document.querySelector('.new_t-change-people');
@@ -585,47 +615,30 @@ function initPeopleButton() {
     // Зберігаємо початковий стан
     dropdown.style.display = 'none';
 
-    // Додаємо стилі для правильної позиції
+    // Додаємо стилі для позиціонування (без затемнення)
     dropdown.style.position = 'fixed';
     dropdown.style.top = '50%';
     dropdown.style.left = '50%';
     dropdown.style.transform = 'translate(-50%, -50%)';
-    dropdown.style.zIndex = '99999999';
-    dropdown.style.pointerEvents = 'auto';
+    dropdown.style.zIndex = '99999';
+    dropdown.style.backgroundColor = 'white';
+    dropdown.style.borderRadius = '24px';
+    dropdown.style.boxShadow = '0 10px 40px rgba(0,0,0,0.2)';
+    dropdown.style.border = '1px solid #e2e8f0';
 
-    // Створюємо overlay
-    let overlay = null;
-
-    function showOverlay() {
-        if (overlay) return;
-        overlay = document.createElement('div');
-        overlay.className = 'form-overlay-bg';
-        document.body.appendChild(overlay);
-        document.body.style.overflow = 'hidden';
-    }
-
-    function hideOverlay() {
-        if (overlay) {
-            overlay.remove();
-            overlay = null;
-        }
-        document.body.style.overflow = '';
-    }
-
+    // Функція закриття
     function closeDropdown() {
         dropdown.style.display = 'none';
-        hideOverlay();
         setTimeout(updateCustomPrice, 300);
     }
 
-    // Обробник для кнопки "Ще"
+    // Обробник для кнопки "Ще" - просте відкриття/закриття
     peopleBtn.onclick = function(e) {
         e.stopPropagation();
         e.preventDefault();
 
         if (dropdown.style.display === 'none') {
             dropdown.style.display = 'block';
-            showOverlay();
         } else {
             closeDropdown();
         }
@@ -639,15 +652,12 @@ function initPeopleButton() {
         }
     });
 
-    // Закриття при кліку на overlay (ТІЛЬКИ якщо клік НЕ на формі)
+    // Закриття при кліку поза формою (як у модального вікна дати)
     document.addEventListener('click', function(e) {
         if (dropdown.style.display === 'block') {
-            // Перевіряємо, чи клік був поза формою
+            // Якщо клік не на кнопці і не на формі
             if (!dropdown.contains(e.target) && e.target !== peopleBtn && !peopleBtn.contains(e.target)) {
-                // Якщо клік на overlay - закриваємо
-                if (e.target === overlay || overlay?.contains(e.target)) {
-                    closeDropdown();
-                }
+                closeDropdown();
             }
         }
     });
@@ -678,7 +688,7 @@ function initPeopleButton() {
         };
     }
 
-    console.log('✅ Оригінальна форма туристів Otpusk ініціалізована');
+    console.log('✅ Форма туристів ініціалізована (без затемнення, як вікно дати)');
 }
 
 // 4. Запуск
