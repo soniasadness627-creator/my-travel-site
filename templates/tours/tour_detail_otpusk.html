@@ -48,6 +48,7 @@
     </div>
 </div>
 
+<!-- ========== СТИЛІ ========== -->
 <style>
     /* ========== ХОВАЄМО ЗАЙВЕ ========== */
     #otpusk-tour-module .new_f-ext-container,
@@ -200,7 +201,7 @@
         color: #dc2626 !important;
     }
 
-    /* ========== ЗМІНА ОРАНЖЕВОГО КОЛЬОРУ В БЛОКАХ ЦІНИ (основні та "Переглянуті тури") ========== */
+    /* ========== ЗМІНА ОРАНЖЕВОГО КОЛЬОРУ В БЛОКАХ ЦІНИ ========== */
     .new_price-value,
     .new_price .currency,
     .new_price-value .currency,
@@ -214,7 +215,7 @@
         color: var(--primary-color) !important;
     }
 
-    /* Ефект при наведенні – темно-сірий (завжди контрастний) */
+    /* Ефект при наведенні – темно-сірий */
     .new_r-item-price:hover .new_price-value,
     .new_r-item-price:hover .currency,
     .new_r-item-price:hover .new_price-desc,
@@ -225,7 +226,7 @@
         transition: color 0.2s ease;
     }
 
-    /* Додатково: кнопки "Детальніше" */
+    /* Кнопки "Детальніше" */
     .new_r-item .btn,
     .new_r-item .btn-primary,
     .new_r-item .btn-outline-primary {
@@ -238,6 +239,42 @@
     .new_r-item .btn-primary:hover {
         background: var(--primary-dark) !important;
         border-color: var(--primary-dark) !important;
+    }
+
+    /* ========== КАРУСЕЛЬ "ПЕРЕГЛЯНУТІ ТУРИ" ФІКС КНОПОК ========== */
+    .new_t-similar-viewed .owl-nav {
+        text-align: center !important;
+        margin-top: 15px !important;
+        position: relative !important;
+        top: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        transform: none !important;
+    }
+
+    .new_t-similar-viewed .owl-prev,
+    .new_t-similar-viewed .owl-next {
+        position: static !important;
+        display: inline-block !important;
+        width: 34px !important;
+        height: 34px !important;
+        background: rgba(0,0,0,0.5) !important;
+        border-radius: 50% !important;
+        color: white !important;
+        font-size: 18px !important;
+        line-height: 34px !important;
+        text-align: center !important;
+        margin: 0 6px !important;
+        opacity: 0.7 !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+
+    .new_t-similar-viewed .owl-prev:hover,
+    .new_t-similar-viewed .owl-next:hover {
+        opacity: 1 !important;
+        background: var(--primary-color) !important;
     }
 
     /* Стилі для повідомлень */
@@ -258,94 +295,93 @@
         border-radius: 8px;
         margin-bottom: 20px;
     }
-    /* Звуження блоку "Переглянуті тури" – безпечно */
-.new_t-similar-viewed-gallery {
-    max-width: 1200px !important;   /* або будь-яка ширина */
-    margin-left: auto !important;
-    margin-right: auto !important;
-}
 
-/* Якщо потрібно змінити ширину карток у каруселі */
-.owl-item {
-    width: 400px !important;        /* задайте свою ширину */
-}
-    /* ========== МОБІЛЬНА ВЕРСІЯ (до 768px) ========== */
-@media (max-width: 768px) {
-    /* Карусель "Переглянуті тури" */
+    /* Звуження блоку "Переглянуті тури" */
     .new_t-similar-viewed-gallery {
-        width: 100% !important;
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch;
+        max-width: 1200px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 
-    .owl-stage {
-        display: flex !important;
-        flex-wrap: nowrap !important;
-    }
+    /* ========== МОБІЛЬНА ВЕРСІЯ (до 768px) ========== */
+    @media (max-width: 768px) {
+        .new_t-similar-viewed-gallery {
+            width: 100% !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+        }
 
-    .owl-item {
-        width: 280px !important;   /* фіксована ширина для мобільних, щоб не стискалися */
-        flex-shrink: 0 !important;
-        margin-right: 15px !important;
-    }
+        .owl-stage {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+        }
 
-    /* Картки в каруселі */
-    .new_r-item {
-        flex-direction: column !important;
-        height: auto !important;
-        margin-bottom: 15px !important;
-    }
+        .owl-item {
+            width: 280px !important;
+            flex-shrink: 0 !important;
+            margin-right: 15px !important;
+        }
 
-    .new_r-item-img {
-        width: 100% !important;
-        height: 160px !important;
-        object-fit: cover !important;
-    }
+        .new_r-item {
+            flex-direction: column !important;
+            height: auto !important;
+            margin-bottom: 15px !important;
+        }
 
-    .new_r-item-body {
-        padding: 12px !important;
-    }
+        .new_r-item-img {
+            width: 100% !important;
+            height: 160px !important;
+            object-fit: cover !important;
+        }
 
-    .new_r-item-hotel {
-        font-size: 1rem !important;
-        white-space: normal !important;
-        word-break: break-word;
-    }
+        .new_r-item-body {
+            padding: 12px !important;
+        }
 
-    .new_r-item-geo span,
-    .new_r-item-food,
-    .new_r-item-from,
-    .new_r-item-date {
-        font-size: 0.75rem !important;
-        white-space: normal !important;
-        word-break: break-word;
-    }
+        .new_r-item-hotel {
+            font-size: 1rem !important;
+            white-space: normal !important;
+            word-break: break-word;
+        }
 
-    .new_r-item-table {
-        flex-direction: column !important;
-        gap: 8px !important;
-    }
+        .new_r-item-geo span,
+        .new_r-item-food,
+        .new_r-item-from,
+        .new_r-item-date {
+            font-size: 0.75rem !important;
+            white-space: normal !important;
+            word-break: break-word;
+        }
 
-    .new_price-value {
-        font-size: 1.1rem !important;
-    }
+        .new_r-item-table {
+            flex-direction: column !important;
+            gap: 8px !important;
+        }
 
-    .new_price-desc {
-        font-size: 0.7rem !important;
-    }
+        .new_price-value {
+            font-size: 1.1rem !important;
+        }
 
-    /* Загальні контейнери */
-    .new_t-container {
-        padding: 0 10px !important;
-    }
+        .new_price-desc {
+            font-size: 0.7rem !important;
+        }
 
-    .new_t-tour-tab-table {
-        padding: 15px !important;
+        .new_t-container {
+            padding: 0 10px !important;
+        }
+
+        .new_t-tour-tab-table {
+            padding: 15px !important;
+        }
+
+        .new_t-similar-viewed .owl-prev,
+        .new_t-similar-viewed .owl-next {
+            width: 28px !important;
+            height: 28px !important;
+            font-size: 14px !important;
+            line-height: 28px !important;
+        }
     }
-}
-    .owl-stage-outer {
-    overflow: visible !important;
-}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
