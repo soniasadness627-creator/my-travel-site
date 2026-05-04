@@ -231,8 +231,9 @@ def search_otpusk_by_country(request, slug=None):
     }
     return render(request, 'tours/search_results_by_country.html', context)
 
+    # ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (З ОБРОБКОЮ ФОРМИ) ==========
 
-# ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (З ОБРОБКОЮ ФОРМИ) ==========
+
 def tour_detail_otpusk(request, slug=None):
     """
     Сторінка детального перегляду туру (без форми пошуку)
@@ -303,7 +304,6 @@ def tour_detail_otpusk(request, slug=None):
 
             # Перевірка наявності поля email в моделі Consultation
             try:
-                # Спроба створити з email
                 consultation = Consultation.objects.create(
                     name=name,
                     phone=full_phone,
@@ -312,7 +312,6 @@ def tour_detail_otpusk(request, slug=None):
                     status='new'
                 )
             except TypeError:
-                # Якщо поля email немає - створюємо без нього
                 consultation = Consultation.objects.create(
                     name=name,
                     phone=full_phone,
@@ -338,11 +337,9 @@ def tour_detail_otpusk(request, slug=None):
             print(f"✅ Заявка успішно створена! ID: {consultation.id}")
             success_msg = "Дякуємо! Вашу заявку успішно відправлено. Агент зв'яжеться з вами найближчим часом."
 
-            # Якщо це AJAX-запит – повертаємо JSON
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': True, 'message': success_msg})
 
-            # Інакше – звичайний redirect з повідомленням
             messages.success(request, success_msg)
             return redirect(request.path + '?' + request.GET.urlencode())
 
@@ -355,6 +352,19 @@ def tour_detail_otpusk(request, slug=None):
                 return JsonResponse({'success': False, 'error': error_msg})
             messages.error(request, error_msg)
             return redirect(request.path + '?' + request.GET.urlencode())
+
+    # ========== GET-ЗАПИТ (ЗВИЧАЙНЕ ВІДОБРАЖЕННЯ СТОРІНКИ) ==========
+    context = {
+        'agent_site': agent_site,
+        'random_agent': get_random_agent(),
+        'hid': request.GET.get('hid', ''),
+        'oid': request.GET.get('oid', ''),
+        'od': request.GET.get('od', ''),
+        'ol': request.GET.get('ol', ''),
+    }
+    return render(request, 'tours/tour_detail_otpusk.html', context)
+
+
 # ========== AJAX ОБРОБКА БРОНЮВАННЯ (Booking) ==========
 @csrf_exempt
 @require_http_methods(["POST"])
