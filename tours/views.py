@@ -259,25 +259,32 @@ def tour_detail_otpusk(request, slug=None):
             tour_dates = request.POST.get('tour_dates', '').strip()
             tour_url = request.POST.get('tour_url', '').strip()
 
-            # Валідація обов'язкових полів
+            # Валідація
             if not name:
-                messages.error(request, "Будь ласка, введіть ваше ім'я")
+                error_msg = "Будь ласка, введіть ваше ім'я"
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'success': False, 'error': error_msg})
+                messages.error(request, error_msg)
                 return redirect(request.path + '?' + request.GET.urlencode())
 
             if not phone:
-                messages.error(request, "Будь ласка, введіть номер телефону")
+                error_msg = "Будь ласка, введіть номер телефону"
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'success': False, 'error': error_msg})
+                messages.error(request, error_msg)
                 return redirect(request.path + '?' + request.GET.urlencode())
 
-            # Очищуємо телефон від нецифрових символів
             phone_clean = re.sub(r'[^0-9]', '', phone)
             if len(phone_clean) < 9:
-                messages.error(request, "Будь ласка, введіть коректний номер телефону")
+                error_msg = "Будь ласка, введіть коректний номер телефону"
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'success': False, 'error': error_msg})
+                messages.error(request, error_msg)
                 return redirect(request.path + '?' + request.GET.urlencode())
 
-            # Формуємо повний номер телефону
             full_phone = f"{country_code}{phone_clean}"
 
-            # Формуємо повне повідомлення з даними про тур
+            # Формуємо повідомлення
             full_message = f"Тур: {tour_name}\n"
             if tour_price:
                 full_message += f"Ціна: {tour_price}\n"
@@ -294,63 +301,60 @@ def tour_detail_otpusk(request, slug=None):
             print(f"   Email: {email}")
             print(f"   Повідомлення: {full_message[:200]}...")
 
-            # Створюємо заявку в моделі Consultation
-            consultation = Consultation.objects.create(
-                name=name,
-                phone=full_phone,
-                email=email if email else '',
-                comment=full_message,
-                status='new'
-            )
+            # Перевірка наявності поля email в моделі Consultation
+            try:
+                # Спроба створити з email
+                consultation = Consultation.objects.create(
+                    name=name,
+                    phone=full_phone,
+                    email=email if email else '',
+                    comment=full_message,
+                    status='new'
+                )
+            except TypeError:
+                # Якщо поля email немає - створюємо без нього
+                consultation = Consultation.objects.create(
+                    name=name,
+                    phone=full_phone,
+                    comment=full_message,
+                    status='new'
+                )
+                print("⚠️ Модель Consultation не має поля email, створено без email.")
 
-            # Прив'язуємо до агента, якщо є
-            agent_assigned = False
-
+            # Прив'язуємо до агента
             if hasattr(request, 'current_agent_site') and request.current_agent_site:
                 consultation.agent = request.current_agent_site.user
                 consultation.save()
-                agent_assigned = True
-                print(f"✅ Заявка прив'язана до агента: {request.current_agent_site.user.username}")
             elif slug:
                 try:
-                    from .models.agent_site import AgentSite
+                    from constructor.models.agent_site import AgentSite
                     agent_site_obj = AgentSite.objects.filter(slug=slug).first()
                     if agent_site_obj and agent_site_obj.user:
                         consultation.agent = agent_site_obj.user
                         consultation.save()
-                        agent_assigned = True
-                        print(f"✅ Заявка прив'язана до агента (за slug): {agent_site_obj.user.username}")
                 except Exception as e:
-                    print(f"⚠️ Не вдалося прив'язати агента за slug: {e}")
-
-            if not agent_assigned:
-                print("⚠️ Заявка створена без прив'язки до агента")
+                    print(f"⚠️ Не вдалося прив'язати агента: {e}")
 
             print(f"✅ Заявка успішно створена! ID: {consultation.id}")
-            messages.success(request,
-                             "Дякуємо! Вашу заявку успішно відправлено. Агент зв'яжеться з вами найближчим часом.")
+            success_msg = "Дякуємо! Вашу заявку успішно відправлено. Агент зв'яжеться з вами найближчим часом."
 
+            # Якщо це AJAX-запит – повертаємо JSON
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': True, 'message': success_msg})
+
+            # Інакше – звичайний redirect з повідомленням
+            messages.success(request, success_msg)
             return redirect(request.path + '?' + request.GET.urlencode())
 
         except Exception as e:
             print(f"❌ ПОМИЛКА при збереженні заявки: {e}")
             import traceback
             traceback.print_exc()
-            messages.error(request, f"Сталася помилка. Спробуйте пізніше.")
+            error_msg = "Сталася помилка. Спробуйте пізніше."
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': error_msg})
+            messages.error(request, error_msg)
             return redirect(request.path + '?' + request.GET.urlencode())
-
-    # ========== ЗВИЧАЙНИЙ GET ЗАПИТ ==========
-    context = {
-        'agent_site': agent_site,
-        'random_agent': get_random_agent(),
-        'hid': request.GET.get('hid', ''),
-        'oid': request.GET.get('oid', ''),
-        'od': request.GET.get('od', ''),
-        'ol': request.GET.get('ol', ''),
-    }
-    return render(request, 'tours/tour_detail_otpusk.html', context)
-
-
 # ========== AJAX ОБРОБКА БРОНЮВАННЯ (Booking) ==========
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -453,7 +457,7 @@ def consultation_ajax(request, slug=None):
         elif slug:
             # Якщо slug передано, але current_agent_site не встановлено
             try:
-                from .models.agent_site import AgentSite
+                from constructor.models.agent_site import AgentSite
                 agent_site = AgentSite.objects.filter(slug=slug).first()
                 if agent_site:
                     consultation.agent = agent_site.user

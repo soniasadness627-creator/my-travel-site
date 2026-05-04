@@ -8,15 +8,13 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 
-# ========== ІНІЦІАЛІЗАЦІЯ CLOUDINARY (на початку) ==========
+# ========== ІНІЦІАЛІЗАЦІЯ CLOUDINARY ==========
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-# Завантажуємо змінні з .env файлу
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 cloudinary.config(
@@ -26,10 +24,7 @@ cloudinary.config(
     secure=True
 )
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-y6_u!mqip_&yv!q5-!on4!4!f4_*%q3z72nr(3n7l)@j_c-sj8')
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
@@ -96,26 +91,36 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'DjangoProject1.wsgi.application'
 
-# ========== БАЗА ДАНИХ - ВИПРАВЛЕНО: ПРИМУСОВО PostgreSQL ==========
-# Перевіряємо DATABASE_URL в першу чергу
-DATABASE_URL = os.getenv('DATABASE_URL')
-if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            ssl_require=False
-        )
-    }
-    print(f"✅ Використовується PostgreSQL: {DATABASES['default']['ENGINE']}")
-else:
+# ========== БАЗА ДАНИХ – ЛОКАЛЬНО SQLite, НА СЕРВЕРІ PostgreSQL ==========
+IS_LOCAL_COMMAND = any(x in sys.argv for x in ['runserver', 'migrate', 'makemigrations', 'shell'])
+
+if IS_LOCAL_COMMAND:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-    print("⚠️ Використовується SQLite (DATABASE_URL не знайдено)")
+    print("⚠️ Локальна розробка: використовується SQLite")
+else:
+    DATABASE_URL = os.getenv('DATABASE_URL')
+    if DATABASE_URL:
+        DATABASES = {
+            'default': dj_database_url.config(
+                default=DATABASE_URL,
+                conn_max_age=600,
+                ssl_require=False
+            )
+        }
+        print(f"✅ Сервер: використовується PostgreSQL")
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+        print("⚠️ Сервер: DATABASE_URL не знайдено, використовується SQLite")
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -149,7 +154,6 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', 'kwwtOaPRA4fv4-_QpL-0sxyRVZ0'),
 }
 
-# НОВІ НАЛАШТУВАННЯ STORAGES ДЛЯ Django 6.0
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -160,16 +164,12 @@ STORAGES = {
 }
 
 MEDIA_URL = '/media/'
-
 APPEND_SLASH = True
 
-# ========== EMAIL НАЛАШТУВАННЯ (оновлено - використовуємо Gmail) ==========
-
-# Отримуємо налаштування з .env
+# ========== EMAIL НАЛАШТУВАННЯ ==========
 USE_AWS_SES = os.getenv('USE_AWS_SES', 'False') == 'True'
 
 if USE_AWS_SES:
-    # AWS SES для продакшену (коли Дмитро надасть ключі)
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = os.getenv('AWS_SES_HOST', 'email-smtp.eu-north-1.amazonaws.com')
     EMAIL_PORT = 587
@@ -177,9 +177,8 @@ if USE_AWS_SES:
     EMAIL_HOST_USER = os.getenv('AWS_SES_USERNAME', '')
     EMAIL_HOST_PASSWORD = os.getenv('AWS_SES_PASSWORD', '')
     DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@clubdatour.com.ua')
-    print("✅ Використовується AWS SES для відправки email")
+    print("✅ AWS SES для відправки email")
 else:
-    # Gmail для відправки (працює зараз)
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_PORT = 587
@@ -187,20 +186,16 @@ else:
     EMAIL_HOST_USER = os.getenv('GMAIL_USER', 'soniasadness627@gmail.com')
     EMAIL_HOST_PASSWORD = os.getenv('GMAIL_PASSWORD', '')
     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-    print("✅ Використовується Gmail для відправки email")
+    print("✅ Gmail для відправки email")
 
 # ========== НАЛАШТУВАННЯ ДЛЯ RENDER ==========
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
-
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
-
-# ========== ПОЛІТИКА REFERRER ДЛЯ Otpusk.com ==========
 SECURE_REFERRER_POLICY = 'unsafe-url'
 
-# ========== БЕЗПЕКА ДЛЯ ПРОДАКШЕНУ ==========
 if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -209,23 +204,22 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
 
-# Gemini API ключ
+# API ключі
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyAlyvwC7SmSESF7YpCOUJRuYgTLIP7b7L4')
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', '')
 
-# ========== НАЛАШТУВАННЯ ПОРТУ ==========
 PORT = os.getenv('PORT', '10000')
 
-# ========== ДІАГНОСТИКА ==========
+# Діагностика для Gunicorn
 if 'gunicorn' in sys.argv[0]:
     print("=== ДІАГНОСТИКА GUNICORN ===")
     print(f"GMAIL_USER: {os.getenv('GMAIL_USER', 'Не знайдено!')}")
-    print(f"GMAIL_PASSWORD: {'Знайдено (приховано)' if os.getenv('GMAIL_PASSWORD') else 'Не знайдено!'}")
+    print(f"GMAIL_PASSWORD: {'Знайдено' if os.getenv('GMAIL_PASSWORD') else 'Не знайдено!'}")
     print(f"DATABASE_URL: {'Знайдено' if os.getenv('DATABASE_URL') else 'Не знайдено!'}")
     print(f"PORT: {os.getenv('PORT', 'Не знайдено!')}")
     print("===========================")
 
-# ========== ЛОГУВАННЯ ==========
+# Логування
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -239,15 +233,8 @@ LOGGING = {
         'level': 'DEBUG',
     },
     'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        },
-        'django.request': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
+        'django': {'handlers': ['console'], 'level': 'INFO'},
+        'django.request': {'handlers': ['console'], 'level': 'DEBUG', 'propagate': False},
     },
 }
 
