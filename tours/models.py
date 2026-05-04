@@ -168,9 +168,11 @@ class PopularDestination(models.Model):
 class Consultation(models.Model):
     name = models.CharField(max_length=100, verbose_name="Ім'я")
     phone = models.CharField(max_length=20, verbose_name="Телефон")
+    email = models.EmailField(blank=True, null=True, verbose_name="Email")          # ДОДАНО
     comment = models.TextField(blank=True, verbose_name="Коментар")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата заявки")
     is_processed = models.BooleanField(default=False, verbose_name="Опрацьовано")
+    status = models.CharField(max_length=20, default='new', blank=True, verbose_name="Статус")   # ДОДАНО
     agent = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
