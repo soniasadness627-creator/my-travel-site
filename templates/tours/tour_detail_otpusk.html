@@ -178,29 +178,29 @@
         background: transparent !important;
     }
 
-    /* ========== ФІРМОВІ КОЛЬОРИ (ФІОЛЕТОВИЙ) ========== */
+    /* ========== ФІРМОВІ КОЛЬОРИ (КОЛІР АГЕНТА) ========== */
     .new_f-people-item.active,
     .new_f-dropdown-btn-apply,
     .new_f-dropdown-body-top,
     .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
-        background: #7a219e !important;
-        border-color: #7a219e !important;
+        background: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
     }
 
     .new_t-important,
     .new_t-header-geo a,
     .new_r-item-geo:hover,
     .new_r-item-hotel:hover {
-        color: #7a219e !important;
+        color: var(--primary-color) !important;
     }
 
     .new_r-item-geo svg,
     .new_t-header-geo svg {
-        fill: #7a219e !important;
+        fill: var(--primary-color) !important;
     }
 
     .new_f-dropdown-btn-apply:hover {
-        background: #5a1675 !important;
+        background: var(--primary-dark) !important;
     }
 
     .new_t-order-price .new_price {
@@ -256,16 +256,12 @@
         fill: var(--primary-color) !important;
     }
 
-    /* ========== ЗМІНА ФОНУ ОРАНЖЕВИХ БЛОКІВ (наприклад, при наведенні) ========== */
-    .new_r-item-price {
-        background: transparent !important;
-    }
-
-    /* Якщо є оранжевий фон у блоку ціни при наведенні */
-    .new_r-item-price:hover,
-    .new_r-item-col .new_r-item-price:hover {
-        background: var(--primary-color) !important;
-        transition: all 0.3s ease;
+    /* ========== ЕФЕКТ ПРИ НАВЕДЕННІ НА БЛОК ЦІНИ (ТІЛЬКИ ТЕКСТ, БЕЗ ФОНУ) ========== */
+    .new_r-item-price:hover .new_price-value,
+    .new_r-item-price:hover .new_price-desc,
+    .new_r-item-price:hover .currency {
+        color: #1f2937 !important;   /* темно-сірий, майже чорний – завжди читається */
+        transition: color 0.2s ease;
     }
 
     /* Додатково: зміна фону кнопки "Детальніше" або подібних */
@@ -313,7 +309,7 @@
                             <i class="fa-regular fa-user text-secondary"></i>
                         </div>
                         <div>
-                            <div class="fw-bold" style="font-size: 0.95rem; color: #7a219e;">
+                            <div class="fw-bold" style="font-size: 0.95rem; color: var(--primary-color);">
                                 {% if agent_site %}
                                     {{ agent_site.user.get_full_name|default:agent_site.user.username }}
                                 {% else %}
@@ -362,7 +358,7 @@
                             <div class="mb-3">
                                 <textarea name="comment" id="bookingMessage" class="form-control" rows="3" placeholder="Ваші побажання (необов'язково)"></textarea>
                             </div>
-                            <button type="button" class="btn w-100" id="submitBookingBtn" style="background: #7a219e; color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px; border: none;">
+                            <button type="button" class="btn w-100" id="submitBookingBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px; border: none;">
                                 <i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур
                             </button>
                         </form>
@@ -434,7 +430,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 showMessage('Будь ласка, введіть ваше ім\'я', 'danger');
                 return;
             }
-
             if (!phone) {
                 showMessage('Будь ласка, введіть номер телефону', 'danger');
                 return;
