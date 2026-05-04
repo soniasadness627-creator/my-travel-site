@@ -232,15 +232,121 @@ def search_otpusk_by_country(request, slug=None):
     return render(request, 'tours/search_results_by_country.html', context)
 
 
-# ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (БЕЗ ФОРМИ ПОШУКУ) ==========
+# ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (З ОБРОБКОЮ ФОРМИ) ==========
 def tour_detail_otpusk(request, slug=None):
     """
     Сторінка детального перегляду туру (без форми пошуку)
+    З обробкою POST запитів для форми бронювання
     """
     agent_site = getattr(request, 'current_agent_site', None)
+
+    # ========== ОБРОБКА POST ЗАПИТУ (ФОРМА БРОНЮВАННЯ) ==========
+    if request.method == 'POST' and request.POST.get('consultation_submit'):
+        print("=" * 50)
+        print("📝 Отримано POST запит на бронювання!")
+        print(f"POST data: {request.POST}")
+        print("=" * 50)
+
+        try:
+            # Отримуємо дані з форми
+            name = request.POST.get('name', '').strip()
+            phone = request.POST.get('phone', '').strip()
+            email = request.POST.get('email', '').strip()
+            comment = request.POST.get('comment', '').strip()
+            country_code = request.POST.get('country_code', '+380')
+            tour_name = request.POST.get('tour_name', '').strip()
+            tour_price = request.POST.get('tour_price', '').strip()
+            tour_dates = request.POST.get('tour_dates', '').strip()
+            tour_url = request.POST.get('tour_url', '').strip()
+
+            # Валідація обов'язкових полів
+            if not name:
+                messages.error(request, "Будь ласка, введіть ваше ім'я")
+                return redirect(request.path + '?' + request.GET.urlencode())
+
+            if not phone:
+                messages.error(request, "Будь ласка, введіть номер телефону")
+                return redirect(request.path + '?' + request.GET.urlencode())
+
+            # Очищуємо телефон від нецифрових символів
+            phone_clean = re.sub(r'[^0-9]', '', phone)
+            if len(phone_clean) < 9:
+                messages.error(request, "Будь ласка, введіть коректний номер телефону")
+                return redirect(request.path + '?' + request.GET.urlencode())
+
+            # Формуємо повний номер телефону
+            full_phone = f"{country_code}{phone_clean}"
+
+            # Формуємо повне повідомлення з даними про тур
+            full_message = f"Тур: {tour_name}\n"
+            if tour_price:
+                full_message += f"Ціна: {tour_price}\n"
+            if tour_dates:
+                full_message += f"Дати: {tour_dates}\n"
+            if tour_url:
+                full_message += f"Посилання: {tour_url}\n"
+            if comment:
+                full_message += f"\nПобажання клієнта:\n{comment}"
+
+            print(f"📝 Створюємо заявку:")
+            print(f"   Ім'я: {name}")
+            print(f"   Телефон: {full_phone}")
+            print(f"   Email: {email}")
+            print(f"   Повідомлення: {full_message[:200]}...")
+
+            # Створюємо заявку в моделі Consultation
+            consultation = Consultation.objects.create(
+                name=name,
+                phone=full_phone,
+                email=email if email else '',
+                comment=full_message,
+                status='new'
+            )
+
+            # Прив'язуємо до агента, якщо є
+            agent_assigned = False
+
+            if hasattr(request, 'current_agent_site') and request.current_agent_site:
+                consultation.agent = request.current_agent_site.user
+                consultation.save()
+                agent_assigned = True
+                print(f"✅ Заявка прив'язана до агента: {request.current_agent_site.user.username}")
+            elif slug:
+                try:
+                    from .models.agent_site import AgentSite
+                    agent_site_obj = AgentSite.objects.filter(slug=slug).first()
+                    if agent_site_obj and agent_site_obj.user:
+                        consultation.agent = agent_site_obj.user
+                        consultation.save()
+                        agent_assigned = True
+                        print(f"✅ Заявка прив'язана до агента (за slug): {agent_site_obj.user.username}")
+                except Exception as e:
+                    print(f"⚠️ Не вдалося прив'язати агента за slug: {e}")
+
+            if not agent_assigned:
+                print("⚠️ Заявка створена без прив'язки до агента")
+
+            print(f"✅ Заявка успішно створена! ID: {consultation.id}")
+            messages.success(request,
+                             "Дякуємо! Вашу заявку успішно відправлено. Агент зв'яжеться з вами найближчим часом.")
+
+            return redirect(request.path + '?' + request.GET.urlencode())
+
+        except Exception as e:
+            print(f"❌ ПОМИЛКА при збереженні заявки: {e}")
+            import traceback
+            traceback.print_exc()
+            messages.error(request, f"Сталася помилка. Спробуйте пізніше.")
+            return redirect(request.path + '?' + request.GET.urlencode())
+
+    # ========== ЗВИЧАЙНИЙ GET ЗАПИТ ==========
     context = {
         'agent_site': agent_site,
         'random_agent': get_random_agent(),
+        'hid': request.GET.get('hid', ''),
+        'oid': request.GET.get('oid', ''),
+        'od': request.GET.get('od', ''),
+        'ol': request.GET.get('ol', ''),
     }
     return render(request, 'tours/tour_detail_otpusk.html', context)
 
@@ -303,6 +409,7 @@ def booking_ajax(request, slug=None):
         import traceback
         traceback.print_exc()
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
 
 # ========== AJAX ОБРОБКА КОНСУЛЬТАЦІЇ ==========
 @csrf_exempt
