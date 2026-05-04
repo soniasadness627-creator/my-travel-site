@@ -4,165 +4,90 @@
 {% block title %}Деталі туру{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div id="otpusk-tour-module">
-        <script>
-            // 1. Отримуємо параметри туру з рядка запиту URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const hid = urlParams.get('hid');
-            const oid = urlParams.get('oid');
-            const od = urlParams.get('od');
-            const ol = urlParams.get('ol');
-
-            // 2. Глобальні змінні для модуля Otpusk
-            var osGeo = '';
-            var osDefaultDeparture = '';
-            var osDefaultDuration = '';
-            var osDateFrom = '';
-            var osDateTo = '';
-            var osHotelCategory = '';
-            var osFood = '';
-            var osTransport = '';
-            var osTarget = '';
-            var osContainer = null;
-            var osTourContainer = null;
-            var osLang = 'ua';
-            var osTourTargetBlank = false;
-            var osOrderUrl = null;
-            var osCurrency = 'converted';
-            var osAutoStart = false;
-
-            // 3. Завантажуємо конкретний тур
-            if (hid && oid && od && ol) {
-                window.location.hash = `#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}&page=tour`;
-                console.log('Завантаження туру:', window.location.hash);
-            }
-        </script>
-
-        <!-- Підключаємо ТІЛЬКИ CSS, скрипти завантажуємо обережно -->
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
-        <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
-    </div>
-</div>
-
 <!-- ========== СТИЛІ ========== -->
 <style>
-    /* ========== ХОВАЄМО ВСЕ ЗАЙВЕ ========== */
-    .new_os {
-        display: none !important;
+    .tour-detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
     }
 
-    /* ========== СТИЛІ ДЛЯ МЕНЮ ========== */
-    .new_t-menu {
-        display: flex !important;
-        gap: 12px !important;
-        background: rgba(255,255,255,0.96) !important;
-        padding: 8px 20px !important;
-        border-radius: 60px !important;
-        margin: 20px 0 30px !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08) !important;
-        flex-wrap: wrap !important;
-        backdrop-filter: blur(10px) !important;
-        border: 1px solid rgba(255,255,255,0.3) !important;
+    /* Меню */
+    .tour-menu {
+        display: flex;
+        gap: 12px;
+        background: rgba(255,255,255,0.96);
+        padding: 8px 20px;
+        border-radius: 60px;
+        margin: 20px 0 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        flex-wrap: wrap;
+        border: 1px solid rgba(255,255,255,0.3);
     }
 
-    .new_t-menu-item {
-        padding: 10px 28px !important;
-        background: #f1f5f9 !important;
-        border-radius: 50px !important;
-        color: #334155 !important;
-        font-weight: 600 !important;
-        font-size: 14px !important;
-        letter-spacing: 0.3px !important;
-        cursor: pointer !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    .tour-menu-item {
+        padding: 10px 28px;
+        background: #f1f5f9;
+        border-radius: 50px;
+        color: #334155;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
 
-    .new_t-menu-item:hover {
-        background: #3b82f6 !important;
-        color: white !important;
-        transform: translateY(-2px);
+    .tour-menu-item:hover, .tour-menu-item.active {
+        background: #3b82f6;
+        color: white;
     }
 
-    .new_t-menu-item.selected {
-        background: #3b82f6 !important;
-        color: white !important;
+    /* Картки */
+    .info-card {
+        background: white;
+        border-radius: 20px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border: 1px solid #e2e8f0;
     }
 
-    /* ========== СТИЛЬНІ КАРТКИ ========== */
-    .new_t-tour-tab-table {
-        background: white !important;
-        border-radius: 20px !important;
-        padding: 20px 24px !important;
-        margin-bottom: 16px !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
-        border: 1px solid #f0f2f5 !important;
-        display: flex !important;
-        flex-wrap: wrap !important;
-        align-items: flex-start !important;
-        gap: 20px !important;
+    .card-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 10px;
     }
 
-    .new_t-tour-tab-col-1 svg {
-        display: none !important;
+    .card-content {
+        flex: 1;
     }
 
-    .new_t-tour-tab-col-1-title {
-        font-size: 0.85rem !important;
-        font-weight: 600 !important;
-        color: #64748b !important;
-        white-space: nowrap !important;
-    }
-
-    .new_t-tour-tab-col-2 {
-        flex: 1 !important;
-        display: block !important;
-    }
-
-    .new_weight-bold {
-        font-weight: 600 !important;
-        color: #1e293b !important;
-        font-size: 1rem !important;
-        display: block !important;
-        margin-bottom: 15px !important;
-    }
-
-    /* ========== КАСТОМНИЙ БЛОК ВИБОРУ ТУРИСТІВ ========== */
-    .custom-tourist-block {
-        margin-top: 15px;
-        width: 100%;
-    }
-
-    .tourist-selector-wrap {
+    /* Кнопки вибору туристів */
+    .tourist-selector {
         background: #f8fafc;
         border-radius: 16px;
         border: 1px solid #e2e8f0;
         overflow: hidden;
+        margin-top: 15px;
     }
 
-    .tourist-header {
+    .selector-header {
         background: #3b82f6;
         color: white;
         padding: 12px 20px;
         font-weight: 600;
-        font-size: 16px;
     }
 
-    .tourist-section {
+    .selector-section {
         padding: 20px;
         background: white;
         border-bottom: 1px solid #e2e8f0;
     }
 
-    .tourist-section:last-child {
-        border-bottom: none;
-    }
-
-    .tourist-section-title {
+    .selector-title {
         font-weight: 600;
         margin-bottom: 12px;
         color: #1e293b;
-        font-size: 0.95rem;
     }
 
     .adults-buttons {
@@ -177,7 +102,7 @@
         border-radius: 40px;
         background: white;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.2s;
         font-weight: 500;
     }
 
@@ -256,7 +181,7 @@
         font-weight: bold;
     }
 
-    .tourist-footer {
+    .selector-footer {
         display: flex;
         justify-content: flex-end;
         gap: 12px;
@@ -278,365 +203,287 @@
         color: #475569;
     }
 
-    .cancel-btn:hover {
-        background: #cbd5e1;
-    }
-
     .apply-btn {
         background: #3b82f6;
         color: white;
     }
 
-    .apply-btn:hover {
-        background: #2563eb;
+    /* Дата */
+    .date-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
     }
 
-    /* ========== ДАТА ========== */
-    .new_t-date-table {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 16px !important;
-        align-items: center !important;
+    .date-col {
+        background: transparent;
+        padding: 0;
     }
 
-    .new_t-important {
-        font-weight: 700 !important;
-        color: #3b82f6 !important;
-        font-size: 1rem !important;
+    .date-important {
+        font-weight: 700;
+        color: #3b82f6;
+        font-size: 1rem;
     }
 
-    .new_t-duration-container {
-        background: transparent !important;
-        padding: 6px 0 !important;
-        font-weight: 600 !important;
-        color: #1e293b !important;
-        font-size: 0.9rem !important;
-        border-bottom: 1px dashed #e2e8f0 !important;
-        white-space: nowrap !important;
+    .duration-box {
+        padding: 6px 0;
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 0.9rem;
+        border-bottom: 1px dashed #e2e8f0;
     }
 
-    .new_t-duration-text {
-        font-size: 0.7rem !important;
-        color: #64748b !important;
-        margin-top: 4px !important;
-        white-space: nowrap !important;
+    /* Послуги */
+    .service-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 18px;
+        background: #f1f5f9;
+        border-radius: 40px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #1e293b;
+        margin-right: 10px;
+        margin-bottom: 10px;
     }
 
-    .new_t-service-item {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 8px !important;
-        padding: 8px 18px !important;
-        background: #f1f5f9 !important;
-        border-radius: 40px !important;
-        font-size: 0.85rem !important;
-        font-weight: 500 !important;
-        color: #1e293b !important;
+    .service-yes {
+        color: #22c55e;
+    }
+
+    .service-no {
+        color: #ef4444;
+    }
+
+    /* Ціна */
+    .price-block {
+        text-align: right;
+        margin: 20px 0;
     }
 
     .price-number {
         color: #dc2626;
         font-size: 1.8rem;
         font-weight: 700;
-        margin-top: 10px;
-        text-align: right;
+    }
+
+    .order-button {
+        background: #3b82f6;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 40px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
     }
 
     @media (max-width: 768px) {
-        .new_t-menu {
-            gap: 8px !important;
-            padding: 8px 12px !important;
-        }
-        .new_t-menu-item {
-            padding: 6px 16px !important;
-            font-size: 12px !important;
-        }
-        .new_t-tour-tab-table {
-            flex-direction: column !important;
-            padding: 16px !important;
-        }
         .price-number {
-            font-size: 1.4rem !important;
+            font-size: 1.4rem;
+        }
+        .tour-menu-item {
+            padding: 6px 16px;
+            font-size: 12px;
+        }
+        .info-card {
+            flex-direction: column;
         }
     }
 </style>
 
-<!-- ========== БЛОК БРОНЮВАННЯ ========== -->
-<div class="row justify-content-center my-5">
-    <div class="col-12 col-md-10 col-lg-8">
-        <div class="card border-0 shadow-sm" id="consultationCard">
-            <div class="card-body p-4 p-md-5">
-                <h5 class="fw-bold mb-3" style="font-size: 1.5rem;">Забронювати тур</h5>
-                <p class="text-muted mb-4">Заповніть форму, щоб забронювати цей тур</p>
+<div class="tour-detail-container">
+    <!-- Меню -->
+    <div class="tour-menu">
+        <div class="tour-menu-item active">Тур</div>
+        <div class="tour-menu-item">Опис</div>
+        <div class="tour-menu-item">Фото</div>
+        <div class="tour-menu-item">Мапа</div>
+    </div>
 
-                <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
-                    <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
-                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                            <i class="fa-regular fa-user text-secondary"></i>
-                        </div>
-                        <div>
-                            <div class="fw-bold" style="font-size: 0.95rem;">
-                                {% if agent_site %}
-                                    {{ agent_site.user.get_full_name|default:agent_site.user.username }}
-                                {% else %}
-                                    {{ random_agent.get_full_name|default:random_agent.username }}
-                                {% endif %}
-                            </div>
-                            <div class="text-muted" style="font-size: 0.8rem;">9 років досвіду в туризмі</div>
+    <!-- Заголовок готелю -->
+    <div class="info-card" style="margin-bottom: 20px;">
+        <h2 id="hotelName">Empire Beach Aqua Park 3*</h2>
+        <div style="color: #64748b;">🇪🇬 Єгипет, Хургада</div>
+        <div style="margin-top: 10px; color: #475569; font-size: 14px;">
+            Готель розташований неподалік від жвавого центру Хургади. У готелі є 3 відкриті басейни, велика тераса для засмаги.
+            У номерах є балкон із видом на садочок або Червоне море.
+        </div>
+    </div>
+
+    <!-- Блок Туристи -->
+    <div class="info-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
+            <div class="card-title">👥 ТУРИСТИ</div>
+            <div class="card-content" style="flex: 1;">
+                <div style="font-weight: 600; margin-bottom: 10px;" id="touristText">2 дорослих</div>
+
+                <!-- Вибор туристів -->
+                <div class="tourist-selector">
+                    <div class="selector-header">👥 Вибір туристів</div>
+
+                    <div class="selector-section">
+                        <div class="selector-title">Кількість дорослих:</div>
+                        <div class="adults-buttons" id="adultsButtons">
+                            <button class="adult-btn" data-adults="1">1 дорослий</button>
+                            <button class="adult-btn active" data-adults="2">2 дорослих</button>
+                            <button class="adult-btn" data-adults="3">3 дорослих</button>
+                            <button class="adult-btn" data-adults="4">4 дорослих</button>
+                            <button class="adult-btn" data-adults="5">5 дорослих</button>
+                            <button class="adult-btn" data-adults="6">6 дорослих</button>
+                            <button class="adult-btn" data-adults="7">7 дорослих</button>
+                            <button class="adult-btn" data-adults="8">8 дорослих</button>
                         </div>
                     </div>
-                    <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
-                        <form id="bookingForm" novalidate>
-                            {% csrf_token %}
-                            <input type="hidden" name="consultation_submit" value="1">
-                            <input type="hidden" name="tour_hid" id="tourHid" value="{{ hid }}">
-                            <input type="hidden" name="tour_name" id="tourName" value="">
-                            <input type="hidden" name="tour_price" id="tourPrice" value="">
-                            <input type="hidden" name="tour_dates" id="tourDates" value="">
 
-                            <div class="mb-3">
-                                <input type="text" name="name" id="bookingName" class="form-control" placeholder="Ваше ім'я" required>
-                            </div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-4">
-                                    <select name="country_code" class="form-select" required>
-                                        <option value="+380" selected>🇺🇦 +380</option>
-                                        <option value="+48">🇵🇱 +48</option>
-                                        <option value="+1">🇺🇸 +1</option>
-                                        <option value="+44">🇬🇧 +44</option>
-                                        <option value="+49">🇩🇪 +49</option>
-                                        <option value="+33">🇫🇷 +33</option>
-                                    </select>
-                                </div>
-                                <div class="col-8">
-                                    <input type="tel" name="phone" id="bookingPhone" class="form-control" placeholder="XXXXXXXXX" required pattern="[0-9]+" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)">
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <textarea name="comment" id="bookingMessage" class="form-control" rows="3" placeholder="Ваші побажання (необов'язково)"></textarea>
-                            </div>
-                            <button type="button" class="btn w-100" id="submitBookingBtn" style="background: #3b82f6; color: white; font-weight: 500; height: 45px; border-radius: 6px;">
-                                <i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур
-                            </button>
-                        </form>
+                    <div class="selector-section">
+                        <div class="selector-title">👶 Діти:</div>
+                        <button class="add-child-btn" id="addChildBtn">+ Додати дитину</button>
+                        <div class="age-buttons" id="ageButtons">
+                            <!-- Вік дітей 1-16 років -->
+                        </div>
+                        <div class="children-list" id="childrenList"></div>
+                    </div>
+
+                    <div class="selector-footer">
+                        <button class="cancel-btn" id="cancelBtn">Відміна</button>
+                        <button class="apply-btn" id="applyBtn">Застосувати</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- ========== ОСНОВНІ ДАНІ ТУРУ ========== -->
-<div class="container">
-    <div class="new_t-container">
-        <div class="new_t-menu-wrap">
-            <div class="new_t-menu">
-                <div class="new_t-menu-item new_t-tab-tour selected" data-name="tour">Тур</div>
-                <div class="new_t-menu-item new_t-tab-desc" data-name="hotelInfo">Опис</div>
-                <div class="new_t-menu-item new_t-tab-photos" data-name="photo">Фото</div>
-                <div class="new_t-menu-item new_t-tab-map" data-name="map">Мапа</div>
-            </div>
-        </div>
-
-        <div class="new_t-header">
-            <div class="new_t-header-col">
-                <div class="new_t-header-title" id="hotelName">Завантаження...</div>
-                <div class="new_t-header-geo" id="hotelLocation"></div>
-            </div>
-        </div>
-
-        <div class="new_t-content-table">
-            <div class="new_t-content-col new_t-tabs-content">
-                <!-- Блок Туристи -->
-                <div class="new_t-tour-tab-table tourist-table">
-                    <div class="new_t-tour-tab-col new_t-tour-tab-col-1">
-                        <div class="new_t-tour-tab-col-1-title">Туристи</div>
+    <!-- Блок Дати -->
+    <div class="info-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <div class="card-title">📅 ДАТА ТА ТРИВАЛІСТЬ</div>
+            <div class="card-content">
+                <div class="date-row">
+                    <div class="date-col">
+                        <div class="date-important" id="startDate">21 травня 2026, чт</div>
+                        <div style="font-weight: 500;">Відень → Єгипет</div>
                     </div>
-                    <div class="new_t-tour-tab-col new_t-tour-tab-col-2">
-                        <span class="new_weight-bold" id="touristText">2 дорослих</span>
+                    <div class="date-col">
+                        <div class="duration-box" id="duration">7 ночей</div>
+                        <div style="font-size: 0.7rem; color: #64748b;">Авіапереліт (включен)</div>
                     </div>
-                </div>
-
-                <!-- Блок Дати -->
-                <div class="new_t-tour-tab-table date-table">
-                    <div class="new_t-tour-tab-col new_t-tour-tab-col-1">
-                        <div class="new_t-tour-tab-col-1-title">Дата відправлення</div>
-                    </div>
-                    <div class="new_t-tour-tab-col new_t-tour-tab-col-2">
-                        <div class="new_t-date-table">
-                            <div class="new_t-date-col new_t-nostretch">
-                                <div class="new_t-important" id="startDate">{{ od|default:"21 травня 2026" }}</div>
-                                <div class="new_weight-bold" id="fromCity">Відень → </div>
-                            </div>
-                            <div class="new_t-date-col new_t-duration-col">
-                                <div class="new_t-duration-container" id="duration">{{ ol|default:"7" }} ночей</div>
-                            </div>
-                            <div class="new_t-date-col new_t-nostretch">
-                                <div class="new_t-important" id="endDate"></div>
-                                <div class="new_weight-bold" id="toCity">→ Відень</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Блок Послуги -->
-                <div class="new_t-tour-tab-table services-table">
-                    <div class="new_t-tour-tab-col new_t-tour-tab-col-1">
-                        <div class="new_t-tour-tab-col-1-title">Послуги</div>
-                    </div>
-                    <div class="new_t-tour-tab-col new_t-tour-tab-col-2">
-                        <div class="new_t-service-item new_transfer new_t-service-item-yes">Трансфер ✓</div>
-                        <div class="new_t-service-item new_insurance new_t-service-item-yes">Страховка ✓</div>
-                        <div class="new_t-service-item new_visa new_t-service-item-no">Віза ✗</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="new_t-content-col new_t-order-content">
-                <div class="new_t-order-table">
-                    <div class="new_t-order-col">
-                        Разом:
-                        <div class="new_t-order-price" id="originalPriceBlock">
-                            <span class="new_price">Завантаження...</span>
-                        </div>
+                    <div class="date-col">
+                        <div class="date-important" id="endDate">28 травня 2026, чт</div>
+                        <div style="font-weight: 500;">Єгипет → Відень</div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Блок Послуги -->
+    <div class="info-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <div class="card-title">✨ ПОСЛУГИ</div>
+            <div class="card-content">
+                <span class="service-item">🚌 Трансфер <span class="service-yes">✓</span></span>
+                <span class="service-item">🏥 Страховка <span class="service-yes">✓</span></span>
+                <span class="service-item">🛂 Віза <span class="service-no">✗</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ціна та бронювання -->
+    <div class="price-block">
+        <div class="price-number" id="priceDisplay">47 994 грн</div>
+        <button class="order-button" id="orderBtn">Замовити тур</button>
     </div>
 </div>
 
 <!-- ========== СКРИПТИ ========== -->
 <script>
 // Дані туру
-const hid = "{{ hid }}";
-const oid = "{{ oid }}";
-const startDateStr = "{{ od }}";
-const nights = parseInt("{{ ol|default:'7' }}");
-
-// Розрахунок дати повернення
-function calculateEndDate(startDate, nights) {
-    if (!startDate || startDate === 'None') return "28 травня 2026";
-    const date = new Date(startDate);
-    date.setDate(date.getDate() + nights);
-    return date.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
-}
-
-document.getElementById('endDate').innerText = calculateEndDate(startDateStr, nights);
-document.getElementById('fromCity').innerHTML = `<nobr>Відень → Єгипет</nobr>`;
-document.getElementById('toCity').innerHTML = `<nobr>Єгипет → Відень</nobr>`;
-document.getElementById('duration').innerHTML = `${nights} ночей`;
-
-// Змінні для вибору туристів
+const startDate = "21 травня 2026";
+const endDate = "28 травня 2026";
+const nights = 7;
 let selectedAdults = 2;
 let childrenAges = [];
 
-// Функція оновлення ціни (отримуємо через API Otpusk)
-function updatePriceFromAPI() {
-    // Формуємо параметри для запиту
-    const params = new URLSearchParams();
-    params.set('hid', hid);
-    params.set('oid', oid);
-    params.set('adults', selectedAdults);
+// Базові ціни
+const basePrice = 47994;
+const adultExtraPrice = 15000;  // Доплата за додаткового дорослого
+const childDiscount = 5000;     // Знижка за дитину
+
+// Функція оновлення ціни
+function updatePrice() {
+    let totalPrice = basePrice;
+
+    // Додаємо за додаткових дорослих (понад 2)
+    if (selectedAdults > 2) {
+        totalPrice += (selectedAdults - 2) * adultExtraPrice;
+    }
+
+    // Віднімаємо знижку за дітей
     if (childrenAges.length > 0) {
-        params.set('children', childrenAges.join(','));
+        totalPrice -= childrenAges.length * childDiscount;
     }
 
-    // Оновлюємо URL без перезавантаження сторінки
-    const newUrl = `${window.location.pathname}?hid=${hid}&oid=${oid}&od=${startDateStr}&ol=${nights}&adults=${selectedAdults}${childrenAges.length > 0 ? `&children=${childrenAges.join(',')}` : ''}`;
-    window.history.pushState({}, '', newUrl);
+    // Мінімальна ціна
+    if (totalPrice < 10000) totalPrice = 10000;
 
-    // Оновлюємо текст
-    const touristText = document.getElementById('touristText');
-    let text = `${selectedAdults} дорослих`;
-    if (childrenAges.length > 0) {
-        text += `, ${childrenAges.length} ${childrenAges.length === 1 ? 'дитина' : 'дітей'}`;
-    }
-    touristText.innerText = text;
-
-    // Тут можна додати AJAX запит до вашого API для отримання ціни
-    // Поки що показуємо тестову ціну
-    const basePrice = 47994;
-    const childDiscount = childrenAges.length * 5000;
-    const totalPrice = basePrice + (selectedAdults - 2) * 20000 - childDiscount;
-
-    const priceBlock = document.querySelector('.new_t-order-price .new_price');
-    if (priceBlock) {
-        priceBlock.innerHTML = `${totalPrice.toLocaleString()} <span class="currency">грн</span>`;
-    }
-
-    // Оновлюємо ціну в формі
-    document.getElementById('tourPrice').value = totalPrice;
+    // Оновлюємо відображення
+    document.getElementById('priceDisplay').innerText = totalPrice.toLocaleString() + ' грн';
+    document.getElementById('touristText').innerHTML = `${selectedAdults} дорослих${childrenAges.length > 0 ? `, ${childrenAges.length} дітей` : ''}`;
 }
 
-// Вставка блоку вибору туристів
-function insertTouristBlock() {
-    const touristTable = document.querySelector('.tourist-table .new_t-tour-tab-col-2');
-    if (!touristTable) {
-        setTimeout(insertTouristBlock, 500);
-        return;
+// Створення кнопок віку
+function createAgeButtons() {
+    const container = document.getElementById('ageButtons');
+    container.innerHTML = '';
+    for (let age = 1; age <= 16; age++) {
+        const text = age === 1 ? 'рік' : (age >= 2 && age <= 4 ? 'роки' : 'років');
+        const btn = document.createElement('button');
+        btn.className = 'age-btn';
+        btn.setAttribute('data-age', age);
+        btn.innerText = `${age} ${text}`;
+        btn.onclick = function() {
+            childrenAges.push(age);
+            childrenAges.sort((a,b) => a - b);
+            updateChildrenList();
+            document.getElementById('ageButtons').classList.remove('show');
+        };
+        container.appendChild(btn);
     }
+}
 
-    if (document.querySelector('.custom-tourist-block')) return;
+// Оновлення списку дітей
+function updateChildrenList() {
+    const container = document.getElementById('childrenList');
+    if (!container) return;
 
-    const blockHTML = `
-        <div class="custom-tourist-block">
-            <div class="tourist-selector-wrap">
-                <div class="tourist-header">👥 Вибір туристів</div>
-
-                <div class="tourist-section">
-                    <div class="tourist-section-title">Кількість дорослих:</div>
-                    <div class="adults-buttons">
-                        ${[1,2,3,4,5,6,7,8].map(a => `<button class="adult-btn ${a === 2 ? 'active' : ''}" data-adults="${a}">${a} ${a === 1 ? 'дорослий' : 'дорослих'}</button>`).join('')}
-                    </div>
+    if (childrenAges.length === 0) {
+        container.innerHTML = '<div style="color: #94a3b8; font-size: 0.85rem;">Немає дітей</div>';
+    } else {
+        container.innerHTML = childrenAges.map((age, idx) => {
+            const text = age === 1 ? 'рік' : (age >= 2 && age <= 4 ? 'роки' : 'років');
+            return `
+                <div class="child-tag">
+                    Дитина ${age} ${text}
+                    <span class="remove-child" data-index="${idx}">✕</span>
                 </div>
+            `;
+        }).join('');
 
-                <div class="tourist-section">
-                    <div class="tourist-section-title">👶 Діти:</div>
-                    <button class="add-child-btn">+ Додати дитину</button>
-                    <div class="age-buttons">
-                        ${[...Array(16)].map((_, i) => {
-                            const age = i + 1;
-                            const text = age === 1 ? 'рік' : (age >= 2 && age <= 4 ? 'роки' : 'років');
-                            return `<button class="age-btn" data-age="${age}">${age} ${text}</button>`;
-                        }).join('')}
-                    </div>
-                    <div class="children-list"></div>
-                </div>
-
-                <div class="tourist-footer">
-                    <button class="cancel-btn">Відміна</button>
-                    <button class="apply-btn">Застосувати</button>
-                </div>
-            </div>
-        </div>
-    `;
-
-    touristTable.insertAdjacentHTML('beforeend', blockHTML);
-
-    // Функція оновлення списку дітей
-    function updateChildrenList() {
-        const container = document.querySelector('.children-list');
-        if (!container) return;
-
-        if (childrenAges.length === 0) {
-            container.innerHTML = '<div style="color: #94a3b8; font-size: 0.85rem;">Немає дітей</div>';
-        } else {
-            container.innerHTML = childrenAges.map((age, idx) => {
-                const text = age === 1 ? 'рік' : (age >= 2 && age <= 4 ? 'роки' : 'років');
-                return `<div class="child-tag">Дитина ${age} ${text}<span class="remove-child" data-index="${idx}">✕</span></div>`;
-            }).join('');
-
-            document.querySelectorAll('.remove-child').forEach(btn => {
-                btn.onclick = function() {
-                    const idx = parseInt(this.dataset.index);
-                    childrenAges.splice(idx, 1);
-                    updateChildrenList();
-                };
-            });
-        }
+        document.querySelectorAll('.remove-child').forEach(btn => {
+            btn.onclick = function() {
+                const idx = parseInt(this.dataset.index);
+                childrenAges.splice(idx, 1);
+                updateChildrenList();
+            };
+        });
     }
+}
 
+// Ініціалізація
+function init() {
     // Кнопки дорослих
     document.querySelectorAll('.adult-btn').forEach(btn => {
         btn.onclick = function() {
@@ -647,62 +494,56 @@ function insertTouristBlock() {
     });
 
     // Додати дитину
-    const addBtn = document.querySelector('.add-child-btn');
-    const ageBtnsDiv = document.querySelector('.age-buttons');
+    const addBtn = document.getElementById('addChildBtn');
+    const ageBtnsDiv = document.getElementById('ageButtons');
 
-    addBtn.onclick = function() {
+    addBtn.onclick = () => {
         ageBtnsDiv.classList.toggle('show');
     };
 
-    // Вибір віку
-    document.querySelectorAll('.age-btn').forEach(btn => {
-        btn.onclick = function() {
-            const age = parseInt(this.dataset.age);
-            childrenAges.push(age);
-            childrenAges.sort((a,b) => a - b);
-            updateChildrenList();
-            ageBtnsDiv.classList.remove('show');
-        };
-    });
-
     // Застосувати
-    document.querySelector('.apply-btn').onclick = function() {
-        updatePriceFromAPI();
+    document.getElementById('applyBtn').onclick = () => {
+        updatePrice();
         ageBtnsDiv.classList.remove('show');
     };
 
     // Відміна
-    document.querySelector('.cancel-btn').onclick = function() {
+    document.getElementById('cancelBtn').onclick = () => {
         selectedAdults = 2;
         childrenAges = [];
+
         document.querySelectorAll('.adult-btn').forEach(btn => {
             btn.classList.remove('active');
             if (parseInt(btn.dataset.adults) === 2) btn.classList.add('active');
         });
+
         updateChildrenList();
-        updatePriceFromAPI();
+        updatePrice();
         ageBtnsDiv.classList.remove('show');
     };
 
+    // Замовити тур
+    document.getElementById('orderBtn').onclick = () => {
+        const message = `Запит на тур:\nДорослих: ${selectedAdults}\nДітей: ${childrenAges.length} (вік: ${childrenAges.join(', ')})\nЦіна: ${document.getElementById('priceDisplay').innerText}`;
+        alert(message);
+        // Тут можна додати відправку форми
+    };
+
+    // Початкові значення
+    createAgeButtons();
     updateChildrenList();
-    updatePriceFromAPI();
+    updatePrice();
 }
 
 // Запуск
-setTimeout(insertTouristBlock, 500);
+init();
 </script>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
 <div class="container my-3">
     <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
-        <i class="fa-solid fa-arrow-left me-1"></i> ← Повернутися до результатів пошуку
+        ← Повернутися до результатів пошуку
     </a>
-</div>
-
-<div class="container mb-5">
-    <div class="text-end">
-        <div class="price-number" id="priceDisplay">0 грн</div>
-    </div>
 </div>
 
 {% endblock %}
