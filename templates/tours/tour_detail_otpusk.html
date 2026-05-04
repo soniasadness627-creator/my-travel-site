@@ -416,6 +416,41 @@
             line-height: 32px;
         }
     }
+    /* ========== СІТКА ДЛЯ ФОТО (замість вертикального списку) ========== */
+.new_t-tab-content.photo {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+    gap: 20px !important;
+    padding: 20px !important;
+    background: transparent !important;
+}
+
+.new_t-tab-content.photo img {
+    width: 100% !important;
+    height: 200px !important;
+    object-fit: cover !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+.new_t-tab-content.photo img:hover {
+    transform: scale(1.02) !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+}
+
+/* Для мобільних пристроїв – сітка з 1–2 колонок */
+@media (max-width: 768px) {
+    .new_t-tab-content.photo {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+        gap: 12px !important;
+        padding: 12px !important;
+    }
+    .new_t-tab-content.photo img {
+        height: 150px !important;
+    }
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
