@@ -7,12 +7,14 @@
 <div class="container my-5">
     <div id="otpusk-tour-module">
         <script>
+            // 1. Отримуємо параметри туру з рядка запиту URL
             const urlParams = new URLSearchParams(window.location.search);
             const hid = urlParams.get('hid');
             const oid = urlParams.get('oid');
             const od = urlParams.get('od');
             const ol = urlParams.get('ol');
 
+            // 2. Глобальні змінні для модуля Otpusk (обов'язкові)
             var osGeo = '';
             var osDefaultDeparture = '';
             var osDefaultDuration = '';
@@ -30,6 +32,7 @@
             var osCurrency = 'converted';
             var osAutoStart = false;
 
+            // 3. Завантажуємо конкретний тур
             if (hid && oid && od && ol) {
                 window.location.hash = `#!hid=${hid}&oid=${oid}&od=${od}&ol=${ol}&page=tour`;
                 console.log('Завантаження туру:', window.location.hash);
@@ -38,6 +41,7 @@
             }
         </script>
 
+        <!-- Підключаємо оригінальні скрипти Otpusk -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
         <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
         <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
@@ -48,6 +52,7 @@
     </div>
 </div>
 
+<!-- ========== СТИЛІ ========== -->
 <style>
     /* ========== ХОВАЄМО ЗАЙВЕ ========== */
     #otpusk-tour-module .new_f-ext-container,
@@ -188,6 +193,7 @@
         color: #dc2626 !important;
     }
 
+    /* Стилі для повідомлень */
     .alert-success {
         background-color: #d4edda;
         border-color: #c3e6cb;
@@ -222,6 +228,7 @@
                 <h5 class="fw-bold mb-3">Забронювати тур</h5>
                 <p class="text-muted mb-4">Заповніть форму, щоб забронювати цей тур</p>
 
+                <!-- Повідомлення про успішне відправлення -->
                 {% if messages %}
                     {% for message in messages %}
                         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -262,7 +269,7 @@
                                 <input type="text" name="name" id="bookingName" class="form-control" placeholder="Ваше ім'я" required>
                             </div>
                             <div class="mb-3">
-                                <input type="text" name="email" id="bookingEmail" class="form-control" placeholder="Ваш email (необов'язково)">
+                                <input type="email" name="email" id="bookingEmail" class="form-control" placeholder="Ваш email" required>
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-4">
@@ -293,7 +300,9 @@
     </div>
 </div>
 
+<!-- ========== СКРИПТИ ========== -->
 <script>
+// Функція для отримання назви готелю
 function getHotelName() {
     const hotelTitle = document.querySelector('.new_t-header-title');
     if (hotelTitle) {
@@ -302,16 +311,19 @@ function getHotelName() {
     return 'Назва не вказана';
 }
 
+// Функція для оновлення прихованих полів перед відправкою
 document.getElementById('bookingForm').addEventListener('submit', function(e) {
     const hotelName = getHotelName();
     document.getElementById('tourName').value = hotelName;
 
+    // Отримуємо актуальну ціну
     const priceBlock = document.querySelector('.new_t-order-price .new_price');
     if (priceBlock) {
         document.getElementById('tourPrice').value = priceBlock.innerText;
     }
 });
 
+// Скрипт для відкриття форми вибору туристів
 setTimeout(function() {
     const btn = document.querySelector('.new_t-change-people');
     if (btn) {
