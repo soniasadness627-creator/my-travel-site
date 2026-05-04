@@ -110,6 +110,7 @@
         outline: none !important;
     }
 
+    /* Видаляємо будь-які псевдоелементи, які могли б створювати лінію */
     .new_t-menu-wrap::before,
     .new_t-menu-wrap::after,
     .new_t-menu::before,
@@ -124,14 +125,17 @@
         gap: 8px !important;
     }
 
+    /* Активний пункт меню – білий фон, фіолетовий текст, без голубої рамки (за бажанням можна залишити фіолетову нижню рамку) */
     .new_t-menu-item.selected {
         background: white !important;
         color: #7a219e !important;
+        /* Якщо хочете прибрати ВСІ нижні рамки – закоментуйте наступний рядок */
         border-bottom: 3px solid #7a219e !important;
         border-radius: 0 !important;
         box-shadow: none !important;
     }
 
+    /* Якщо голуба рамка з'являється через інший елемент, прибираємо її */
     .new_t-menu-item.selected {
         border-top: none !important;
         border-left: none !important;
@@ -147,6 +151,7 @@
         content: none !important;
     }
 
+    /* Неактивні пункти меню */
     .new_t-menu-item {
         background: #f1f5f9 !important;
         color: #64748b !important;
@@ -182,6 +187,7 @@
     .new_f-people-item.active,
     .new_f-dropdown-btn-apply,
     .new_f-dropdown-body-top,
+    .new_t-change-people:hover,
     .new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
         background: #7a219e !important;
         border-color: #7a219e !important;
@@ -199,54 +205,16 @@
         fill: #7a219e !important;
     }
 
+    .new_t-change-people:hover svg {
+        fill: white !important;
+    }
+
     .new_f-dropdown-btn-apply:hover {
         background: #5a1675 !important;
     }
 
     .new_t-order-price .new_price {
         color: #dc2626 !important;
-    }
-
-    /* ========== КНОПКА "ЩЕ" – СІРИЙ ФОН ПРИ НАВЕДЕННІ, ФІОЛЕТОВА СТРІЛКА ========== */
-    .new_t-change-people {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 36px !important;
-        height: 36px !important;
-        background: #f1f5f9 !important;
-        border-radius: 50% !important;
-        cursor: pointer !important;
-        margin-left: 10px !important;
-        transition: all 0.2s ease !important;
-        border: none !important;
-        position: relative !important;
-        z-index: 10 !important;
-    }
-
-    /* При наведенні – світло-сірий фон (не фіолетовий) */
-    .new_t-change-people:hover {
-        background: #e2e8f0 !important;
-        transform: scale(1.05);
-    }
-
-    /* Ховаємо текст "Ще" */
-    .new_t-change-people span:not(svg) {
-        font-size: 0 !important;
-    }
-
-    /* Стрілка – фіолетова замість оранжевої */
-    .new_t-change-people svg {
-        width: 14px !important;
-        height: 14px !important;
-        transform: rotate(90deg) !important;
-        fill: #7a219e !important;
-        transition: fill 0.2s ease !important;
-    }
-
-    /* При наведенні – стрілка залишається фіолетовою (або можна зробити сірою, якщо потрібно) */
-    .new_t-change-people:hover svg {
-        fill: #7a219e !important;
     }
 
     /* Стилі для повідомлень */
