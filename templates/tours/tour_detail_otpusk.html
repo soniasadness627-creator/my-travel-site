@@ -110,6 +110,12 @@
         display: none !important;
     }
 
+    /* ========== ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЩЕ" ТА ВСЮ ФОРМУ ========== */
+    .new_t-change-people,
+    .new_f-dropdown-body {
+        display: none !important;
+    }
+
     /* ========== СТИЛІ ДЛЯ МЕНЮ ========== */
     .new_t-menu {
         display: flex !important;
@@ -204,7 +210,7 @@
         display: flex !important;
         flex-wrap: wrap !important;
         align-items: center !important;
-        justify-content: flex-start !important;
+        justify-content: space-between !important;
         gap: 15px !important;
     }
 
@@ -212,44 +218,49 @@
         font-weight: 600 !important;
         color: #1e293b !important;
         font-size: 1rem !important;
-    }
-
-    /* ========== КНОПКА "ЩЕ" ========== */
-    .new_t-change-people {
         display: inline-flex !important;
         align-items: center !important;
-        justify-content: center !important;
-        width: 36px !important;
-        height: 36px !important;
-        background: #f1f5f9 !important;
-        border-radius: 50% !important;
-        cursor: pointer !important;
-        margin-left: 10px !important;
-        transition: all 0.2s ease !important;
-        border: none !important;
-        position: relative !important;
-        z-index: 10 !important;
+        gap: 10px !important;
     }
 
-    .new_t-change-people:hover {
-        background: #3b82f6 !important;
+    /* ========== КАСТОМНІ КНОПКИ ДЛЯ ВИБОРУ ТУРИСТІВ ========== */
+    .custom-adults-selector {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #f1f5f9;
+        padding: 5px 12px;
+        border-radius: 40px;
+        margin-left: 15px;
+    }
+
+    .custom-adults-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        background: white;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        color: #334155;
+    }
+
+    .custom-adults-btn:hover {
+        background: #3b82f6;
+        color: white;
         transform: scale(1.05);
     }
 
-    .new_t-change-people:hover svg {
-        fill: white !important;
+    .custom-adults-btn.active {
+        background: #3b82f6;
+        color: white;
     }
 
-    .new_t-change-people span:not(svg) {
-        font-size: 0 !important;
-    }
-
-    .new_t-change-people svg {
-        width: 14px !important;
-        height: 14px !important;
-        transform: rotate(90deg) !important;
-        fill: #64748b !important;
-        transition: fill 0.2s ease !important;
+    .custom-adults-value {
+        font-weight: 600;
+        min-width: 20px;
+        text-align: center;
     }
 
     /* ========== ДАТА ========== */
@@ -369,28 +380,10 @@
         fill: #ef4444 !important;
     }
 
-    /* ========== ОРИГІНАЛЬНА ФОРМА ТУРИСТІВ - ВИПРАВЛЕНО ========== */
-    .new_f-dropdown-body {
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        z-index: 99999999 !important;
-        background: white !important;
-        border-radius: 24px !important;
-        width: 90% !important;
-        max-width: 550px !important;
-        min-width: 320px !important;
-        max-height: 85vh !important;
-        overflow-y: auto !important;
-        box-shadow: 0 30px 60px rgba(0,0,0,0.4) !important;
-        pointer-events: auto !important;
-    }
-
-    /* ВСІ елементи форми клікабельні */
-    .new_f-dropdown-body * {
-        pointer-events: auto !important;
-        cursor: pointer !important;
+    .price-number {
+        color: #dc2626;
+        font-size: 1.8rem;
+        font-weight: 700;
     }
 
     .new_t-duration-icons {
@@ -423,13 +416,12 @@
         .new_t-date-table {
             flex-wrap: wrap !important;
         }
-        .new_f-dropdown-body {
-            width: 95% !important;
-            max-width: none !important;
-            min-width: 280px !important;
+        .price-number {
+            font-size: 1.4rem !important;
         }
-        .new_f-people-list {
-            flex-direction: column !important;
+        .custom-adults-selector {
+            margin-left: 0;
+            margin-top: 8px;
         }
     }
 </style>
@@ -521,11 +513,9 @@
     </div>
 </div>
 
-<!-- ========== ОСНОВНІ СКРИПТИ (ВИПРАВЛЕНО) ========== -->
+<!-- ========== ОСНОВНІ СКРИПТИ ========== -->
 <script>
-// ========== РОБОТА З ОРИГІНАЛЬНОЮ ФОРМОЮ ТУРИСТІВ ==========
-
-// 1. Оновлення ціни
+// Функція оновлення ціни
 function updateCustomPrice() {
     const originalPriceBlock = document.querySelector('.new_t-order-price');
     const priceNumber = document.querySelector('.price-number');
@@ -542,7 +532,105 @@ function updateCustomPrice() {
     }
 }
 
-// 2. Спостерігач за ціною
+// Функція оновлення кількості туристів в Otpusk
+function updateOtpuskAdults(adults) {
+    // Знаходимо оригінальне поле в Otpusk
+    const peopleInput = document.querySelector('input[name="people"]');
+    if (peopleInput) {
+        peopleInput.value = adults;
+        // Тригеримо подію зміни
+        peopleInput.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    // Оновлюємо URL параметри
+    const url = new URL(window.location.href);
+    url.searchParams.set('adults', adults);
+    window.history.replaceState({}, '', url);
+
+    // Оновлюємо hash для Otpusk
+    if (window.location.hash) {
+        let hash = window.location.hash;
+        hash = hash.replace(/&adults=\d+/, '');
+        window.location.hash = `${hash}&adults=${adults}`;
+    }
+
+    // Примусово оновлюємо ціну через затримку
+    setTimeout(() => {
+        // Шукаємо кнопку "Застосувати" в оригінальній формі і клікаємо
+        const applyBtn = document.querySelector('.new_f-dropdown-btn-apply');
+        if (applyBtn) {
+            applyBtn.click();
+        }
+        updateCustomPrice();
+    }, 300);
+}
+
+// Додаємо кастомні кнопки вибору туристів
+function addCustomAdultsSelector() {
+    const touristTable = document.querySelector('.tourist-table');
+    if (!touristTable) {
+        setTimeout(addCustomAdultsSelector, 500);
+        return;
+    }
+
+    const col2 = touristTable.querySelector('.new_t-tour-tab-col-2');
+    if (!col2) return;
+
+    if (document.querySelector('.custom-adults-selector')) return;
+
+    // Отримуємо поточну кількість дорослих
+    let currentAdults = 2;
+    const adultsSpan = col2.querySelector('.new_weight-bold');
+    if (adultsSpan) {
+        const match = adultsSpan.innerText.match(/(\d+)\s+дорослих/);
+        if (match) currentAdults = parseInt(match[1]);
+    }
+
+    // Створюємо кастомний селектор
+    const selector = document.createElement('div');
+    selector.className = 'custom-adults-selector';
+    selector.innerHTML = `
+        <button class="custom-adults-btn" data-adults="1">1</button>
+        <button class="custom-adults-btn" data-adults="2">2</button>
+        <button class="custom-adults-btn" data-adults="3">3</button>
+        <button class="custom-adults-btn" data-adults="4">4</button>
+        <button class="custom-adults-btn" data-adults="5">5</button>
+        <button class="custom-adults-btn" data-adults="6">6</button>
+    `;
+
+    // Додаємо селектор в блок
+    if (adultsSpan) {
+        adultsSpan.appendChild(selector);
+    }
+
+    // Активуємо поточну кількість
+    document.querySelectorAll('.custom-adults-btn').forEach(btn => {
+        if (parseInt(btn.dataset.adults) === currentAdults) {
+            btn.classList.add('active');
+        }
+
+        btn.onclick = function(e) {
+            e.stopPropagation();
+            const adults = parseInt(this.dataset.adults);
+
+            // Оновлюємо активний стан
+            document.querySelectorAll('.custom-adults-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            // Оновлюємо текст
+            if (adultsSpan) {
+                adultsSpan.childNodes[0].nodeValue = `${adults} дорослих `;
+            }
+
+            // Оновлюємо Otpusk
+            updateOtpuskAdults(adults);
+        };
+    });
+
+    console.log('✅ Кастомний вибір туристів додано');
+}
+
+// Спостерігач за ціною
 function startPriceWatcher() {
     const observer = new MutationObserver(function() {
         updateCustomPrice();
@@ -551,57 +639,11 @@ function startPriceWatcher() {
     updateCustomPrice();
 }
 
-// 3. Ініціалізація ОРИГІНАЛЬНОЇ форми туристів (просте виправлення)
-function initPeopleButton() {
-    // Шукаємо оригінальну кнопку "Ще"
-    const peopleBtn = document.querySelector('.new_t-change-people');
-    if (!peopleBtn) {
-        setTimeout(initPeopleButton, 500);
-        return;
-    }
-
-    // Знаходимо оригінальний дропдаун Otpusk
-    let dropdown = peopleBtn.querySelector('.new_f-dropdown-body');
-    if (!dropdown) {
-        setTimeout(initPeopleButton, 300);
-        return;
-    }
-
-    // Просто додаємо стилі для правильної позиції та клікабельності
-    dropdown.style.position = 'fixed';
-    dropdown.style.top = '50%';
-    dropdown.style.left = '50%';
-    dropdown.style.transform = 'translate(-50%, -50%)';
-    dropdown.style.zIndex = '99999999';
-    dropdown.style.backgroundColor = 'white';
-    dropdown.style.borderRadius = '24px';
-    dropdown.style.boxShadow = '0 30px 60px rgba(0,0,0,0.4)';
-    dropdown.style.pointerEvents = 'auto';
-
-    // Переконуємось, що всі внутрішні елементи клікабельні
-    const allElements = dropdown.querySelectorAll('*');
-    allElements.forEach(el => {
-        el.style.pointerEvents = 'auto';
-    });
-
-    // Оновлюємо ціну після змін
-    const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
-    if (applyBtn) {
-        const originalClick = applyBtn.onclick;
-        applyBtn.onclick = function(e) {
-            if (originalClick) originalClick.call(this, e);
-            setTimeout(updateCustomPrice, 500);
-        };
-    }
-
-    console.log('✅ Оригінальна форма туристів виправлена');
-}
-
-// 4. Запуск
+// Запуск
 setTimeout(function() {
     startPriceWatcher();
-    initPeopleButton();
-}, 1500);
+    addCustomAdultsSelector();
+}, 2000);
 </script>
 
 {% endblock %}
