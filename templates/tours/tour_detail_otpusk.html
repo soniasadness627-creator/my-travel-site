@@ -312,12 +312,29 @@ function getHotelName() {
     return 'Назва не вказана';
 }
 
-// Функція для показу повідомлень (з перевіркою наявності елемента)
+// Безпечна функція показу повідомлень (створить контейнер, якщо його немає)
 function showMessage(message, type) {
-    const messageDiv = document.getElementById('formMessage');
+    let messageDiv = document.getElementById('formMessage');
     if (!messageDiv) {
-        console.error('Елемент #formMessage не знайдено!');
-        return;
+        // Шукаємо батьківський елемент (картку)
+        const cardBody = document.querySelector('#consultationCard .card-body');
+        if (cardBody) {
+            const newDiv = document.createElement('div');
+            newDiv.id = 'formMessage';
+            newDiv.className = 'alert';
+            newDiv.style.display = 'none';
+            // Вставляємо після заголовка
+            const title = cardBody.querySelector('h5');
+            if (title && title.nextSibling) {
+                cardBody.insertBefore(newDiv, title.nextSibling);
+            } else {
+                cardBody.insertBefore(newDiv, cardBody.firstChild);
+            }
+            messageDiv = newDiv;
+        } else {
+            console.error('Не вдалося створити #formMessage');
+            return;
+        }
     }
     messageDiv.className = `alert alert-${type}`;
     messageDiv.innerHTML = message + '<button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>';
@@ -389,8 +406,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             })
             .then(response => {
+                console.log('Response status:', response.status);
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error(`HTTP error ${response.status}`);
                 }
                 return response.json();
             })
@@ -405,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Fetch error:', error);
                 showMessage('Помилка з\'єднання. Спробуйте пізніше.', 'danger');
             })
             .finally(() => {
