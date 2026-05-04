@@ -79,9 +79,7 @@
     /* ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ЗАМОВИТИ ТУР" ВІД OTPUSK */
     .new_t-order-btn-true,
     .new_t-order-btn,
-    .new_t-order-btn-false,
-    .new_t-order-btn-true:hover,
-    .new_t-order-btn:hover {
+    .new_t-order-btn-false {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
@@ -102,11 +100,44 @@
         background: transparent !important;
     }
 
+    /* ========== СТИЛІ ДЛЯ МЕНЮ ========== */
+    /* Фон активного пункту меню - БІЛИЙ */
+    .new_t-menu-item.selected {
+        background: white !important;
+        color: #7a219e !important;
+        border-bottom: 3px solid #7a219e !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+
+    /* НЕактивні пункти меню - СІРИЙ фон */
+    .new_t-menu-item {
+        background: #f1f5f9 !important;
+        color: #64748b !important;
+        border: none !important;
+    }
+
+    /* При наведенні на неактивний пункт - світло-сірий */
+    .new_t-menu-item:hover {
+        background: #e2e8f0 !important;
+        color: #7a219e !important;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Контейнер меню */
+    .new_t-menu {
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        gap: 8px !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        border-radius: 0 !important;
+    }
+
     /* ========== ФІРМОВІ КОЛЬОРИ АГЕНТА (ФІОЛЕТОВИЙ #7a219e) ========== */
 
-    /* Головний колір для всіх елементів */
-    .new_t-menu-item:hover,
-    .new_t-menu-item.selected,
+    /* Головний колір для інших елементів */
     .new_f-people-item.active,
     .new_f-dropdown-btn-apply,
     .new_f-dropdown-body-top,
