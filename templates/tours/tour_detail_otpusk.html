@@ -269,6 +269,83 @@
 .owl-item {
     width: 400px !important;        /* задайте свою ширину */
 }
+    /* ========== МОБІЛЬНА ВЕРСІЯ (до 768px) ========== */
+@media (max-width: 768px) {
+    /* Карусель "Переглянуті тури" */
+    .new_t-similar-viewed-gallery {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .owl-stage {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+    }
+
+    .owl-item {
+        width: 280px !important;   /* фіксована ширина для мобільних, щоб не стискалися */
+        flex-shrink: 0 !important;
+        margin-right: 15px !important;
+    }
+
+    /* Картки в каруселі */
+    .new_r-item {
+        flex-direction: column !important;
+        height: auto !important;
+        margin-bottom: 15px !important;
+    }
+
+    .new_r-item-img {
+        width: 100% !important;
+        height: 160px !important;
+        object-fit: cover !important;
+    }
+
+    .new_r-item-body {
+        padding: 12px !important;
+    }
+
+    .new_r-item-hotel {
+        font-size: 1rem !important;
+        white-space: normal !important;
+        word-break: break-word;
+    }
+
+    .new_r-item-geo span,
+    .new_r-item-food,
+    .new_r-item-from,
+    .new_r-item-date {
+        font-size: 0.75rem !important;
+        white-space: normal !important;
+        word-break: break-word;
+    }
+
+    .new_r-item-table {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    .new_price-value {
+        font-size: 1.1rem !important;
+    }
+
+    .new_price-desc {
+        font-size: 0.7rem !important;
+    }
+
+    /* Загальні контейнери */
+    .new_t-container {
+        padding: 0 10px !important;
+    }
+
+    .new_t-tour-tab-table {
+        padding: 15px !important;
+    }
+}
+    .owl-stage-outer {
+    overflow: visible !important;
+}
 </style>
 
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
