@@ -52,25 +52,28 @@
     </div>
 </div>
 
-<!-- ========== СТИЛІ (ТІЛЬКИ ДЛЯ ФОРМИ ТУРИСТІВ) ========== -->
+<!-- ========== СТИЛІ ========== -->
 <style>
     /* ========== ХОВАЄМО ФОРМУ ПОШУКУ ========== */
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
     #otpusk-tour-module .new_f-ext-btn,
+    #otpusk-tour-module .new_f-dropdown-body-top,
     #otpusk-tour-module .new_r-item-wrap,
     #otpusk-tour-module .new_r-currency-switch,
     #otpusk-tour-module .new_f-form {
         display: none !important;
     }
 
-    /* ========== ХОВАЄМО КНОПКУ "ПОВЕРНУТИСЯ" ========== */
+    /* ========== ХОВАЄМО ОРИГІНАЛЬНУ КНОПКУ "ПОВЕРНУТИСЯ" ========== */
     #otpusk-tour-module .new_t-menu-back,
-    #otpusk-tour-module .new_t-menu-back-link {
+    #otpusk-tour-module .new_t-menu-back-link,
+    .new_t-menu-back,
+    .new_t-menu-back-link {
         display: none !important;
     }
 
-    /* ========== ЗАЛИШАЄМО ОСНОВНИЙ КОНТЕЙНЕР ========== */
+    /* ========== ЗАЛИШАЄМО КОНТЕЙНЕР ВИДИМИМ ========== */
     #otpusk-tour-module .new_t-container {
         display: block !important;
     }
@@ -89,28 +92,19 @@
         display: none !important;
     }
 
-    /* ========== ХОВАЄМО РЕЙТИНГ ========== */
-    .new_r-item-rating-container {
-        display: none !important;
-    }
-
-    /* ========== ХОВАЄМО КНОПКУ "ЩЕ" ========== */
-    .new_t-change-people {
-        display: none !important;
-    }
-
-    /* ========== СТИЛІ ДЛЯ ФОРМИ ТУРИСТІВ (РОБИМО ВИДИМОЮ) ========== */
+    /* ========== РОБИМО ФОРМУ ВИДИМОЮ ========== */
     .new_f-dropdown-body {
+        display: block !important;
         position: relative !important;
         top: auto !important;
         left: auto !important;
         transform: none !important;
-        display: block !important;
         width: 100% !important;
-        background: #f8fafc !important;
-        border-radius: 16px !important;
         margin-top: 15px !important;
+        margin-bottom: 0 !important;
+        background: #f8fafc !important;
         border: 1px solid #e2e8f0 !important;
+        border-radius: 16px !important;
         box-shadow: none !important;
     }
 
@@ -123,11 +117,6 @@
         background: #3b82f6 !important;
         color: white !important;
         padding: 12px 20px !important;
-    }
-
-    .new_f-dropdown-body-close {
-        display: block !important;
-        cursor: pointer;
     }
 
     .new_f-people-container, .new_f-children-container {
@@ -163,11 +152,6 @@
         border: none !important;
     }
 
-    .new_f-children-accordion-btn:hover {
-        background: #3b82f6 !important;
-        color: white !important;
-    }
-
     .new_f-children-accordion-body {
         display: flex !important;
         flex-wrap: wrap !important;
@@ -180,11 +164,6 @@
         background: #f1f5f9 !important;
         border-radius: 30px !important;
         cursor: pointer !important;
-    }
-
-    .new_f-children-age-item:hover {
-        background: #3b82f6 !important;
-        color: white !important;
     }
 
     .new_f-dropdown-body-bottom {
@@ -214,7 +193,16 @@
         color: white !important;
     }
 
-    /* Мобільна версія */
+    /* Ховаємо непотрібні елементи */
+    .new_t-change-people,
+    .new_t-change-people-dropdown {
+        display: none !important;
+    }
+
+    .new_r-item-rating-container {
+        display: none !important;
+    }
+
     @media (max-width: 768px) {
         .new_f-people-list {
             flex-direction: column !important;
@@ -294,171 +282,39 @@
     </div>
 </div>
 
-<!-- ========== СКРИПТ ДЛЯ АКТИВАЦІЇ ФОРМИ ========== -->
+<!-- ========== СКРИПТ - ВІДКРИВАЄМО ФОРМУ ========== -->
 <script>
-// Функція для активації оригінальної форми Otpusk
-function activateOtpuskForm() {
-    // Шукаємо форму
-    const dropdown = document.querySelector('.new_f-dropdown-body');
+// Функція для відкриття форми Otpusk
+function openOtpuskForm() {
+    // Шукаємо кнопку "Ще"
+    const peopleBtn = document.querySelector('.new_t-change-people');
+    if (!peopleBtn) {
+        setTimeout(openOtpuskForm, 500);
+        return;
+    }
+
+    // Знаходимо дропдаун
+    let dropdown = peopleBtn.querySelector('.new_f-dropdown-body');
     if (!dropdown) {
-        setTimeout(activateOtpuskForm, 500);
+        setTimeout(openOtpuskForm, 300);
         return;
     }
 
     // Робимо форму видимою
     dropdown.style.display = 'block';
+    dropdown.style.position = 'relative';
+    dropdown.style.top = 'auto';
+    dropdown.style.left = 'auto';
+    dropdown.style.transform = 'none';
 
-    // Знаходимо кнопки дорослих
-    const adultItems = dropdown.querySelectorAll('.new_f-people-item');
-    adultItems.forEach(item => {
-        item.onclick = function(e) {
-            e.stopPropagation();
-            adultItems.forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
+    // Ховаємо кнопку "Ще"
+    peopleBtn.style.display = 'none';
 
-            // Оновлюємо приховане поле
-            const adultsValue = this.getAttribute('data-value');
-            const peopleInput = dropdown.querySelector('input[name="people"]');
-            if (peopleInput) peopleInput.value = adultsValue;
-        };
-    });
-
-    // Кнопка "Додати дитину"
-    const addChildBtn = dropdown.querySelector('.new_f-children-accordion-btn');
-    const childBody = dropdown.querySelector('.new_f-children-accordion-body');
-
-    if (addChildBtn && childBody) {
-        addChildBtn.onclick = function(e) {
-            e.stopPropagation();
-            childBody.style.display = childBody.style.display === 'none' ? 'flex' : 'none';
-        };
-        childBody.style.display = 'none';
-    }
-
-    // Кнопки віку дітей
-    const ageItems = dropdown.querySelectorAll('.new_f-children-age-item');
-    const childrenList = dropdown.querySelector('.new_f-children-list');
-    let childrenArray = [];
-
-    function updateChildrenList() {
-        if (!childrenList) return;
-        if (childrenArray.length === 0) {
-            childrenList.innerHTML = '';
-        } else {
-            childrenList.innerHTML = childrenArray.map((age, idx) => `
-                <div class="new_f-children-list-item">
-                    Дитина ${age} ${age === 1 ? 'рік' : (age >= 2 && age <= 4 ? 'роки' : 'років')}
-                    <span class="remove-child" data-idx="${idx}" style="cursor:pointer; color:#dc2626;">✕</span>
-                </div>
-            `).join('');
-
-            childrenList.querySelectorAll('.remove-child').forEach(btn => {
-                btn.onclick = function() {
-                    const idx = parseInt(this.dataset.idx);
-                    childrenArray.splice(idx, 1);
-                    updateChildrenList();
-                };
-            });
-        }
-    }
-
-    ageItems.forEach(item => {
-        item.onclick = function(e) {
-            e.stopPropagation();
-            const age = parseInt(this.getAttribute('data-value'));
-            childrenArray.push(age);
-            childrenArray.sort((a,b) => a - b);
-            updateChildrenList();
-            if (childBody) childBody.style.display = 'none';
-        };
-    });
-
-    // Кнопка "Застосувати"
-    const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
-    if (applyBtn) {
-        applyBtn.onclick = function(e) {
-            e.stopPropagation();
-            // Оновлюємо URL параметри
-            const activeAdult = dropdown.querySelector('.new_f-people-item.active');
-            const adults = activeAdult ? activeAdult.getAttribute('data-value') : '2';
-
-            const url = new URL(window.location.href);
-            url.searchParams.set('adults', adults);
-            if (childrenArray.length > 0) {
-                url.searchParams.set('children', childrenArray.join(','));
-            } else {
-                url.searchParams.delete('children');
-            }
-            window.history.pushState({}, '', url);
-
-            // Оновлюємо hash для Otpusk
-            if (window.location.hash) {
-                let hash = window.location.hash;
-                hash = hash.replace(/&adults=\d+/, '').replace(/&children=[^&]*/, '');
-                window.location.hash = `${hash}&adults=${adults}${childrenArray.length > 0 ? `&children=${childrenArray.join(',')}` : ''}`;
-            }
-
-            // Оновлюємо текст
-            const touristText = document.querySelector('.tourist-table .new_weight-bold');
-            if (touristText) {
-                let text = `${adults} дорослих`;
-                if (childrenArray.length > 0) {
-                    text += `, ${childrenArray.length} ${childrenArray.length === 1 ? 'дитина' : 'дітей'}`;
-                }
-                touristText.innerText = text;
-            }
-
-            // Перезавантажуємо сторінку, щоб Otpusk оновив ціну
-            setTimeout(() => {
-                location.reload();
-            }, 300);
-        };
-    }
-
-    // Кнопка "Відміна"
-    const cancelBtn = dropdown.querySelector('.new_f-dropdown-btn-cancel');
-    if (cancelBtn) {
-        cancelBtn.onclick = function(e) {
-            e.stopPropagation();
-            // Скидаємо до 2 дорослих
-            adultItems.forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('data-value') === '2') {
-                    item.classList.add('active');
-                }
-            });
-            childrenArray = [];
-            updateChildrenList();
-
-            // Оновлюємо URL
-            const url = new URL(window.location.href);
-            url.searchParams.set('adults', '2');
-            url.searchParams.delete('children');
-            window.history.pushState({}, '', url);
-
-            if (window.location.hash) {
-                let hash = window.location.hash;
-                hash = hash.replace(/&adults=\d+/, '').replace(/&children=[^&]*/, '');
-                window.location.hash = `${hash}&adults=2`;
-            }
-
-            // Оновлюємо текст
-            const touristText = document.querySelector('.tourist-table .new_weight-bold');
-            if (touristText) touristText.innerText = '2 дорослих';
-
-            // Перезавантажуємо сторінку
-            setTimeout(() => {
-                location.reload();
-            }, 300);
-        };
-    }
-
-    updateChildrenList();
-    console.log('✅ Форма Otpusk активована');
+    console.log('✅ Форма Otpusk відкрита');
 }
 
-// Запускаємо після завантаження сторінки
-setTimeout(activateOtpuskForm, 2000);
+// Запускаємо після завантаження
+setTimeout(openOtpuskForm, 2000);
 </script>
 
 {% endblock %}
