@@ -90,7 +90,7 @@
         background: transparent !important;
     }
 
-    /* ========== СТИЛІ ДЛЯ МЕНЮ – КОЛІР АГЕНТА ========== */
+    /* ========== СТИЛІ ДЛЯ МЕНЮ – КОЛІР АГЕНТА (БЕЗ ГОЛУБОЇ ПОЛОСКИ) ========== */
     .new_t-menu-wrap,
     .new_t-menu {
         background: transparent !important;
@@ -109,6 +109,7 @@
         color: #64748b !important;
         border: none !important;
         border-radius: 0 !important;
+        border-bottom: none !important !important;
     }
 
     .new_t-menu-item.selected {
@@ -120,11 +121,13 @@
         border-top: none !important;
         border-left: none !important;
         border-right: none !important;
+        border-bottom-style: solid !important;
     }
 
     .new_t-menu-item:hover {
         background: #e2e8f0 !important;
         color: var(--primary-color) !important;
+        border-bottom: none !important;
     }
 
     .new_t-menu-item.selected::before,
@@ -132,6 +135,15 @@
     .new_t-menu-item.selected .arrow,
     .new_t-menu-item.selected .indicator,
     .new_t-menu-item.selected svg {
+        display: none !important;
+        content: none !important;
+    }
+
+    /* Додаткове видалення будь-яких псевдоелементів, які могли б створити полоску */
+    .new_t-menu::after,
+    .new_t-menu::before,
+    .new_t-menu-wrap::after,
+    .new_t-menu-wrap::before {
         display: none !important;
         content: none !important;
     }
@@ -293,38 +305,13 @@
         }
     }
 
-    /* Стилі для повідомлень */
-    .alert-success {
-        background-color: #d4edda;
-        border-color: #c3e6cb;
-        color: #155724;
-        padding: 12px 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-
-    .alert-danger {
-        background-color: #f8d7da;
-        border-color: #f5c6cb;
-        color: #721c24;
-        padding: 12px 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-
-    /* Звуження блоку "Переглянуті тури" */
-    .new_t-similar-viewed-gallery {
-        max-width: 1200px !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-    }
-
-    /* ========== МОБІЛЬНА ВЕРСІЯ (до 768px) ========== */
+    /* ========== ВИПРАВЛЕННЯ МОБІЛЬНОЇ ВЕРСІЇ КАРУСЕЛІ ========== */
     @media (max-width: 768px) {
         .new_t-similar-viewed-gallery {
             width: 100% !important;
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch;
+            padding: 0 10px !important;
         }
 
         .owl-stage {
@@ -390,21 +377,49 @@
             padding: 15px !important;
         }
 
-        .new_t-similar-viewed .owl-prev {
-            left: -10px !important;
-            width: 32px !important;
-            height: 32px !important;
-        }
+        .new_t-similar-viewed .owl-prev,
         .new_t-similar-viewed .owl-next {
-            right: -10px !important;
-            width: 32px !important;
-            height: 32px !important;
+            width: 36px !important;
+            height: 36px !important;
+            line-height: 36px !important;
         }
         .new_t-similar-viewed .owl-prev::before,
         .new_t-similar-viewed .owl-next::before {
-            font-size: 24px;
-            line-height: 32px;
+            font-size: 28px;
+            line-height: 36px;
         }
+        .new_t-similar-viewed .owl-prev {
+            left: 5px !important;
+        }
+        .new_t-similar-viewed .owl-next {
+            right: 5px !important;
+        }
+    }
+
+    /* Стилі для повідомлень */
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    /* Звуження блоку "Переглянуті тури" */
+    .new_t-similar-viewed-gallery {
+        max-width: 1200px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 
     /* ========== СІТКА ДЛЯ ФОТО – ТІЛЬКИ КОЛИ ВКЛАДКА АКТИВНА ========== */
@@ -509,8 +524,50 @@
         background-color: var(--primary-color) !important;
         color: #ffffff !important;
     }
-</style>
 
+    /* ========== ЗМІНА ГОЛУБИХ КОЛЬОРІВ У МОДАЛЬНИХ ВІКНАХ (ДАТИ, ХАРЧУВАННЯ) ========== */
+    /* Заголовок модального вікна – фон кольором агента, текст білий */
+    .new_t-modal-body-top {
+        background-color: var(--primary-color) !important;
+        color: #ffffff !important;
+        border: none !important;
+    }
+
+    /* Активна колонка з кількістю ночей – колір тексту агента */
+    .new_t-date-modal-table-head.selected .new_t-head-nights,
+    .new_t-date-modal-table-head.selected .new_t-head-days {
+        color: var(--primary-color) !important;
+    }
+
+    /* Виділена клітинка з датою (активна) */
+    .new_t-date-modal-table td.selected {
+        background-color: rgba(var(--primary-rgb, 193, 31, 88), 0.08) !important;
+        color: var(--primary-color) !important;
+        font-weight: bold;
+    }
+
+    /* Стрілки перегортання – колір агента */
+    .new_t-date-change svg {
+        fill: var(--primary-color) !important;
+    }
+
+    /* Кнопка "Застосувати" у модальних вікнах – колір агента */
+    .new_t-modal-body .new_f-dropdown-btn-apply {
+        background-color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        color: white !important;
+    }
+    .new_t-modal-body .new_f-dropdown-btn-apply:hover {
+        background-color: var(--primary-dark) !important;
+    }
+
+    /* Додаткове прибирання голубої полоски у меню (повне) */
+    .new_t-menu-item::after,
+    .new_t-menu-item::before {
+        border-bottom: none !important;
+        content: none !important;
+    }
+</style>
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
 <div class="container my-3">
     <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
