@@ -4,7 +4,8 @@
 {% block title %}Деталі туру{% endblock %}
 
 {% block content %}
-<div class="container my-5">
+<!-- ЗМІНЕНО: container-fluid замість container, щоб не було зайвих відступів на малих екранах -->
+<div class="container-fluid px-2 px-md-3 my-4">
     <div id="otpusk-tour-module">
         <script>
             const urlParams = new URLSearchParams(window.location.search);
@@ -49,6 +50,18 @@
 </div>
 
 <style>
+    /* ========== ГЛОБАЛЬНІ ВИПРАВЛЕННЯ ДЛЯ ПЕРЕПОВНЕННЯ ========== */
+    html, body {
+        overflow-x: hidden !important;
+        max-width: 100% !important;
+    }
+
+    /* Усі елементи від Otpusk отримують правильний box-sizing */
+    #otpusk-tour-module * {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
     /* ========== ХОВАЄМО ЗАЙВЕ ========== */
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
@@ -300,12 +313,6 @@
         background: var(--primary-color) !important;
     }
 
-    @media (max-width: 480px) {
-        .new_t-similar-viewed-gallery {
-            padding: 0 30px !important;
-        }
-    }
-
     /* Стилі для повідомлень */
     .alert-success {
         background-color: #d4edda;
@@ -554,10 +561,13 @@
             gap: 12px !important;
         }
 
+        /* ГОЛОВНЕ ВИПРАВЛЕННЯ КАРУСЕЛІ */
         .owl-item {
-            width: 280px !important;
+            width: auto !important;
+            min-width: 240px;
+            max-width: 85%;
             flex-shrink: 0 !important;
-            margin-right: 0 !important;
+            margin-right: 12px !important;
         }
 
         .new_t-similar-viewed .owl-prev,
@@ -579,117 +589,30 @@
         }
     }
 
-    /* ========== ДОДАТКОВА АДАПТИВНІСТЬ ДЛЯ РІЗНИХ ПРИСТРОЇВ ========== */
-
-    /* Для телефонів до 480px (iPhone SE, Android 360px) */
-    @media (max-width: 480px) {
-        .container {
-            padding-left: 10px !important;
-            padding-right: 10px !important;
-        }
-
-        #otpusk-tour-module {
-            width: 100% !important;
-            overflow-x: hidden !important;
-        }
-
+    /* ========== ДОДАТКОВА АДАПТИВНІСТЬ ДЛЯ МАЛИХ ТЕЛЕФОНІВ ========== */
+    @media (max-width: 576px) {
         .consult-row {
             flex-direction: column !important;
+            align-items: stretch !important;
             gap: 15px !important;
         }
-
-        .agent-block {
-            width: 100% !important;
-            justify-content: flex-start !important;
-            padding: 10px 15px !important;
+        .form-control, .form-select {
+            font-size: 16px !important; /* Запобігає зуму на iOS */
         }
-
-        .form-block {
-            width: 100% !important;
-        }
-
-        .form-control,
-        .form-select {
-            font-size: 16px !important; /* Запобігає автоматичному зуму на iOS */
-        }
-
         #submitBookingBtn {
             height: 48px !important;
-            font-size: 14px !important;
-        }
-
-        .owl-item {
-            width: 85% !important; /* Карусель не на весь екран */
-        }
-
-        .new_t-tab-content.photo {
-            padding: 10px !important;
-        }
-
-        h5 {
-            font-size: 1.2rem !important;
-        }
-
-        p {
-            font-size: 0.9rem !important;
-        }
-    }
-
-    /* Для iPhone 6/7/8 Plus, iPhone XR, 11, 12, 13, 14 (414px і більше) */
-    @media (min-width: 414px) and (max-width: 480px) {
-        .owl-item {
-            width: 70% !important;
         }
         .new_t-tour-tab-table {
-            padding: 15px 18px !important;
+            padding: 12px 16px !important;
         }
-    }
-
-    /* Для планшетів (портрет) – 768px вже є, але додамо специфічні */
-    @media (min-width: 768px) and (max-width: 1023px) {
-        .new_t-menu {
-            gap: 12px !important;
-        }
-        .new_t-menu-item {
-            padding: 10px 18px !important;
-        }
-        .owl-item {
-            width: 280px !important;
-        }
-        .consult-row {
-            gap: 20px !important;
-        }
-        .form-block {
-            min-width: 300px !important;
-        }
-    }
-
-    /* Для маленьких ноутбуків (1024px – 1280px) */
-    @media (min-width: 1024px) and (max-width: 1280px) {
-        .container {
-            max-width: 1000px !important;
-        }
-        .new_t-tour-tab-table {
-            padding: 18px 22px !important;
-        }
-        .owl-item {
-            width: 300px !important;
-        }
-    }
-
-    /* Для десктопів (1281px і більше) – базові стилі залишаються без змін */
-    @media (min-width: 1281px) {
-        .container {
-            max-width: 1200px !important;
-        }
-        .owl-item {
-            width: 320px !important;
+        .new_f-wrapper {
+            padding: 12px !important;
         }
     }
 </style>
 
-<!-- КНОПКА "ПОВЕРНУТИСЯ" – ВИПРАВЛЕНО: ТЕПЕР ВЕДЕ НА СТОРІНКУ РЕЗУЛЬТАТІВ ПОШУКУ -->
-<div class="container my-3">
+<!-- КНОПКА "ПОВЕРНУТИСЯ" -->
+<div class="container-fluid px-2 px-md-3 my-3">
     <button onclick="goBackToSearch()" class="btn btn-outline-secondary btn-sm" style="cursor: pointer;">
         ← Повернутися до результатів пошуку
     </button>
