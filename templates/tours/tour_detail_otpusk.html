@@ -90,7 +90,7 @@
         background: transparent !important;
     }
 
-    /* ========== СТИЛІ ДЛЯ МЕНЮ – КОЛІР АГЕНТА (БЕЗ ГОЛУБОЇ ПОЛОСКИ) ========== */
+    /* ========== СТИЛІ ДЛЯ МЕНЮ – КОЛІР АГЕНТА ========== */
     .new_t-menu-wrap,
     .new_t-menu {
         background: transparent !important;
@@ -98,18 +98,11 @@
         box-shadow: none !important;
     }
 
-    .new_t-menu {
-        border-bottom: none !important;
-        padding: 0 !important;
-        gap: 8px !important;
-    }
-
     .new_t-menu-item {
         background: #f1f5f9 !important;
         color: #64748b !important;
         border: none !important;
         border-radius: 0 !important;
-        border-bottom: none !important;
     }
 
     .new_t-menu-item.selected {
@@ -118,36 +111,11 @@
         border-bottom: 3px solid var(--primary-color) !important;
         border-radius: 0 !important;
         box-shadow: none !important;
-        border-top: none !important;
-        border-left: none !important;
-        border-right: none !important;
-        border-bottom-style: solid !important;
     }
 
     .new_t-menu-item:hover {
         background: #e2e8f0 !important;
         color: var(--primary-color) !important;
-        border-bottom: none !important;
-    }
-
-    .new_t-menu-item.selected::before,
-    .new_t-menu-item.selected::after,
-    .new_t-menu-item.selected .arrow,
-    .new_t-menu-item.selected .indicator,
-    .new_t-menu-item.selected svg {
-        display: none !important;
-        content: none !important;
-    }
-
-    .new_t-menu::after,
-    .new_t-menu::before,
-    .new_t-menu-wrap::after,
-    .new_t-menu-wrap::before,
-    .new_t-menu-item::after,
-    .new_t-menu-item::before {
-        display: none !important;
-        content: none !important;
-        border-bottom: none !important;
     }
 
     /* ========== КАРТКИ В БЛОЦІ "ТУР" - БІЛИЙ ФОН ========== */
@@ -158,14 +126,6 @@
         box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
         margin-bottom: 16px !important;
         padding: 20px 24px !important;
-    }
-
-    .new_t-tour-tab-col-2,
-    .new_t-date-table,
-    .new_f-people-container,
-    .new_f-children-container,
-    .new_t-tour-tab-col-1 {
-        background: transparent !important;
     }
 
     /* ========== ФІРМОВІ КОЛЬОРИ (КОЛІР АГЕНТА) ========== */
@@ -211,7 +171,6 @@
         color: var(--primary-color) !important;
     }
 
-    /* Ефект при наведенні – темно-сірий */
     .new_r-item-price:hover .new_price-value,
     .new_r-item-price:hover .currency,
     .new_r-item-price:hover .new_price-desc,
@@ -222,7 +181,6 @@
         transition: color 0.2s ease;
     }
 
-    /* Кнопки "Детальніше" */
     .new_r-item .btn,
     .new_r-item .btn-primary,
     .new_r-item .btn-outline-primary {
@@ -237,7 +195,7 @@
         border-color: var(--primary-dark) !important;
     }
 
-    /* ========== КАРУСЕЛЬ "ПЕРЕГЛЯНУТІ ТУРИ" – КНОПКИ ЗЛІВА ТА СПРАВА ========== */
+    /* ========== КАРУСЕЛЬ "ПЕРЕГЛЯНУТІ ТУРИ" ========== */
     .new_t-similar-viewed {
         position: relative;
     }
@@ -306,7 +264,6 @@
         }
     }
 
-    /* Стилі для повідомлень */
     .alert-success {
         background-color: #d4edda;
         border-color: #c3e6cb;
@@ -332,14 +289,14 @@
     }
 
     /* ========== СІТКА ДЛЯ ФОТО ========== */
-    .new_t-tab-content.photo[style*="display: block"] {
+    .new_t-tab-content.photo {
         display: grid !important;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
         gap: 20px !important;
         padding: 20px !important;
     }
 
-    .new_t-tab-content.photo[style*="display: block"] img {
+    .new_t-tab-content.photo img {
         width: 100% !important;
         height: 200px !important;
         object-fit: cover !important;
@@ -348,27 +305,27 @@
         transition: transform 0.2s ease !important;
     }
 
-    .new_t-tab-content.photo[style*="display: block"] img:hover {
+    .new_t-tab-content.photo img:hover {
         transform: scale(1.02) !important;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
     }
 
     @media (max-width: 992px) {
-        .new_t-tab-content.photo[style*="display: block"] {
+        .new_t-tab-content.photo {
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
         }
-        .new_t-tab-content.photo[style*="display: block"] img {
+        .new_t-tab-content.photo img {
             height: 160px !important;
         }
     }
 
     @media (max-width: 768px) {
-        .new_t-tab-content.photo[style*="display: block"] {
+        .new_t-tab-content.photo {
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
             gap: 12px !important;
             padding: 12px !important;
         }
-        .new_t-tab-content.photo[style*="display: block"] img {
+        .new_t-tab-content.photo img {
             height: 120px !important;
         }
     }
@@ -456,18 +413,93 @@
         background-color: var(--primary-dark) !important;
     }
 
-    /* ========== НОВІ ВИПРАВЛЕННЯ ДЛЯ МОБІЛЬНИХ ========== */
+    /* ========== НОВІ ВИПРАВЛЕННЯ: ЗАКРІПЛЕННЯ + ГАМБУРГЕР-МЕНЮ ========== */
 
-    /* 1. Закріплюємо блок "Результат туру" зверху */
+    /* 1. Закріплюємо блок "Результат туру" зверху, враховуючи висоту оригінального меню сайту */
     .new_f-wrapper {
         position: sticky !important;
         top: 0 !important;
         z-index: 1000 !important;
         margin-bottom: 15px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    }
+    /* Якщо у вашому сайті є фіксоване меню зверху, додайте відступ */
+    body.has-fixed-header .new_f-wrapper {
+        top: 60px !important; /* висота вашого хедера */
     }
 
-    /* 2. На мобільних: ховаємо карусель і показуємо десктопне фото */
+    /* 2. Прибираємо зайві відступи між фото та текстом */
+    .new_t-header-col {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+    .new_t-header {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    /* Якщо main має padding-top, прибираємо */
+    main.flex-grow-1.pt-5 {
+        padding-top: 0 !important;
+    }
+
+    /* 3. ГАМБУРГЕР-МЕНЮ (на мобільних) */
     @media (max-width: 768px) {
+        /* Ховаємо оригінальне горизонтальне меню */
+        .new_t-menu {
+            display: none !important;
+            flex-direction: column !important;
+            background: white !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            padding: 10px 0 !important;
+            margin: 10px 0 !important;
+        }
+        /* Показуємо меню, коли додано клас .open */
+        .new_t-menu.open {
+            display: flex !important;
+        }
+        /* Кнопка-гамбургер */
+        .hamburger-menu-btn {
+            display: flex !important;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--primary-color) !important;
+            color: white !important;
+            padding: 10px 16px !important;
+            border-radius: 8px !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            cursor: pointer !important;
+            margin-bottom: 15px !important;
+            width: 100% !important;
+            border: none !important;
+        }
+        .hamburger-menu-btn span:first-child {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .hamburger-menu-btn span:last-child {
+            font-size: 24px;
+        }
+        /* Пункти меню вертикально */
+        .new_t-menu-item {
+            display: block !important;
+            text-align: center !important;
+            padding: 12px 16px !important;
+            background: transparent !important;
+            color: #333 !important;
+            border-radius: 0 !important;
+            border-bottom: 1px solid #eee !important;
+        }
+        .new_t-menu-item:last-child {
+            border-bottom: none;
+        }
+        .new_t-menu-item.selected {
+            background: var(--primary-color) !important;
+            color: white !important;
+            border-bottom: none !important;
+        }
+        /* Сховати карусель галереї, показати десктопне фото */
         .new_t-header-gallery-mobile {
             display: none !important;
         }
@@ -477,26 +509,31 @@
             height: 200px !important;
             background-size: cover !important;
             background-position: center !important;
+            border-radius: 12px !important;
         }
-    }
-
-    /* 3. Меню вкладок на мобільних – переносимо в 2-3 рядки (без горизонтального скролу) */
-    @media (max-width: 768px) {
-        .new_t-menu {
-            flex-wrap: wrap !important;
-            justify-content: center !important;
-            gap: 8px !important;
-            overflow-x: visible !important;
-        }
-        .new_t-menu-item {
-            flex: 0 0 auto !important;
-            padding: 8px 14px !important;
+        /* Зменшуємо відступи в заголовку */
+        .new_t-header-desc {
+            margin-top: 8px !important;
             font-size: 13px !important;
-            white-space: nowrap !important;
+        }
+        /* Ховаємо стрілки каруселі "Переглянутих турів" на мобільних (опціонально) */
+        .new_t-similar-viewed .owl-prev,
+        .new_t-similar-viewed .owl-next {
+            display: none !important;
         }
     }
 
-    /* 4. Додатково: забороняємо горизонтальний скрол всього модуля */
+    /* На десктопі кнопку гамбургера ховаємо */
+    @media (min-width: 769px) {
+        .hamburger-menu-btn {
+            display: none !important;
+        }
+        .new_t-menu {
+            display: flex !important;
+        }
+    }
+
+    /* 4. Забороняємо горизонтальний скрол */
     #otpusk-tour-module,
     .new_t-container {
         overflow-x: hidden !important;
@@ -628,11 +665,40 @@ function goBackToSearch() {
     }
 }
 
-// Додатковий фікс для фото на мобільних (якщо десктопне фото не завантажилось)
+function initHamburgerMenu() {
+    if (window.innerWidth > 768) return;
+    const menuWrap = document.querySelector('.new_t-menu-wrap');
+    const originalMenu = document.querySelector('.new_t-menu');
+    if (!menuWrap || !originalMenu) return;
+    // Якщо кнопка вже є, не створюємо дублікат
+    if (document.querySelector('.hamburger-menu-btn')) return;
+    const btn = document.createElement('button');
+    btn.className = 'hamburger-menu-btn';
+    btn.innerHTML = '<span>📋 Меню</span><span>☰</span>';
+    menuWrap.insertBefore(btn, originalMenu);
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        originalMenu.classList.toggle('open');
+    });
+    // Закриваємо меню після вибору пункту
+    const items = originalMenu.querySelectorAll('.new_t-menu-item');
+    items.forEach(item => {
+        item.addEventListener('click', () => {
+            originalMenu.classList.remove('open');
+        });
+    });
+    // Якщо клікнули поза меню – закриваємо
+    document.addEventListener('click', function(e) {
+        if (!menuWrap.contains(e.target)) {
+            originalMenu.classList.remove('open');
+        }
+    });
+}
+
 function fixMobilePhoto() {
     if (window.innerWidth <= 768) {
         const desktopImg = document.querySelector('.new_t-header-desktop-img');
-        if (desktopImg && !desktopImg.style.backgroundImage) {
+        if (desktopImg && (!desktopImg.style.backgroundImage || desktopImg.style.backgroundImage === 'none')) {
             const firstSlide = document.querySelector('.new_t-header-gallery-slider-item');
             if (firstSlide) {
                 const bgUrl = firstSlide.style.backgroundImage;
@@ -659,7 +725,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => observer.disconnect(), 5000);
     }
 
-    // Викликаємо фікс фото
+    initHamburgerMenu();
     fixMobilePhoto();
 
     const submitBtn = document.getElementById('submitBookingBtn');
