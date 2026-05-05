@@ -998,6 +998,38 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 }
+    /* ========== АЛЬТЕРНАТИВНЕ ВИРІШЕННЯ: ПОКАЗУЄМО ПЕРШЕ ФОТО НА 478-768px ========== */
+@media (min-width: 478px) and (max-width: 768px) {
+    /* Ховаємо карусель */
+    .new_t-header-gallery-mobile {
+        display: none !important;
+    }
+
+    /* Показуємо статичне фото з першого слайда */
+    .new_t-header-desktop-img {
+        display: block !important;
+        width: 100% !important;
+        height: 250px !important;
+        background-size: cover !important;
+        background-position: center !important;
+        border-radius: 12px !important;
+    }
+
+    /* Сітка фото у вкладці "Фото" */
+    .new_t-tab-content.photo {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+        gap: 10px !important;
+        padding: 10px !important;
+    }
+
+    .new_t-tab-content.photo img {
+        width: 100% !important;
+        height: 120px !important;
+        object-fit: cover !important;
+        border-radius: 8px !important;
+    }
+}
 </style>
 
 <script>
