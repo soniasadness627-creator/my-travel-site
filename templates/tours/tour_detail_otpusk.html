@@ -803,7 +803,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initLightbox, 1000);
 });
 </script>
-<!-- ========== ГАМБУРГЕР-МЕНЮ ДЛЯ iPhone (фінальне виправлення) ========== -->
+<!-- ========== ГАМБУРГЕР-МЕНЮ ДЛЯ iPhone (з виправленням для вкладки "Відгуки") ========== -->
 <style>
     /* Повністю перевизначаємо поведінку меню на мобільних – тільки гамбургер */
     @media (max-width: 768px) {
@@ -886,53 +886,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     /* ПРИМУСОВО ПОКАЗУЄМО ВСІ ПУНКТИ МЕНЮ НА МОБІЛЬНИХ */
-@media (max-width: 768px) {
-    .new_t-menu-item {
-        display: block !important;
+    @media (max-width: 768px) {
+        .new_t-menu-item {
+            display: block !important;
+        }
+        /* Якщо якісь пункти приховані через style="display: none" – перебиваємо */
+        .new_t-menu-item[style*="display: none"] {
+            display: block !important;
+        }
     }
-    /* Якщо якісь пункти приховані через style="display: none" – перебиваємо */
-    .new_t-menu-item[style*="display: none"] {
-        display: block !important;
-    }
-}
 </style>
 
 <script>
 (function() {
     // Функція для створення гамбургер-меню (показує ВСІ пункти)
     function initHamburger() {
-        // Якщо вже є кнопка – виходимо
         if (document.querySelector('.hamburger-trigger')) return;
 
         const menu = document.querySelector('.new_t-menu');
         if (!menu) {
-            // Якщо меню ще не з'явилося, пробуємо знову через 300 мс
             setTimeout(initHamburger, 300);
             return;
         }
 
-        // Якщо ширина екрана більша за 768 – не додаємо гамбургер
         if (window.innerWidth > 768) return;
 
-        // Створюємо кнопку
         const btn = document.createElement('div');
         btn.className = 'hamburger-trigger';
         btn.innerHTML = '☰ Меню';
-
-        // Вставляємо кнопку перед меню
         menu.parentNode.insertBefore(btn, menu);
 
-        // Відкриття/закриття
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
             menu.classList.toggle('show');
             btn.innerHTML = menu.classList.contains('show') ? '✕ Закрити' : '☰ Меню';
-
-            // Логування для перевірки (можна видалити)
-            console.log('Пункти меню:', menu.querySelectorAll('.new_t-menu-item').length);
         });
 
-        // Закриваємо меню після вибору пункту
         const items = menu.querySelectorAll('.new_t-menu-item');
         items.forEach(item => {
             item.addEventListener('click', function() {
@@ -941,10 +930,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // При зміні розміру вікна – адаптуємо поведінку
         window.addEventListener('resize', function() {
             if (window.innerWidth > 768) {
-                // На широких екранах ховаємо кнопку, показуємо звичайне меню
                 if (btn) btn.style.display = 'none';
                 if (menu) {
                     menu.classList.remove('show');
@@ -953,7 +940,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     menu.style.flexWrap = 'wrap';
                 }
             } else {
-                // На мобільних – показуємо кнопку, ховаємо меню (якщо не відкрите)
                 if (btn) btn.style.display = 'inline-flex';
                 if (menu && !menu.classList.contains('show')) {
                     menu.style.display = 'none';
@@ -962,25 +948,63 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Запускаємо після завантаження DOM
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initHamburger);
-    } else {
-        initHamburger();
+    // ========== НОВЕ ВИПРАВЛЕННЯ ДЛЯ ВКЛАДКИ "ВІДГУКИ" ==========
+    // Функція, яка після завантаження відгуків прокручує до меню
+    function fixReviewsScroll() {
+        const reviewsTab = document.querySelector('.new_t-tab-content.reviews');
+        if (!reviewsTab) return;
+
+        const observer = new MutationObserver(function() {
+            if (reviewsTab.innerHTML.trim() !== '' && reviewsTab.offsetHeight > 50) {
+                const menuWrap = document.querySelector('.new_t-menu-wrap');
+                if (menuWrap && menuWrap.getBoundingClientRect().top < 50) {
+                    menuWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                observer.disconnect();
+            }
+        });
+        observer.observe(reviewsTab, { childList: true, subtree: true });
+        setTimeout(() => observer.disconnect(), 3000);
     }
 
-    // Спостерігаємо за змінами в DOM (на випадок, якщо Otpusk додає пункти меню пізніше)
-    const observer = new MutationObserver(function(mutations) {
+    // Додаємо обробник на клік по вкладці "Відгуки"
+    function patchReviewsTab() {
+        const reviewsMenuItem = document.querySelector('.new_t-menu-item[data-name="reviews"]');
+        if (!reviewsMenuItem) {
+            setTimeout(patchReviewsTab, 500);
+            return;
+        }
+        reviewsMenuItem.addEventListener('click', function() {
+            setTimeout(fixReviewsScroll, 200);
+            setTimeout(fixReviewsScroll, 600);
+        });
+    }
+
+    // Запускаємо всі виправлення після завантаження DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            initHamburger();
+            patchReviewsTab();
+        });
+    } else {
+        initHamburger();
+        patchReviewsTab();
+    }
+
+    // Спостерігаємо за змінами в DOM (на випадок, якщо Otpusk додає пункти пізніше)
+    const observer = new MutationObserver(function() {
         const menu = document.querySelector('.new_t-menu');
         const btn = document.querySelector('.hamburger-trigger');
         if (menu && !btn && window.innerWidth <= 768) {
             initHamburger();
         }
+        // Якщо з'явився пункт меню "Відгуки" – навішуємо обробник
+        if (!document.querySelector('.new_t-menu-item[data-name="reviews"]')) return;
+        // Перевіряємо, чи вже є обробник (просто повторно викликаємо patchReviewsTab)
+        patchReviewsTab();
     });
     observer.observe(document.body, { childList: true, subtree: true });
-    setTimeout(() => observer.disconnect(), 10000);
+    setTimeout(() => observer.disconnect(), 15000);
 })();
-
 </script>
-
 {% endblock %}
