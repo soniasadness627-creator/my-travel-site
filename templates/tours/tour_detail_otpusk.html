@@ -895,6 +895,24 @@ document.addEventListener('DOMContentLoaded', function() {
             display: block !important;
         }
     }
+    /* Виправлення: відгуки не накривають меню на дуже маленьких екранах (≤478px) */
+@media (max-width: 478px) {
+    .new_t-tab-content.reviews {
+        margin-top: 80px !important;   /* достатній відступ, щоб меню було видно */
+        padding-top: 20px !important;
+        clear: both !important;
+    }
+    /* Також для впевненості – додаємо відступ самому меню, якщо воно sticky */
+    .new_t-menu-wrap {
+        margin-bottom: 20px !important;
+        position: relative !important;
+        z-index: 5 !important;
+    }
+    /* Якщо блок "Результат туру" занадто високий – трохи зменшуємо його відступ */
+    .new_f-wrapper {
+        margin-bottom: 10px !important;
+    }
+}
 </style>
 
 <script>
