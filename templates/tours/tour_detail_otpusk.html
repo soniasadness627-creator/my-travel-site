@@ -1142,15 +1142,17 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => observer.disconnect(), 15000);
 })();
 </script>
-<!-- ========== БЛОК "ГОТЕЛІ З АНАЛОГІЧНОЮ ЦІНОЮ" (карусель з API) ========== -->
+<!-- ========== БЛОК "ГОТЕЛІ З АНАЛОГІЧНОЮ ЦІНОЮ" (API Otpusk) ========== -->
 <div class="container mt-5 mb-5" id="similarPriceSection" style="display: none;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold" style="color: var(--primary-color);">🏨 Готелі з аналогічною ціною (±5000 грн)</h3>
         <a href="/search/" class="text-decoration-none" style="color: var(--primary-color);">Всі тури →</a>
     </div>
     <div class="similar-price-wrapper">
-        <div class="similar-price-carousel owl-carousel owl-theme" id="similarPriceCarousel"></div>
-        <div class="similar-price-nav">
+        <div class="similar-price-carousel owl-carousel owl-theme" id="similarPriceCarousel">
+            <div class="similar-price-loading">🔍 Пошук готелів з аналогічною ціною...</div>
+        </div>
+        <div class="similar-price-nav" style="display: none;">
             <button class="similar-prev-btn">‹</button>
             <button class="similar-next-btn">›</button>
         </div>
@@ -1159,13 +1161,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <style>
-    /* Стилі для каруселі аналогічних турів */
-    .similar-price-wrapper {
-        position: relative;
-    }
-    .similar-price-carousel .owl-item {
-        padding: 10px;
-    }
+    .similar-price-wrapper { position: relative; }
+    .similar-price-carousel .owl-item { padding: 10px; }
     .similar-price-card {
         background: white;
         border-radius: 16px;
@@ -1176,19 +1173,14 @@ document.addEventListener('DOMContentLoaded', function() {
         height: 100%;
         border: 1px solid #e2e8f0;
     }
-    .similar-price-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    }
+    .similar-price-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
     .similar-price-img {
         width: 100%;
         height: 180px;
         object-fit: cover;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
-    .similar-price-info {
-        padding: 15px;
-    }
+    .similar-price-info { padding: 15px; }
     .similar-price-hotel {
         font-weight: 700;
         font-size: 16px;
@@ -1207,11 +1199,7 @@ document.addEventListener('DOMContentLoaded', function() {
         align-items: center;
         gap: 4px;
     }
-    .similar-price-location svg {
-        width: 12px;
-        height: 12px;
-        fill: #64748b;
-    }
+    .similar-price-location svg { width: 12px; height: 12px; fill: #64748b; }
     .similar-price-footer {
         display: flex;
         justify-content: space-between;
@@ -1225,16 +1213,8 @@ document.addEventListener('DOMContentLoaded', function() {
         font-size: 18px;
         color: var(--primary-color);
     }
-    .similar-price-price small {
-        font-size: 11px;
-        font-weight: 400;
-        color: #64748b;
-    }
-    .similar-price-nights {
-        font-size: 12px;
-        color: #64748b;
-    }
-    /* Кастомні кнопки навігації */
+    .similar-price-price small { font-size: 11px; font-weight: 400; color: #64748b; }
+    .similar-price-nights { font-size: 12px; color: #64748b; }
     .similar-price-nav {
         position: absolute;
         top: -45px;
@@ -1243,8 +1223,7 @@ document.addEventListener('DOMContentLoaded', function() {
         gap: 8px;
         z-index: 10;
     }
-    .similar-prev-btn,
-    .similar-next-btn {
+    .similar-prev-btn, .similar-next-btn {
         width: 34px;
         height: 34px;
         background: white;
@@ -1259,58 +1238,37 @@ document.addEventListener('DOMContentLoaded', function() {
         align-items: center;
         justify-content: center;
     }
-    .similar-prev-btn:hover,
-    .similar-next-btn:hover {
+    .similar-prev-btn:hover, .similar-next-btn:hover {
         background: var(--primary-color);
         color: white;
         border-color: var(--primary-color);
     }
-    .similar-prev-btn.disabled,
-    .similar-next-btn.disabled {
+    .similar-prev-btn.disabled, .similar-next-btn.disabled {
         opacity: 0.4;
         cursor: default;
         pointer-events: none;
     }
-    /* Ховаємо стандартні кнопки Owl */
-    .similar-price-carousel .owl-nav {
-        display: none !important;
-    }
+    .similar-price-carousel .owl-nav { display: none !important; }
     @media (max-width: 768px) {
-        .similar-price-card {
-            margin: 0 5px;
-        }
-        .similar-price-img {
-            height: 140px;
-        }
-        .similar-price-price {
-            font-size: 16px;
-        }
-        .similar-price-nav {
-            top: -40px;
-        }
-        .similar-prev-btn,
-        .similar-next-btn {
-            width: 28px;
-            height: 28px;
-            font-size: 16px;
-        }
+        .similar-price-card { margin: 0 5px; }
+        .similar-price-img { height: 140px; }
+        .similar-price-price { font-size: 16px; }
+        .similar-price-nav { top: -40px; }
+        .similar-prev-btn, .similar-next-btn { width: 28px; height: 28px; font-size: 16px; }
     }
-    .similar-price-loading {
-        text-align: center;
-        padding: 40px;
-        color: #64748b;
-    }
+    .similar-price-loading { text-align: center; padding: 40px; color: #64748b; }
 </style>
 
 <script>
 (function() {
-    let currentCarousel = null;
     let currentOwl = null;
+    let isLoaded = false;
 
     async function loadSimilarPriceTours() {
         const section = document.getElementById('similarPriceSection');
         const carousel = document.getElementById('similarPriceCarousel');
         const messageDiv = document.getElementById('similarPriceMessage');
+        const navDiv = document.querySelector('.similar-price-nav');
 
         if (!section || !carousel) return;
 
@@ -1320,118 +1278,164 @@ document.addEventListener('DOMContentLoaded', function() {
         if (priceElement) {
             const priceText = priceElement.innerText;
             const priceMatch = priceText.match(/\d+/);
-            if (priceMatch) {
-                currentPrice = parseInt(priceMatch[0]);
-            }
+            if (priceMatch) currentPrice = parseInt(priceMatch[0]);
         }
 
-        if (currentPrice === 0) {
-            console.log('Не вдалося отримати ціну туру');
+        if (currentPrice === 0 || currentPrice < 1000) {
+            console.log('Ціна туру не визначена або замала:', currentPrice);
             section.style.display = 'none';
             return;
         }
 
         console.log('Поточна ціна:', currentPrice);
 
-        // Ціновий діапазон ±5000 грн
         const minPrice = Math.max(0, currentPrice - 5000);
         const maxPrice = currentPrice + 5000;
 
         console.log(`Пошук турів у діапазоні: ${minPrice} - ${maxPrice} грн`);
 
-        // Отримуємо напрямок з поточного туру
+        // Отримуємо напрямок
         let destination = '';
         const geoElement = document.querySelector('.new_t-header-geo a');
-        if (geoElement) {
-            destination = geoElement.innerText.trim();
-        }
+        if (geoElement) destination = geoElement.innerText.trim();
 
-        // Показуємо завантаження
-        carousel.innerHTML = '<div class="similar-price-loading">🔍 Шукаємо готелі з аналогічною ціною...</div>';
-        section.style.display = 'block';
-        messageDiv.style.display = 'none';
+        // Формуємо URL для API з використанням вашої сесії
+        const apiUrl = `https://export.otpusk.com/api/2.4/?object=hotel&action=search&lang=ua&currency=UAH&limit=12&adults=2&price_min=${minPrice}&price_max=${maxPrice}&nights=7`;
 
         try {
-            // Формуємо запит до API Otpusk через проксі (використовуємо JSONP або прямий запит)
-            // Оскільки пряме API може мати CORS, використовуємо альтернативний підхід
-            const searchUrl = `https://export.otpusk.com/api/2.4/?object=hotel&action=search&lang=ua&currency=UAH&limit=20&adults=2&price_min=${minPrice}&price_max=${maxPrice}&nights=7`;
-
-            // Спроба через JSONP
-            const tours = await fetchToursViaProxy(searchUrl, destination);
+            // Спроба отримати дані через JSONP
+            const tours = await fetchToursViaJSONP(apiUrl);
 
             if (tours && tours.length > 0) {
-                // Видаляємо поточний тур з результатів
-                const currentHid = document.querySelector('.new_t-header')?.getAttribute('data-hid') || hid;
-                const filteredTours = tours.filter(t => t.hid != currentHid && t.hid != hid).slice(0, 12);
+                const currentHid = hid;
+                const filteredTours = tours.filter(t => t.hid != currentHid).slice(0, 12);
 
                 if (filteredTours.length > 0) {
                     renderCarousel(filteredTours);
-                } else {
-                    showNoResults(messageDiv, carousel);
+                    section.style.display = 'block';
+                    if (navDiv) navDiv.style.display = 'flex';
+                    messageDiv.style.display = 'none';
+                    return;
                 }
-            } else {
-                showNoResults(messageDiv, carousel);
             }
+            showNoResults(messageDiv, carousel, navDiv);
         } catch (error) {
-            console.error('Помилка завантаження:', error);
-            showNoResults(messageDiv, carousel);
+            console.error('Помилка завантаження API:', error);
+            // Фолбек - використовуємо універсальний пошук
+            await fallbackSearch(currentPrice);
         }
     }
 
-    async function fetchToursViaProxy(url, destination) {
-        // Спробуємо отримати дані через JSONP або використаємо результати пошуку зі сторінки
-        // Оскільки API Otpusk має обмеження, використовуємо дані з DOM результатів пошуку
-        return new Promise((resolve) => {
-            // Шукаємо будь-які тури на сторінці (блок "Переглянуті тури" або інші)
-            const viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item');
-            const tours = [];
+    function fetchToursViaJSONP(url) {
+        return new Promise((resolve, reject) => {
+            const callbackName = 'jsonp_callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+            const script = document.createElement('script');
+            const timeout = setTimeout(() => {
+                delete window[callbackName];
+                document.head.removeChild(script);
+                reject(new Error('JSONP timeout'));
+            }, 10000);
 
-            viewedItems.forEach(item => {
-                const hotelName = item.querySelector('.new_r-item-hotel')?.innerText || '';
-                let priceText = item.querySelector('.new_price-value')?.innerText || '';
-                let price = 0;
-                const priceMatch = priceText.match(/\d+/);
-                if (priceMatch) price = parseInt(priceMatch[0]);
-
-                let link = '';
-                const linkElement = item.querySelector('a');
-                if (linkElement) link = linkElement.getAttribute('href');
-
-                let img = '';
-                const imgElement = item.querySelector('img');
-                if (imgElement && imgElement.src) img = imgElement.src;
-
-                const location = item.querySelector('.new_r-item-geo')?.innerText || '';
-                const nights = item.querySelector('.new_r-item-nights')?.innerText?.replace(/[^0-9]/g, '') || '7';
-                const hidAttr = item.getAttribute('data-hid') || '';
-
-                if (hotelName && price > 0) {
-                    tours.push({ hotelName, price, priceText, link, img, location, nights, hid: hidAttr });
+            window[callbackName] = function(data) {
+                clearTimeout(timeout);
+                delete window[callbackName];
+                document.head.removeChild(script);
+                if (data && data.results) {
+                    const tours = data.results.map(item => ({
+                        hotelName: item.hotel_name || item.name || '',
+                        price: item.price || item.price_from || 0,
+                        priceText: `${item.price || item.price_from} ${item.currency || 'грн'}`,
+                        link: `?hid=${item.hid}&oid=${item.oid}&od=${od}&ol=${ol}`,
+                        img: item.image || item.photo || '',
+                        location: item.country_name || item.city_name || '',
+                        nights: ol || 7,
+                        hid: item.hid
+                    }));
+                    resolve(tours);
+                } else {
+                    resolve([]);
                 }
-            });
+            };
 
-            // Фільтруємо за ціною
-            const currentPriceElem = document.querySelector('.new_t-order-price .new_price-value');
-            let currentPrice = 0;
-            if (currentPriceElem) {
-                const match = currentPriceElem.innerText.match(/\d+/);
-                if (match) currentPrice = parseInt(match[0]);
-            }
-
-            const minPrice = Math.max(0, currentPrice - 5000);
-            const maxPrice = currentPrice + 5000;
-
-            const filtered = tours.filter(t => t.price >= minPrice && t.price <= maxPrice && t.price !== currentPrice);
-
-            console.log(`Знайдено ${filtered.length} турів у діапазоні цін`);
-            resolve(filtered);
+            const fullUrl = url + `&callback=${callbackName}&_=${Date.now()}`;
+            script.src = fullUrl;
+            script.onerror = () => {
+                clearTimeout(timeout);
+                delete window[callbackName];
+                reject(new Error('JSONP request failed'));
+            };
+            document.head.appendChild(script);
         });
     }
 
-    function showNoResults(messageDiv, carousel) {
-        carousel.innerHTML = '';
-        messageDiv.innerHTML = '😔 Не знайдено готелів у вказаному ціновому діапазоні. Спробуйте змінити параметри пошуку.';
-        messageDiv.style.display = 'block';
+    async function fallbackSearch(currentPrice) {
+        const section = document.getElementById('similarPriceSection');
+        const carousel = document.getElementById('similarPriceCarousel');
+        const messageDiv = document.getElementById('similarPriceMessage');
+        const navDiv = document.querySelector('.similar-price-nav');
+
+        console.log('Використовуємо пошук через DOM...');
+
+        // Шукаємо тури в блоці "Переглянуті тури"
+        let attempts = 0;
+        const maxAttempts = 20;
+
+        const checkForTours = setInterval(() => {
+            const viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item');
+            attempts++;
+
+            if (viewedItems.length > 0) {
+                clearInterval(checkForTours);
+                const tours = [];
+                viewedItems.forEach(item => {
+                    const hotelName = item.querySelector('.new_r-item-hotel')?.innerText || '';
+                    let priceText = item.querySelector('.new_price-value')?.innerText || '';
+                    let price = 0;
+                    const priceMatch = priceText.match(/\d+/);
+                    if (priceMatch) price = parseInt(priceMatch[0]);
+
+                    let link = '';
+                    const linkElement = item.querySelector('a');
+                    if (linkElement) link = linkElement.getAttribute('href');
+
+                    let img = '';
+                    const imgElement = item.querySelector('img');
+                    if (imgElement && imgElement.src) img = imgElement.src;
+
+                    const location = item.querySelector('.new_r-item-geo')?.innerText || '';
+                    const nights = item.querySelector('.new_r-item-nights')?.innerText?.replace(/[^0-9]/g, '') || ol || '7';
+
+                    if (hotelName && price > 0) {
+                        tours.push({ hotelName, price, priceText, link, img, location, nights });
+                    }
+                });
+
+                const minPrice = Math.max(0, currentPrice - 5000);
+                const maxPrice = currentPrice + 5000;
+                const filtered = tours.filter(t => t.price >= minPrice && t.price <= maxPrice && t.price !== currentPrice);
+
+                if (filtered.length > 0) {
+                    renderCarousel(filtered);
+                    section.style.display = 'block';
+                    if (navDiv) navDiv.style.display = 'flex';
+                    messageDiv.style.display = 'none';
+                } else {
+                    section.style.display = 'none';
+                }
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkForTours);
+                showNoResults(messageDiv, carousel, navDiv);
+            }
+        }, 1000);
+    }
+
+    function showNoResults(messageDiv, carousel, navDiv) {
+        if (carousel) carousel.innerHTML = '';
+        if (messageDiv) {
+            messageDiv.innerHTML = '😔 Не знайдено готелів у ціновому діапазоні ±5000 грн. Спробуйте інший тур.';
+            messageDiv.style.display = 'block';
+        }
+        if (navDiv) navDiv.style.display = 'none';
     }
 
     function renderCarousel(tours) {
@@ -1441,7 +1445,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let html = '';
         tours.forEach(tour => {
             const imgHtml = tour.img ?
-                `<img class="similar-price-img" src="${tour.img}" alt="${escapeHtml(tour.hotelName)}" onerror="this.style.background='linear-gradient(135deg, var(--primary-color), var(--primary-dark))'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.color='white'; this.outerHTML='<div class=\\'similar-price-img\\' style=\\'background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;\\'>🏨</div>';">` :
+                `<img class="similar-price-img" src="${tour.img}" alt="${escapeHtml(tour.hotelName)}" onerror="this.style.background='linear-gradient(135deg, var(--primary-color), var(--primary-dark))'; this.outerHTML='<div class=\\'similar-price-img\\' style=\\'background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;\\'>🏨</div>';">` :
                 `<div class="similar-price-img" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🏨</div>`;
 
             html += `
@@ -1464,11 +1468,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         carousel.innerHTML = html;
 
-        // Ініціалізуємо Owl Carousel
         if (typeof $ !== 'undefined' && $.fn.owlCarousel) {
-            if (currentOwl) {
-                $(carousel).trigger('destroy.owl.carousel');
-            }
+            if (currentOwl) $(carousel).trigger('destroy.owl.carousel');
             currentOwl = $(carousel).owlCarousel({
                 items: 4,
                 margin: 20,
@@ -1483,28 +1484,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            // Додаємо обробники для кастомних кнопок
             const prevBtn = document.querySelector('.similar-prev-btn');
             const nextBtn = document.querySelector('.similar-next-btn');
-
             if (prevBtn) {
                 prevBtn.classList.remove('disabled');
-                prevBtn.onclick = () => { $(carousel).trigger('prev.owl.carousel'); };
+                prevBtn.onclick = () => $(carousel).trigger('prev.owl.carousel');
             }
             if (nextBtn) {
                 nextBtn.classList.remove('disabled');
-                nextBtn.onclick = () => { $(carousel).trigger('next.owl.carousel'); };
+                nextBtn.onclick = () => $(carousel).trigger('next.owl.carousel');
             }
-
-            console.log('Owl Carousel ініціалізовано, турів:', tours.length);
-        } else {
-            carousel.style.display = 'grid';
-            carousel.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
-            carousel.style.gap = '20px';
-            carousel.classList.remove('owl-carousel', 'owl-theme');
-
-            const nav = document.querySelector('.similar-price-nav');
-            if (nav) nav.style.display = 'none';
         }
     }
 
@@ -1515,27 +1504,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return div.innerHTML;
     }
 
-    // Запускаємо після завантаження сторінки
+    // Запускаємо після завантаження
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(loadSimilarPriceTours, 3000);
-            setTimeout(loadSimilarPriceTours, 5000);
+            setTimeout(loadSimilarPriceTours, 6000);
         });
     } else {
         setTimeout(loadSimilarPriceTours, 3000);
-        setTimeout(loadSimilarPriceTours, 5000);
+        setTimeout(loadSimilarPriceTours, 6000);
     }
-
-    // Спостерігаємо за змінами
-    const observer = new MutationObserver(() => {
-        const viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item');
-        if (viewedItems.length > 0) {
-            loadSimilarPriceTours();
-            observer.disconnect();
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-    setTimeout(() => observer.disconnect(), 15000);
 })();
 </script>
 {% endblock %}
