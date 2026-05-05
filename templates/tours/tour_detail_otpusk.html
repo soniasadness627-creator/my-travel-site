@@ -578,6 +578,114 @@
             right: 5px !important;
         }
     }
+
+    /* ========== ДОДАТКОВА АДАПТИВНІСТЬ ДЛЯ РІЗНИХ ПРИСТРОЇВ ========== */
+
+    /* Для телефонів до 480px (iPhone SE, Android 360px) */
+    @media (max-width: 480px) {
+        .container {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+
+        #otpusk-tour-module {
+            width: 100% !important;
+            overflow-x: hidden !important;
+        }
+
+        .consult-row {
+            flex-direction: column !important;
+            gap: 15px !important;
+        }
+
+        .agent-block {
+            width: 100% !important;
+            justify-content: flex-start !important;
+            padding: 10px 15px !important;
+        }
+
+        .form-block {
+            width: 100% !important;
+        }
+
+        .form-control,
+        .form-select {
+            font-size: 16px !important; /* Запобігає автоматичному зуму на iOS */
+        }
+
+        #submitBookingBtn {
+            height: 48px !important;
+            font-size: 14px !important;
+        }
+
+        .owl-item {
+            width: 85% !important; /* Карусель не на весь екран */
+        }
+
+        .new_t-tab-content.photo {
+            padding: 10px !important;
+        }
+
+        h5 {
+            font-size: 1.2rem !important;
+        }
+
+        p {
+            font-size: 0.9rem !important;
+        }
+    }
+
+    /* Для iPhone 6/7/8 Plus, iPhone XR, 11, 12, 13, 14 (414px і більше) */
+    @media (min-width: 414px) and (max-width: 480px) {
+        .owl-item {
+            width: 70% !important;
+        }
+        .new_t-tour-tab-table {
+            padding: 15px 18px !important;
+        }
+    }
+
+    /* Для планшетів (портрет) – 768px вже є, але додамо специфічні */
+    @media (min-width: 768px) and (max-width: 1023px) {
+        .new_t-menu {
+            gap: 12px !important;
+        }
+        .new_t-menu-item {
+            padding: 10px 18px !important;
+        }
+        .owl-item {
+            width: 280px !important;
+        }
+        .consult-row {
+            gap: 20px !important;
+        }
+        .form-block {
+            min-width: 300px !important;
+        }
+    }
+
+    /* Для маленьких ноутбуків (1024px – 1280px) */
+    @media (min-width: 1024px) and (max-width: 1280px) {
+        .container {
+            max-width: 1000px !important;
+        }
+        .new_t-tour-tab-table {
+            padding: 18px 22px !important;
+        }
+        .owl-item {
+            width: 300px !important;
+        }
+    }
+
+    /* Для десктопів (1281px і більше) – базові стилі залишаються без змін */
+    @media (min-width: 1281px) {
+        .container {
+            max-width: 1200px !important;
+        }
+        .owl-item {
+            width: 320px !important;
+        }
+    }
 </style>
 
 <!-- КНОПКА "ПОВЕРНУТИСЯ" – ВИПРАВЛЕНО: ТЕПЕР ВЕДЕ НА СТОРІНКУ РЕЗУЛЬТАТІВ ПОШУКУ -->
@@ -694,18 +802,12 @@ function showMessage(message, type) {
     setTimeout(() => { if (messageDiv) messageDiv.style.display = 'none'; }, 5000);
 }
 
-// Функція для кнопки "Повернутися до результатів пошуку"
 function goBackToSearch() {
-    // Якщо є реферер і він містить сторінку пошуку – йдемо туди
     if (document.referrer && (document.referrer.includes('/search/') || document.referrer.includes('/result/'))) {
         window.location.href = document.referrer;
-    }
-    // Інакше – стандартний back
-    else if (window.history.length > 1) {
+    } else if (window.history.length > 1) {
         window.history.back();
-    }
-    // Якщо нічого не підходить – ведемо на головну пошуку (замініть URL за потреби)
-    else {
+    } else {
         window.location.href = '/search/';
     }
 }
@@ -725,26 +827,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         observer.observe(document.body, { childList: true, subtree: true });
         setTimeout(() => observer.disconnect(), 5000);
-    }
-
-    // ВИПРАВЛЕННЯ ВКЛАДОК НА МОБІЛЬНИХ: показуємо тільки активний контент
-    function fixTabs() {
-        const selectedTab = document.querySelector('.new_t-menu-item.selected');
-        if (!selectedTab) return;
-        const tabName = selectedTab.getAttribute('data-name');
-        if (!tabName) return;
-        document.querySelectorAll('.new_t-tab-content').forEach(tab => {
-            tab.style.display = 'none';
-        });
-        const activeTab = document.querySelector(`.new_t-tab-content.${tabName}`);
-        if (activeTab) activeTab.style.display = 'block';
-    }
-    // Спостерігаємо за зміною активного пункту меню
-    const menu = document.querySelector('.new_t-menu');
-    if (menu) {
-        const observer = new MutationObserver(() => fixTabs());
-        observer.observe(menu, { childList: true, subtree: true, attributes: true });
-        fixTabs();
     }
 
     const submitBtn = document.getElementById('submitBookingBtn');
