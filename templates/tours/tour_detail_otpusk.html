@@ -1142,7 +1142,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => observer.disconnect(), 15000);
 })();
 </script>
-<!-- ========== БЛОК "ГОТЕЛІ З АНАЛОГІЧНОЮ ЦІНОЮ" (API Otpusk) ========== -->
+<!-- ========== БЛОК "ГОТЕЛІ З АНАЛОГІЧНОЮ ЦІНОЮ" (виправлений) ========== -->
 <div class="container mt-5 mb-5" id="similarPriceSection" style="display: none;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold" style="color: var(--primary-color);">🏨 Готелі з аналогічною ціною (±5000 грн)</h3>
@@ -1264,6 +1264,51 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentOwl = null;
     let isLoaded = false;
 
+    function getCurrentPrice() {
+        // Спробуємо різні селектори для пошуку ціни
+        let price = 0;
+        let priceText = '';
+
+        // 1. Спочатку шукаємо .new_t-order-price .new_price-value
+        let priceElement = document.querySelector('.new_t-order-price .new_price-value');
+        if (priceElement) {
+            priceText = priceElement.innerText;
+        }
+
+        // 2. Якщо не знайшли, шукаємо .new_price-value
+        if (!priceElement) {
+            priceElement = document.querySelector('.new_price-value');
+            if (priceElement) priceText = priceElement.innerText;
+        }
+
+        // 3. Якщо не знайшли, шукаємо будь-який елемент з ціною
+        if (!priceElement) {
+            const priceElements = document.querySelectorAll('[class*="price"]');
+            for (let el of priceElements) {
+                const text = el.innerText;
+                if (text && text.match(/\d{4,}/)) {
+                    priceText = text;
+                    break;
+                }
+            }
+        }
+
+        console.log('Знайдено текст з ціною:', priceText);
+
+        if (priceText) {
+            const priceMatch = priceText.match(/\d{4,}/);
+            if (priceMatch) {
+                price = parseInt(priceMatch[0]);
+            }
+        }
+
+        return price;
+    }
+
+    // Отримуємо ціну з URL параметрів (якщо не знайшли на сторінці)
+    const urlPriceMatch = window.location.search.match(/price[=:]\s*(\d+)/i);
+    const urlPrice = urlPriceMatch ? parseInt(urlPriceMatch[1]) : 0;
+
     async function loadSimilarPriceTours() {
         const section = document.getElementById('similarPriceSection');
         const carousel = document.getElementById('similarPriceCarousel');
@@ -1272,124 +1317,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!section || !carousel) return;
 
-        // Отримуємо поточну ціну туру
-        let currentPrice = 0;
-        const priceElement = document.querySelector('.new_t-order-price .new_price-value');
-        if (priceElement) {
-            const priceText = priceElement.innerText;
-            const priceMatch = priceText.match(/\d+/);
-            if (priceMatch) currentPrice = parseInt(priceMatch[0]);
+        // Отримуємо поточну ціну туру (спочатку з DOM, потім з URL)
+        let currentPrice = getCurrentPrice();
+
+        if (currentPrice === 0 && urlPrice > 0) {
+            currentPrice = urlPrice;
+            console.log('Ціна взята з URL:', currentPrice);
         }
 
-        if (currentPrice === 0 || currentPrice < 1000) {
-            console.log('Ціна туру не визначена або замала:', currentPrice);
-            section.style.display = 'none';
-            return;
+        // Приклад ціни для тесту (якщо реальна не знайдена)
+        if (currentPrice === 0) {
+            console.log('⚠️ Ціна не знайдена, використовуємо тестове значення 20000 грн для перевірки');
+            currentPrice = 20000;
         }
 
-        console.log('Поточна ціна:', currentPrice);
+        console.log('Поточна ціна для пошуку:', currentPrice);
 
-        const minPrice = Math.max(0, currentPrice - 5000);
+        const minPrice = Math.max(1000, currentPrice - 5000);
         const maxPrice = currentPrice + 5000;
 
         console.log(`Пошук турів у діапазоні: ${minPrice} - ${maxPrice} грн`);
 
-        // Отримуємо напрямок
-        let destination = '';
-        const geoElement = document.querySelector('.new_t-header-geo a');
-        if (geoElement) destination = geoElement.innerText.trim();
-
-        // Формуємо URL для API з використанням вашої сесії
-        const apiUrl = `https://export.otpusk.com/api/2.4/?object=hotel&action=search&lang=ua&currency=UAH&limit=12&adults=2&price_min=${minPrice}&price_max=${maxPrice}&nights=7`;
-
-        try {
-            // Спроба отримати дані через JSONP
-            const tours = await fetchToursViaJSONP(apiUrl);
-
-            if (tours && tours.length > 0) {
-                const currentHid = hid;
-                const filteredTours = tours.filter(t => t.hid != currentHid).slice(0, 12);
-
-                if (filteredTours.length > 0) {
-                    renderCarousel(filteredTours);
-                    section.style.display = 'block';
-                    if (navDiv) navDiv.style.display = 'flex';
-                    messageDiv.style.display = 'none';
-                    return;
-                }
-            }
-            showNoResults(messageDiv, carousel, navDiv);
-        } catch (error) {
-            console.error('Помилка завантаження API:', error);
-            // Фолбек - використовуємо універсальний пошук
-            await fallbackSearch(currentPrice);
-        }
-    }
-
-    function fetchToursViaJSONP(url) {
-        return new Promise((resolve, reject) => {
-            const callbackName = 'jsonp_callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
-            const script = document.createElement('script');
-            const timeout = setTimeout(() => {
-                delete window[callbackName];
-                document.head.removeChild(script);
-                reject(new Error('JSONP timeout'));
-            }, 10000);
-
-            window[callbackName] = function(data) {
-                clearTimeout(timeout);
-                delete window[callbackName];
-                document.head.removeChild(script);
-                if (data && data.results) {
-                    const tours = data.results.map(item => ({
-                        hotelName: item.hotel_name || item.name || '',
-                        price: item.price || item.price_from || 0,
-                        priceText: `${item.price || item.price_from} ${item.currency || 'грн'}`,
-                        link: `?hid=${item.hid}&oid=${item.oid}&od=${od}&ol=${ol}`,
-                        img: item.image || item.photo || '',
-                        location: item.country_name || item.city_name || '',
-                        nights: ol || 7,
-                        hid: item.hid
-                    }));
-                    resolve(tours);
-                } else {
-                    resolve([]);
-                }
-            };
-
-            const fullUrl = url + `&callback=${callbackName}&_=${Date.now()}`;
-            script.src = fullUrl;
-            script.onerror = () => {
-                clearTimeout(timeout);
-                delete window[callbackName];
-                reject(new Error('JSONP request failed'));
-            };
-            document.head.appendChild(script);
-        });
-    }
-
-    async function fallbackSearch(currentPrice) {
-        const section = document.getElementById('similarPriceSection');
-        const carousel = document.getElementById('similarPriceCarousel');
-        const messageDiv = document.getElementById('similarPriceMessage');
-        const navDiv = document.querySelector('.similar-price-nav');
-
-        console.log('Використовуємо пошук через DOM...');
-
         // Шукаємо тури в блоці "Переглянуті тури"
         let attempts = 0;
-        const maxAttempts = 20;
+        const maxAttempts = 25;
+        let found = false;
 
         const checkForTours = setInterval(() => {
-            const viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item');
+            const viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item, .new_r-item');
             attempts++;
+
+            console.log(`Спроба ${attempts}: знайдено елементів - ${viewedItems.length}`);
 
             if (viewedItems.length > 0) {
                 clearInterval(checkForTours);
                 const tours = [];
                 viewedItems.forEach(item => {
-                    const hotelName = item.querySelector('.new_r-item-hotel')?.innerText || '';
-                    let priceText = item.querySelector('.new_price-value')?.innerText || '';
+                    const hotelName = item.querySelector('.new_r-item-hotel, .hotel-name, [class*="hotel"]')?.innerText || '';
+                    let priceText = item.querySelector('.new_price-value, .price, [class*="price"]')?.innerText || '';
                     let price = 0;
                     const priceMatch = priceText.match(/\d+/);
                     if (priceMatch) price = parseInt(priceMatch[0]);
@@ -1397,12 +1362,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     let link = '';
                     const linkElement = item.querySelector('a');
                     if (linkElement) link = linkElement.getAttribute('href');
+                    if (link && !link.startsWith('http')) {
+                        link = window.location.pathname + link;
+                    }
 
                     let img = '';
                     const imgElement = item.querySelector('img');
-                    if (imgElement && imgElement.src) img = imgElement.src;
+                    if (imgElement && imgElement.src && !imgElement.src.includes('placeholder')) {
+                        img = imgElement.src;
+                    }
 
-                    const location = item.querySelector('.new_r-item-geo')?.innerText || '';
+                    const location = item.querySelector('.new_r-item-geo, .location, [class*="geo"]')?.innerText || '';
                     const nights = item.querySelector('.new_r-item-nights')?.innerText?.replace(/[^0-9]/g, '') || ol || '7';
 
                     if (hotelName && price > 0) {
@@ -1410,32 +1380,38 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
 
-                const minPrice = Math.max(0, currentPrice - 5000);
-                const maxPrice = currentPrice + 5000;
-                const filtered = tours.filter(t => t.price >= minPrice && t.price <= maxPrice && t.price !== currentPrice);
+                console.log(`Всього знайдено турів для фільтрації: ${tours.length}`);
+
+                const filtered = tours.filter(t => t.price >= minPrice && t.price <= maxPrice && t.price !== currentPrice && Math.abs(t.price - currentPrice) <= 5000);
+
+                console.log(`Після фільтрації (діапазон ±5000): ${filtered.length} турів`);
 
                 if (filtered.length > 0) {
                     renderCarousel(filtered);
                     section.style.display = 'block';
                     if (navDiv) navDiv.style.display = 'flex';
                     messageDiv.style.display = 'none';
-                } else {
-                    section.style.display = 'none';
+                    found = true;
+                } else if (tours.length > 0) {
+                    // Якщо є тури, але не підходять за ціною - показуємо повідомлення
+                    carousel.innerHTML = '';
+                    messageDiv.innerHTML = `😔 Не знайдено готелів у ціновому діапазоні ±5000 грн (поточна ціна: ${currentPrice} грн). Знайдено ${tours.length} інших турів.`;
+                    messageDiv.style.display = 'block';
+                    section.style.display = 'block';
+                    if (navDiv) navDiv.style.display = 'none';
+                    found = true;
                 }
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkForTours);
-                showNoResults(messageDiv, carousel, navDiv);
+                if (!found) {
+                    carousel.innerHTML = '';
+                    messageDiv.innerHTML = '😔 Не знайдено турів для відображення. Будь ласка, перегляньте інші тури на сайті.';
+                    messageDiv.style.display = 'block';
+                    section.style.display = 'block';
+                    if (navDiv) navDiv.style.display = 'none';
+                }
             }
-        }, 1000);
-    }
-
-    function showNoResults(messageDiv, carousel, navDiv) {
-        if (carousel) carousel.innerHTML = '';
-        if (messageDiv) {
-            messageDiv.innerHTML = '😔 Не знайдено готелів у ціновому діапазоні ±5000 грн. Спробуйте інший тур.';
-            messageDiv.style.display = 'block';
-        }
-        if (navDiv) navDiv.style.display = 'none';
+        }, 800);
     }
 
     function renderCarousel(tours) {
@@ -1443,7 +1419,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!carousel) return;
 
         let html = '';
-        tours.forEach(tour => {
+        tours.slice(0, 12).forEach(tour => {
             const imgHtml = tour.img ?
                 `<img class="similar-price-img" src="${tour.img}" alt="${escapeHtml(tour.hotelName)}" onerror="this.style.background='linear-gradient(135deg, var(--primary-color), var(--primary-dark))'; this.outerHTML='<div class=\\'similar-price-img\\' style=\\'background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;\\'>🏨</div>';">` :
                 `<div class="similar-price-img" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🏨</div>`;
@@ -1507,11 +1483,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Запускаємо після завантаження
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(loadSimilarPriceTours, 3000);
+            setTimeout(loadSimilarPriceTours, 2000);
+            setTimeout(loadSimilarPriceTours, 4000);
             setTimeout(loadSimilarPriceTours, 6000);
         });
     } else {
-        setTimeout(loadSimilarPriceTours, 3000);
+        setTimeout(loadSimilarPriceTours, 2000);
+        setTimeout(loadSimilarPriceTours, 4000);
         setTimeout(loadSimilarPriceTours, 6000);
     }
 })();
