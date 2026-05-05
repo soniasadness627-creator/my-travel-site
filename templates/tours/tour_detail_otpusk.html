@@ -860,18 +860,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- ========== ПРИМУСОВЕ СТВОРЕННЯ ВСІХ 5 ПУНКТІВ МЕНЮ (ГАМБУРГЕР) ========== -->
+<!-- ========== ФІНАЛЬНЕ ВИПРАВЛЕННЯ МЕНЮ ТА ГАМБУРГЕРА ========== -->
 <script>
 (function() {
     // Список всіх необхідних пунктів меню
-    const menuItems = [
-        { name: 'tour', label: 'Тур' },
-        { name: 'hotelInfo', label: 'Опис' },
-        { name: 'photo', label: 'Фото' },
-        { name: 'map', label: 'Мапа' },
-        { name: 'reviews', label: 'Відгуки' }
+    const requiredItems = [
+        { name: 'tour', label: 'Тур', hasCount: false },
+        { name: 'hotelInfo', label: 'Опис', hasCount: false },
+        { name: 'photo', label: 'Фото', hasCount: true, count: '32' },
+        { name: 'map', label: 'Мапа', hasCount: false },
+        { name: 'reviews', label: 'Відгуки', hasCount: true, count: '3' }
     ];
 
+    // Основна функція, яка гарантує наявність усіх 5 пунктів
     function ensureFullMenu() {
         const menuContainer = document.querySelector('.new_t-menu');
         if (!menuContainer) {
@@ -879,36 +880,32 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Перевіряємо, скільки зараз пунктів
-        const existingItems = menuContainer.querySelectorAll('.new_t-menu-item');
-        if (existingItems.length >= 5) {
-            // Якщо вже є 5 – нічого не робимо
-            return;
-        }
+        // Отримуємо поточні пункти
+        let existingItems = Array.from(menuContainer.querySelectorAll('.new_t-menu-item'));
+        let existingNames = existingItems.map(item => item.getAttribute('data-name'));
 
-        // Якщо пунктів менше 5 – видаляємо всі старі та створюємо свої
+        // Якщо вже є всі 5 – нічого не робимо
+        if (existingItems.length >= 5) return;
+
+        // Видаляємо всі старі пункти (щоб уникнути дублювання)
         existingItems.forEach(item => item.remove());
 
         // Створюємо нові пункти
-        menuItems.forEach((item, index) => {
+        requiredItems.forEach((item, index) => {
             const div = document.createElement('div');
             div.className = 'new_t-menu-item';
             if (index === 0) div.classList.add('selected');
             div.setAttribute('data-name', item.name);
             div.textContent = item.label;
-            if (item.name === 'photo') {
+            if (item.hasCount) {
                 const span = document.createElement('span');
-                span.textContent = '32';
-                div.appendChild(span);
-            } else if (item.name === 'reviews') {
-                const span = document.createElement('span');
-                span.textContent = '3';
+                span.textContent = item.count;
                 div.appendChild(span);
             }
             menuContainer.appendChild(div);
         });
 
-        // Після створення – додаємо обробники кліків для перемикання вкладок
+        // Додаємо обробники подій
         attachTabClickHandlers();
     }
 
@@ -939,69 +936,95 @@ document.addEventListener('DOMContentLoaded', function() {
         if (activeTab) {
             activeTab.style.display = 'block';
         } else {
-            console.warn('Вкладка не знайдена:', tabName);
+            // Якщо вкладки немає – пробуємо завантажити вручну (для мапи, відгуків)
+            if (tabName === 'reviews') loadReviews();
+            else if (tabName === 'map') loadMap();
         }
 
-        // Оновлюємо хеш (для історії)
+        // Оновлюємо хеш URL
         if (window.otpMain && window.otpMain.hash) {
             window.otpMain.hash.add('page', tabName);
             window.otpMain.hash.compile();
         }
+    }
 
-        // Спеціальна обробка для мапи
-        if (tabName === 'map') {
-            setTimeout(() => {
-                const mapContainer = document.querySelector('.new_t-tab-content.map');
-                if (mapContainer && !mapContainer.innerHTML.trim()) {
-                    if (window.otpMain && window.otpMain.tour && window.otpMain.tour.hotelMap && window.otpMain.tour.hotelMap.view) {
-                        const hotel = window.otpMain.tour.hotel;
-                        if (hotel && hotel.i) {
-                            window.otpMain.tour.hotelMap.view.render(mapContainer, hotel);
-                        }
-                    }
-                }
-                // Додаємо хрестик закриття, якщо його немає
-                const closeBtn = document.querySelector('.new_t-tab-content.map .new_t-tab-content-close');
-                if (closeBtn) {
-                    closeBtn.style.cursor = 'pointer';
-                    // Видаляємо старі обробники, щоб не дублювати
-                    const newBtn = closeBtn.cloneNode(true);
-                    closeBtn.parentNode.replaceChild(newBtn, closeBtn);
-                    newBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const tourTab = document.querySelector('.new_t-menu-item[data-name="tour"]');
-                        if (tourTab) tourTab.click();
-                        const mapCont = document.querySelector('.new_t-tab-content.map');
-                        if (mapCont) mapCont.style.display = 'none';
-                        document.documentElement.classList.remove('new_layer-open-map');
-                    });
-                }
-            }, 100);
+    function loadReviews() {
+        const reviewsTab = document.querySelector('.new_t-tab-content.reviews');
+        if (!reviewsTab) return;
+        if (reviewsTab.innerHTML.trim() !== '') {
+            document.querySelectorAll('.new_t-tab-content').forEach(t => t.style.display = 'none');
+            reviewsTab.style.display = 'block';
+            return;
+        }
+        // Спроба через otpMain
+        if (window.otpMain && window.otpMain.tour && window.otpMain.tour.reviews && window.otpMain.tour.reviews.view) {
+            const hotel = window.otpMain.tour.hotel;
+            if (hotel && hotel.i) {
+                window.otpMain.tour.reviews.view.render(reviewsTab, hotel);
+            }
+        } else {
+            reviewsTab.innerHTML = '<div class="alert alert-info">Завантаження відгуків...</div>';
+            document.querySelectorAll('.new_t-tab-content').forEach(t => t.style.display = 'none');
+            reviewsTab.style.display = 'block';
         }
     }
 
-    // Запускаємо після завантаження DOM і після того, як Otpusk створить своє меню
+    function loadMap() {
+        const mapTab = document.querySelector('.new_t-tab-content.map');
+        if (!mapTab) return;
+        if (mapTab.innerHTML.trim() !== '' && mapTab.querySelector('#new_os-map')) {
+            document.querySelectorAll('.new_t-tab-content').forEach(t => t.style.display = 'none');
+            mapTab.style.display = 'block';
+            return;
+        }
+        if (window.otpMain && window.otpMain.tour && window.otpMain.tour.hotelMap && window.otpMain.tour.hotelMap.view) {
+            const hotel = window.otpMain.tour.hotel;
+            if (hotel && hotel.i) {
+                window.otpMain.tour.hotelMap.view.render(mapTab, hotel);
+            }
+        } else {
+            mapTab.innerHTML = '<div class="new_t-tab-content-top"><div class="new_t-tab-content-close">×</div>Мапа</div><div id="new_os-map" style="height:300px;">Мапа не завантажилась</div>';
+            document.querySelectorAll('.new_t-tab-content').forEach(t => t.style.display = 'none');
+            mapTab.style.display = 'block';
+        }
+        // Робимо хрестик клікабельним
+        setTimeout(() => {
+            const closeBtn = mapTab.querySelector('.new_t-tab-content-close');
+            if (closeBtn) {
+                closeBtn.onclick = function(e) {
+                    e.preventDefault();
+                    const tourTab = document.querySelector('.new_t-menu-item[data-name="tour"]');
+                    if (tourTab) tourTab.click();
+                    mapTab.style.display = 'none';
+                };
+            }
+        }, 100);
+    }
+
+    // Запускаємо виправлення меню через деякий час (даємо Otpusk час створити своє меню)
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             setTimeout(ensureFullMenu, 500);
+            setTimeout(ensureFullMenu, 1500);
         });
     } else {
         setTimeout(ensureFullMenu, 500);
+        setTimeout(ensureFullMenu, 1500);
     }
 
-    // Спостерігаємо за змінами, якщо Otpusk пізніше перезапише меню
-    const menuObserver = new MutationObserver(function(mutations) {
+    // Спостерігаємо за змінами – якщо меню зникло або змінилося – відновлюємо
+    const menuObserver = new MutationObserver(() => {
         const menu = document.querySelector('.new_t-menu');
         if (menu && menu.querySelectorAll('.new_t-menu-item').length < 5) {
             ensureFullMenu();
         }
     });
     menuObserver.observe(document.body, { childList: true, subtree: true });
-    setTimeout(() => menuObserver.disconnect(), 15000);
+    setTimeout(() => menuObserver.disconnect(), 20000);
 })();
 
-// Окремий фікс для гамбургер-меню (кнопка)
-(function initHamburgerFinal() {
+// Кнопка гамбургера – створюємо та керуємо нею
+(function initHamburger() {
     function createHamburger() {
         if (document.querySelector('.hamburger-trigger')) return;
         const menu = document.querySelector('.new_t-menu');
@@ -1010,21 +1033,25 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         if (window.innerWidth > 768) return;
+
         const btn = document.createElement('div');
         btn.className = 'hamburger-trigger';
         btn.innerHTML = '☰ Меню';
         menu.parentNode.insertBefore(btn, menu);
+
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             menu.classList.toggle('show');
             btn.innerHTML = menu.classList.contains('show') ? '✕ Закрити' : '☰ Меню';
         });
+
         menu.querySelectorAll('.new_t-menu-item').forEach(item => {
             item.addEventListener('click', () => {
                 menu.classList.remove('show');
                 btn.innerHTML = '☰ Меню';
             });
         });
+
         window.addEventListener('resize', () => {
             if (window.innerWidth > 768) {
                 if (btn) btn.style.display = 'none';
@@ -1039,201 +1066,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (menu && !menu.classList.contains('show')) {
                     menu.style.display = 'none';
                 }
+                // Якщо кнопка зникла – відновлюємо
+                if (!document.querySelector('.hamburger-trigger')) {
+                    createHamburger();
+                }
             }
         });
     }
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', createHamburger);
     } else {
         createHamburger();
     }
-})();
-</script>
-<script>
-(function() {
-    // Функція для додавання відсутніх пунктів меню
-    function ensureMenuHasAllItems() {
-        const menu = document.querySelector('.new_t-menu');
-        if (!menu) {
-            setTimeout(ensureMenuHasAllItems, 300);
-            return;
-        }
-
-        // Всі необхідні пункти
-        const requiredItems = [
-            { name: 'tour', label: 'Тур', hasCount: false },
-            { name: 'hotelInfo', label: 'Опис', hasCount: false },
-            { name: 'photo', label: 'Фото', hasCount: true, count: '32' },
-            { name: 'map', label: 'Мапа', hasCount: false },
-            { name: 'reviews', label: 'Відгуки', hasCount: true, count: '3' }
-        ];
-
-        // Отримуємо існуючі назви пунктів
-        const existingItems = Array.from(menu.querySelectorAll('.new_t-menu-item'));
-        const existingNames = existingItems.map(item => item.getAttribute('data-name'));
-
-        // Додаємо відсутні пункти
-        requiredItems.forEach(req => {
-            if (!existingNames.includes(req.name)) {
-                const newItem = document.createElement('div');
-                newItem.className = 'new_t-menu-item';
-                newItem.setAttribute('data-name', req.name);
-                newItem.textContent = req.label;
-                if (req.hasCount) {
-                    const span = document.createElement('span');
-                    span.textContent = req.count;
-                    newItem.appendChild(span);
-                }
-                menu.appendChild(newItem);
-            }
-        });
-
-        // Оновлюємо стилі активного пункту (якщо потрібно)
-        const currentActive = menu.querySelector('.new_t-menu-item.selected');
-        if (!currentActive && menu.firstChild) {
-            menu.firstChild.classList.add('selected');
-        }
-
-        // Переконуємось, що всі пункти мають обробники подій (замість того, щоб покладатися на оригінальний код)
-        attachTabClickHandlers();
-    }
-
-    function attachTabClickHandlers() {
-        const menu = document.querySelector('.new_t-menu');
-        if (!menu) return;
-
-        const items = menu.querySelectorAll('.new_t-menu-item');
-        items.forEach(item => {
-            // Видаляємо старий обробник, якщо він був, щоб не дублювати
-            item.removeEventListener('click', handleTabClick);
-            item.addEventListener('click', handleTabClick);
-        });
-    }
-
-    function handleTabClick(e) {
-        const target = e.currentTarget;
-        const tabName = target.getAttribute('data-name');
-        if (!tabName) return;
-
-        // Змінюємо активний клас
-        document.querySelectorAll('.new_t-menu-item').forEach(i => i.classList.remove('selected'));
-        target.classList.add('selected');
-
-        // Використовуємо оригінальну функцію перемикання від Otpusk, якщо вона є
-        if (window.otpMain && window.otpMain.tour && window.otpMain.tour.view && window.otpMain.tour.view.$menu) {
-            // Симулюємо клік по оригінальному меню (якщо воно існує)
-            const originalMenuItem = document.querySelector(`.new_t-menu-item[data-name="${tabName}"]`);
-            if (originalMenuItem && originalMenuItem !== target) {
-                // Якщо доданий нами пункт – знаходимо оригінальний (якщо він є)
-                // Але ми вже замінили всі пункти, тому краще викликати метод безпосередньо
-            }
-        }
-
-        // Альтернативний спосіб: знайти відповідну вкладку та показати її
-        const allTabs = document.querySelectorAll('.new_t-tab-content');
-        const activeTab = document.querySelector(`.new_t-tab-content.${tabName}`);
-        if (activeTab) {
-            allTabs.forEach(tab => tab.style.display = 'none');
-            activeTab.style.display = 'block';
-        } else {
-            // Якщо вкладки немає – можливо, її потрібно завантажити (наприклад, відгуки)
-            if (tabName === 'reviews') {
-                loadReviews();
-            } else if (tabName === 'map') {
-                loadMap();
-            } else if (tabName === 'photo') {
-                // Фото вже завантажуються через оригінальний віджет
-                console.log('Перехід до фото');
-            }
-        }
-
-        // Оновлюємо хеш URL
-        if (window.location.hash) {
-            const newHash = window.location.hash.replace(/page=\w+/, `page=${tabName}`);
-            window.location.hash = newHash;
-        }
-    }
-
-    function loadReviews() {
-        // Якщо вже є блок відгуків, показуємо його
-        const reviewsTab = document.querySelector('.new_t-tab-content.reviews');
-        if (reviewsTab && reviewsTab.innerHTML.trim() !== '') {
-            document.querySelectorAll('.new_t-tab-content').forEach(t => t.style.display = 'none');
-            reviewsTab.style.display = 'block';
-            return;
-        }
-        // Спробуємо завантажити відгуки через otpMain
-        if (window.otpMain && window.otpMain.tour && window.otpMain.tour.reviews && window.otpMain.tour.reviews.view) {
-            const hotel = window.otpMain.tour.hotel;
-            if (hotel && hotel.i) {
-                window.otpMain.tour.reviews.view.render(reviewsTab, hotel);
-            }
-        } else {
-            // Якщо отпус не дає API, просто покажемо повідомлення
-            if (reviewsTab) {
-                reviewsTab.innerHTML = '<div class="alert alert-info">Завантаження відгуків...</div>';
-                document.querySelectorAll('.new_t-tab-content').forEach(t => t.style.display = 'none');
-                reviewsTab.style.display = 'block';
-                // Тут можна зробити AJAX запит до віджету відгуків
-            }
-        }
-    }
-
-    function loadMap() {
-        const mapTab = document.querySelector('.new_t-tab-content.map');
-        if (!mapTab) return;
-        // Якщо мапа вже завантажена – просто показуємо
-        if (mapTab.innerHTML.trim() !== '' && mapTab.querySelector('#new_os-map')) {
-            document.querySelectorAll('.new_t-tab-content').forEach(t => t.style.display = 'none');
-            mapTab.style.display = 'block';
-            return;
-        }
-        // Намагаємось викликати рендер мапи через otpMain
-        if (window.otpMain && window.otpMain.tour && window.otpMain.tour.hotelMap && window.otpMain.tour.hotelMap.view) {
-            const hotel = window.otpMain.tour.hotel;
-            if (hotel && hotel.i) {
-                window.otpMain.tour.hotelMap.view.render(mapTab, hotel);
-            }
-        } else {
-            // Показуємо заглушку
-            mapTab.innerHTML = '<div class="new_t-tab-content-top"><div class="new_t-tab-content-close">×</div>Мапа</div><div id="new_os-map" style="height:300px;">Мапа не завантажилась</div>';
-            document.querySelectorAll('.new_t-tab-content').forEach(t => t.style.display = 'none');
-            mapTab.style.display = 'block';
-        }
-        // Додаємо обробник для хрестика
-        setTimeout(() => {
-            const closeBtn = mapTab.querySelector('.new_t-tab-content-close');
-            if (closeBtn) {
-                closeBtn.onclick = function(e) {
-                    e.preventDefault();
-                    const tourTab = document.querySelector('.new_t-menu-item[data-name="tour"]');
-                    if (tourTab) tourTab.click();
-                    mapTab.style.display = 'none';
-                };
-            }
-        }, 100);
-    }
-
-    // Запускаємо додавання пунктів після завантаження сторінки та після появи оригінального меню
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(ensureMenuHasAllItems, 500);
-            setTimeout(ensureMenuHasAllItems, 1500); // повторний запуск для надійності
-        });
-    } else {
-        setTimeout(ensureMenuHasAllItems, 500);
-        setTimeout(ensureMenuHasAllItems, 1500);
-    }
-
-    // Спостерігаємо за змінами в меню (якщо Otpusk його перезапише)
-    const observer = new MutationObserver(() => {
-        const menu = document.querySelector('.new_t-menu');
-        if (menu && menu.querySelectorAll('.new_t-menu-item').length < 5) {
-            ensureMenuHasAllItems();
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-    setTimeout(() => observer.disconnect(), 20000);
 })();
 </script>
 {% endblock %}
