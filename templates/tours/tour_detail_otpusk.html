@@ -379,7 +379,7 @@
 
     /* ========== БЛОК "ПОШУК ТУРУ" / "РЕЗУЛЬТАТ ТУРУ" ========== */
     .new_f-wrapper {
-        background-color: var(--primary-color) !important;
+        background-color: #ffffff !important;   /* фон білий */
         border-radius: 3px !important;
         padding: 20px !important;
         margin-bottom: 20px !important;
@@ -397,19 +397,21 @@
     }
 
     .new_f-wrapper .new_f-form-submit {
-        background-color: #ffffff !important;
-        color: var(--primary-color) !important;
-        border: none !important;
-    }
+    background-color: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+}
     .new_f-wrapper .new_f-form-submit:hover {
         background-color: #f8f9fa !important;
     }
 
-    .new_f-wrapper svg,
-    .new_f-wrapper .new_f-datepicker-wrap svg,
-    .new_f-wrapper .new_f-dropdown-btn svg {
-        filter: brightness(0) invert(1);
-    }
+    /* Іконки (svg) – робимо білими (невидимими) */
+.new_f-wrapper svg,
+.new_f-wrapper .new_f-datepicker-wrap svg,
+.new_f-wrapper .new_f-dropdown-btn svg {
+    fill: #ffffff !important;
+    filter: none !important;
+}
 
     .new_f-wrapper .new_f-dropdown-body,
     .new_f-wrapper .new_f-dropdown-body * {
