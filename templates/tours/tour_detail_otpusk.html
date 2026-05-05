@@ -235,7 +235,7 @@
         border-color: var(--primary-dark) !important;
     }
 
-    /* ========== КАРУСЕЛЬ "ПЕРЕГЛЯНУТІ ТУРИ" – КНОПКИ ЗЛІВА ТА СПРАВА ЗІ СТРІЛКАМИ ========== */
+     /* ========== КАРУСЕЛЬ "ПЕРЕГЛЯНУТІ ТУРИ" – КНОПКИ ЗЛІВА ТА СПРАВА ЗІ СТРІЛКАМИ ========== */
     .new_t-similar-viewed {
         position: relative;
     }
@@ -305,13 +305,38 @@
         }
     }
 
-    /* ========== ВИПРАВЛЕННЯ МОБІЛЬНОЇ ВЕРСІЇ КАРУСЕЛІ ========== */
+    /* Стилі для повідомлень */
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    /* Звуження блоку "Переглянуті тури" */
+    .new_t-similar-viewed-gallery {
+        max-width: 1200px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    /* ========== МОБІЛЬНА ВЕРСІЯ (до 768px) ========== */
     @media (max-width: 768px) {
         .new_t-similar-viewed-gallery {
             width: 100% !important;
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch;
-            padding: 0 10px !important;
         }
 
         .owl-stage {
@@ -377,49 +402,21 @@
             padding: 15px !important;
         }
 
-        .new_t-similar-viewed .owl-prev,
+        .new_t-similar-viewed .owl-prev {
+            left: -10px !important;
+            width: 32px !important;
+            height: 32px !important;
+        }
         .new_t-similar-viewed .owl-next {
-            width: 36px !important;
-            height: 36px !important;
-            line-height: 36px !important;
+            right: -10px !important;
+            width: 32px !important;
+            height: 32px !important;
         }
         .new_t-similar-viewed .owl-prev::before,
         .new_t-similar-viewed .owl-next::before {
-            font-size: 28px;
-            line-height: 36px;
+            font-size: 24px;
+            line-height: 32px;
         }
-        .new_t-similar-viewed .owl-prev {
-            left: 5px !important;
-        }
-        .new_t-similar-viewed .owl-next {
-            right: 5px !important;
-        }
-    }
-
-    /* Стилі для повідомлень */
-    .alert-success {
-        background-color: #d4edda;
-        border-color: #c3e6cb;
-        color: #155724;
-        padding: 12px 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-
-    .alert-danger {
-        background-color: #f8d7da;
-        border-color: #f5c6cb;
-        color: #721c24;
-        padding: 12px 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-
-    /* Звуження блоку "Переглянуті тури" */
-    .new_t-similar-viewed-gallery {
-        max-width: 1200px !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
     }
 
     /* ========== СІТКА ДЛЯ ФОТО – ТІЛЬКИ КОЛИ ВКЛАДКА АКТИВНА ========== */
