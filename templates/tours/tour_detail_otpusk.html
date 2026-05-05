@@ -109,7 +109,7 @@
         color: #64748b !important;
         border: none !important;
         border-radius: 0 !important;
-        border-bottom: none !important !important;
+        border-bottom: none !important;
     }
 
     .new_t-menu-item.selected {
@@ -139,13 +139,15 @@
         content: none !important;
     }
 
-    /* Додаткове видалення будь-яких псевдоелементів, які могли б створити полоску */
     .new_t-menu::after,
     .new_t-menu::before,
     .new_t-menu-wrap::after,
-    .new_t-menu-wrap::before {
+    .new_t-menu-wrap::before,
+    .new_t-menu-item::after,
+    .new_t-menu-item::before {
         display: none !important;
         content: none !important;
+        border-bottom: none !important;
     }
 
     /* ========== КАРТКИ В БЛОЦІ "ТУР" - БІЛИЙ ФОН ========== */
@@ -235,7 +237,7 @@
         border-color: var(--primary-dark) !important;
     }
 
-     /* ========== КАРУСЕЛЬ "ПЕРЕГЛЯНУТІ ТУРИ" – КНОПКИ ЗЛІВА ТА СПРАВА ЗІ СТРІЛКАМИ ========== */
+    /* ========== КАРУСЕЛЬ "ПЕРЕГЛЯНУТІ ТУРИ" – КНОПКИ ЗЛІВА ТА СПРАВА ========== */
     .new_t-similar-viewed {
         position: relative;
     }
@@ -298,7 +300,6 @@
         background: var(--primary-color) !important;
     }
 
-    /* Для дуже маленьких екранів – додаємо відступи, щоб кнопки не перекривали картки */
     @media (max-width: 480px) {
         .new_t-similar-viewed-gallery {
             padding: 0 30px !important;
@@ -324,102 +325,13 @@
         margin-bottom: 20px;
     }
 
-    /* Звуження блоку "Переглянуті тури" */
     .new_t-similar-viewed-gallery {
         max-width: 1200px !important;
         margin-left: auto !important;
         margin-right: auto !important;
     }
 
-    /* ========== МОБІЛЬНА ВЕРСІЯ (до 768px) ========== */
-    @media (max-width: 768px) {
-        .new_t-similar-viewed-gallery {
-            width: 100% !important;
-            overflow-x: auto !important;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .owl-stage {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-        }
-
-        .owl-item {
-            width: 280px !important;
-            flex-shrink: 0 !important;
-            margin-right: 15px !important;
-        }
-
-        .new_r-item {
-            flex-direction: column !important;
-            height: auto !important;
-            margin-bottom: 15px !important;
-        }
-
-        .new_r-item-img {
-            width: 100% !important;
-            height: 160px !important;
-            object-fit: cover !important;
-        }
-
-        .new_r-item-body {
-            padding: 12px !important;
-        }
-
-        .new_r-item-hotel {
-            font-size: 1rem !important;
-            white-space: normal !important;
-            word-break: break-word;
-        }
-
-        .new_r-item-geo span,
-        .new_r-item-food,
-        .new_r-item-from,
-        .new_r-item-date {
-            font-size: 0.75rem !important;
-            white-space: normal !important;
-            word-break: break-word;
-        }
-
-        .new_r-item-table {
-            flex-direction: column !important;
-            gap: 8px !important;
-        }
-
-        .new_price-value {
-            font-size: 1.1rem !important;
-        }
-
-        .new_price-desc {
-            font-size: 0.7rem !important;
-        }
-
-        .new_t-container {
-            padding: 0 10px !important;
-        }
-
-        .new_t-tour-tab-table {
-            padding: 15px !important;
-        }
-
-        .new_t-similar-viewed .owl-prev {
-            left: -10px !important;
-            width: 32px !important;
-            height: 32px !important;
-        }
-        .new_t-similar-viewed .owl-next {
-            right: -10px !important;
-            width: 32px !important;
-            height: 32px !important;
-        }
-        .new_t-similar-viewed .owl-prev::before,
-        .new_t-similar-viewed .owl-next::before {
-            font-size: 24px;
-            line-height: 32px;
-        }
-    }
-
-    /* ========== СІТКА ДЛЯ ФОТО – ТІЛЬКИ КОЛИ ВКЛАДКА АКТИВНА ========== */
+    /* ========== СІТКА ДЛЯ ФОТО ========== */
     .new_t-tab-content.photo[style*="display: block"] {
         display: grid !important;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
@@ -441,7 +353,6 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
     }
 
-    /* Адаптація для планшетів */
     @media (max-width: 992px) {
         .new_t-tab-content.photo[style*="display: block"] {
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
@@ -451,7 +362,6 @@
         }
     }
 
-    /* Адаптація для мобільних */
     @media (max-width: 768px) {
         .new_t-tab-content.photo[style*="display: block"] {
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
@@ -463,13 +373,11 @@
         }
     }
 
-    /* Змінює фон основного блоку туру з сірого на білий */
     .new_t-content {
         background-color: #ffffff !important;
     }
 
-    /* ========== НОВІ СТИЛІ ДЛЯ БЛОКУ "ПОШУК ТУРУ" / "РЕЗУЛЬТАТ ТУРУ" ========== */
-    /* Фон блоку – колір агента */
+    /* ========== БЛОК "ПОШУК ТУРУ" / "РЕЗУЛЬТАТ ТУРУ" ========== */
     .new_f-wrapper {
         background-color: var(--primary-color) !important;
         border-radius: 3px !important;
@@ -477,7 +385,6 @@
         margin-bottom: 20px !important;
     }
 
-    /* Заголовок та всі тексти всередині – білі */
     .new_f-wrapper .new_f-title,
     .new_f-wrapper .new_f-form-field .new_f-dropdown-btn,
     .new_f-wrapper .new_f-form-field .new_f-dropdown-btn *,
@@ -489,7 +396,6 @@
         color: #ffffff !important;
     }
 
-    /* Кнопка "Знайти" – біла з кольоровим текстом */
     .new_f-wrapper .new_f-form-submit {
         background-color: #ffffff !important;
         color: var(--primary-color) !important;
@@ -499,14 +405,12 @@
         background-color: #f8f9fa !important;
     }
 
-    /* SVG-іконки – білі */
     .new_f-wrapper svg,
     .new_f-wrapper .new_f-datepicker-wrap svg,
     .new_f-wrapper .new_f-dropdown-btn svg {
         filter: brightness(0) invert(1);
     }
 
-    /* Випадаючі списки залишаємо світлими для зручності читання */
     .new_f-wrapper .new_f-dropdown-body,
     .new_f-wrapper .new_f-dropdown-body * {
         background-color: #ffffff !important;
@@ -516,39 +420,33 @@
         filter: none !important;
     }
 
-    /* Додаткові елементи, які можуть бути в блоці */
     .new_f-wrapper .new_f-dropdown-body-top {
         background-color: var(--primary-color) !important;
         color: #ffffff !important;
     }
 
-    /* ========== ЗМІНА ГОЛУБИХ КОЛЬОРІВ У МОДАЛЬНИХ ВІКНАХ (ДАТИ, ХАРЧУВАННЯ) ========== */
-    /* Заголовок модального вікна – фон кольором агента, текст білий */
+    /* ========== МОДАЛЬНІ ВІКНА (ДАТИ, ХАРЧУВАННЯ) – КОЛІР АГЕНТА ========== */
     .new_t-modal-body-top {
         background-color: var(--primary-color) !important;
         color: #ffffff !important;
         border: none !important;
     }
 
-    /* Активна колонка з кількістю ночей – колір тексту агента */
     .new_t-date-modal-table-head.selected .new_t-head-nights,
     .new_t-date-modal-table-head.selected .new_t-head-days {
         color: var(--primary-color) !important;
     }
 
-    /* Виділена клітинка з датою (активна) */
     .new_t-date-modal-table td.selected {
         background-color: rgba(var(--primary-rgb, 193, 31, 88), 0.08) !important;
         color: var(--primary-color) !important;
         font-weight: bold;
     }
 
-    /* Стрілки перегортання – колір агента */
     .new_t-date-change svg {
         fill: var(--primary-color) !important;
     }
 
-    /* Кнопка "Застосувати" у модальних вікнах – колір агента */
     .new_t-modal-body .new_f-dropdown-btn-apply {
         background-color: var(--primary-color) !important;
         border-color: var(--primary-color) !important;
@@ -558,11 +456,124 @@
         background-color: var(--primary-dark) !important;
     }
 
-    /* Додаткове прибирання голубої полоски у меню (повне) */
-    .new_t-menu-item::after,
-    .new_t-menu-item::before {
-        border-bottom: none !important;
-        content: none !important;
+    /* ========== МОБІЛЬНА ВЕРСІЯ – ВИПРАВЛЕННЯ НАКЛАДАННЯ В "ПЕРЕГЛЯНУТИХ ТУРАХ" ========== */
+    @media (max-width: 768px) {
+        /* Кожна картка туру – нормальне блокування */
+        .new_r-item {
+            flex-direction: column !important;
+            display: flex !important;
+            background: white !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+            margin-bottom: 15px !important;
+        }
+
+        /* Фото – фіксована висота, не розтягується, обрізається */
+        .new_r-item-img {
+            width: 100% !important;
+            height: 180px !important;
+            object-fit: cover !important;
+            display: block !important;
+        }
+
+        /* Тіло картки – нормальне позиціонування, не поверх фото */
+        .new_r-item-body {
+            padding: 12px 15px !important;
+            background: white !important;
+            position: relative !important;
+            z-index: 2 !important;
+        }
+
+        /* Назва готелю – без накладання, переноситься */
+        .new_r-item-hotel {
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            margin-bottom: 8px !important;
+            white-space: normal !important;
+            word-break: break-word;
+            line-height: 1.3 !important;
+        }
+
+        /* Інші текстові елементи – нормальний відступ */
+        .new_r-item-geo,
+        .new_r-item-food,
+        .new_r-item-from,
+        .new_r-item-date {
+            font-size: 0.75rem !important;
+            margin-bottom: 5px !important;
+            white-space: normal !important;
+        }
+
+        /* Ціна та кнопка в окремому рядку, без накладання */
+        .new_r-item-table {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-top: 12px !important;
+            gap: 10px !important;
+        }
+
+        .new_price-value {
+            font-size: 1.1rem !important;
+            font-weight: bold !important;
+        }
+
+        .new_price-desc {
+            font-size: 0.7rem !important;
+        }
+
+        /* Кнопка "Детальніше" – нормальний розмір, не перекриває текст */
+        .new_r-item .btn {
+            padding: 6px 12px !important;
+            font-size: 0.8rem !important;
+            white-space: nowrap !important;
+            display: inline-block !important;
+            width: auto !important;
+        }
+
+        /* Виправлення можливих накладень через absolute/relative */
+        .new_r-item-body * {
+            position: static !important;
+        }
+
+        /* Галерея – горизонтальний скрол з відступами */
+        .new_t-similar-viewed-gallery {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 10px !important;
+        }
+
+        .owl-stage {
+            display: flex !important;
+            gap: 12px !important;
+        }
+
+        .owl-item {
+            width: 280px !important;
+            flex-shrink: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        /* Кнопки навігації каруселі на мобільних – менші та трохи зсунуті */
+        .new_t-similar-viewed .owl-prev,
+        .new_t-similar-viewed .owl-next {
+            width: 32px !important;
+            height: 32px !important;
+            line-height: 32px !important;
+        }
+        .new_t-similar-viewed .owl-prev::before,
+        .new_t-similar-viewed .owl-next::before {
+            font-size: 28px;
+            line-height: 32px;
+        }
+        .new_t-similar-viewed .owl-prev {
+            left: 5px !important;
+        }
+        .new_t-similar-viewed .owl-next {
+            right: 5px !important;
+        }
     }
 </style>
 <!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
