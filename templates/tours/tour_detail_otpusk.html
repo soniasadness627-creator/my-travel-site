@@ -456,9 +456,21 @@
         background-color: var(--primary-dark) !important;
     }
 
-    /* ========== МОБІЛЬНА ВЕРСІЯ – ВИПРАВЛЕННЯ НАКЛАДАННЯ В "ПЕРЕГЛЯНУТИХ ТУРАХ" ========== */
+    /* ========== ВИПРАВЛЕННЯ ДЛЯ МОБІЛЬНИХ ========== */
     @media (max-width: 768px) {
-        /* Кожна картка туру – нормальне блокування */
+        /* Відновлення блоку "Переглянуті тури" */
+        .new_t-similar-viewed {
+            display: block !important;
+            visibility: visible !important;
+            overflow: visible !important;
+            margin-top: 30px !important;
+            clear: both !important;
+        }
+        .owl-stage-outer {
+            overflow: visible !important;
+        }
+
+        /* Стилі для карток у каруселі (без накладання) */
         .new_r-item {
             flex-direction: column !important;
             display: flex !important;
@@ -469,7 +481,6 @@
             margin-bottom: 15px !important;
         }
 
-        /* Фото – фіксована висота, не розтягується, обрізається */
         .new_r-item-img {
             width: 100% !important;
             height: 180px !important;
@@ -477,7 +488,6 @@
             display: block !important;
         }
 
-        /* Тіло картки – нормальне позиціонування, не поверх фото */
         .new_r-item-body {
             padding: 12px 15px !important;
             background: white !important;
@@ -485,7 +495,6 @@
             z-index: 2 !important;
         }
 
-        /* Назва готелю – без накладання, переноситься */
         .new_r-item-hotel {
             font-size: 1rem !important;
             font-weight: 600 !important;
@@ -495,7 +504,6 @@
             line-height: 1.3 !important;
         }
 
-        /* Інші текстові елементи – нормальний відступ */
         .new_r-item-geo,
         .new_r-item-food,
         .new_r-item-from,
@@ -505,7 +513,6 @@
             white-space: normal !important;
         }
 
-        /* Ціна та кнопка в окремому рядку, без накладання */
         .new_r-item-table {
             display: flex !important;
             flex-direction: row !important;
@@ -524,7 +531,6 @@
             font-size: 0.7rem !important;
         }
 
-        /* Кнопка "Детальніше" – нормальний розмір, не перекриває текст */
         .new_r-item .btn {
             padding: 6px 12px !important;
             font-size: 0.8rem !important;
@@ -533,12 +539,10 @@
             width: auto !important;
         }
 
-        /* Виправлення можливих накладень через absolute/relative */
         .new_r-item-body * {
             position: static !important;
         }
 
-        /* Галерея – горизонтальний скрол з відступами */
         .new_t-similar-viewed-gallery {
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch;
@@ -556,7 +560,6 @@
             margin-right: 0 !important;
         }
 
-        /* Кнопки навігації каруселі на мобільних – менші та трохи зсунуті */
         .new_t-similar-viewed .owl-prev,
         .new_t-similar-viewed .owl-next {
             width: 32px !important;
@@ -576,11 +579,12 @@
         }
     }
 </style>
-<!-- СВОЯ КНОПКА "ПОВЕРНУТИСЯ" -->
+
+<!-- КНОПКА "ПОВЕРНУТИСЯ" – ВИПРАВЛЕНО: ТЕПЕР ВЕДЕ НА СТОРІНКУ РЕЗУЛЬТАТІВ ПОШУКУ -->
 <div class="container my-3">
-    <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
+    <button onclick="goBackToSearch()" class="btn btn-outline-secondary btn-sm" style="cursor: pointer;">
         ← Повернутися до результатів пошуку
-    </a>
+    </button>
 </div>
 
 <!-- ========== БЛОК БРОНЮВАННЯ ========== -->
@@ -690,13 +694,28 @@ function showMessage(message, type) {
     setTimeout(() => { if (messageDiv) messageDiv.style.display = 'none'; }, 5000);
 }
 
+// Функція для кнопки "Повернутися до результатів пошуку"
+function goBackToSearch() {
+    // Якщо є реферер і він містить сторінку пошуку – йдемо туди
+    if (document.referrer && (document.referrer.includes('/search/') || document.referrer.includes('/result/'))) {
+        window.location.href = document.referrer;
+    }
+    // Інакше – стандартний back
+    else if (window.history.length > 1) {
+        window.history.back();
+    }
+    // Якщо нічого не підходить – ведемо на головну пошуку (замініть URL за потреби)
+    else {
+        window.location.href = '/search/';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Зміна тексту "Пошук туру" на "Результат туру"
     const titleElement = document.querySelector('.new_f-wrapper .new_f-title');
     if (titleElement && titleElement.innerText === 'Пошук туру') {
         titleElement.innerText = 'Результат туру';
     } else {
-        // Якщо елемент з'являється динамічно
         const observer = new MutationObserver(function() {
             const el = document.querySelector('.new_f-wrapper .new_f-title');
             if (el && el.innerText === 'Пошук туру') {
@@ -706,6 +725,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         observer.observe(document.body, { childList: true, subtree: true });
         setTimeout(() => observer.disconnect(), 5000);
+    }
+
+    // ВИПРАВЛЕННЯ ВКЛАДОК НА МОБІЛЬНИХ: показуємо тільки активний контент
+    function fixTabs() {
+        const selectedTab = document.querySelector('.new_t-menu-item.selected');
+        if (!selectedTab) return;
+        const tabName = selectedTab.getAttribute('data-name');
+        if (!tabName) return;
+        document.querySelectorAll('.new_t-tab-content').forEach(tab => {
+            tab.style.display = 'none';
+        });
+        const activeTab = document.querySelector(`.new_t-tab-content.${tabName}`);
+        if (activeTab) activeTab.style.display = 'block';
+    }
+    // Спостерігаємо за зміною активного пункту меню
+    const menu = document.querySelector('.new_t-menu');
+    if (menu) {
+        const observer = new MutationObserver(() => fixTabs());
+        observer.observe(menu, { childList: true, subtree: true, attributes: true });
+        fixTabs();
     }
 
     const submitBtn = document.getElementById('submitBookingBtn');
@@ -787,7 +826,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 2000);
 });
 
-// ========== ПЕРЕГЛЯД ФОТО ПРИ НАТИСКАННІ ==========
+// ========== ПЕРЕГЛЯД ФОТО ПРИ НАТИСКАННІ (LIGHTBOX) ==========
 function initLightbox() {
     const photos = document.querySelectorAll('.new_t-tab-content.photo img');
     if (photos.length === 0) {
