@@ -502,6 +502,77 @@
         overflow-x: hidden !important;
         max-width: 100% !important;
     }
+    /* ========== ЗМІНА КОЛЬОРУ ВЕРХНІХ ПАНЕЛЕЙ У МАПІ ТА ВІДГУКАХ ========== */
+/* Замінюємо голубий фон #4C9CE0 на колір агента */
+.new_t-tab-content.map .new_t-tab-content-top,
+.new_t-tab-content.reviews .new_t-tab-content-top {
+    background: var(--primary-color, #c11f58) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+/* Стилізуємо хрестик закриття – білий, круглий, з колірним фоном при наведенні */
+.new_t-tab-content.map .new_t-tab-content-close,
+.new_t-tab-content.reviews .new_t-tab-content-close {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 50% !important;
+    width: 30px !important;
+    height: 30px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 22px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    color: white !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    float: right !important;
+}
+
+.new_t-tab-content.map .new_t-tab-content-close:hover,
+.new_t-tab-content.reviews .new_t-tab-content-close:hover {
+    background: rgba(0, 0, 0, 0.3) !important;
+    transform: scale(1.05) !important;
+}
+
+/* Якщо хрестик десь ще має інші кольори – перебиваємо */
+.new_t-tab-content-top .new_t-tab-content-close {
+    color: white !important;
+    background: transparent !important;
+}
+
+/* Для заголовка всередині панелі – теж білий колір */
+.new_t-tab-content.map .new_t-tab-content-top,
+.new_t-tab-content.reviews .new_t-tab-content-top {
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    position: relative !important;
+    height: auto !important;
+    line-height: normal !important;
+    padding: 10px 15px !important;
+}
+
+/* Вирівнюємо текст та хрестик */
+.new_t-tab-content.map .new_t-tab-content-top,
+.new_t-tab-content.reviews .new_t-tab-content-top {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+/* Видаляємо можливі абсолютні позиціонування, які заважають */
+.new_t-tab-content.map .new_t-tab-content-top,
+.new_t-tab-content.reviews .new_t-tab-content-top {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+}
 </style>
 
 <!-- КНОПКА "ПОВЕРНУТИСЯ" -->
