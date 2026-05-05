@@ -90,7 +90,7 @@
         background: transparent !important;
     }
 
-    /* ========== СТИЛІ ДЛЯ МЕНЮ – КОЛІР АГЕНТА (БЕЗ ГОЛУБОЇ ПОЛОСКИ) ========== */
+    /* ========== СТИЛІ ДЛЯ МЕНЮ – КОЛІР АГЕНТА ========== */
     .new_t-menu-wrap,
     .new_t-menu {
         background: transparent !important;
@@ -456,9 +456,8 @@
         background-color: var(--primary-dark) !important;
     }
 
-    /* ========== ГАМБУРГЕР-МЕНЮ ТА ІНШІ ВИПРАВЛЕННЯ ДЛЯ МОБІЛЬНИХ ========== */
+    /* ========== АДАПТИВНІСТЬ ТА ГАМБУРГЕР-МЕНЮ ========== */
     @media (max-width: 768px) {
-        /* Закріплюємо блок "Результат туру" зверху */
         .new_f-wrapper {
             position: sticky !important;
             top: 0 !important;
@@ -467,13 +466,11 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
-        /* Зменшуємо відступ між фото та заголовком */
         .new_t-header-col {
             margin-top: 0 !important;
             padding-top: 0 !important;
         }
 
-        /* Повертаємо оригінальну карусель фото */
         .new_t-header-gallery-mobile {
             display: block !important;
         }
@@ -481,7 +478,7 @@
             display: none !important;
         }
 
-        /* Гамбургер-меню – ховаємо оригінальне горизонтальне меню */
+        /* Оригінальне меню ховаємо, будемо використовувати своє */
         .new_t-menu {
             display: none !important;
             flex-direction: column !important;
@@ -506,10 +503,6 @@
         }
         .new_t-menu-item:last-child {
             border-bottom: none;
-        }
-        /* Примусово показуємо всі пункти меню */
-        .new_t-menu-item[style*="display: none"] {
-            display: block !important;
         }
 
         /* Кнопка гамбургера */
@@ -536,7 +529,6 @@
             background: var(--primary-dark, #a01848);
         }
 
-        /* Додаткові покращення для тексту */
         .new_t-header-title {
             font-size: 1.3rem !important;
         }
@@ -546,7 +538,7 @@
         }
     }
 
-    /* Стилі для хрестика закриття мапи */
+    /* Хрестик закриття мапи */
     .new_t-tab-content.map .new_t-tab-content-top {
         position: relative;
         background: rgba(0,0,0,0.7);
@@ -578,7 +570,6 @@
         transform: scale(1.05);
     }
 
-    /* Забороняємо горизонтальний скрол всього модуля */
     #otpusk-tour-module,
     .new_t-container {
         overflow-x: hidden !important;
@@ -869,124 +860,193 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- ========== ГАМБУРГЕР-МЕНЮ ТА ФІКС ДЛЯ МАПИ ========== -->
+<!-- ========== ПРИМУСОВЕ СТВОРЕННЯ ВСІХ 5 ПУНКТІВ МЕНЮ (ГАМБУРГЕР) ========== -->
 <script>
 (function() {
-    // Функція створення/відновлення гамбургер-меню
-    let hamburgerBtn = null;
-    let menuElement = null;
+    // Список всіх необхідних пунктів меню
+    const menuItems = [
+        { name: 'tour', label: 'Тур' },
+        { name: 'hotelInfo', label: 'Опис' },
+        { name: 'photo', label: 'Фото' },
+        { name: 'map', label: 'Мапа' },
+        { name: 'reviews', label: 'Відгуки' }
+    ];
 
-    function createOrRestoreHamburger() {
+    function ensureFullMenu() {
+        const menuContainer = document.querySelector('.new_t-menu');
+        if (!menuContainer) {
+            setTimeout(ensureFullMenu, 300);
+            return;
+        }
+
+        // Перевіряємо, скільки зараз пунктів
+        const existingItems = menuContainer.querySelectorAll('.new_t-menu-item');
+        if (existingItems.length >= 5) {
+            // Якщо вже є 5 – нічого не робимо
+            return;
+        }
+
+        // Якщо пунктів менше 5 – видаляємо всі старі та створюємо свої
+        existingItems.forEach(item => item.remove());
+
+        // Створюємо нові пункти
+        menuItems.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'new_t-menu-item';
+            if (index === 0) div.classList.add('selected');
+            div.setAttribute('data-name', item.name);
+            div.textContent = item.label;
+            if (item.name === 'photo') {
+                const span = document.createElement('span');
+                span.textContent = '32';
+                div.appendChild(span);
+            } else if (item.name === 'reviews') {
+                const span = document.createElement('span');
+                span.textContent = '3';
+                div.appendChild(span);
+            }
+            menuContainer.appendChild(div);
+        });
+
+        // Після створення – додаємо обробники кліків для перемикання вкладок
+        attachTabClickHandlers();
+    }
+
+    function attachTabClickHandlers() {
+        const items = document.querySelectorAll('.new_t-menu-item');
+        items.forEach(item => {
+            item.removeEventListener('click', tabClickHandler);
+            item.addEventListener('click', tabClickHandler);
+        });
+    }
+
+    function tabClickHandler(e) {
+        const target = e.currentTarget;
+        const tabName = target.getAttribute('data-name');
+        if (!tabName) return;
+
+        // Змінюємо активний клас
+        document.querySelectorAll('.new_t-menu-item').forEach(i => i.classList.remove('selected'));
+        target.classList.add('selected');
+
+        // Ховаємо всі вкладки
+        document.querySelectorAll('.new_t-tab-content').forEach(tab => {
+            tab.style.display = 'none';
+        });
+
+        // Показуємо вибрану вкладку
+        const activeTab = document.querySelector(`.new_t-tab-content.${tabName}`);
+        if (activeTab) {
+            activeTab.style.display = 'block';
+        } else {
+            console.warn('Вкладка не знайдена:', tabName);
+        }
+
+        // Оновлюємо хеш (для історії)
+        if (window.otpMain && window.otpMain.hash) {
+            window.otpMain.hash.add('page', tabName);
+            window.otpMain.hash.compile();
+        }
+
+        // Спеціальна обробка для мапи
+        if (tabName === 'map') {
+            setTimeout(() => {
+                const mapContainer = document.querySelector('.new_t-tab-content.map');
+                if (mapContainer && !mapContainer.innerHTML.trim()) {
+                    if (window.otpMain && window.otpMain.tour && window.otpMain.tour.hotelMap && window.otpMain.tour.hotelMap.view) {
+                        const hotel = window.otpMain.tour.hotel;
+                        if (hotel && hotel.i) {
+                            window.otpMain.tour.hotelMap.view.render(mapContainer, hotel);
+                        }
+                    }
+                }
+                // Додаємо хрестик закриття, якщо його немає
+                const closeBtn = document.querySelector('.new_t-tab-content.map .new_t-tab-content-close');
+                if (closeBtn) {
+                    closeBtn.style.cursor = 'pointer';
+                    // Видаляємо старі обробники, щоб не дублювати
+                    const newBtn = closeBtn.cloneNode(true);
+                    closeBtn.parentNode.replaceChild(newBtn, closeBtn);
+                    newBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const tourTab = document.querySelector('.new_t-menu-item[data-name="tour"]');
+                        if (tourTab) tourTab.click();
+                        const mapCont = document.querySelector('.new_t-tab-content.map');
+                        if (mapCont) mapCont.style.display = 'none';
+                        document.documentElement.classList.remove('new_layer-open-map');
+                    });
+                }
+            }, 100);
+        }
+    }
+
+    // Запускаємо після завантаження DOM і після того, як Otpusk створить своє меню
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(ensureFullMenu, 500);
+        });
+    } else {
+        setTimeout(ensureFullMenu, 500);
+    }
+
+    // Спостерігаємо за змінами, якщо Otpusk пізніше перезапише меню
+    const menuObserver = new MutationObserver(function(mutations) {
+        const menu = document.querySelector('.new_t-menu');
+        if (menu && menu.querySelectorAll('.new_t-menu-item').length < 5) {
+            ensureFullMenu();
+        }
+    });
+    menuObserver.observe(document.body, { childList: true, subtree: true });
+    setTimeout(() => menuObserver.disconnect(), 15000);
+})();
+
+// Окремий фікс для гамбургер-меню (кнопка)
+(function initHamburgerFinal() {
+    function createHamburger() {
+        if (document.querySelector('.hamburger-trigger')) return;
         const menu = document.querySelector('.new_t-menu');
         if (!menu) {
-            setTimeout(createOrRestoreHamburger, 300);
+            setTimeout(createHamburger, 300);
             return;
         }
         if (window.innerWidth > 768) return;
-
-        menuElement = menu;
-
-        // Якщо кнопки ще немає – створюємо
-        if (!document.querySelector('.hamburger-trigger')) {
-            const btn = document.createElement('div');
-            btn.className = 'hamburger-trigger';
-            btn.innerHTML = '☰ Меню';
-            menu.parentNode.insertBefore(btn, menu);
-            hamburgerBtn = btn;
-
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                menu.classList.toggle('show');
-                btn.innerHTML = menu.classList.contains('show') ? '✕ Закрити' : '☰ Меню';
-            });
-
-            menu.querySelectorAll('.new_t-menu-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    menu.classList.remove('show');
-                    if (hamburgerBtn) hamburgerBtn.innerHTML = '☰ Меню';
-                });
-            });
-        } else {
-            hamburgerBtn = document.querySelector('.hamburger-trigger');
-        }
-
-        // Приховуємо/показуємо залежно від ширини
-        if (window.innerWidth <= 768) {
-            if (hamburgerBtn) hamburgerBtn.style.display = 'inline-flex';
-            if (menu && !menu.classList.contains('show')) menu.style.display = 'none';
-        } else {
-            if (hamburgerBtn) hamburgerBtn.style.display = 'none';
-            if (menu) {
+        const btn = document.createElement('div');
+        btn.className = 'hamburger-trigger';
+        btn.innerHTML = '☰ Меню';
+        menu.parentNode.insertBefore(btn, menu);
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menu.classList.toggle('show');
+            btn.innerHTML = menu.classList.contains('show') ? '✕ Закрити' : '☰ Меню';
+        });
+        menu.querySelectorAll('.new_t-menu-item').forEach(item => {
+            item.addEventListener('click', () => {
                 menu.classList.remove('show');
-                menu.style.display = 'flex';
-                menu.style.flexDirection = 'row';
-                menu.style.flexWrap = 'wrap';
-            }
-        }
-    }
-
-    // Спостерігаємо за змінами в DOM, щоб кнопка не зникала
-    const observer = new MutationObserver(() => {
-        if (window.innerWidth <= 768 && !document.querySelector('.hamburger-trigger')) {
-            createOrRestoreHamburger();
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // Запуск
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', createOrRestoreHamburger);
-    } else {
-        createOrRestoreHamburger();
-    }
-
-    // Обробка зміни розміру вікна
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) {
-            if (hamburgerBtn) hamburgerBtn.style.display = 'none';
-            if (menuElement) {
-                menuElement.classList.remove('show');
-                menuElement.style.display = 'flex';
-                menuElement.style.flexDirection = 'row';
-                menuElement.style.flexWrap = 'wrap';
-            }
-        } else {
-            if (hamburgerBtn) hamburgerBtn.style.display = 'inline-flex';
-            if (menuElement && !menuElement.classList.contains('show')) {
-                menuElement.style.display = 'none';
-            }
-            if (!document.querySelector('.hamburger-trigger')) {
-                createOrRestoreHamburger();
-            }
-        }
-    });
-})();
-
-// Фікс для закриття мапи через хрестик (робимо його клікабельним)
-(function fixMapClose() {
-    const checkInterval = setInterval(() => {
-        const mapCloseBtn = document.querySelector('.new_t-tab-content.map .new_t-tab-content-close');
-        if (mapCloseBtn) {
-            mapCloseBtn.style.cursor = 'pointer';
-            // Видаляємо старі обробники, щоб не дублювати
-            const newBtn = mapCloseBtn.cloneNode(true);
-            mapCloseBtn.parentNode.replaceChild(newBtn, mapCloseBtn);
-            newBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                // Повертаємось до вкладки "Тур"
-                const tourTab = document.querySelector('.new_t-menu-item[data-name="tour"]');
-                if (tourTab) tourTab.click();
-                // Ховаємо контейнер мапи
-                const mapContainer = document.querySelector('.new_t-tab-content.map');
-                if (mapContainer) mapContainer.style.display = 'none';
-                // Знімаємо клас відкритого оверлею, якщо є
-                document.documentElement.classList.remove('new_layer-open-map');
+                btn.innerHTML = '☰ Меню';
             });
-            clearInterval(checkInterval);
-        }
-    }, 500);
-    setTimeout(() => clearInterval(checkInterval), 10000);
+        });
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                if (btn) btn.style.display = 'none';
+                if (menu) {
+                    menu.classList.remove('show');
+                    menu.style.display = 'flex';
+                    menu.style.flexDirection = 'row';
+                    menu.style.flexWrap = 'wrap';
+                }
+            } else {
+                if (btn) btn.style.display = 'inline-flex';
+                if (menu && !menu.classList.contains('show')) {
+                    menu.style.display = 'none';
+                }
+            }
+        });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', createHamburger);
+    } else {
+        createHamburger();
+    }
 })();
 </script>
 {% endblock %}
