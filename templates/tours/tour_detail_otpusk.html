@@ -803,52 +803,59 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initLightbox, 1000);
 });
 </script>
-<!-- ========== ГАМБУРГЕР-МЕНЮ ДЛЯ МОБІЛЬНИХ ========== -->
+<!-- ========== ГАМБУРГЕР-МЕНЮ ДЛЯ iPhone (виправлене) ========== -->
 <style>
-    /* Глобальні стилі для гамбургера */
-    .hamburger-menu-btn {
-        display: none;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        background: var(--primary-color, #c11f58);
-        color: white;
-        padding: 10px 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
-        margin-bottom: 12px;
-        width: fit-content;
-        user-select: none;
-        transition: background 0.2s;
-    }
-    .hamburger-menu-btn:hover {
-        background: var(--primary-dark, #a01848);
-    }
-
+    /* Базові стилі – тільки для мобільних */
     @media (max-width: 768px) {
-        /* Ховаємо оригінальне горизонтальне меню, воно буде показане через кнопку */
+        /* Ховаємо оригінальне меню (воно буде показане через кнопку) */
         .new_t-menu {
             display: none !important;
             flex-direction: column !important;
-            gap: 8px;
             background: white;
-            padding: 15px;
-            border-radius: 12px;
+            border-radius: 16px;
+            padding: 10px 0;
+            margin: 15px 0;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            width: 100%;
         }
         /* Коли меню відкрите */
-        .new_t-menu.open {
+        .new_t-menu.show {
             display: flex !important;
         }
-        /* Пункти меню вертикально */
+        /* Пункти меню вертикально, без обрізання */
         .new_t-menu-item {
-            display: block !important;
-            text-align: center !important;
+            flex: none !important;
+            text-align: center;
+            padding: 12px 16px !important;
+            font-size: 15px !important;
+            border-bottom: 1px solid #eee;
             white-space: normal !important;
-            padding: 10px !important;
+            width: auto !important;
+        }
+        .new_t-menu-item:last-child {
+            border-bottom: none;
+        }
+        /* Кнопка гамбургера */
+        .hamburger-trigger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--primary-color, #c11f58);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 15px;
+            width: fit-content;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: 0.2s;
+        }
+        .hamburger-trigger:active {
+            background: var(--primary-dark, #a01848);
         }
         /* Закріплюємо блок "Результат туру" зверху */
         .new_f-wrapper {
@@ -862,71 +869,92 @@ document.addEventListener('DOMContentLoaded', function() {
             margin-top: 0 !important;
             padding-top: 0 !important;
         }
-        /* Якщо хочете повернути карусель фото (за замовчуванням вона вже є) – розкоментуйте наступний блок */
-        /*
+        /* Повертаємо оригінальну карусель фото (якщо вона була прихована) */
         .new_t-header-gallery-mobile {
             display: block !important;
         }
         .new_t-header-desktop-img {
             display: none !important;
         }
-        */
+        /* Додатково – робимо текст трохи зручнішим */
+        .new_t-header-title {
+            font-size: 1.3rem !important;
+        }
+        .new_t-header-desc {
+            font-size: 0.85rem !important;
+            line-height: 1.4 !important;
+        }
     }
 </style>
 
 <script>
-// Гамбургер-меню для мобільних вкладок
-(function initHamburgerMenu() {
-    const menu = document.querySelector('.new_t-menu');
-    if (!menu) return;
+(function() {
+    // Функція для створення гамбургер-меню (працює на iPhone)
+    function initHamburger() {
+        // Якщо вже є кнопка – виходимо
+        if (document.querySelector('.hamburger-trigger')) return;
 
-    const isMobile = () => window.innerWidth <= 768;
-
-    if (!isMobile()) return;
-
-    // Створюємо кнопку гамбургера
-    const btn = document.createElement('div');
-    btn.className = 'hamburger-menu-btn';
-    btn.innerHTML = '<span>☰ Меню</span>';
-
-    // Вставляємо кнопку перед меню
-    menu.parentElement.insertBefore(btn, menu);
-
-    // Відкриття/закриття
-    btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (menu.style.display === 'none' || getComputedStyle(menu).display === 'none') {
-            menu.style.display = 'flex';
-            btn.innerHTML = '<span>✕ Закрити</span>';
-        } else {
-            menu.style.display = 'none';
-            btn.innerHTML = '<span>☰ Меню</span>';
+        const menu = document.querySelector('.new_t-menu');
+        if (!menu) {
+            // Якщо меню ще не з'явилося, пробуємо знову через 300 мс
+            setTimeout(initHamburger, 300);
+            return;
         }
-    });
 
-    // Закриття при виборі пункту меню
-    menu.querySelectorAll('.new_t-menu-item').forEach(item => {
-        item.addEventListener('click', () => {
-            if (isMobile()) {
-                menu.style.display = 'none';
-                btn.innerHTML = '<span>☰ Меню</span>';
+        // Якщо ширина екрана більша за 768 – не додаємо гамбургер
+        if (window.innerWidth > 768) return;
+
+        // Створюємо кнопку
+        const btn = document.createElement('div');
+        btn.className = 'hamburger-trigger';
+        btn.innerHTML = '☰ Меню';
+
+        // Вставляємо кнопку перед меню
+        menu.parentNode.insertBefore(btn, menu);
+
+        // Відкриття/закриття
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            menu.classList.toggle('show');
+            btn.innerHTML = menu.classList.contains('show') ? '✕ Закрити' : '☰ Меню';
+        });
+
+        // Закриваємо меню після вибору пункту
+        const items = menu.querySelectorAll('.new_t-menu-item');
+        items.forEach(item => {
+            item.addEventListener('click', function() {
+                menu.classList.remove('show');
+                btn.innerHTML = '☰ Меню';
+            });
+        });
+
+        // При зміні розміру вікна – адаптуємо поведінку
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                // На широких екранах ховаємо кнопку, показуємо звичайне меню
+                if (btn) btn.style.display = 'none';
+                if (menu) {
+                    menu.classList.remove('show');
+                    menu.style.display = 'flex';
+                    menu.style.flexDirection = 'row';
+                    menu.style.flexWrap = 'wrap';
+                }
+            } else {
+                // На мобільних – показуємо кнопку, ховаємо меню (якщо не відкрите)
+                if (btn) btn.style.display = 'inline-flex';
+                if (menu && !menu.classList.contains('show')) {
+                    menu.style.display = 'none';
+                }
             }
         });
-    });
+    }
 
-    // Адаптація при зміні розміру вікна
-    window.addEventListener('resize', () => {
-        if (isMobile()) {
-            if (btn) btn.style.display = 'flex';
-            menu.style.display = 'none';
-            btn.innerHTML = '<span>☰ Меню</span>';
-        } else {
-            if (btn) btn.style.display = 'none';
-            menu.style.display = 'flex';
-            menu.style.flexDirection = 'row';
-            menu.style.flexWrap = 'wrap';
-        }
-    });
+    // Запускаємо після завантаження DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHamburger);
+    } else {
+        initHamburger();
+    }
 })();
 </script>
 {% endblock %}
