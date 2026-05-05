@@ -1145,12 +1145,12 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- ========== БЛОК "ГОТЕЛІ З АНАЛОГІЧНОЮ ЦІНОЮ" ========== -->
 <div class="container mt-5 mb-5" id="similarPriceSection" style="display: none;">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold" style="color: var(--primary-color);">🏨 Готелі з аналогічною ціною (±5000 грн)</h3>
+        <h3 class="fw-bold" style="color: #000000;">Готелі з аналогічною ціною</h3>
         <a href="/search/" class="text-decoration-none" style="color: var(--primary-color);">Всі тури →</a>
     </div>
     <div class="similar-price-wrapper">
         <div class="similar-price-carousel owl-carousel owl-theme" id="similarPriceCarousel"></div>
-        <div class="similar-price-nav" style="display: none;">
+        <div class="similar-price-nav">
             <button class="similar-prev-btn">‹</button>
             <button class="similar-next-btn">›</button>
         </div>
@@ -1159,8 +1159,20 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <style>
-    .similar-price-wrapper { position: relative; }
-    .similar-price-carousel .owl-item { padding: 10px; }
+    .similar-price-wrapper {
+        position: relative;
+        padding: 0 5px;
+    }
+    .similar-price-carousel {
+        display: block !important;
+    }
+    .similar-price-carousel .owl-stage {
+        display: flex !important;
+    }
+    .similar-price-carousel .owl-item {
+        padding: 10px;
+        flex-shrink: 0;
+    }
     .similar-price-card {
         background: white;
         border-radius: 16px;
@@ -1171,7 +1183,10 @@ document.addEventListener('DOMContentLoaded', function() {
         height: 100%;
         border: 1px solid #e2e8f0;
     }
-    .similar-price-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    .similar-price-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
     .similar-price-img {
         width: 100%;
         height: 180px;
@@ -1247,6 +1262,7 @@ document.addEventListener('DOMContentLoaded', function() {
         pointer-events: none;
     }
     .similar-price-carousel .owl-nav { display: none !important; }
+
     @media (max-width: 768px) {
         .similar-price-card { margin: 0 5px; }
         .similar-price-img { height: 140px; }
@@ -1293,7 +1309,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             let img = '';
             const imgElement = item.querySelector('img');
-            if (imgElement && imgElement.src) img = imgElement.src;
+            if (imgElement && imgElement.src && !imgElement.src.includes('data:image')) {
+                img = imgElement.src;
+            }
 
             const location = item.querySelector('.new_r-item-geo')?.innerText?.trim() || '';
             const nights = item.querySelector('.new_r-item-nights')?.innerText?.replace(/[^0-9]/g, '') || ol || '7';
@@ -1340,13 +1358,12 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Шукаємо тури
         const allTours = getAllTours();
 
         if (allTours.length === 0) {
             carousel.innerHTML = '<div class="similar-price-loading">⏳ Зачекайте, тури завантажуються...</div>';
             section.style.display = 'block';
-            // Спробуємо ще раз пізніше
+            if (navDiv) navDiv.style.display = 'none';
             setTimeout(loadSimilarTours, 2000);
             return;
         }
@@ -1397,32 +1414,76 @@ document.addEventListener('DOMContentLoaded', function() {
 
         carousel.innerHTML = html;
 
+        // Переконуємось, що Owl Carousel працює горизонтально
         if (typeof $ !== 'undefined' && $.fn.owlCarousel) {
-            if (currentOwl) $(carousel).trigger('destroy.owl.carousel');
+            if (currentOwl) {
+                $(carousel).trigger('destroy.owl.carousel');
+                $(carousel).find('.owl-stage-outer').children().unwrap();
+            }
+
             currentOwl = $(carousel).owlCarousel({
                 items: 4,
                 margin: 20,
                 dots: false,
                 nav: false,
                 loop: tours.length > 4,
+                autoplay: false,
                 responsive: {
                     0: { items: 1, margin: 10 },
                     480: { items: 2, margin: 15 },
                     768: { items: 3, margin: 20 },
                     992: { items: 4, margin: 20 }
+                },
+                onInitialized: function() {
+                    console.log('🔄 Owl Carousel ініціалізовано, турів:', tours.length);
+                    updateNavButtons();
+                },
+                onTranslated: function() {
+                    updateNavButtons();
                 }
             });
 
+            function updateNavButtons() {
+                const owl = currentOwl;
+                const prevBtn = document.querySelector('.similar-prev-btn');
+                const nextBtn = document.querySelector('.similar-next-btn');
+
+                if (prevBtn) {
+                    if (owl.current() === 0) {
+                        prevBtn.classList.add('disabled');
+                    } else {
+                        prevBtn.classList.remove('disabled');
+                    }
+                }
+
+                if (nextBtn) {
+                    if (owl.current() + owl.settings().items >= tours.length) {
+                        nextBtn.classList.add('disabled');
+                    } else {
+                        nextBtn.classList.remove('disabled');
+                    }
+                }
+            }
+
             const prevBtn = document.querySelector('.similar-prev-btn');
             const nextBtn = document.querySelector('.similar-next-btn');
+
             if (prevBtn) {
-                prevBtn.classList.remove('disabled');
-                prevBtn.onclick = () => $(carousel).trigger('prev.owl.carousel');
+                prevBtn.onclick = function() {
+                    if (currentOwl) currentOwl.trigger('prev.owl.carousel');
+                };
             }
             if (nextBtn) {
-                nextBtn.classList.remove('disabled');
-                nextBtn.onclick = () => $(carousel).trigger('next.owl.carousel');
+                nextBtn.onclick = function() {
+                    if (currentOwl) currentOwl.trigger('next.owl.carousel');
+                };
             }
+        } else {
+            console.warn('⚠️ Owl Carousel не знайдено');
+            carousel.style.display = 'grid';
+            carousel.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
+            carousel.style.gap = '20px';
+            carousel.classList.remove('owl-carousel', 'owl-theme');
         }
     }
 
@@ -1433,7 +1494,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return div.innerHTML;
     }
 
-    // Запускаємо пошук багаторазово
     function startSearch() {
         loadSimilarTours();
         setTimeout(loadSimilarTours, 3000);
@@ -1447,7 +1507,6 @@ document.addEventListener('DOMContentLoaded', function() {
         startSearch();
     }
 
-    // Спостерігаємо за появою турів
     const observer = new MutationObserver(() => {
         const viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item');
         if (viewedItems.length > 0 && !isLoaded) {
