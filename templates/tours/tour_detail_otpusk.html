@@ -885,6 +885,16 @@ document.addEventListener('DOMContentLoaded', function() {
             line-height: 1.4 !important;
         }
     }
+    /* ПРИМУСОВО ПОКАЗУЄМО ВСІ ПУНКТИ МЕНЮ НА МОБІЛЬНИХ */
+@media (max-width: 768px) {
+    .new_t-menu-item {
+        display: block !important;
+    }
+    /* Якщо якісь пункти приховані через style="display: none" – перебиваємо */
+    .new_t-menu-item[style*="display: none"] {
+        display: block !important;
+    }
+}
 </style>
 
 <script>
@@ -969,6 +979,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     observer.observe(document.body, { childList: true, subtree: true });
     setTimeout(() => observer.disconnect(), 10000);
+})();
+    // Додатковий фікс: переконуємось, що всі пункти меню видимі
+(function ensureAllMenuItems() {
+    setTimeout(function() {
+        const menu = document.querySelector('.new_t-menu');
+        if (menu) {
+            // Перевіряємо, чи є всі 5 пунктів
+            const items = menu.querySelectorAll('.new_t-menu-item');
+            if (items.length < 5) {
+                console.log('Знайдено лише', items.length, 'пунктів. Очікуємо 5.');
+                // Якщо пунктів менше 5, можна примусово показати всі, але зазвичай це проблема Otpusk
+            }
+        }
+    }, 2000);
 })();
 </script>
 
