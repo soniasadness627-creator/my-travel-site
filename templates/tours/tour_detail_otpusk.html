@@ -90,7 +90,7 @@
         background: transparent !important;
     }
 
-    /* ========== СТИЛІ ДЛЯ МЕНЮ – КОЛІР АГЕНТА (БЕЗ ГОЛУБОЇ ПОЛОСКИ) ========== */
+    /* ========== СТИЛІ ДЛЯ МЕНЮ – КОЛІР АГЕНТА ========== */
     .new_t-menu-wrap,
     .new_t-menu {
         background: transparent !important;
@@ -211,7 +211,6 @@
         color: var(--primary-color) !important;
     }
 
-    /* Ефект при наведенні – темно-сірий */
     .new_r-item-price:hover .new_price-value,
     .new_r-item-price:hover .currency,
     .new_r-item-price:hover .new_price-desc,
@@ -222,7 +221,6 @@
         transition: color 0.2s ease;
     }
 
-    /* Кнопки "Детальніше" */
     .new_r-item .btn,
     .new_r-item .btn-primary,
     .new_r-item .btn-outline-primary {
@@ -306,7 +304,6 @@
         }
     }
 
-    /* Стилі для повідомлень */
     .alert-success {
         background-color: #d4edda;
         border-color: #c3e6cb;
@@ -332,14 +329,14 @@
     }
 
     /* ========== СІТКА ДЛЯ ФОТО ========== */
-    .new_t-tab-content.photo[style*="display: block"] {
+    .new_t-tab-content.photo {
         display: grid !important;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
         gap: 20px !important;
         padding: 20px !important;
     }
 
-    .new_t-tab-content.photo[style*="display: block"] img {
+    .new_t-tab-content.photo img {
         width: 100% !important;
         height: 200px !important;
         object-fit: cover !important;
@@ -348,27 +345,27 @@
         transition: transform 0.2s ease !important;
     }
 
-    .new_t-tab-content.photo[style*="display: block"] img:hover {
+    .new_t-tab-content.photo img:hover {
         transform: scale(1.02) !important;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
     }
 
     @media (max-width: 992px) {
-        .new_t-tab-content.photo[style*="display: block"] {
+        .new_t-tab-content.photo {
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
         }
-        .new_t-tab-content.photo[style*="display: block"] img {
+        .new_t-tab-content.photo img {
             height: 160px !important;
         }
     }
 
     @media (max-width: 768px) {
-        .new_t-tab-content.photo[style*="display: block"] {
+        .new_t-tab-content.photo {
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
             gap: 12px !important;
             padding: 12px !important;
         }
-        .new_t-tab-content.photo[style*="display: block"] img {
+        .new_t-tab-content.photo img {
             height: 120px !important;
         }
     }
@@ -456,7 +453,7 @@
         background-color: var(--primary-dark) !important;
     }
 
-    /* ========== НОВІ ВИПРАВЛЕННЯ ДЛЯ МОБІЛЬНИХ ========== */
+    /* ========== НОВІ ВИПРАВЛЕННЯ ДЛЯ МОБІЛЬНИХ ТА ЗАКРІПЛЕННЯ ========== */
 
     /* 1. Закріплюємо блок "Результат туру" зверху */
     .new_f-wrapper {
@@ -464,23 +461,26 @@
         top: 0 !important;
         z-index: 1000 !important;
         margin-bottom: 15px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
     }
 
-    /* 2. На мобільних: ховаємо карусель і показуємо десктопне фото */
-    @media (max-width: 768px) {
-        .new_t-header-gallery-mobile {
-            display: none !important;
-        }
-        .new_t-header-desktop-img {
-            display: block !important;
-            width: 100% !important;
-            height: 200px !important;
-            background-size: cover !important;
-            background-position: center !important;
-        }
+    /* 2. Прибираємо великий відступ між фото та заголовком */
+    .new_t-header-col {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    .new_t-header {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
     }
 
-    /* 3. Меню вкладок на мобільних – переносимо в 2-3 рядки (без горизонтального скролу) */
+    /* Якщо батьківський main або контейнер має зайвий padding-top */
+    main.flex-grow-1.pt-5,
+    .flex-grow-1.pt-5 {
+        padding-top: 0 !important;
+    }
+
+    /* 3. Виправлення для мобільних: меню в 2-3 рядки, компактні відступи */
     @media (max-width: 768px) {
         .new_t-menu {
             flex-wrap: wrap !important;
@@ -494,9 +494,30 @@
             font-size: 13px !important;
             white-space: nowrap !important;
         }
+
+        /* Ховаємо карусель галереї, показуємо десктопне фото */
+        .new_t-header-gallery-mobile {
+            display: none !important;
+        }
+        .new_t-header-desktop-img {
+            display: block !important;
+            width: 100% !important;
+            height: 200px !important;
+            background-size: cover !important;
+            background-position: center !important;
+        }
+
+        /* Зменшуємо відступи в заголовку */
+        .new_t-header-col {
+            padding: 0 12px !important;
+        }
+        .new_t-header-desc {
+            margin-top: 8px !important;
+            font-size: 13px !important;
+        }
     }
 
-    /* 4. Додатково: забороняємо горизонтальний скрол всього модуля */
+    /* 4. Забороняємо горизонтальний скрол */
     #otpusk-tour-module,
     .new_t-container {
         overflow-x: hidden !important;
@@ -628,11 +649,10 @@ function goBackToSearch() {
     }
 }
 
-// Додатковий фікс для фото на мобільних (якщо десктопне фото не завантажилось)
 function fixMobilePhoto() {
     if (window.innerWidth <= 768) {
         const desktopImg = document.querySelector('.new_t-header-desktop-img');
-        if (desktopImg && !desktopImg.style.backgroundImage) {
+        if (desktopImg && (!desktopImg.style.backgroundImage || desktopImg.style.backgroundImage === 'none')) {
             const firstSlide = document.querySelector('.new_t-header-gallery-slider-item');
             if (firstSlide) {
                 const bgUrl = firstSlide.style.backgroundImage;
@@ -659,7 +679,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => observer.disconnect(), 5000);
     }
 
-    // Викликаємо фікс фото
     fixMobilePhoto();
 
     const submitBtn = document.getElementById('submitBookingBtn');
