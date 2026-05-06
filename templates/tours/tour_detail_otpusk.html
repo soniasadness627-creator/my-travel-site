@@ -582,6 +582,34 @@
     </button>
 </div>
 
+<script>
+function goBackToSearch() {
+    // Отримуємо slug агента з поточної URL (якщо є)
+    let agentSlug = '';
+    const pathParts = window.location.pathname.split('/');
+    // Шукаємо slug агента в URL (формат: /a/[slug]/...)
+    for (let i = 0; i < pathParts.length; i++) {
+        if (pathParts[i] === 'a' && pathParts[i + 1]) {
+            agentSlug = pathParts[i + 1];
+            break;
+        }
+    }
+
+    // Формуємо URL для повернення
+    let searchUrl = '/search-otpusk/';
+    if (agentSlug) {
+        searchUrl = `/a/${agentSlug}/search-otpusk/`;
+    }
+
+    // Перевіряємо чи є referrer (попередня сторінка)
+    if (document.referrer && document.referrer.includes('/search-otpusk/')) {
+        window.location.href = document.referrer;
+    } else {
+        window.location.href = searchUrl;
+    }
+}
+</script>
+
 <!-- ========== БЛОК БРОНЮВАННЯ ========== -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
@@ -1144,15 +1172,19 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <!-- ========== БЛОК "ГОТЕЛІ З АНАЛОГІЧНОЮ ЦІНОЮ" (КАРУСЕЛЬ) ========== -->
 <div class="container mt-5 mb-5" id="similarPriceSection" style="display: none;">
-    <h3 class="mb-4" style="color: #000000; font-weight: normal; text-align: left;">Готелі з найкращим співвідношенням ціни та якості</h3>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 style="color: #000000; font-weight: normal; margin: 0;">Готелі з найкращим співвідношенням ціни та якості</h3>
+        <div class="slider-nav-buttons" style="display: flex; gap: 10px;">
+            <button class="slider-nav prev" id="sliderPrev" style="width: 36px; height: 36px; background: white; border: 1px solid #e2e8f0; border-radius: 50%; cursor: pointer; color: var(--primary-color); font-size: 20px; display: flex; align-items: center; justify-content: center;">‹</button>
+            <button class="slider-nav next" id="sliderNext" style="width: 36px; height: 36px; background: white; border: 1px solid #e2e8f0; border-radius: 50%; cursor: pointer; color: var(--primary-color); font-size: 20px; display: flex; align-items: center; justify-content: center;">›</button>
+        </div>
+    </div>
     <div class="similar-price-slider-wrapper" style="position: relative;">
         <div class="similar-price-slider" id="similarPriceSlider" style="overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
             <div class="similar-price-track" id="similarPriceTrack" style="display: flex; gap: 20px;">
                 <div class="text-center py-5" style="width: 100%;">🔍 Пошук турів...</div>
             </div>
         </div>
-        <button class="slider-nav prev" id="sliderPrev" style="position: absolute; left: -15px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; background: white; border: 1px solid #e2e8f0; border-radius: 50%; cursor: pointer; color: var(--primary-color); font-size: 20px; display: flex; align-items: center; justify-content: center; z-index: 10;">‹</button>
-        <button class="slider-nav next" id="sliderNext" style="position: absolute; right: -15px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; background: white; border: 1px solid #e2e8f0; border-radius: 50%; cursor: pointer; color: var(--primary-color); font-size: 20px; display: flex; align-items: center; justify-content: center; z-index: 10;">›</button>
     </div>
     <div id="similarPriceMessage" class="text-center py-4" style="display: none; color: #64748b;"></div>
 </div>
@@ -1251,15 +1283,9 @@ document.addEventListener('DOMContentLoaded', function() {
             height: 150px;
         }
         .slider-nav {
-            width: 30px !important;
-            height: 30px !important;
-            font-size: 16px !important;
-        }
-        .slider-nav.prev {
-            left: -8px !important;
-        }
-        .slider-nav.next {
-            right: -8px !important;
+            width: 32px !important;
+            height: 32px !important;
+            font-size: 18px !important;
         }
     }
     @media (max-width: 480px) {
@@ -1268,6 +1294,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         .similar-price-img {
             height: 140px;
+        }
+        .slider-nav-buttons {
+            gap: 5px !important;
+        }
+        .slider-nav {
+            width: 28px !important;
+            height: 28px !important;
+            font-size: 16px !important;
         }
     }
 </style>
@@ -1343,7 +1377,6 @@ document.addEventListener('DOMContentLoaded', function() {
         else if (width >= 600) visibleCards = 2;
         else visibleCards = 1;
 
-        // Оновлюємо ширину картки
         const container = document.querySelector('.similar-price-slider');
         if (container) {
             const containerWidth = container.clientWidth;
@@ -1426,7 +1459,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         track.innerHTML = html;
 
-        // Оновлюємо ширину карток
         setTimeout(() => {
             updateVisibleCards();
             if (messageDiv) messageDiv.style.display = 'none';
@@ -1488,7 +1520,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return div.innerHTML;
     }
 
-    // Налаштовуємо кнопки після завантаження DOM
     document.addEventListener('DOMContentLoaded', function() {
         const prevBtn = document.getElementById('sliderPrev');
         const nextBtn = document.getElementById('sliderNext');
@@ -1508,13 +1539,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Запускаємо завантаження
         setTimeout(loadSimilarTours, 2000);
         setTimeout(loadSimilarTours, 4000);
         setTimeout(loadSimilarTours, 6000);
     });
 
-    // Спостерігаємо за появою турів
     const observer = new MutationObserver(() => {
         const viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item');
         if (viewedItems.length > 0) {
