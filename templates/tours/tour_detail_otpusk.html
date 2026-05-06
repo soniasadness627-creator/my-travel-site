@@ -610,9 +610,9 @@ function goToSearchPage() {
 <!-- ========== ІНФОРМАЦІЙНІ БЛОКИ ПРО ПЕРЕВАГИ ========== -->
 <div class="container my-5">
     <div class="row g-4">
-        <!-- Блок 1: Економія часу -->
+        <!-- Блок 1: Економія часу (блакитний відтінок) -->
         <div class="col-md-4">
-            <div class="info-card h-100 text-center p-4">
+            <div class="info-card info-card-blue h-100 text-center p-4">
                 <div class="info-icon mb-3">
                     <i class="fa-regular fa-clock fa-3x"></i>
                 </div>
@@ -624,9 +624,9 @@ function goToSearchPage() {
             </div>
         </div>
 
-        <!-- Блок 2: Швидке бронювання -->
+        <!-- Блок 2: Швидке бронювання (червоний/рожевий відтінок) -->
         <div class="col-md-4">
-            <div class="info-card h-100 text-center p-4">
+            <div class="info-card info-card-red h-100 text-center p-4">
                 <div class="info-icon mb-3">
                     <i class="fa-regular fa-calendar-check fa-3x"></i>
                 </div>
@@ -638,9 +638,9 @@ function goToSearchPage() {
             </div>
         </div>
 
-        <!-- Блок 3: Безпека -->
+        <!-- Блок 3: Безпека (зелений відтінок) -->
         <div class="col-md-4">
-            <div class="info-card h-100 text-center p-4">
+            <div class="info-card info-card-green h-100 text-center p-4">
                 <div class="info-icon mb-3">
                     <i class="fa-regular fa-shield-haltered fa-3x"></i>
                 </div>
@@ -656,21 +656,58 @@ function goToSearchPage() {
 
 <style>
     .info-card {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border-radius: 24px;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
     }
 
     .info-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        border-color: rgba(var(--primary-rgb, 193, 31, 88), 0.2);
+        transform: translateY(-6px);
+        box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Блакитний градієнт (ледь помітний) */
+    .info-card-blue {
+        background: linear-gradient(135deg, rgba(173, 216, 230, 0.15) 0%, rgba(100, 149, 237, 0.08) 100%);
+        border: 1px solid rgba(100, 149, 237, 0.2);
+    }
+
+    .info-card-blue:hover {
+        border-color: rgba(100, 149, 237, 0.4);
+        box-shadow: 0 20px 35px rgba(100, 149, 237, 0.1);
+    }
+
+    /* Червоний/рожевий градієнт (ледь помітний) */
+    .info-card-red {
+        background: linear-gradient(135deg, rgba(255, 182, 193, 0.15) 0%, rgba(255, 99, 132, 0.08) 100%);
+        border: 1px solid rgba(255, 99, 132, 0.2);
+    }
+
+    .info-card-red:hover {
+        border-color: rgba(255, 99, 132, 0.4);
+        box-shadow: 0 20px 35px rgba(255, 99, 132, 0.1);
+    }
+
+    /* Зелений градієнт (ледь помітний) */
+    .info-card-green {
+        background: linear-gradient(135deg, rgba(144, 238, 144, 0.15) 0%, rgba(46, 139, 87, 0.08) 100%);
+        border: 1px solid rgba(46, 139, 87, 0.2);
+    }
+
+    .info-card-green:hover {
+        border-color: rgba(46, 139, 87, 0.4);
+        box-shadow: 0 20px 35px rgba(46, 139, 87, 0.1);
     }
 
     .info-icon {
         color: var(--primary-color);
+        transition: transform 0.3s ease;
+    }
+
+    .info-card:hover .info-icon {
+        transform: scale(1.05);
     }
 
     .info-title {
@@ -682,12 +719,43 @@ function goToSearchPage() {
 
     .info-text {
         font-size: 0.9rem;
-        color: #64748b;
+        color: #475569;
         line-height: 1.5;
         margin-bottom: 0;
     }
 
-    /* Адаптивність для мобільних */
+    /* Декоративний елемент - маленьке коло в кутку */
+    .info-card::before {
+        content: '';
+        position: absolute;
+        top: -30px;
+        right: -30px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        opacity: 0.3;
+        transition: all 0.3s ease;
+    }
+
+    .info-card-blue::before {
+        background: radial-gradient(circle, rgba(100, 149, 237, 0.2), transparent);
+    }
+
+    .info-card-red::before {
+        background: radial-gradient(circle, rgba(255, 99, 132, 0.2), transparent);
+    }
+
+    .info-card-green::before {
+        background: radial-gradient(circle, rgba(46, 139, 87, 0.2), transparent);
+    }
+
+    .info-card:hover::before {
+        width: 130px;
+        height: 130px;
+        opacity: 0.4;
+    }
+
+    /* Адаптивність */
     @media (max-width: 768px) {
         .info-card {
             padding: 20px !important;
@@ -705,7 +773,7 @@ function goToSearchPage() {
 
     @media (max-width: 576px) {
         .info-card {
-            margin: 0 10px;
+            margin: 0 5px;
         }
     }
 </style>
