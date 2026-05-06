@@ -610,7 +610,7 @@ function goToSearchPage() {
 <!-- ========== ІНФОРМАЦІЙНІ БЛОКИ ПРО ПЕРЕВАГИ ========== -->
 <div class="container my-5">
     <div class="row g-4">
-        <!-- Блок 1: Економія часу (блакитний відтінок) -->
+        <!-- Блок 1: Економія часу (блакитний відтінок + годинник) -->
         <div class="col-md-4">
             <div class="info-card info-card-blue h-100 text-center p-4">
                 <div class="info-icon mb-3">
@@ -624,11 +624,11 @@ function goToSearchPage() {
             </div>
         </div>
 
-        <!-- Блок 2: Швидке бронювання (червоний/рожевий відтінок) -->
+        <!-- Блок 2: Миттєве бронювання (червоний/рожевий відтінок + блискавка) -->
         <div class="col-md-4">
             <div class="info-card info-card-red h-100 text-center p-4">
                 <div class="info-icon mb-3">
-                    <i class="fa-regular fa-calendar-check fa-3x"></i>
+                    <i class="fa-solid fa-bolt fa-3x"></i>
                 </div>
                 <h4 class="info-title">Миттєве бронювання</h4>
                 <p class="info-text">
@@ -638,11 +638,11 @@ function goToSearchPage() {
             </div>
         </div>
 
-        <!-- Блок 3: Безпека (зелений відтінок) -->
+        <!-- Блок 3: Безпека (зелений відтінок + щит) -->
         <div class="col-md-4">
             <div class="info-card info-card-green h-100 text-center p-4">
                 <div class="info-icon mb-3">
-                    <i class="fa-regular fa-shield-haltered fa-3x"></i>
+                    <i class="fa-solid fa-shield-haltered fa-3x"></i>
                 </div>
                 <h4 class="info-title">Безпечне бронювання</h4>
                 <p class="info-text">
@@ -666,6 +666,16 @@ function goToSearchPage() {
     .info-card:hover {
         transform: translateY(-6px);
         box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Іконки - чорний колір */
+    .info-icon {
+        color: #000000;
+        transition: transform 0.3s ease;
+    }
+
+    .info-card:hover .info-icon {
+        transform: scale(1.05);
     }
 
     /* Блакитний градієнт (ледь помітний) */
@@ -699,15 +709,6 @@ function goToSearchPage() {
     .info-card-green:hover {
         border-color: rgba(46, 139, 87, 0.4);
         box-shadow: 0 20px 35px rgba(46, 139, 87, 0.1);
-    }
-
-    .info-icon {
-        color: var(--primary-color);
-        transition: transform 0.3s ease;
-    }
-
-    .info-card:hover .info-icon {
-        transform: scale(1.05);
     }
 
     .info-title {
@@ -777,7 +778,6 @@ function goToSearchPage() {
         }
     }
 </style>
-
 <!-- ========== БЛОК БРОНЮВАННЯ ========== -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
