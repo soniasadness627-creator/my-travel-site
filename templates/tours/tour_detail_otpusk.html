@@ -577,16 +577,17 @@
 
 <!-- КНОПКА "ПОВЕРНУТИСЯ" -->
 <div class="container my-3">
-    <button onclick="goBackToSearch()" class="btn btn-outline-secondary btn-sm" style="cursor: pointer;">
+    <button onclick="goToSearchPage()" class="btn btn-outline-secondary btn-sm" style="cursor: pointer;">
         ← Повернутися до результатів пошуку
     </button>
 </div>
 
 <script>
-function goBackToSearch() {
-    // Отримуємо slug агента з поточної URL (якщо є)
+function goToSearchPage() {
+    // Отримуємо slug агента з поточної URL
     let agentSlug = '';
     const pathParts = window.location.pathname.split('/');
+
     // Шукаємо slug агента в URL (формат: /a/[slug]/...)
     for (let i = 0; i < pathParts.length; i++) {
         if (pathParts[i] === 'a' && pathParts[i + 1]) {
@@ -595,18 +596,14 @@ function goBackToSearch() {
         }
     }
 
-    // Формуємо URL для повернення
+    // Формуємо URL для сторінки пошуку
     let searchUrl = '/search-otpusk/';
     if (agentSlug) {
         searchUrl = `/a/${agentSlug}/search-otpusk/`;
     }
 
-    // Перевіряємо чи є referrer (попередня сторінка)
-    if (document.referrer && document.referrer.includes('/search-otpusk/')) {
-        window.location.href = document.referrer;
-    } else {
-        window.location.href = searchUrl;
-    }
+    // Перенаправляємо
+    window.location.href = searchUrl;
 }
 </script>
 
