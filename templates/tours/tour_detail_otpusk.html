@@ -49,13 +49,15 @@
 </div>
 
 <style>
-    /* ========== ХОВАЄМО ЗАЙВЕ ========== */
+    /* ========== ХОВАЄМО ЗАЙВЕ (АЛЕ НЕ ЧІПАЄМО БЛОК ПОШУКУ) ========== */
     #otpusk-tour-module .new_f-ext-container,
     #otpusk-tour-module .new_r-filters-container,
-    #otpusk-tour-module .new_f-ext-btn,
-    #otpusk-tour-module .new_f-form {
+    #otpusk-tour-module .new_f-ext-btn {
         display: none !important;
     }
+
+    /* ВАЖЛИВО: НЕ ховаємо .new_f-form !!! */
+    /* #otpusk-tour-module .new_f-form - видалено */
 
     #otpusk-tour-module .new_t-menu-back {
         display: none !important;
@@ -584,25 +586,18 @@
 
 <script>
 function goToSearchPage() {
-    // Отримуємо slug агента з поточної URL
     let agentSlug = '';
     const pathParts = window.location.pathname.split('/');
-
-    // Шукаємо slug агента в URL (формат: /a/[slug]/...)
     for (let i = 0; i < pathParts.length; i++) {
         if (pathParts[i] === 'a' && pathParts[i + 1]) {
             agentSlug = pathParts[i + 1];
             break;
         }
     }
-
-    // Формуємо URL для сторінки пошуку
     let searchUrl = '/search-otpusk/';
     if (agentSlug) {
         searchUrl = `/a/${agentSlug}/search-otpusk/`;
     }
-
-    // Перенаправляємо
     window.location.href = searchUrl;
 }
 </script>
@@ -610,7 +605,6 @@ function goToSearchPage() {
 <!-- ========== ІНФОРМАЦІЙНІ БЛОКИ ПРО ПЕРЕВАГИ ========== -->
 <div class="container my-5">
     <div class="row g-4">
-        <!-- Блок 1: Економія часу (блакитний відтінок + годинник) -->
         <div class="col-md-4">
             <div class="info-card info-card-blue h-100 text-center p-4">
                 <div class="info-icon mb-3">
@@ -623,8 +617,6 @@ function goToSearchPage() {
                 </p>
             </div>
         </div>
-
-        <!-- Блок 2: Миттєве бронювання (червоний/рожевий відтінок + блискавка) -->
         <div class="col-md-4">
             <div class="info-card info-card-red h-100 text-center p-4">
                 <div class="info-icon mb-3">
@@ -637,8 +629,6 @@ function goToSearchPage() {
                 </p>
             </div>
         </div>
-
-        <!-- Блок 3: Безпека (зелений відтінок + щит) -->
         <div class="col-md-4">
             <div class="info-card info-card-green h-100 text-center p-4">
                 <div class="info-icon mb-3">
@@ -662,70 +652,53 @@ function goToSearchPage() {
         position: relative;
         overflow: hidden;
     }
-
     .info-card:hover {
         transform: translateY(-6px);
         box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
     }
-
-    /* Іконки - чорний колір */
     .info-icon {
         color: #000000;
         transition: transform 0.3s ease;
     }
-
     .info-card:hover .info-icon {
         transform: scale(1.05);
     }
-
-    /* Блакитний градієнт (ледь помітний) */
     .info-card-blue {
         background: linear-gradient(135deg, rgba(173, 216, 230, 0.15) 0%, rgba(100, 149, 237, 0.08) 100%);
         border: 1px solid rgba(100, 149, 237, 0.2);
     }
-
     .info-card-blue:hover {
         border-color: rgba(100, 149, 237, 0.4);
         box-shadow: 0 20px 35px rgba(100, 149, 237, 0.1);
     }
-
-    /* Червоний/рожевий градієнт (ледь помітний) */
     .info-card-red {
         background: linear-gradient(135deg, rgba(255, 182, 193, 0.15) 0%, rgba(255, 99, 132, 0.08) 100%);
         border: 1px solid rgba(255, 99, 132, 0.2);
     }
-
     .info-card-red:hover {
         border-color: rgba(255, 99, 132, 0.4);
         box-shadow: 0 20px 35px rgba(255, 99, 132, 0.1);
     }
-
-    /* Зелений градієнт (ледь помітний) */
     .info-card-green {
         background: linear-gradient(135deg, rgba(144, 238, 144, 0.15) 0%, rgba(46, 139, 87, 0.08) 100%);
         border: 1px solid rgba(46, 139, 87, 0.2);
     }
-
     .info-card-green:hover {
         border-color: rgba(46, 139, 87, 0.4);
         box-shadow: 0 20px 35px rgba(46, 139, 87, 0.1);
     }
-
     .info-title {
         font-size: 1.25rem;
         font-weight: 600;
         color: #1e293b;
         margin-bottom: 12px;
     }
-
     .info-text {
         font-size: 0.9rem;
         color: #475569;
         line-height: 1.5;
         margin-bottom: 0;
     }
-
-    /* Декоративний елемент - маленьке коло в кутку */
     .info-card::before {
         content: '';
         position: absolute;
@@ -737,26 +710,20 @@ function goToSearchPage() {
         opacity: 0.3;
         transition: all 0.3s ease;
     }
-
     .info-card-blue::before {
         background: radial-gradient(circle, rgba(100, 149, 237, 0.2), transparent);
     }
-
     .info-card-red::before {
         background: radial-gradient(circle, rgba(255, 99, 132, 0.2), transparent);
     }
-
     .info-card-green::before {
         background: radial-gradient(circle, rgba(46, 139, 87, 0.2), transparent);
     }
-
     .info-card:hover::before {
         width: 130px;
         height: 130px;
         opacity: 0.4;
     }
-
-    /* Адаптивність */
     @media (max-width: 768px) {
         .info-card {
             padding: 20px !important;
@@ -771,7 +738,6 @@ function goToSearchPage() {
             font-size: 0.85rem;
         }
     }
-
     @media (max-width: 576px) {
         .info-card {
             margin: 0 5px;
@@ -790,7 +756,6 @@ function goToSearchPage() {
             </div>
         </div>
 
-        <!-- Форма пошуку -->
         <div class="card border-0 shadow-sm rounded-4 p-3 bg-white" style="background: #f8fafc;">
             <form id="hotelSearchForm" class="row g-3 align-items-end">
                 <div class="col-md-3 col-sm-6">
@@ -846,7 +811,6 @@ function goToSearchPage() {
             </form>
         </div>
 
-        <!-- Таблиця з пропозиціями -->
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
             <div class="table-responsive" id="hotelPricesTable">
                 <div class="text-center py-5">
@@ -894,14 +858,11 @@ function goToSearchPage() {
     function initHotelPricesBlock() {
         const section = document.getElementById('hotelPricesSection');
         const titleEl = document.getElementById('hotelPricesTitle');
-
         if (!section) return;
 
-        // Отримуємо назву готелю
         const hotelName = document.querySelector('.new_t-header-title')?.innerText?.trim() || 'Готель';
         if (titleEl) titleEl.textContent = `Ціни на тури в готель ${hotelName}`;
 
-        // Заповнюємо випадаючий список міст вильоту
         const departureSelect = document.getElementById('searchDeparture');
         if (departureSelect && departureSelect.options.length === 1) {
             const departureItems = document.querySelectorAll('.new_f-dropdown-item');
@@ -928,8 +889,6 @@ function goToSearchPage() {
                     departureSelect.appendChild(option);
                 });
             }
-
-            // Встановлюємо значення за замовчуванням з URL або DOM
             const fromElement = document.querySelector('.new_f-dropdown-btn-text');
             if (fromElement && fromElement.innerText) {
                 const defaultCity = fromElement.innerText.trim();
@@ -942,12 +901,10 @@ function goToSearchPage() {
             }
         }
 
-        // Ініціалізуємо Flatpickr для вибору дат
         if (typeof flatpickr !== 'undefined' && !flatpickrInstance) {
             const startDate = od || '2026-05-21';
             const endDate = new Date(startDate);
             endDate.setDate(endDate.getDate() + (parseInt(ol) || 7));
-
             flatpickrInstance = flatpickr('#searchDateRange', {
                 mode: 'range',
                 dateFormat: 'd M, Y',
@@ -961,7 +918,6 @@ function goToSearchPage() {
             });
         }
 
-        // Обробник форми
         const form = document.getElementById('hotelSearchForm');
         if (form) {
             form.addEventListener('submit', function(e) {
@@ -970,7 +926,6 @@ function goToSearchPage() {
             });
         }
 
-        // Завантажуємо пропозиції
         loadHotelPrices();
         section.style.display = 'block';
     }
@@ -979,12 +934,10 @@ function goToSearchPage() {
         const tableContainer = document.getElementById('hotelPricesTable');
         if (!tableContainer) return;
 
-        // Отримуємо параметри пошуку
         const departure = document.getElementById('searchDeparture')?.value || 'Кишинева';
         const nights = document.getElementById('searchNights')?.value || '7';
         const adults = document.getElementById('searchAdults')?.value || '2';
 
-        // Отримуємо дати
         let dateFrom = od || '2026-05-21';
         let dateTo = null;
         if (flatpickrInstance && flatpickrInstance.selectedDates.length === 2) {
@@ -992,7 +945,6 @@ function goToSearchPage() {
             dateTo = flatpickrInstance.selectedDates[1];
         }
 
-        // Показуємо завантаження
         tableContainer.innerHTML = `
             <div class="text-center py-5">
                 <div class="spinner-border text-primary" role="status">
@@ -1002,7 +954,6 @@ function goToSearchPage() {
             </div>
         `;
 
-        // Збираємо пропозиції з DOM (з блоку "Результат туру")
         setTimeout(() => {
             const offers = collectOffersFromDOM();
             if (offers.length > 0) {
@@ -1021,7 +972,6 @@ function goToSearchPage() {
     function collectOffersFromDOM() {
         const offers = [];
 
-        // Шукаємо таблицю з пропозиціями (від Otpusk)
         const priceTable = document.querySelector('.new_t-order-table');
         if (priceTable) {
             const priceElement = priceTable.querySelector('.new_price');
@@ -1034,7 +984,7 @@ function goToSearchPage() {
             const foodElement = document.querySelector('.new_t-tour-tab-col-2 .new_weight-bold + .new_t-important');
             const food = foodElement?.innerText?.trim() || 'Все включено';
             const dateElement = document.querySelector('.new_t-date-col .new_t-important');
-            const dateText = dateElement?.innerText || od ? new Date(od).toLocaleDateString('uk-UA') : '21 травня 2026';
+            const dateText = dateElement?.innerText || (od ? new Date(od).toLocaleDateString('uk-UA') : '21 травня 2026');
             const nights = ol || '7';
             const departure = document.querySelector('.new_f-dropdown-btn-text')?.innerText || 'Кишинева';
 
@@ -1048,7 +998,6 @@ function goToSearchPage() {
             });
         }
 
-        // Також шукаємо пропозиції з модального вікна дат
         const dateModalRows = document.querySelectorAll('.new_t-date-modal-table tbody tr');
         dateModalRows.forEach(row => {
             const cells = row.querySelectorAll('td');
@@ -1059,7 +1008,6 @@ function goToSearchPage() {
                 let nights = nightsCell?.innerText?.replace('на ', '')?.replace('ночей', '')?.trim() || ol || '7';
                 const priceCell = row.querySelector('td.selected, td:not(.selected)');
                 let price = priceCell?.innerText?.trim() || '';
-
                 if (date && price && price.match(/\d/)) {
                     offers.push({
                         date: date,
@@ -1073,7 +1021,6 @@ function goToSearchPage() {
             }
         });
 
-        // Унікальні пропозиції за датою
         const uniqueOffers = [];
         const seenDates = new Set();
         for (const offer of offers) {
@@ -1082,7 +1029,6 @@ function goToSearchPage() {
                 uniqueOffers.push(offer);
             }
         }
-
         return uniqueOffers;
     }
 
@@ -1104,7 +1050,6 @@ function goToSearchPage() {
                 </thead>
                 <tbody>
         `;
-
         offers.forEach((offer, index) => {
             const priceFormatted = parseInt(offer.price).toLocaleString('uk-UA');
             html += `
@@ -1128,7 +1073,6 @@ function goToSearchPage() {
                 </tr>
             `;
         });
-
         html += `
                 </tbody>
             </table>
@@ -1136,10 +1080,8 @@ function goToSearchPage() {
                 <button class="btn btn-outline-secondary btn-sm rounded-pill px-4" onclick="window.location.href='/search/'">Показати ще пропозиції</button>
             </div>
         `;
-
         tableContainer.innerHTML = html;
 
-        // Додаємо обробник кліку на рядок
         document.querySelectorAll('.hotel-price-row').forEach(row => {
             row.addEventListener('click', function() {
                 document.querySelectorAll('.hotel-price-row').forEach(r => r.classList.remove('selected'));
@@ -1164,13 +1106,48 @@ function goToSearchPage() {
         }
     };
 
-    // Запускаємо після завантаження DOM
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initHotelPricesBlock);
     } else {
         initHotelPricesBlock();
     }
 })();
+</script>
+
+<!-- ========== ПЕРЕМІЩЕННЯ БЛОКУ ЦІН ПІСЛЯ ОРИГІНАЛЬНОГО БЛОКУ ПОШУКУ ========== -->
+<script>
+function moveHotelPricesBlock() {
+    const hotelPricesSection = document.getElementById('hotelPricesSection');
+    const originalSearchBlock = document.querySelector('.new_f-wrapper');
+
+    if (hotelPricesSection && originalSearchBlock && originalSearchBlock.parentNode) {
+        originalSearchBlock.parentNode.insertBefore(hotelPricesSection, originalSearchBlock.nextSibling);
+        hotelPricesSection.style.display = 'block';
+        console.log('✅ Блок "Ціни на тури в готель" переміщено після блоку пошуку');
+        return true;
+    }
+    return false;
+}
+
+function moveHotelPricesBlockWithRetry(retries = 20) {
+    if (moveHotelPricesBlock()) return;
+    if (retries <= 0) {
+        console.warn('⚠️ Не вдалося перемістити блок цін після 20 спроб');
+        return;
+    }
+    console.log(`⏳ Очікуємо завантаження блоку пошуку... спроб залишилось: ${retries}`);
+    setTimeout(() => moveHotelPricesBlockWithRetry(retries - 1), 500);
+}
+
+// Запускаємо переміщення після завантаження DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', moveHotelPricesBlockWithRetry);
+} else {
+    moveHotelPricesBlockWithRetry();
+}
+
+// Додаємо глобальну функцію для ручного виклику (наприклад, після оновлення даних)
+window.forceMoveHotelPricesBlock = moveHotelPricesBlockWithRetry;
 </script>
 
 <!-- ========== БЛОК БРОНЮВАННЯ ========== -->
@@ -1184,8 +1161,7 @@ function goToSearchPage() {
 
                 <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
                     <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
-                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
-                             style="width: 40px; height: 40px;">
+                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
                             <i class="fa-regular fa-user text-secondary"></i>
                         </div>
                         <div>
@@ -1280,17 +1256,6 @@ function showMessage(message, type) {
     setTimeout(() => { if (messageDiv) messageDiv.style.display = 'none'; }, 5000);
 }
 
-function goBackToSearch() {
-    if (document.referrer && (document.referrer.includes('/search/') || document.referrer.includes('/result/'))) {
-        window.location.href = document.referrer;
-    } else if (window.history.length > 1) {
-        window.history.back();
-    } else {
-        window.location.href = '/search/';
-    }
-}
-
-// Додатковий фікс для фото на мобільних (якщо десктопне фото не завантажилось)
 function fixMobilePhoto() {
     if (window.innerWidth <= 768) {
         const desktopImg = document.querySelector('.new_t-header-desktop-img');
@@ -1305,7 +1270,6 @@ function fixMobilePhoto() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Зміна тексту "Пошук туру" на "Результат туру"
     const titleElement = document.querySelector('.new_f-wrapper .new_f-title');
     if (titleElement && titleElement.innerText === 'Пошук туру') {
         titleElement.innerText = 'Результат туру';
@@ -1321,7 +1285,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => observer.disconnect(), 5000);
     }
 
-    // Викликаємо фікс фото
     fixMobilePhoto();
 
     const submitBtn = document.getElementById('submitBookingBtn');
@@ -1403,7 +1366,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 2000);
 });
 
-// ========== ПЕРЕГЛЯД ФОТО ПРИ НАТИСКАННІ (LIGHTBOX) ==========
 function initLightbox() {
     const photos = document.querySelectorAll('.new_t-tab-content.photo img');
     if (photos.length === 0) {
@@ -1465,11 +1427,10 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initLightbox, 1000);
 });
 </script>
-<!-- ========== ГАМБУРГЕР-МЕНЮ ДЛЯ iPhone (з виправленням для вкладки "Відгуки") ========== -->
+
+<!-- ========== ГАМБУРГЕР-МЕНЮ ДЛЯ iPhone ========== -->
 <style>
-    /* Повністю перевизначаємо поведінку меню на мобільних – тільки гамбургер */
     @media (max-width: 768px) {
-        /* Ховаємо оригінальне горизонтальне меню */
         .new_t-menu {
             display: none !important;
             flex-direction: column !important;
@@ -1480,11 +1441,9 @@ document.addEventListener('DOMContentLoaded', function() {
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             width: 100%;
         }
-        /* Коли меню відкрите */
         .new_t-menu.show {
             display: flex !important;
         }
-        /* Пункти меню вертикально, без обрізання */
         .new_t-menu-item {
             flex: none !important;
             text-align: center;
@@ -1497,7 +1456,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .new_t-menu-item:last-child {
             border-bottom: none;
         }
-        /* Кнопка гамбургера */
         .hamburger-trigger {
             display: inline-flex;
             align-items: center;
@@ -1519,26 +1477,22 @@ document.addEventListener('DOMContentLoaded', function() {
         .hamburger-trigger:active {
             background: var(--primary-dark, #a01848);
         }
-        /* Закріплюємо блок "Результат туру" зверху */
         .new_f-wrapper {
             position: sticky !important;
             top: 0 !important;
             z-index: 1000 !important;
             margin-bottom: 15px !important;
         }
-        /* Зменшуємо відступ між фото та заголовком */
         .new_t-header-col {
             margin-top: 0 !important;
             padding-top: 0 !important;
         }
-        /* Повертаємо оригінальну карусель фото */
         .new_t-header-gallery-mobile {
             display: block !important;
         }
         .new_t-header-desktop-img {
             display: none !important;
         }
-        /* Додатково – робимо текст трохи зручнішим */
         .new_t-header-title {
             font-size: 1.3rem !important;
         }
@@ -1547,107 +1501,87 @@ document.addEventListener('DOMContentLoaded', function() {
             line-height: 1.4 !important;
         }
     }
-    /* ПРИМУСОВО ПОКАЗУЄМО ВСІ ПУНКТИ МЕНЮ НА МОБІЛЬНИХ */
     @media (max-width: 768px) {
         .new_t-menu-item {
             display: block !important;
         }
-        /* Якщо якісь пункти приховані через style="display: none" – перебиваємо */
         .new_t-menu-item[style*="display: none"] {
             display: block !important;
         }
     }
-    /* Виправлення: відгуки не накривають меню на дуже маленьких екранах (≤478px) */
-@media (max-width: 478px) {
-    .new_t-tab-content.reviews {
-        margin-top: 80px !important;   /* достатній відступ, щоб меню було видно */
-        padding-top: 20px !important;
-        clear: both !important;
-    }
-    /* Також для впевненості – додаємо відступ самому меню, якщо воно sticky */
-    .new_t-menu-wrap {
-        margin-bottom: 20px !important;
-        position: relative !important;
-        z-index: 5 !important;
-    }
-    /* Якщо блок "Результат туру" занадто високий – трохи зменшуємо його відступ */
-    .new_f-wrapper {
-        margin-bottom: 10px !important;
-    }
-}
-    /* Виправлення для Мапи – такий самий відступ, щоб меню було видно */
-@media (max-width: 478px) {
-    .new_t-tab-content.map {
-        margin-top: 100px !important;
-        padding-top: 10px !important;
-        clear: both !important;
-    }
-    /* Додатково для екранів ≤380px – збільшуємо відступ */
-    @media (max-width: 380px) {
-        .new_t-tab-content.map {
-            margin-top: 120px !important;
+    @media (max-width: 478px) {
+        .new_t-tab-content.reviews {
+            margin-top: 80px !important;
+            padding-top: 20px !important;
+            clear: both !important;
+        }
+        .new_t-menu-wrap {
+            margin-bottom: 20px !important;
+            position: relative !important;
+            z-index: 5 !important;
+        }
+        .new_f-wrapper {
+            margin-bottom: 10px !important;
         }
     }
-}
-    /* ========== АЛЬТЕРНАТИВНЕ ВИРІШЕННЯ: ПОКАЗУЄМО ПЕРШЕ ФОТО НА 478-768px ========== */
-@media (min-width: 478px) and (max-width: 768px) {
-    /* Ховаємо карусель */
-    .new_t-header-gallery-mobile {
-        display: none !important;
+    @media (max-width: 478px) {
+        .new_t-tab-content.map {
+            margin-top: 100px !important;
+            padding-top: 10px !important;
+            clear: both !important;
+        }
+        @media (max-width: 380px) {
+            .new_t-tab-content.map {
+                margin-top: 120px !important;
+            }
+        }
     }
-
-    /* Показуємо статичне фото з першого слайда */
-    .new_t-header-desktop-img {
-        display: block !important;
-        width: 100% !important;
-        height: 250px !important;
-        background-size: cover !important;
-        background-position: center !important;
-        border-radius: 12px !important;
+    @media (min-width: 478px) and (max-width: 768px) {
+        .new_t-header-gallery-mobile {
+            display: none !important;
+        }
+        .new_t-header-desktop-img {
+            display: block !important;
+            width: 100% !important;
+            height: 250px !important;
+            background-size: cover !important;
+            background-position: center !important;
+            border-radius: 12px !important;
+        }
+        .new_t-tab-content.photo {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+            gap: 10px !important;
+            padding: 10px !important;
+        }
+        .new_t-tab-content.photo img {
+            width: 100% !important;
+            height: 120px !important;
+            object-fit: cover !important;
+            border-radius: 8px !important;
+        }
     }
-
-    /* Сітка фото у вкладці "Фото" */
-    .new_t-tab-content.photo {
-        display: grid !important;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
-        gap: 10px !important;
-        padding: 10px !important;
-    }
-
-    .new_t-tab-content.photo img {
-        width: 100% !important;
-        height: 120px !important;
-        object-fit: cover !important;
-        border-radius: 8px !important;
-    }
-}
 </style>
 
 <script>
 (function() {
-    // Функція для створення гамбургер-меню (показує ВСІ пункти)
     function initHamburger() {
         if (document.querySelector('.hamburger-trigger')) return;
-
         const menu = document.querySelector('.new_t-menu');
         if (!menu) {
             setTimeout(initHamburger, 300);
             return;
         }
-
         if (window.innerWidth > 768) return;
-
         const btn = document.createElement('div');
         btn.className = 'hamburger-trigger';
         btn.innerHTML = '☰ Меню';
         menu.parentNode.insertBefore(btn, menu);
-
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
             menu.classList.toggle('show');
             btn.innerHTML = menu.classList.contains('show') ? '✕ Закрити' : '☰ Меню';
         });
-
         const items = menu.querySelectorAll('.new_t-menu-item');
         items.forEach(item => {
             item.addEventListener('click', function() {
@@ -1655,7 +1589,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 btn.innerHTML = '☰ Меню';
             });
         });
-
         window.addEventListener('resize', function() {
             if (window.innerWidth > 768) {
                 if (btn) btn.style.display = 'none';
@@ -1674,12 +1607,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ========== НОВЕ ВИПРАВЛЕННЯ ДЛЯ ВКЛАДКИ "ВІДГУКИ" ==========
-    // Функція, яка після завантаження відгуків прокручує до меню
     function fixReviewsScroll() {
         const reviewsTab = document.querySelector('.new_t-tab-content.reviews');
         if (!reviewsTab) return;
-
         const observer = new MutationObserver(function() {
             if (reviewsTab.innerHTML.trim() !== '' && reviewsTab.offsetHeight > 50) {
                 const menuWrap = document.querySelector('.new_t-menu-wrap');
@@ -1693,7 +1623,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => observer.disconnect(), 3000);
     }
 
-    // Додаємо обробник на клік по вкладці "Відгуки"
     function patchReviewsTab() {
         const reviewsMenuItem = document.querySelector('.new_t-menu-item[data-name="reviews"]');
         if (!reviewsMenuItem) {
@@ -1706,7 +1635,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Запускаємо всі виправлення після завантаження DOM
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             initHamburger();
@@ -1717,22 +1645,20 @@ document.addEventListener('DOMContentLoaded', function() {
         patchReviewsTab();
     }
 
-    // Спостерігаємо за змінами в DOM (на випадок, якщо Otpusk додає пункти пізніше)
     const observer = new MutationObserver(function() {
         const menu = document.querySelector('.new_t-menu');
         const btn = document.querySelector('.hamburger-trigger');
         if (menu && !btn && window.innerWidth <= 768) {
             initHamburger();
         }
-        // Якщо з'явився пункт меню "Відгуки" – навішуємо обробник
         if (!document.querySelector('.new_t-menu-item[data-name="reviews"]')) return;
-        // Перевіряємо, чи вже є обробник (просто повторно викликаємо patchReviewsTab)
         patchReviewsTab();
     });
     observer.observe(document.body, { childList: true, subtree: true });
     setTimeout(() => observer.disconnect(), 15000);
 })();
 </script>
+
 <!-- ========== БЛОК "ГОТЕЛІ З АНАЛОГІЧНОЮ ЦІНОЮ" (КАРУСЕЛЬ) ========== -->
 <div class="container mt-5 mb-5" id="similarPriceSection" style="display: none;">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -1875,7 +1801,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let cardWidth = 300;
     let visibleCards = 4;
 
-    // Безкоштовні фото готелів
     const hotelImages = [
         'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=300&h=180&fit=crop',
         'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=300&h=180&fit=crop',
@@ -1911,21 +1836,17 @@ document.addEventListener('DOMContentLoaded', function() {
     function getAllTours() {
         const tours = [];
         const viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item');
-
         viewedItems.forEach((item, idx) => {
             const hotelName = item.querySelector('.new_r-item-hotel')?.innerText?.trim() || '';
             let priceText = item.querySelector('.new_price-value')?.innerText?.trim() || '';
             let price = 0;
             const priceMatch = priceText.match(/\d+/g);
             if (priceMatch) price = parseInt(priceMatch.join('').replace(/\s/g, ''));
-
             let link = '';
             const linkElement = item.querySelector('a');
             if (linkElement) link = linkElement.getAttribute('href');
-
             const location = item.querySelector('.new_r-item-geo')?.innerText?.trim() || '';
             const nights = item.querySelector('.new_r-item-nights')?.innerText?.replace(/[^0-9]/g, '') || '7';
-
             if (hotelName && price > 0 && link) {
                 tours.push({ hotelName, price, priceText, link, location, nights, imageIndex: idx });
             }
@@ -1939,7 +1860,6 @@ document.addEventListener('DOMContentLoaded', function() {
         else if (width >= 900) visibleCards = 3;
         else if (width >= 600) visibleCards = 2;
         else visibleCards = 1;
-
         const container = document.querySelector('.similar-price-slider');
         if (container) {
             const containerWidth = container.clientWidth;
@@ -1957,17 +1877,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const slider = document.getElementById('similarPriceSlider');
         const prevBtn = document.getElementById('sliderPrev');
         const nextBtn = document.getElementById('sliderNext');
-
         if (!slider || !prevBtn || !nextBtn) return;
-
         const maxScroll = slider.scrollWidth - slider.clientWidth;
-
         if (slider.scrollLeft <= 5) {
             prevBtn.classList.add('disabled');
         } else {
             prevBtn.classList.remove('disabled');
         }
-
         if (slider.scrollLeft >= maxScroll - 5) {
             nextBtn.classList.add('disabled');
         } else {
@@ -1978,12 +1894,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function scrollSlider(direction) {
         const slider = document.getElementById('similarPriceSlider');
         if (!slider) return;
-
         const cardWidthWithGap = cardWidth + 20;
         const scrollAmount = direction === 'next' ? cardWidthWithGap * visibleCards : -cardWidthWithGap * visibleCards;
-
         slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-
         setTimeout(updateButtons, 300);
     }
 
@@ -1991,9 +1904,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const track = document.getElementById('similarPriceTrack');
         const section = document.getElementById('similarPriceSection');
         const messageDiv = document.getElementById('similarPriceMessage');
-
         if (!track) return;
-
         let html = '';
         tours.forEach((tour, idx) => {
             const imageUrl = getRandomImage(tour.imageIndex || idx);
@@ -2019,9 +1930,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
         });
-
         track.innerHTML = html;
-
         setTimeout(() => {
             updateVisibleCards();
             if (messageDiv) messageDiv.style.display = 'none';
@@ -2034,15 +1943,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const section = document.getElementById('similarPriceSection');
             const track = document.getElementById('similarPriceTrack');
             const messageDiv = document.getElementById('similarPriceMessage');
-
             if (!section || !track) return;
-
             const currentPrice = getCurrentPrice();
             if (currentPrice === 0) {
                 section.style.display = 'none';
                 return;
             }
-
             const allTours = getAllTours();
             if (allTours.length === 0) {
                 if (messageDiv) {
@@ -2053,13 +1959,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(loadSimilarTours, 2000);
                 return;
             }
-
             const minPrice = currentPrice - 5000;
             const maxPrice = currentPrice + 5000;
             const filteredTours = allTours.filter(tour => {
                 return tour.price >= minPrice && tour.price <= maxPrice && tour.price !== currentPrice;
             });
-
             if (filteredTours.length === 0) {
                 if (messageDiv) {
                     messageDiv.innerHTML = `😔 Не знайдено готелів у ціновому діапазоні ±5000 грн<br><small>Поточна ціна: ${currentPrice.toLocaleString()} грн</small>`;
@@ -2068,9 +1972,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 section.style.display = 'block';
                 return;
             }
-
             renderCarousel(filteredTours);
-
         } catch(e) {
             console.error('Помилка:', e);
         }
@@ -2087,7 +1989,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const prevBtn = document.getElementById('sliderPrev');
         const nextBtn = document.getElementById('sliderNext');
         const slider = document.getElementById('similarPriceSlider');
-
         if (prevBtn) {
             prevBtn.addEventListener('click', () => scrollSlider('prev'));
         }
@@ -2101,7 +2002,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateButtons();
             });
         }
-
         setTimeout(loadSimilarTours, 2000);
         setTimeout(loadSimilarTours, 4000);
         setTimeout(loadSimilarTours, 6000);
@@ -2118,7 +2018,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => observer.disconnect(), 15000);
 })();
 </script>
-<!-- ========== БЛОК "ГОТЕЛІ ЗІ СХОЖИМ РЕЙТИНГОМ" (виправлений) ========== -->
+
+<!-- ========== БЛОК "ГОТЕЛІ ЗІ СХОЖИМ РЕЙТИНГОМ" ========== -->
 <div class="container mt-5 mb-5" id="similarRatingSection" style="display: none;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 style="color: #000000; font-weight: normal; margin: 0;">Готелі зі схожим рейтингом</h3>
@@ -2274,7 +2175,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let ratingCardWidth = 300;
     let ratingVisibleCards = 4;
 
-    // Фото для карток
     const ratingHotelImages = [
         'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=300&h=180&fit=crop',
         'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=300&h=180&fit=crop',
@@ -2293,39 +2193,28 @@ document.addEventListener('DOMContentLoaded', function() {
     function getAllToursForRating() {
         const tours = [];
         const viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item');
-
         viewedItems.forEach((item, idx) => {
             const hotelName = item.querySelector('.new_r-item-hotel')?.innerText?.trim() || '';
             let priceText = item.querySelector('.new_price-value')?.innerText?.trim() || '';
             let price = 0;
             const priceMatch = priceText.match(/\d+/g);
             if (priceMatch) price = parseInt(priceMatch.join('').replace(/\s/g, ''));
-
             let link = '';
             const linkElement = item.querySelector('a');
             if (linkElement) link = linkElement.getAttribute('href');
-
             const location = item.querySelector('.new_r-item-geo')?.innerText?.trim() || '';
             const nights = item.querySelector('.new_r-item-nights')?.innerText?.replace(/[^0-9]/g, '') || '7';
-
-            // Оскільки рейтинг прихований, використовуємо фіксований рейтинг на основі ціни
-            // (як альтернативу) або використовуємо порядковий номер
             let rating = 0;
-            // Шукаємо рейтинг, навіть якщо він прихований
             const ratingElement = item.querySelector('.new_r-item-rating-value');
             if (ratingElement && ratingElement.innerText) {
                 const ratingMatch = ratingElement.innerText.match(/\d+(?:\.\d+)?/);
                 if (ratingMatch) rating = parseFloat(ratingMatch[0]);
             }
-
-            // Якщо рейтинг не знайдено, використовуємо фейковий на основі ціни (для демонстрації)
             if (rating === 0 && price > 0) {
-                // Симулюємо рейтинг від 5 до 9 на основі ціни
                 rating = 5 + (price % 50) / 10;
                 if (rating > 9) rating = 9;
                 rating = Math.round(rating * 10) / 10;
             }
-
             if (hotelName && price > 0 && link) {
                 tours.push({ hotelName, price, priceText, link, location, nights, rating, imageIndex: idx });
             }
@@ -2335,16 +2224,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function getCurrentTourRating() {
         let rating = 0;
-
-        // Спроба 1: Шукаємо в заголовку
         const ratingElement = document.querySelector('.new_t-header .new_r-item-rating-value');
         if (ratingElement) {
             const ratingText = ratingElement.innerText;
             const ratingMatch = ratingText.match(/\d+(?:\.\d+)?/);
             if (ratingMatch) rating = parseFloat(ratingMatch[0]);
         }
-
-        // Спроба 2: Шукаємо в блоці ціни (може бути десь ще)
         if (rating === 0) {
             const altRating = document.querySelector('[class*="rating"]');
             if (altRating) {
@@ -2352,15 +2237,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (ratingMatch) rating = parseFloat(ratingMatch[0]);
             }
         }
-
-        // Якщо рейтинг не знайдено, використовуємо значення за замовчуванням 8.0
         if (rating === 0) {
             rating = 8.0;
             console.log('Рейтинг не знайдено, використовуємо значення за замовчуванням:', rating);
         } else {
             console.log('Знайдено рейтинг туру:', rating);
         }
-
         return rating;
     }
 
@@ -2370,7 +2252,6 @@ document.addEventListener('DOMContentLoaded', function() {
         else if (width >= 900) ratingVisibleCards = 3;
         else if (width >= 600) ratingVisibleCards = 2;
         else ratingVisibleCards = 1;
-
         const container = document.querySelector('.rating-slider');
         if (container) {
             const containerWidth = container.clientWidth;
@@ -2388,17 +2269,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const slider = document.getElementById('ratingSlider');
         const prevBtn = document.getElementById('ratingSliderPrev');
         const nextBtn = document.getElementById('ratingSliderNext');
-
         if (!slider || !prevBtn || !nextBtn) return;
-
         const maxScroll = slider.scrollWidth - slider.clientWidth;
-
         if (slider.scrollLeft <= 5) {
             prevBtn.classList.add('disabled');
         } else {
             prevBtn.classList.remove('disabled');
         }
-
         if (slider.scrollLeft >= maxScroll - 5) {
             nextBtn.classList.add('disabled');
         } else {
@@ -2409,12 +2286,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function scrollRatingSlider(direction) {
         const slider = document.getElementById('ratingSlider');
         if (!slider) return;
-
         const cardWidthWithGap = ratingCardWidth + 20;
         const scrollAmount = direction === 'next' ? cardWidthWithGap * ratingVisibleCards : -cardWidthWithGap * ratingVisibleCards;
-
         slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-
         setTimeout(updateRatingButtons, 300);
     }
 
@@ -2422,7 +2296,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const fullStars = Math.floor(rating);
         const hasHalfStar = rating % 1 >= 0.5;
         let starsHtml = '';
-
         for (let i = 0; i < fullStars; i++) {
             starsHtml += '<i class="fa-solid fa-star" style="color: #f59e0b;"></i>';
         }
@@ -2440,9 +2313,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const track = document.getElementById('ratingTrack');
         const section = document.getElementById('similarRatingSection');
         const messageDiv = document.getElementById('ratingMessage');
-
         if (!track) return;
-
         let html = '';
         tours.forEach((tour, idx) => {
             const imageUrl = getRatingImage(tour.imageIndex || idx);
@@ -2473,9 +2344,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
         });
-
         track.innerHTML = html;
-
         setTimeout(() => {
             updateRatingVisibleCards();
             if (messageDiv) messageDiv.style.display = 'none';
@@ -2488,13 +2357,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const section = document.getElementById('similarRatingSection');
             const track = document.getElementById('ratingTrack');
             const messageDiv = document.getElementById('ratingMessage');
-
             if (!section || !track) return;
-
             const currentRating = getCurrentTourRating();
-
             const allTours = getAllToursForRating();
-
             if (allTours.length === 0) {
                 if (messageDiv) {
                     messageDiv.innerHTML = '⏳ Зачекайте, тури завантажуються...';
@@ -2504,14 +2369,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(loadSimilarRatingTours, 2000);
                 return;
             }
-
-            // Фільтруємо тури з рейтингом ±1 від поточного
             const filteredTours = allTours.filter(tour => {
                 return tour.rating >= currentRating - 1 && tour.rating <= currentRating + 1 && Math.abs(tour.rating - currentRating) > 0.1;
             }).sort((a, b) => b.rating - a.rating);
-
             console.log(`Поточний рейтинг: ${currentRating}, Знайдено турів: ${filteredTours.length}`);
-
             if (filteredTours.length === 0) {
                 if (messageDiv) {
                     messageDiv.innerHTML = `😔 Не знайдено готелів зі схожим рейтингом (±1)<br><small>Поточний рейтинг: ${currentRating.toFixed(1)}</small>`;
@@ -2520,9 +2381,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 section.style.display = 'block';
                 return;
             }
-
             renderRatingCarousel(filteredTours);
-
         } catch(e) {
             console.error('Помилка завантаження рейтингу:', e);
         }
@@ -2535,12 +2394,10 @@ document.addEventListener('DOMContentLoaded', function() {
         return div.innerHTML;
     }
 
-    // Ініціалізація
     document.addEventListener('DOMContentLoaded', function() {
         const prevBtn = document.getElementById('ratingSliderPrev');
         const nextBtn = document.getElementById('ratingSliderNext');
         const slider = document.getElementById('ratingSlider');
-
         if (prevBtn) {
             prevBtn.addEventListener('click', () => scrollRatingSlider('prev'));
         }
@@ -2554,7 +2411,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateRatingButtons();
             });
         }
-
         setTimeout(loadSimilarRatingTours, 2500);
         setTimeout(loadSimilarRatingTours, 4500);
         setTimeout(loadSimilarRatingTours, 6500);
