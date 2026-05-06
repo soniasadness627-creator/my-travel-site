@@ -1723,4 +1723,449 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => observer.disconnect(), 15000);
 })();
 </script>
+<!-- ========== БЛОК "ГОТЕЛІ ЗІ СХОЖИМ РЕЙТИНГОМ" ========== -->
+<div class="container mt-5 mb-5" id="similarRatingSection" style="display: none;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 style="color: #000000; font-weight: normal; margin: 0;">⭐ Готелі зі схожим рейтингом</h3>
+        <div class="rating-slider-nav-buttons" style="display: flex; gap: 10px;">
+            <button class="rating-slider-nav prev" id="ratingSliderPrev" style="width: 36px; height: 36px; background: white; border: 1px solid #e2e8f0; border-radius: 50%; cursor: pointer; color: var(--primary-color); font-size: 20px; display: flex; align-items: center; justify-content: center;">‹</button>
+            <button class="rating-slider-nav next" id="ratingSliderNext" style="width: 36px; height: 36px; background: white; border: 1px solid #e2e8f0; border-radius: 50%; cursor: pointer; color: var(--primary-color); font-size: 20px; display: flex; align-items: center; justify-content: center;">›</button>
+        </div>
+    </div>
+    <div class="rating-slider-wrapper" style="position: relative;">
+        <div class="rating-slider" id="ratingSlider" style="overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+            <div class="rating-track" id="ratingTrack" style="display: flex; gap: 20px;">
+                <div class="text-center py-5" style="width: 100%;">🔍 Пошук готелів зі схожим рейтингом...</div>
+            </div>
+        </div>
+    </div>
+    <div id="ratingMessage" class="text-center py-4" style="display: none; color: #64748b;"></div>
+</div>
+
+<style>
+    .rating-slider {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    .rating-slider::-webkit-scrollbar {
+        display: none;
+    }
+    .rating-card {
+        flex: 0 0 auto;
+        width: 280px;
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+        border: 1px solid #e2e8f0;
+    }
+    .rating-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    .rating-img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .rating-info {
+        padding: 15px;
+    }
+    .rating-hotel {
+        font-weight: 700;
+        font-size: 16px;
+        color: #1e293b;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .rating-location {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .rating-location svg {
+        width: 12px;
+        height: 12px;
+        fill: #64748b;
+    }
+    .rating-stars {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin: 8px 0;
+    }
+    .rating-stars i {
+        font-size: 14px;
+    }
+    .rating-value {
+        font-weight: 700;
+        font-size: 14px;
+        color: #f59e0b;
+        margin-right: 8px;
+    }
+    .rating-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #e2e8f0;
+    }
+    .rating-price {
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--primary-color);
+    }
+    .rating-price small {
+        font-size: 11px;
+        font-weight: 400;
+        color: #64748b;
+    }
+    .rating-slider-nav {
+        transition: all 0.2s ease;
+    }
+    .rating-slider-nav:hover {
+        background: var(--primary-color) !important;
+        color: white !important;
+        border-color: var(--primary-color) !important;
+    }
+    .rating-slider-nav.disabled {
+        opacity: 0.4;
+        cursor: default;
+        pointer-events: none;
+    }
+    @media (max-width: 768px) {
+        .rating-card {
+            width: 260px;
+        }
+        .rating-img {
+            height: 150px;
+        }
+        .rating-slider-nav {
+            width: 32px !important;
+            height: 32px !important;
+            font-size: 18px !important;
+        }
+    }
+    @media (max-width: 480px) {
+        .rating-card {
+            width: 240px;
+        }
+        .rating-img {
+            height: 140px;
+        }
+        .rating-slider-nav-buttons {
+            gap: 5px !important;
+        }
+        .rating-slider-nav {
+            width: 28px !important;
+            height: 28px !important;
+            font-size: 16px !important;
+        }
+    }
+</style>
+
+<script>
+(function() {
+    let ratingCardWidth = 300;
+    let ratingVisibleCards = 4;
+
+    // Фото для карток
+    const ratingHotelImages = [
+        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=300&h=180&fit=crop',
+        'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=300&h=180&fit=crop',
+        'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=300&h=180&fit=crop',
+        'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=300&h=180&fit=crop',
+        'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=300&h=180&fit=crop',
+        'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=300&h=180&fit=crop',
+        'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=300&h=180&fit=crop',
+        'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=300&h=180&fit=crop'
+    ];
+
+    function getRatingImage(index) {
+        return ratingHotelImages[index % ratingHotelImages.length];
+    }
+
+    // Функція для отримання рейтингу з туру
+    function getTourRating(item) {
+        // Шукаємо рейтинг у різних місцях
+        let rating = 0;
+        const ratingElement = item.querySelector('.new_r-item-rating-value');
+        if (ratingElement) {
+            const ratingText = ratingElement.innerText;
+            const ratingMatch = ratingText.match(/\d+(?:\.\d+)?/);
+            if (ratingMatch) rating = parseFloat(ratingMatch[0]);
+        }
+        return rating;
+    }
+
+    function getAllToursForRating() {
+        const tours = [];
+        const viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item');
+
+        viewedItems.forEach((item, idx) => {
+            const hotelName = item.querySelector('.new_r-item-hotel')?.innerText?.trim() || '';
+            let priceText = item.querySelector('.new_price-value')?.innerText?.trim() || '';
+            let price = 0;
+            const priceMatch = priceText.match(/\d+/g);
+            if (priceMatch) price = parseInt(priceMatch.join('').replace(/\s/g, ''));
+
+            let link = '';
+            const linkElement = item.querySelector('a');
+            if (linkElement) link = linkElement.getAttribute('href');
+
+            const location = item.querySelector('.new_r-item-geo')?.innerText?.trim() || '';
+            const nights = item.querySelector('.new_r-item-nights')?.innerText?.replace(/[^0-9]/g, '') || '7';
+            const rating = getTourRating(item);
+
+            if (hotelName && price > 0 && link) {
+                tours.push({ hotelName, price, priceText, link, location, nights, rating, imageIndex: idx });
+            }
+        });
+        return tours;
+    }
+
+    function getCurrentTourRating() {
+        let rating = 0;
+        // Шукаємо рейтинг поточного туру
+        const ratingElement = document.querySelector('.new_t-header-rating-value, .new_t-header-rating');
+        if (ratingElement) {
+            const ratingText = ratingElement.innerText;
+            const ratingMatch = ratingText.match(/\d+(?:\.\d+)?/);
+            if (ratingMatch) rating = parseFloat(ratingMatch[0]);
+        }
+        return rating;
+    }
+
+    function updateRatingVisibleCards() {
+        const width = window.innerWidth;
+        if (width >= 1200) ratingVisibleCards = 4;
+        else if (width >= 900) ratingVisibleCards = 3;
+        else if (width >= 600) ratingVisibleCards = 2;
+        else ratingVisibleCards = 1;
+
+        const container = document.querySelector('.rating-slider');
+        if (container) {
+            const containerWidth = container.clientWidth;
+            const gap = 20;
+            ratingCardWidth = (containerWidth - (gap * (ratingVisibleCards - 1))) / ratingVisibleCards;
+            const cards = document.querySelectorAll('.rating-card');
+            cards.forEach(card => {
+                card.style.width = ratingCardWidth + 'px';
+            });
+        }
+        updateRatingButtons();
+    }
+
+    function updateRatingButtons() {
+        const slider = document.getElementById('ratingSlider');
+        const prevBtn = document.getElementById('ratingSliderPrev');
+        const nextBtn = document.getElementById('ratingSliderNext');
+
+        if (!slider || !prevBtn || !nextBtn) return;
+
+        const maxScroll = slider.scrollWidth - slider.clientWidth;
+
+        if (slider.scrollLeft <= 5) {
+            prevBtn.classList.add('disabled');
+        } else {
+            prevBtn.classList.remove('disabled');
+        }
+
+        if (slider.scrollLeft >= maxScroll - 5) {
+            nextBtn.classList.add('disabled');
+        } else {
+            nextBtn.classList.remove('disabled');
+        }
+    }
+
+    function scrollRatingSlider(direction) {
+        const slider = document.getElementById('ratingSlider');
+        if (!slider) return;
+
+        const cardWidthWithGap = ratingCardWidth + 20;
+        const scrollAmount = direction === 'next' ? cardWidthWithGap * ratingVisibleCards : -cardWidthWithGap * ratingVisibleCards;
+
+        slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+
+        setTimeout(updateRatingButtons, 300);
+    }
+
+    // Функція для відображення зірок
+    function renderStars(rating) {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        let starsHtml = '';
+
+        for (let i = 0; i < fullStars; i++) {
+            starsHtml += '<i class="fa-solid fa-star" style="color: #f59e0b;"></i>';
+        }
+        if (hasHalfStar) {
+            starsHtml += '<i class="fa-solid fa-star-half-alt" style="color: #f59e0b;"></i>';
+        }
+        const emptyStars = 5 - Math.ceil(rating);
+        for (let i = 0; i < emptyStars; i++) {
+            starsHtml += '<i class="fa-regular fa-star" style="color: #f59e0b;"></i>';
+        }
+        return starsHtml;
+    }
+
+    function renderRatingCarousel(tours) {
+        const track = document.getElementById('ratingTrack');
+        const section = document.getElementById('similarRatingSection');
+        const messageDiv = document.getElementById('ratingMessage');
+
+        if (!track) return;
+
+        let html = '';
+        tours.forEach((tour, idx) => {
+            const imageUrl = getRatingImage(tour.imageIndex || idx);
+            const starsHtml = renderStars(tour.rating);
+            html += `
+                <div class="rating-card" onclick="window.location.href='${tour.link}'">
+                    <img class="rating-img" src="${imageUrl}" alt="${escapeHtml(tour.hotelName)}" onerror="this.style.background='linear-gradient(135deg, var(--primary-color), var(--primary-dark))'; this.src='';">
+                    <div class="rating-info">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="rating-hotel">${escapeHtml(tour.hotelName)}</div>
+                            <span class="badge rounded-pill px-2 py-1" style="font-size: 0.7rem; background-color: var(--primary-color); color: #ffffff;">${tour.nights} ночей</span>
+                        </div>
+                        <div class="rating-location">
+                            <svg viewBox="0 0 24 24" width="12" height="12"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            ${escapeHtml(tour.location || 'Популярний напрямок')}
+                        </div>
+                        <div class="rating-stars">
+                            <span class="rating-value">${tour.rating.toFixed(1)}</span>
+                            ${starsHtml}
+                        </div>
+                        <div class="rating-footer">
+                            <div class="rating-price">${escapeHtml(tour.priceText)} <small>за тур</small></div>
+                            <button class="btn btn-outline-primary btn-sm" style="border-color: var(--primary-color); color: var(--primary-color); font-size: 0.75rem; padding: 0.25rem 0.75rem; border-radius: 6px;" onclick="event.stopPropagation(); window.location.href='${tour.link}'">
+                                Деталі →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        track.innerHTML = html;
+
+        setTimeout(() => {
+            updateRatingVisibleCards();
+            if (messageDiv) messageDiv.style.display = 'none';
+            if (section) section.style.display = 'block';
+        }, 100);
+    }
+
+    function loadSimilarRatingTours() {
+        try {
+            const section = document.getElementById('similarRatingSection');
+            const track = document.getElementById('ratingTrack');
+            const messageDiv = document.getElementById('ratingMessage');
+
+            if (!section || !track) return;
+
+            const currentRating = getCurrentTourRating();
+
+            // Якщо рейтинг не знайдено або менше 1, пробуємо взяти з DOM
+            if (currentRating === 0) {
+                // Шукаємо альтернативне місце для рейтингу
+                const altRating = document.querySelector('.new_t-header-rating');
+                if (altRating) {
+                    const match = altRating.innerText.match(/\d+(?:\.\d+)?/);
+                    if (match) currentRating = parseFloat(match[0]);
+                }
+            }
+
+            if (currentRating === 0) {
+                console.log('Рейтинг не знайдено');
+                section.style.display = 'none';
+                return;
+            }
+
+            const allTours = getAllToursForRating();
+
+            if (allTours.length === 0) {
+                if (messageDiv) {
+                    messageDiv.innerHTML = '⏳ Зачекайте, тури завантажуються...';
+                    messageDiv.style.display = 'block';
+                }
+                section.style.display = 'block';
+                setTimeout(loadSimilarRatingTours, 2000);
+                return;
+            }
+
+            // Фільтруємо тури з рейтингом ±1 від поточного
+            const filteredTours = allTours.filter(tour => {
+                return tour.rating >= currentRating - 1 && tour.rating <= currentRating + 1 && tour.rating !== currentRating;
+            }).sort((a, b) => b.rating - a.rating); // Сортуємо за рейтингом
+
+            if (filteredTours.length === 0) {
+                if (messageDiv) {
+                    messageDiv.innerHTML = `😔 Не знайдено готелів зі схожим рейтингом (±1)<br><small>Поточний рейтинг: ${currentRating.toFixed(1)}</small>`;
+                    messageDiv.style.display = 'block';
+                }
+                section.style.display = 'block';
+                return;
+            }
+
+            renderRatingCarousel(filteredTours);
+
+        } catch(e) {
+            console.error('Помилка завантаження рейтингу:', e);
+        }
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Ініціалізація
+    document.addEventListener('DOMContentLoaded', function() {
+        const prevBtn = document.getElementById('ratingSliderPrev');
+        const nextBtn = document.getElementById('ratingSliderNext');
+        const slider = document.getElementById('ratingSlider');
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => scrollRatingSlider('prev'));
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => scrollRatingSlider('next'));
+        }
+        if (slider) {
+            slider.addEventListener('scroll', updateRatingButtons);
+            window.addEventListener('resize', () => {
+                updateRatingVisibleCards();
+                updateRatingButtons();
+            });
+        }
+
+        setTimeout(loadSimilarRatingTours, 2500);
+        setTimeout(loadSimilarRatingTours, 4500);
+        setTimeout(loadSimilarRatingTours, 6500);
+    });
+
+    const ratingObserver = new MutationObserver(() => {
+        const viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item');
+        if (viewedItems.length > 0) {
+            loadSimilarRatingTours();
+            ratingObserver.disconnect();
+        }
+    });
+    ratingObserver.observe(document.body, { childList: true, subtree: true });
+    setTimeout(() => ratingObserver.disconnect(), 15000);
+})();
+</script>
 {% endblock %}
