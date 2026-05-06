@@ -607,6 +607,109 @@ function goToSearchPage() {
 }
 </script>
 
+<!-- ========== ІНФОРМАЦІЙНІ БЛОКИ ПРО ПЕРЕВАГИ ========== -->
+<div class="container my-5">
+    <div class="row g-4">
+        <!-- Блок 1: Економія часу -->
+        <div class="col-md-4">
+            <div class="info-card h-100 text-center p-4">
+                <div class="info-icon mb-3">
+                    <i class="fa-regular fa-clock fa-3x"></i>
+                </div>
+                <h4 class="info-title">Заощаджуйте час</h4>
+                <p class="info-text">
+                    Не потрібно перевіряти десятки сайтів — усі пропозиції вже тут.
+                    Система покаже найвигіднішу ціну серед усіх туроператорів.
+                </p>
+            </div>
+        </div>
+
+        <!-- Блок 2: Швидке бронювання -->
+        <div class="col-md-4">
+            <div class="info-card h-100 text-center p-4">
+                <div class="info-icon mb-3">
+                    <i class="fa-regular fa-calendar-check fa-3x"></i>
+                </div>
+                <h4 class="info-title">Миттєве бронювання</h4>
+                <p class="info-text">
+                    Оплачуйте онлайн та бронюйте номер миттєво,
+                    поки найкращі місця в готелі не закінчилися.
+                </p>
+            </div>
+        </div>
+
+        <!-- Блок 3: Безпека -->
+        <div class="col-md-4">
+            <div class="info-card h-100 text-center p-4">
+                <div class="info-icon mb-3">
+                    <i class="fa-regular fa-shield-haltered fa-3x"></i>
+                </div>
+                <h4 class="info-title">Безпечне бронювання</h4>
+                <p class="info-text">
+                    Гроші заморожуються на вашій картці та не знімаються
+                    до підтвердження бронювання туроператором.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .info-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        border-color: rgba(var(--primary-rgb, 193, 31, 88), 0.2);
+    }
+
+    .info-icon {
+        color: var(--primary-color);
+    }
+
+    .info-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 12px;
+    }
+
+    .info-text {
+        font-size: 0.9rem;
+        color: #64748b;
+        line-height: 1.5;
+        margin-bottom: 0;
+    }
+
+    /* Адаптивність для мобільних */
+    @media (max-width: 768px) {
+        .info-card {
+            padding: 20px !important;
+        }
+        .info-icon i {
+            font-size: 2rem !important;
+        }
+        .info-title {
+            font-size: 1.1rem;
+        }
+        .info-text {
+            font-size: 0.85rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .info-card {
+            margin: 0 10px;
+        }
+    }
+</style>
+
 <!-- ========== БЛОК БРОНЮВАННЯ ========== -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
