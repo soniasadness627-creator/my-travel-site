@@ -1144,8 +1144,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <!-- ========== БЛОК "ГОТЕЛІ З АНАЛОГІЧНОЮ ЦІНОЮ" ========== -->
 <div class="container mt-5 mb-5" id="similarPriceSection" style="display: none;">
-    <h3 class="fw-bold text-center mb-4" style="color: #000000;">Готелі з найкращим співвідношенням ціни та якості</h3>
-    <div id="similarPriceContainer" class="row" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+    <h3 class="mb-4" style="color: #000000; font-weight: normal; text-align: left;">Готелі з найкращим співвідношенням ціни та якості</h3>
+    <div id="similarPriceContainer" class="row" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: flex-start;">
         <div class="text-center py-5" style="width: 100%;">🔍 Пошук турів...</div>
     </div>
 </div>
@@ -1278,14 +1278,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="card-body p-3">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <h6 class="card-title fw-bold mb-0" style="font-size: 0.95rem;">${escapeHtml(tour.hotelName)}</h6>
-                                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2 py-1" style="font-size: 0.7rem;">${tour.nights} ночей</span>
+                                    <span class="badge rounded-pill px-2 py-1" style="font-size: 0.7rem; background-color: var(--primary-color); color: #ffffff;">${tour.nights} ночей</span>
                                 </div>
                                 <p class="card-text small text-muted mb-2">
                                     <i class="fa-solid fa-location-dot me-1"></i> ${escapeHtml(tour.location || 'Популярний напрямок')}
                                 </p>
                                 <div class="d-flex justify-content-between align-items-center mt-2">
                                     <span class="fw-bold text-danger" style="font-size: 1.1rem;">${escapeHtml(tour.priceText)}</span>
-                                    <button class="btn btn-outline-primary btn-sm rounded-pill" style="border-color: var(--primary-color); color: var(--primary-color); font-size: 0.75rem; padding: 0.25rem 0.75rem;" onclick="event.stopPropagation(); window.location.href='${tour.link}'">
+                                    <button class="btn btn-outline-primary btn-sm" style="border-color: var(--primary-color); color: var(--primary-color); font-size: 0.75rem; padding: 0.25rem 0.75rem; border-radius: 6px;" onclick="event.stopPropagation(); window.location.href='${tour.link}'">
                                         Деталі →
                                     </button>
                                 </div>
