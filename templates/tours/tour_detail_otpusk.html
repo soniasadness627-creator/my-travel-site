@@ -682,21 +682,7 @@
     }
     /* ========== ПРИХОВУЄМО ОРИГІНАЛЬНИЙ БЛОК ПОШУКУ OTPUSK ========== */
 /* Цей блок дублює ваш кастомний блок "Ціни на тури в готель", тому ховаємо його */
-/* Оригінальний блок пошуку Otpusk - ТИМЧАСОВО ПОКАЗУЄМО */
-.new_f-wrapper {
-    display: block !important;
-    visibility: visible !important;
-    height: auto !important;
-    overflow: visible !important;
-    margin: 20px 0 !important;
-    padding: 20px !important;
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    border: 2px solid red !important;
-}
+
 
 </style>
 <style>
@@ -711,10 +697,7 @@
     flex-direction: column !important;
 }
 
-.new_f-container {
-    order: 2 !important; /* Оригінальний пошук відправляємо вниз */
-    margin-top: 30px !important;
-}
+
 
 #hotelPricesSection ~ *:not(.new_f-container) {
     order: 3 !important;
