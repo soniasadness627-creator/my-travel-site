@@ -864,6 +864,27 @@ function goToSearchPage() {
     opacity: 0 !important;
     pointer-events: none !important;
 }
+    <style>
+/* Переміщуємо ваш блок вище за допомогою CSS */
+#hotelPricesSection {
+    order: -1 !important; /* Ставимо першим */
+    margin-top: 0 !important;
+}
+
+#otpusk-tour-module {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.new_f-container {
+    order: 2 !important; /* Оригінальний пошук відправляємо вниз */
+    margin-top: 30px !important;
+}
+
+#hotelPricesSection ~ *:not(.new_f-container) {
+    order: 3 !important;
+}
+</style>
 </style>
 
 <script>
