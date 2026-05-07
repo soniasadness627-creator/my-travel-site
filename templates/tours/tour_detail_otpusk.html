@@ -894,6 +894,8 @@ function goToSearchPage() {
     let basePrice = 0;
     let hotelNameObserver = null;
     let availableDatesMap = new Map();
+    let calendarUpdateTimer = null;
+    let isPriceUpdating = false;
 
     function getHotelName() {
         const hotelTitle = document.querySelector('.new_t-header-title');
@@ -913,54 +915,37 @@ function goToSearchPage() {
         }
     }
 
-    // ========== НОРМАЛІЗАЦІЯ ДАТ ДЛЯ ПОРІВНЯННЯ ==========
     function normalizeDateString(dateStr) {
         if (!dateStr) return '';
-
-        // Видаляємо "з " на початку
         let normalized = dateStr.replace(/^з\s+/i, '').trim();
-        // Видаляємо день тижня в дужках
         normalized = normalized.replace(/\s*\([^)]*\)/g, '').trim();
-        // Замінюємо місяці на коротку форму для порівняння з календарем
         const monthMap = {
             'січня': 'Січ', 'лютого': 'Лют', 'березня': 'Бер', 'квітня': 'Кві',
             'травня': 'Тра', 'червня': 'Чер', 'липня': 'Лип', 'серпня': 'Сер',
             'вересня': 'Вер', 'жовтня': 'Жов', 'листопада': 'Лис', 'грудня': 'Гру'
         };
-
         for (const [full, short] of Object.entries(monthMap)) {
             if (normalized.includes(full)) {
                 normalized = normalized.replace(full, short);
                 break;
             }
         }
-
-        // Видаляємо рік якщо є
         normalized = normalized.replace(/\s+\d{4}/g, '');
         normalized = normalized.replace(/\s+/g, ' ').toLowerCase().trim();
-
         return normalized;
     }
 
-    // ========== ЗБІР ДАТ З МОДАЛЬНОЇ ТАБЛИЦІ (ЯК У КАЛЕНДАРІ) ==========
     function collectAvailableDates() {
         availableDatesMap.clear();
-
-        // ДЖЕРЕЛО 1: Модальна таблиця дат
         const dateModalRows = document.querySelectorAll('.new_t-date-modal-table tbody tr');
-        console.log('🔍 Знайдено рядків у модальній таблиці:', dateModalRows.length);
 
         dateModalRows.forEach(row => {
             const dateSpan = row.querySelector('td:first-child span');
             if (!dateSpan) return;
-
             let rawDate = dateSpan.innerText.trim();
             let normalizedDate = normalizeDateString(rawDate);
-
-            // Шукаємо ціну в комірках
             const priceCells = row.querySelectorAll('td');
             let foundPrice = 0;
-
             for (let i = 1; i < priceCells.length && i <= 14; i++) {
                 const cellText = priceCells[i].innerText.trim();
                 if (cellText !== '—' && cellText !== '-' && cellText.match(/\d/)) {
@@ -971,14 +956,11 @@ function goToSearchPage() {
                     }
                 }
             }
-
             if (foundPrice > 0) {
                 availableDatesMap.set(normalizedDate, foundPrice);
-                console.log(`📅 Додано дату: "${rawDate}" -> "${normalizedDate}" = ${foundPrice} грн`);
             }
         });
 
-        // ДЖЕРЕЛО 2: Якщо модальної таблиці немає, беремо основну дату
         if (availableDatesMap.size === 0) {
             const dateElement = document.querySelector('.new_t-date-col .new_t-important');
             if (dateElement) {
@@ -986,20 +968,15 @@ function goToSearchPage() {
                 const price = getBasePriceFromDOM();
                 if (price > 0) {
                     availableDatesMap.set(dateText, price);
-                    console.log(`📅 Резервна дата: ${dateText} = ${price} грн`);
                 }
             }
         }
-
-        console.log('✅ ВСЬОГО доступних дат:', availableDatesMap.size, Array.from(availableDatesMap.keys()));
         return availableDatesMap;
     }
 
-    // ========== ОТРИМАННЯ ДАТ З КАЛЕНДАРЯ НАПРЯМУ ==========
     function getDatesFromCalendarTable() {
         const calendarDates = [];
         const calendarCells = document.querySelectorAll('.calendar-table td.has-price, .calendar-table td.lowest-price');
-
         calendarCells.forEach(cell => {
             const dateAttr = cell.getAttribute('data-date');
             const priceAttr = cell.getAttribute('data-price');
@@ -1012,8 +989,6 @@ function goToSearchPage() {
                 calendarDates.push({ date: dateKey, price: parseInt(priceAttr) });
             }
         });
-
-        console.log('📅 Дати з календаря:', calendarDates);
         return calendarDates;
     }
 
@@ -1026,33 +1001,24 @@ function goToSearchPage() {
     }
 
     function isDateAvailable(selectedDate) {
-        // Оновлюємо дати перед перевіркою
         collectAvailableDates();
-
-        // Також перевіряємо дати з календарної таблиці
         const calendarDates = getDatesFromCalendarTable();
-
         let dateToCheck = '';
         if (typeof selectedDate === 'object' && selectedDate instanceof Date) {
             dateToCheck = formatDateForComparison(selectedDate);
         } else {
             dateToCheck = normalizeDateString(selectedDate);
         }
-
-        // Шукаємо в availableDatesMap
         for (const [availableDate, price] of availableDatesMap) {
             if (availableDate === dateToCheck || availableDate.includes(dateToCheck) || dateToCheck.includes(availableDate)) {
                 return { available: true, price: price };
             }
         }
-
-        // Шукаємо в календарі
         for (const calDate of calendarDates) {
             if (calDate.date === dateToCheck) {
                 return { available: true, price: calDate.price };
             }
         }
-
         return { available: false, price: 0 };
     }
 
@@ -1083,7 +1049,6 @@ function goToSearchPage() {
             const monthNames = ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'];
             return `${d.getDate()} ${monthNames[d.getMonth()]}`;
         }
-
         const dateElement = document.querySelector('.new_t-date-col .new_t-important');
         if (dateElement) {
             return normalizeDateString(dateElement.innerText.trim());
@@ -1124,11 +1089,9 @@ function goToSearchPage() {
             }
             return nightsSelect.value;
         }
-
         const urlParams = new URLSearchParams(window.location.search);
         const olParam = urlParams.get('ol');
         if (olParam) return olParam;
-
         const nightsElement = document.querySelector('.new_t-duration-container');
         if (nightsElement) {
             const nightsMatch = nightsElement.innerText.match(/\d+/);
@@ -1140,27 +1103,22 @@ function goToSearchPage() {
     function loadDepartureCities() {
         const departureSelect = document.getElementById('searchDeparture');
         if (!departureSelect) return;
-
         while (departureSelect.options.length > 1) {
             departureSelect.remove(1);
         }
-
         const cities = new Set();
         const currentCity = getDepartureCity();
         cities.add(currentCity);
-
         const defaultCities = [
             'Кишинева', 'Києва', 'Львова', 'Одеси', 'Варшави',
             'Праги', 'Будапешта', 'Відня', 'Бухареста'
         ];
-
         cities.forEach(city => {
             const option = document.createElement('option');
             option.value = city;
             option.textContent = city;
             departureSelect.appendChild(option);
         });
-
         if (departureSelect.options.length <= 2) {
             defaultCities.forEach(city => {
                 const option = document.createElement('option');
@@ -1169,7 +1127,6 @@ function goToSearchPage() {
                 departureSelect.appendChild(option);
             });
         }
-
         if (currentCity) {
             for (let i = 0; i < departureSelect.options.length; i++) {
                 if (departureSelect.options[i].text === currentCity) {
@@ -1180,19 +1137,14 @@ function goToSearchPage() {
         }
     }
 
-    // ========== ЗБІР ПРОПОЗИЦІЙ З КАЛЕНДАРЯ ==========
     function collectOffersFromDOM() {
         const offers = [];
         const selectedDeparture = document.getElementById('searchDeparture')?.value || getDepartureCity();
         const nights = getNights();
         const room = getRoomType();
         const food = getFoodType();
-
-        // Отримуємо дати з календаря
         const calendarDates = getDatesFromCalendarTable();
-
         if (calendarDates.length === 0) {
-            // Якщо календар ще не завантажився, пробуємо модальну таблицю
             collectAvailableDates();
             for (const [date, price] of availableDatesMap) {
                 if (price > 0) {
@@ -1209,7 +1161,6 @@ function goToSearchPage() {
                 }
             }
         } else {
-            // Використовуємо дати з календаря
             for (const calDate of calendarDates) {
                 const adjustedPrice = recalculatePrice(currentAdults, calDate.price);
                 offers.push({
@@ -1223,8 +1174,6 @@ function goToSearchPage() {
                 });
             }
         }
-
-        // Унікальні пропозиції
         const uniqueOffers = [];
         const seenDates = new Set();
         for (const offer of offers) {
@@ -1234,17 +1183,12 @@ function goToSearchPage() {
                 uniqueOffers.push(offer);
             }
         }
-
-        console.log(`📊 Зібрано пропозицій: ${uniqueOffers.length}`);
-        uniqueOffers.forEach(o => console.log(`   - ${o.date}: ${o.price} грн`));
-
         return uniqueOffers;
     }
 
     function renderOffersTable(offers) {
         const tableContainer = document.getElementById('hotelPricesTable');
         if (!tableContainer) return;
-
         if (offers.length === 0) {
             tableContainer.innerHTML = `
                 <div class="text-center py-5">
@@ -1261,7 +1205,6 @@ function goToSearchPage() {
             `;
             return;
         }
-
         let html = `
             <table class="table table-hover mb-0" style="min-width: 600px;">
                 <thead class="bg-light">
@@ -1276,11 +1219,9 @@ function goToSearchPage() {
                 </thead>
                 <tbody>
         `;
-
         offers.forEach((offer, index) => {
             const priceFormatted = parseInt(offer.price).toLocaleString('uk-UA');
             const roomDisplay = offer.room.split('(')[0].trim();
-
             html += `
                 <tr class="hotel-price-row" data-index="${index}" style="cursor: pointer;">
                     <td class="p-3 hotel-price-cell">
@@ -1302,7 +1243,6 @@ function goToSearchPage() {
                 </tr>
             `;
         });
-
         html += `
                 </tbody>
             </table>
@@ -1312,9 +1252,7 @@ function goToSearchPage() {
                 </button>
             </div>
         `;
-
         tableContainer.innerHTML = html;
-
         document.querySelectorAll('.hotel-price-row').forEach(row => {
             row.addEventListener('click', function() {
                 document.querySelectorAll('.hotel-price-row').forEach(r => r.classList.remove('selected'));
@@ -1324,11 +1262,11 @@ function goToSearchPage() {
     }
 
     function loadHotelPrices() {
+        if (isPriceUpdating) return;
         const tableContainer = document.getElementById('hotelPricesTable');
         if (!tableContainer) return;
-
+        isPriceUpdating = true;
         currentAdults = parseInt(document.getElementById('searchAdults')?.value) || 2;
-
         tableContainer.innerHTML = `
             <div class="text-center py-5">
                 <div class="spinner-border text-primary" role="status">
@@ -1337,7 +1275,6 @@ function goToSearchPage() {
                 <p class="mt-3 text-muted">Пошук турів для ${currentAdults} дорослих...</p>
             </div>
         `;
-
         setTimeout(() => {
             const offers = collectOffersFromDOM();
             if (offers.length > 0) {
@@ -1356,13 +1293,13 @@ function goToSearchPage() {
                     </div>
                 `;
             }
+            setTimeout(() => { isPriceUpdating = false; }, 500);
         }, 300);
     }
 
     function checkAndNotifyAvailability(startDate) {
         const availability = isDateAvailable(startDate);
         const dateStr = startDate.toLocaleDateString('uk-UA');
-
         if (!availability.available) {
             const tableContainer = document.getElementById('hotelPricesTable');
             if (tableContainer) {
@@ -1421,17 +1358,24 @@ function goToSearchPage() {
         return div.innerHTML;
     }
 
-    // ========== СПОСТЕРІГАЧ ЗА ОНОВЛЕННЯМ КАЛЕНДАРЯ ==========
+    // ========== ВИПРАВЛЕНИЙ СПОСТЕРІГАЧ (БЕЗ ЦИКЛУ) ==========
     function watchForCalendarUpdates() {
+        let lastUpdateTime = 0;
         const observer = new MutationObserver(() => {
+            const now = Date.now();
+            if (now - lastUpdateTime < 3000) return;
             const calendarTable = document.querySelector('.calendar-table');
             if (calendarTable && calendarTable.querySelectorAll('td.has-price, td.lowest-price').length > 0) {
-                console.log('🔄 Календар оновлено, перезавантажуємо пропозиції');
-                if (window.reloadHotelPrices) window.reloadHotelPrices();
+                lastUpdateTime = now;
+                setTimeout(() => {
+                    if (window.reloadHotelPrices && !isPriceUpdating) {
+                        window.reloadHotelPrices();
+                    }
+                }, 500);
             }
         });
         observer.observe(document.body, { childList: true, subtree: true });
-        setTimeout(() => observer.disconnect(), 30000);
+        setTimeout(() => observer.disconnect(), 20000);
     }
 
     function initHotelPricesBlock() {
@@ -1449,9 +1393,15 @@ function goToSearchPage() {
         setTimeout(loadDepartureCities, 1500);
         setTimeout(loadDepartureCities, 3000);
 
+        // Безпечний інтервал - тільки збір дат
+        let lastCollectTime = 0;
         setInterval(() => {
-            collectAvailableDates();
-        }, 5000);
+            const now = Date.now();
+            if (now - lastCollectTime > 8000) {
+                lastCollectTime = now;
+                collectAvailableDates();
+            }
+        }, 10000);
 
         if (typeof flatpickr !== 'undefined' && !window.flatpickrInstance) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -1459,7 +1409,6 @@ function goToSearchPage() {
             const nights = parseInt(getNights());
             const endDate = new Date(startDate);
             endDate.setDate(endDate.getDate() + nights);
-
             window.flatpickrInstance = flatpickr('#searchDateRange', {
                 mode: 'range',
                 dateFormat: 'd M, Y',
@@ -1506,7 +1455,6 @@ function goToSearchPage() {
 
         watchForCalendarUpdates();
 
-        // Затримка перед першим завантаженням
         setTimeout(() => {
             loadHotelPrices();
         }, 1000);
@@ -3500,5 +3448,34 @@ if (document.readyState === 'loading') {
 }
 setTimeout(fixCalendarPosition, 1500);
 setTimeout(fixCalendarPosition, 3000);
+</script>
+<script>
+// FIX: Виправлення нескінченного циклу
+(function fixInfiniteLoop() {
+    console.log('🔧 Застосування виправлення циклу...');
+
+    // Вимікаємо всі старі інтервали, які могли залишитися
+    const highestId = setTimeout(() => {}, 0);
+    for (let i = 0; i <= highestId; i++) {
+        clearTimeout(i);
+        clearInterval(i);
+    }
+
+    // Додаємо тільки один безпечний інтервал
+    let lastCollectionTime = 0;
+    const safeInterval = setInterval(() => {
+        const now = Date.now();
+        if (now - lastCollectionTime > 8000 && window.collectAvailableDates) {
+            lastCollectionTime = now;
+            window.collectAvailableDates();
+        }
+    }, 10000);
+
+    // Зупиняємо через 2 хвилини
+    setTimeout(() => {
+        clearInterval(safeInterval);
+        console.log('👋 Безпечний інтервал зупинено');
+    }, 120000);
+})();
 </script>
 {% endblock %}
