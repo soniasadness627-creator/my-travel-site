@@ -682,18 +682,21 @@
     }
     /* ========== ПРИХОВУЄМО ОРИГІНАЛЬНИЙ БЛОК ПОШУКУ OTPUSK ========== */
 /* Цей блок дублює ваш кастомний блок "Ціни на тури в готель", тому ховаємо його */
+/* Оригінальний блок пошуку Otpusk - тимчасово показуємо для налагодження */
 .new_f-wrapper {
-    display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    overflow: hidden !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    position: absolute !important;
-    top: -9999px !important;
-    left: -9999px !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
+    /* ТИМЧАСОВО ПОКАЗУЄМО, ЩОБ БАЧИТИ ДАНІ */
+    display: block !important;
+    visibility: visible !important;
+    height: auto !important;
+    overflow: visible !important;
+    margin: 20px 0 !important;
+    padding: 20px !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    border: 2px solid red !important; /* ДЛЯ НАГЛЯДНОСТІ */
 }
 
 </style>
@@ -3533,5 +3536,38 @@ setTimeout(fixCalendarPosition, 3000);
         console.log('👋 Безпечний інтервал зупинено');
     }, 120000);
 })();
+</script>
+<script>
+// ДІАГНОСТИЧНИЙ СКРИПТ - ПОКАЖЕ ВСІ ДОСТУПНІ ДАТИ
+setTimeout(function() {
+    console.log('========== ДІАГНОСТИКА ==========');
+
+    // Перевіряємо модальну таблицю дат
+    const modalRows = document.querySelectorAll('.new_t-date-modal-table tbody tr');
+    console.log('📊 Модальна таблиця, рядків:', modalRows.length);
+
+    modalRows.forEach((row, idx) => {
+        const dateSpan = row.querySelector('td:first-child span');
+        if (dateSpan) {
+            console.log(`  Дата ${idx + 1}:`, dateSpan.innerText);
+        }
+
+        const priceCells = row.querySelectorAll('td');
+        priceCells.forEach((cell, cellIdx) => {
+            if (cellIdx > 0 && cell.innerText.match(/\d/)) {
+                console.log(`    Ціна в комірці ${cellIdx}:`, cell.innerText);
+            }
+        });
+    });
+
+    // Перевіряємо головну ціну
+    const mainPrice = document.querySelector('.new_t-order-price .new_price');
+    console.log('💰 Головна ціна:', mainPrice ? mainPrice.innerText : 'не знайдено');
+
+    // Перевіряємо дату
+    const mainDate = document.querySelector('.new_t-date-col .new_t-important');
+    console.log('📅 Головна дата:', mainDate ? mainDate.innerText : 'не знайдено');
+
+}, 3000);
 </script>
 {% endblock %}
