@@ -864,7 +864,9 @@ function goToSearchPage() {
     opacity: 0 !important;
     pointer-events: none !important;
 }
-    <style>
+
+</style>
+<style>
 /* Переміщуємо ваш блок вище за допомогою CSS */
 #hotelPricesSection {
     order: -1 !important; /* Ставимо першим */
@@ -885,8 +887,6 @@ function goToSearchPage() {
     order: 3 !important;
 }
 </style>
-</style>
-
 <script>
 (function() {
     let flatpickrInstance = null;
@@ -2812,5 +2812,35 @@ document.addEventListener('DOMContentLoaded', function() {
     ratingObserver.observe(document.body, { childList: true, subtree: true });
     setTimeout(() => ratingObserver.disconnect(), 15000);
 })();
+</script>
+<script>
+function moveSearchToBottom() {
+    const searchBlock = document.querySelector('.new_f-container');
+    const tourModule = document.getElementById('otpusk-tour-module');
+
+    if (searchBlock && tourModule) {
+        // Переміщуємо блок пошуку в самий кінець
+        tourModule.appendChild(searchBlock);
+        console.log('✅ Блок пошуку переміщено вниз сторінки');
+        return true;
+    }
+    return false;
+}
+
+// Повторюємо спроби, поки блок не знайдеться
+let attempts = 0;
+function tryMove() {
+    if (moveSearchToBottom()) return;
+    attempts++;
+    if (attempts < 20) {
+        setTimeout(tryMove, 500);
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', tryMove);
+} else {
+    tryMove();
+}
 </script>
 {% endblock %}
