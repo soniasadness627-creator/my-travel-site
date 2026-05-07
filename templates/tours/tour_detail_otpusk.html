@@ -682,9 +682,8 @@
     }
     /* ========== ПРИХОВУЄМО ОРИГІНАЛЬНИЙ БЛОК ПОШУКУ OTPUSK ========== */
 /* Цей блок дублює ваш кастомний блок "Ціни на тури в готель", тому ховаємо його */
-/* Оригінальний блок пошуку Otpusk - тимчасово показуємо для налагодження */
+/* Оригінальний блок пошуку Otpusk - ТИМЧАСОВО ПОКАЗУЄМО */
 .new_f-wrapper {
-    /* ТИМЧАСОВО ПОКАЗУЄМО, ЩОБ БАЧИТИ ДАНІ */
     display: block !important;
     visibility: visible !important;
     height: auto !important;
@@ -696,7 +695,7 @@
     left: auto !important;
     opacity: 1 !important;
     pointer-events: auto !important;
-    border: 2px solid red !important; /* ДЛЯ НАГЛЯДНОСТІ */
+    border: 2px solid red !important;
 }
 
 </style>
@@ -3737,5 +3736,40 @@ setTimeout(function() {
     console.log('📅 Головна дата:', mainDate ? mainDate.innerText : 'не знайдено');
 
 }, 3000);
+</script>
+<script>
+// ФОРСУЄМО ЗАВАНТАЖЕННЯ ДАНИХ ВІДЖЕТА
+(function forceWidgetLoad() {
+    console.log('🚀 Форсуємо завантаження даних...');
+
+    // Пробуємо викликати функцію оновлення віджета
+    setTimeout(() => {
+        if (typeof window.updatePrices !== 'undefined') {
+            window.updatePrices();
+        }
+
+        // Шукаємо кнопку "Ще" і натискаємо її
+        const moreBtn = document.querySelector('.new_t-change-date');
+        if (moreBtn) {
+            moreBtn.click();
+            console.log('✅ Натиснуто кнопку "Ще" для завантаження дат');
+        }
+
+        // Пробуємо викликати будь-яку функцію перезавантаження
+        if (typeof window.reloadCalendar !== 'undefined') {
+            window.reloadCalendar();
+        }
+
+        // Примусове оновлення сторінки через 5 секунд, якщо дані не з'явилися
+        setTimeout(() => {
+            const modalRows = document.querySelectorAll('.new_t-date-modal-table tbody tr');
+            if (modalRows.length === 0) {
+                console.warn('⚠️ Дані не завантажилися, пробуємо ще раз...');
+                const reloadBtn = document.querySelector('.new_f-form-submit');
+                if (reloadBtn) reloadBtn.click();
+            }
+        }, 3000);
+    }, 1000);
+})();
 </script>
 {% endblock %}
