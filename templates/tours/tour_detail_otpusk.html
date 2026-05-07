@@ -576,175 +576,6 @@
     right: auto !important;
 }
 </style>
-
-<!-- КНОПКА "ПОВЕРНУТИСЯ" -->
-<div class="container my-3">
-    <button onclick="goToSearchPage()" class="btn btn-outline-secondary btn-sm" style="cursor: pointer;">
-        ← Повернутися до результатів пошуку
-    </button>
-</div>
-
-<script>
-function goToSearchPage() {
-    let agentSlug = '';
-    const pathParts = window.location.pathname.split('/');
-    for (let i = 0; i < pathParts.length; i++) {
-        if (pathParts[i] === 'a' && pathParts[i + 1]) {
-            agentSlug = pathParts[i + 1];
-            break;
-        }
-    }
-    let searchUrl = '/search-otpusk/';
-    if (agentSlug) {
-        searchUrl = `/a/${agentSlug}/search-otpusk/`;
-    }
-    window.location.href = searchUrl;
-}
-</script>
-
-<!-- ========== ІНФОРМАЦІЙНІ БЛОКИ ПРО ПЕРЕВАГИ ========== -->
-<div class="container my-5">
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="info-card info-card-blue h-100 text-center p-4">
-                <div class="info-icon mb-3">
-                    <i class="fa-regular fa-clock fa-3x"></i>
-                </div>
-                <h4 class="info-title">Заощаджуйте час</h4>
-                <p class="info-text">
-                    Не потрібно перевіряти десятки сайтів — усі пропозиції вже тут.
-                    Система покаже найвигіднішу ціну серед усіх туроператорів.
-                </p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="info-card info-card-red h-100 text-center p-4">
-                <div class="info-icon mb-3">
-                    <i class="fa-solid fa-bolt fa-3x"></i>
-                </div>
-                <h4 class="info-title">Миттєве бронювання</h4>
-                <p class="info-text">
-                    Оплачуйте онлайн та бронюйте номер миттєво,
-                    поки найкращі місця в готелі не закінчилися.
-                </p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="info-card info-card-green h-100 text-center p-4">
-                <div class="info-icon mb-3">
-                    <i class="fa-solid fa-shield-alt fa-3x"></i>
-                </div>
-                <h4 class="info-title">Безпечне бронювання</h4>
-                <p class="info-text">
-                    Гроші заморожуються на вашій картці та не знімаються
-                    до підтвердження бронювання туроператором.
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    .info-card {
-        border-radius: 24px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        backdrop-filter: blur(10px);
-        position: relative;
-        overflow: hidden;
-    }
-    .info-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
-    }
-    .info-icon {
-        color: #000000;
-        transition: transform 0.3s ease;
-    }
-    .info-card:hover .info-icon {
-        transform: scale(1.05);
-    }
-    .info-card-blue {
-        background: linear-gradient(135deg, rgba(173, 216, 230, 0.15) 0%, rgba(100, 149, 237, 0.08) 100%);
-        border: 1px solid rgba(100, 149, 237, 0.2);
-    }
-    .info-card-blue:hover {
-        border-color: rgba(100, 149, 237, 0.4);
-        box-shadow: 0 20px 35px rgba(100, 149, 237, 0.1);
-    }
-    .info-card-red {
-        background: linear-gradient(135deg, rgba(255, 182, 193, 0.15) 0%, rgba(255, 99, 132, 0.08) 100%);
-        border: 1px solid rgba(255, 99, 132, 0.2);
-    }
-    .info-card-red:hover {
-        border-color: rgba(255, 99, 132, 0.4);
-        box-shadow: 0 20px 35px rgba(255, 99, 132, 0.1);
-    }
-    .info-card-green {
-        background: linear-gradient(135deg, rgba(144, 238, 144, 0.15) 0%, rgba(46, 139, 87, 0.08) 100%);
-        border: 1px solid rgba(46, 139, 87, 0.2);
-    }
-    .info-card-green:hover {
-        border-color: rgba(46, 139, 87, 0.4);
-        box-shadow: 0 20px 35px rgba(46, 139, 87, 0.1);
-    }
-    .info-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1e293b;
-        margin-bottom: 12px;
-    }
-    .info-text {
-        font-size: 0.9rem;
-        color: #475569;
-        line-height: 1.5;
-        margin-bottom: 0;
-    }
-    .info-card::before {
-        content: '';
-        position: absolute;
-        top: -30px;
-        right: -30px;
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        opacity: 0.3;
-        transition: all 0.3s ease;
-    }
-    .info-card-blue::before {
-        background: radial-gradient(circle, rgba(100, 149, 237, 0.2), transparent);
-    }
-    .info-card-red::before {
-        background: radial-gradient(circle, rgba(255, 99, 132, 0.2), transparent);
-    }
-    .info-card-green::before {
-        background: radial-gradient(circle, rgba(46, 139, 87, 0.2), transparent);
-    }
-    .info-card:hover::before {
-        width: 130px;
-        height: 130px;
-        opacity: 0.4;
-    }
-    @media (max-width: 768px) {
-        .info-card {
-            padding: 20px !important;
-        }
-        .info-icon i {
-            font-size: 2rem !important;
-        }
-        .info-title {
-            font-size: 1.1rem;
-        }
-        .info-text {
-            font-size: 0.85rem;
-        }
-    }
-    @media (max-width: 576px) {
-        .info-card {
-            margin: 0 5px;
-        }
-    }
-</style>
-
 <!-- ========== БЛОК "ЦІНИ НА ТУРИ В ГОТЕЛЬ" ========== -->
 <div class="container mt-5 mb-5" id="hotelPricesSection" style="display: none;">
     <div class="d-flex flex-column gap-4">
@@ -1960,6 +1791,175 @@ function goToSearchPage() {
     setTimeout(initPriceCalendar, 8000);
 })();
 </script>
+<!-- КНОПКА "ПОВЕРНУТИСЯ" -->
+<div class="container my-3">
+    <button onclick="goToSearchPage()" class="btn btn-outline-secondary btn-sm" style="cursor: pointer;">
+        ← Повернутися до результатів пошуку
+    </button>
+</div>
+
+<script>
+function goToSearchPage() {
+    let agentSlug = '';
+    const pathParts = window.location.pathname.split('/');
+    for (let i = 0; i < pathParts.length; i++) {
+        if (pathParts[i] === 'a' && pathParts[i + 1]) {
+            agentSlug = pathParts[i + 1];
+            break;
+        }
+    }
+    let searchUrl = '/search-otpusk/';
+    if (agentSlug) {
+        searchUrl = `/a/${agentSlug}/search-otpusk/`;
+    }
+    window.location.href = searchUrl;
+}
+</script>
+
+<!-- ========== ІНФОРМАЦІЙНІ БЛОКИ ПРО ПЕРЕВАГИ ========== -->
+<div class="container my-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="info-card info-card-blue h-100 text-center p-4">
+                <div class="info-icon mb-3">
+                    <i class="fa-regular fa-clock fa-3x"></i>
+                </div>
+                <h4 class="info-title">Заощаджуйте час</h4>
+                <p class="info-text">
+                    Не потрібно перевіряти десятки сайтів — усі пропозиції вже тут.
+                    Система покаже найвигіднішу ціну серед усіх туроператорів.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="info-card info-card-red h-100 text-center p-4">
+                <div class="info-icon mb-3">
+                    <i class="fa-solid fa-bolt fa-3x"></i>
+                </div>
+                <h4 class="info-title">Миттєве бронювання</h4>
+                <p class="info-text">
+                    Оплачуйте онлайн та бронюйте номер миттєво,
+                    поки найкращі місця в готелі не закінчилися.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="info-card info-card-green h-100 text-center p-4">
+                <div class="info-icon mb-3">
+                    <i class="fa-solid fa-shield-alt fa-3x"></i>
+                </div>
+                <h4 class="info-title">Безпечне бронювання</h4>
+                <p class="info-text">
+                    Гроші заморожуються на вашій картці та не знімаються
+                    до підтвердження бронювання туроператором.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .info-card {
+        border-radius: 24px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+    }
+    .info-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+    }
+    .info-icon {
+        color: #000000;
+        transition: transform 0.3s ease;
+    }
+    .info-card:hover .info-icon {
+        transform: scale(1.05);
+    }
+    .info-card-blue {
+        background: linear-gradient(135deg, rgba(173, 216, 230, 0.15) 0%, rgba(100, 149, 237, 0.08) 100%);
+        border: 1px solid rgba(100, 149, 237, 0.2);
+    }
+    .info-card-blue:hover {
+        border-color: rgba(100, 149, 237, 0.4);
+        box-shadow: 0 20px 35px rgba(100, 149, 237, 0.1);
+    }
+    .info-card-red {
+        background: linear-gradient(135deg, rgba(255, 182, 193, 0.15) 0%, rgba(255, 99, 132, 0.08) 100%);
+        border: 1px solid rgba(255, 99, 132, 0.2);
+    }
+    .info-card-red:hover {
+        border-color: rgba(255, 99, 132, 0.4);
+        box-shadow: 0 20px 35px rgba(255, 99, 132, 0.1);
+    }
+    .info-card-green {
+        background: linear-gradient(135deg, rgba(144, 238, 144, 0.15) 0%, rgba(46, 139, 87, 0.08) 100%);
+        border: 1px solid rgba(46, 139, 87, 0.2);
+    }
+    .info-card-green:hover {
+        border-color: rgba(46, 139, 87, 0.4);
+        box-shadow: 0 20px 35px rgba(46, 139, 87, 0.1);
+    }
+    .info-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 12px;
+    }
+    .info-text {
+        font-size: 0.9rem;
+        color: #475569;
+        line-height: 1.5;
+        margin-bottom: 0;
+    }
+    .info-card::before {
+        content: '';
+        position: absolute;
+        top: -30px;
+        right: -30px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        opacity: 0.3;
+        transition: all 0.3s ease;
+    }
+    .info-card-blue::before {
+        background: radial-gradient(circle, rgba(100, 149, 237, 0.2), transparent);
+    }
+    .info-card-red::before {
+        background: radial-gradient(circle, rgba(255, 99, 132, 0.2), transparent);
+    }
+    .info-card-green::before {
+        background: radial-gradient(circle, rgba(46, 139, 87, 0.2), transparent);
+    }
+    .info-card:hover::before {
+        width: 130px;
+        height: 130px;
+        opacity: 0.4;
+    }
+    @media (max-width: 768px) {
+        .info-card {
+            padding: 20px !important;
+        }
+        .info-icon i {
+            font-size: 2rem !important;
+        }
+        .info-title {
+            font-size: 1.1rem;
+        }
+        .info-text {
+            font-size: 0.85rem;
+        }
+    }
+    @media (max-width: 576px) {
+        .info-card {
+            margin: 0 5px;
+        }
+    }
+</style>
+
+
 
 <!-- ========== БЛОК БРОНЮВАННЯ ========== -->
 <div class="row justify-content-center my-5">
