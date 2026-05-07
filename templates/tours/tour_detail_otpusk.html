@@ -745,7 +745,7 @@ function goToSearchPage() {
     }
 </style>
 
-<!-- ========== БЛОК "ЦІНИ НА ТУРИ В ГОТЕЛЬ" ========== -->
+// ========== ВИПРАВЛЕНИЙ БЛОК "ЦІНИ НА ТУРИ В ГОТЕЛЬ" ==========
 <div class="container mt-5 mb-5" id="hotelPricesSection" style="display: none;">
     <div class="d-flex flex-column gap-4">
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
@@ -854,6 +854,109 @@ function goToSearchPage() {
 <script>
 (function() {
     let flatpickrInstance = null;
+    let departureCitiesLoaded = false;
+
+    // Функція для отримання міст вильоту з оригінального блоку
+    function loadDepartureCities() {
+        const departureSelect = document.getElementById('searchDeparture');
+        if (!departureSelect || departureCitiesLoaded) return;
+
+        // Спосіб 1: Шукаємо в оригінальному блоці .new_f-dropdown
+        const fromElement = document.querySelector('.new_f-dropdown-btn-text');
+        if (fromElement && fromElement.innerText) {
+            const currentCity = fromElement.innerText.trim();
+            // Додаємо поточне місто як опцію
+            if (!Array.from(departureSelect.options).some(opt => opt.text === currentCity)) {
+                const option = document.createElement('option');
+                option.value = currentCity;
+                option.textContent = currentCity;
+                departureSelect.appendChild(option);
+                departureSelect.value = currentCity;
+            }
+        }
+
+        // Спосіб 2: Шукаємо всі можливі міста з різних місць в DOM
+        const possibleCitySelectors = [
+            '.new_f-dropdown-item',
+            '.new_t-date-modal-body-top',
+            '.new_f-dropdown-btn-text',
+            '[class*="departure"]',
+            '[class*="from"]'
+        ];
+
+        const cities = new Set();
+
+        // Додаємо поточне місто з URL параметра (якщо є)
+        const urlParams = new URLSearchParams(window.location.search);
+        const odCity = urlParams.get('od'); // може бути код міста
+        if (odCity && odCity.length > 2) {
+            cities.add(odCity);
+        }
+
+        // Збираємо міста з DOM
+        possibleCitySelectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                let cityText = el.innerText?.trim();
+                if (cityText && cityText.length > 2 && cityText.length < 30 &&
+                    !cityText.includes('дата') && !cityText.includes('тривалість') &&
+                    !cityText.includes('ночей') && !cityText.includes('дн') &&
+                    !cityText.includes('тис') && !cityText.includes('грн') &&
+                    !cityText.match(/^\d+$/)) {
+
+                    // Очищаємо текст від зайвого
+                    cityText = cityText.replace(/^з\s+/i, '').replace(/\([^)]*\)/g, '').trim();
+                    if (cityText && cityText.length > 1 && cityText.length < 20) {
+                        cities.add(cityText);
+                    }
+                }
+            });
+        });
+
+        // Список популярних міст вильоту (Україна, Молдова, Польща, Румунія)
+        const defaultCities = [
+            'Кишинева', 'Києва', 'Львова', 'Одеси', 'Харкова', 'Дніпра',
+            'Варшави', 'Кракова', 'Праги', 'Будапешта', 'Відня', 'Бухареста',
+            'Братислави', 'Софії', 'Белграда', 'Загреба', 'Любляни'
+        ];
+
+        // Додаємо всі знайдені міста
+        cities.forEach(city => {
+            if (!Array.from(departureSelect.options).some(opt => opt.text === city)) {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                departureSelect.appendChild(option);
+            }
+        });
+
+        // Якщо міст мало (< 3), додаємо стандартні
+        if (departureSelect.options.length <= 2) {
+            defaultCities.forEach(city => {
+                if (!Array.from(departureSelect.options).some(opt => opt.text === city)) {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    departureSelect.appendChild(option);
+                }
+            });
+        }
+
+        // Встановлюємо значення за замовчуванням
+        const fromElement2 = document.querySelector('.new_f-dropdown-btn-text');
+        if (fromElement2 && fromElement2.innerText) {
+            const defaultCity = fromElement2.innerText.trim();
+            if (Array.from(departureSelect.options).some(opt => opt.text === defaultCity)) {
+                departureSelect.value = defaultCity;
+            } else if (departureSelect.options.length > 1) {
+                departureSelect.selectedIndex = 1;
+            }
+        } else if (departureSelect.options.length > 1) {
+            departureSelect.selectedIndex = 1;
+        }
+
+        departureCitiesLoaded = true;
+        console.log('✅ Міста вильоту завантажено:', Array.from(departureSelect.options).map(o => o.text).join(', '));
+    }
 
     function initHotelPricesBlock() {
         const section = document.getElementById('hotelPricesSection');
@@ -863,53 +966,23 @@ function goToSearchPage() {
         const hotelName = document.querySelector('.new_t-header-title')?.innerText?.trim() || 'Готель';
         if (titleEl) titleEl.textContent = `Ціни на тури в готель ${hotelName}`;
 
-        const departureSelect = document.getElementById('searchDeparture');
-        if (departureSelect && departureSelect.options.length === 1) {
-            const departureItems = document.querySelectorAll('.new_f-dropdown-item');
-            const cities = new Set();
-            departureItems.forEach(item => {
-                const cityText = item.innerText?.trim();
-                if (cityText && cityText !== 'Без транспорту' && !cityText.includes('Алмати')) {
-                    cities.add(cityText);
-                }
-            });
-            if (cities.size > 0) {
-                cities.forEach(city => {
-                    const option = document.createElement('option');
-                    option.value = city;
-                    option.textContent = city;
-                    departureSelect.appendChild(option);
-                });
-            } else {
-                const defaultOptions = ['Кишинева', 'Києва', 'Варшави', 'Праги', 'Будапешта', 'Відня'];
-                defaultOptions.forEach(city => {
-                    const option = document.createElement('option');
-                    option.value = city;
-                    option.textContent = city;
-                    departureSelect.appendChild(option);
-                });
-            }
-            const fromElement = document.querySelector('.new_f-dropdown-btn-text');
-            if (fromElement && fromElement.innerText) {
-                const defaultCity = fromElement.innerText.trim();
-                for (let i = 0; i < departureSelect.options.length; i++) {
-                    if (departureSelect.options[i].text === defaultCity) {
-                        departureSelect.selectedIndex = i;
-                        break;
-                    }
-                }
-            }
-        }
+        // Завантажуємо міста вильоту з невеликою затримкою (чекаємо поки віджет завантажиться)
+        setTimeout(loadDepartureCities, 500);
+        setTimeout(loadDepartureCities, 1500);
+        setTimeout(loadDepartureCities, 3000);
 
+        // Ініціалізуємо Flatpickr
         if (typeof flatpickr !== 'undefined' && !flatpickrInstance) {
-            const startDate = od || '2026-05-21';
+            const startDate = window.od || (new URLSearchParams(window.location.search).get('od')) || '2026-05-21';
+            const nights = window.ol || (new URLSearchParams(window.location.search).get('ol')) || '7';
             const endDate = new Date(startDate);
-            endDate.setDate(endDate.getDate() + (parseInt(ol) || 7));
+            endDate.setDate(endDate.getDate() + (parseInt(nights) || 7));
+
             flatpickrInstance = flatpickr('#searchDateRange', {
                 mode: 'range',
                 dateFormat: 'd M, Y',
                 locale: 'uk',
-                defaultDate: [startDate, endDate],
+                defaultDate: [new Date(startDate), endDate],
                 onChange: function(selectedDates) {
                     if (selectedDates.length === 2) {
                         console.log('Дата туру:', selectedDates[0], 'до', selectedDates[1]);
@@ -938,19 +1011,12 @@ function goToSearchPage() {
         const nights = document.getElementById('searchNights')?.value || '7';
         const adults = document.getElementById('searchAdults')?.value || '2';
 
-        let dateFrom = od || '2026-05-21';
-        let dateTo = null;
-        if (flatpickrInstance && flatpickrInstance.selectedDates.length === 2) {
-            dateFrom = flatpickrInstance.selectedDates[0];
-            dateTo = flatpickrInstance.selectedDates[1];
-        }
-
         tableContainer.innerHTML = `
             <div class="text-center py-5">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Завантаження...</span>
                 </div>
-                <p class="mt-3 text-muted">Пошук пропозицій туру...</p>
+                <p class="mt-3 text-muted">Пошук пропозицій туру з ${departure}...</p>
             </div>
         `;
 
@@ -962,79 +1028,139 @@ function goToSearchPage() {
                 tableContainer.innerHTML = `
                     <div class="text-center py-5">
                         <i class="fa-regular fa-circle-exclamation fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">Не знайдено пропозицій туру</p>
+                        <p class="text-muted">Не знайдено пропозицій туру з ${departure}</p>
+                        <button class="btn btn-outline-primary btn-sm mt-2" onclick="loadDepartureCities(); setTimeout(() => loadHotelPrices(), 500);">
+                            <i class="fa-regular fa-arrows-rotate me-1"></i> Спробувати ще раз
+                        </button>
                     </div>
                 `;
             }
-        }, 500);
+        }, 800);
     }
 
     function collectOffersFromDOM() {
         const offers = [];
+        const selectedDeparture = document.getElementById('searchDeparture')?.value || '';
 
-        const priceTable = document.querySelector('.new_t-order-table');
-        if (priceTable) {
-            const priceElement = priceTable.querySelector('.new_price');
-            const priceText = priceElement?.innerText || '';
-            const priceMatch = priceText.match(/\d[\d\s]*\d/);
-            const price = priceMatch ? priceMatch[0].replace(/\s/g, '') : '0';
+        // Отримуємо ціну з основного блоку
+        const priceElement = document.querySelector('.new_t-order-price .new_price');
+        let price = '0';
+        if (priceElement) {
+            const priceText = priceElement.innerText;
+            const priceMatch = priceText.match(/[\d\s]+(?:\s*грн)?/);
+            if (priceMatch) {
+                price = priceMatch[0].replace(/\s/g, '').replace('грн', '').trim();
+            }
+        }
 
-            const roomElement = document.querySelector('.new_t-tour-tab-col-2 .new_t-important');
-            const room = roomElement?.innerText?.trim() || 'Standard Room';
-            const foodElement = document.querySelector('.new_t-tour-tab-col-2 .new_weight-bold + .new_t-important');
-            const food = foodElement?.innerText?.trim() || 'Все включено';
-            const dateElement = document.querySelector('.new_t-date-col .new_t-important');
-            const dateText = dateElement?.innerText || (od ? new Date(od).toLocaleDateString('uk-UA') : '21 травня 2026');
-            const nights = ol || '7';
-            const departure = document.querySelector('.new_f-dropdown-btn-text')?.innerText || 'Кишинева';
+        // Отримуємо дату
+        const dateElement = document.querySelector('.new_t-date-col .new_t-important');
+        let dateText = '';
+        if (dateElement) {
+            dateText = dateElement.innerText.trim();
+        } else {
+            const odParam = new URLSearchParams(window.location.search).get('od');
+            if (odParam) {
+                const d = new Date(odParam);
+                dateText = d.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
+            }
+        }
 
+        // Отримуємо тривалість
+        let nights = new URLSearchParams(window.location.search).get('ol') || '7';
+        const nightsElement = document.querySelector('.new_t-duration-container');
+        if (nightsElement) {
+            const nightsMatch = nightsElement.innerText.match(/\d+/);
+            if (nightsMatch) nights = nightsMatch[0];
+        }
+
+        // Отримуємо тип номера
+        const roomElement = document.querySelector('.new_t-tour-tab-col-2 .new_t-important');
+        let room = 'Standard Room';
+        if (roomElement && roomElement.innerText) {
+            room = roomElement.innerText.trim();
+        }
+
+        // Отримуємо харчування
+        const foodElements = document.querySelectorAll('.new_t-tour-tab-col-2 .new_t-important');
+        let food = 'Все включено';
+        if (foodElements.length > 1) {
+            food = foodElements[1].innerText.trim();
+        }
+
+        // Робимо одну пропозицію з поточними даними
+        if (price !== '0' && price !== '') {
             offers.push({
-                date: dateText,
+                date: dateText || 'Поточна дата',
                 nights: nights,
                 room: room,
                 food: food,
                 price: price,
-                departure: departure
+                departure: selectedDeparture || document.querySelector('.new_f-dropdown-btn-text')?.innerText?.trim() || 'Кишинева'
             });
         }
 
+        // Шукаємо додаткові пропозиції в модальному вікні дат
         const dateModalRows = document.querySelectorAll('.new_t-date-modal-table tbody tr');
         dateModalRows.forEach(row => {
             const cells = row.querySelectorAll('td');
-            if (cells.length > 0) {
-                const dateCell = cells[0];
-                let date = dateCell?.innerText?.replace('з ', '')?.trim() || '';
-                const nightsCell = row.parentElement?.querySelector('thead th.selected .new_t-head-nights');
-                let nights = nightsCell?.innerText?.replace('на ', '')?.replace('ночей', '')?.trim() || ol || '7';
-                const priceCell = row.querySelector('td.selected, td:not(.selected)');
-                let price = priceCell?.innerText?.trim() || '';
-                if (date && price && price.match(/\d/)) {
+            if (cells.length > 1) {
+                let date = '';
+                const dateSpan = row.querySelector('td:first-child span');
+                if (dateSpan) {
+                    date = dateSpan.innerText.trim();
+                }
+
+                // Шукаємо ціну в рядочку
+                let priceValue = '';
+                for (let i = 0; i < cells.length; i++) {
+                    const cellText = cells[i].innerText.trim();
+                    if (cellText.match(/\d[\d\s]*\d/)) {
+                        priceValue = cellText.replace(/\s/g, '');
+                        break;
+                    }
+                }
+
+                if (date && priceValue && priceValue !== '—' && priceValue !== '-') {
                     offers.push({
                         date: date,
                         nights: nights,
-                        room: 'Standard Room',
-                        food: 'Все включено',
-                        price: price,
-                        departure: document.querySelector('.new_f-dropdown-btn-text')?.innerText || 'Кишинева'
+                        room: room,
+                        food: food,
+                        price: priceValue,
+                        departure: selectedDeparture || 'Кишинева'
                     });
                 }
             }
         });
 
+        // Унікальні пропозиції за датою
         const uniqueOffers = [];
         const seenDates = new Set();
         for (const offer of offers) {
-            if (!seenDates.has(offer.date)) {
-                seenDates.add(offer.date);
+            const key = `${offer.date}_${offer.price}`;
+            if (!seenDates.has(key)) {
+                seenDates.add(key);
                 uniqueOffers.push(offer);
             }
         }
+
         return uniqueOffers;
     }
 
     function renderOffersTable(offers) {
         const tableContainer = document.getElementById('hotelPricesTable');
         if (!tableContainer) return;
+
+        if (offers.length === 0) {
+            tableContainer.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fa-regular fa-circle-exclamation fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Не знайдено пропозицій туру</p>
+                </div>
+            `;
+            return;
+        }
 
         let html = `
             <table class="table table-hover mb-0" style="min-width: 600px;">
@@ -1050,29 +1176,31 @@ function goToSearchPage() {
                 </thead>
                 <tbody>
         `;
+
         offers.forEach((offer, index) => {
             const priceFormatted = parseInt(offer.price).toLocaleString('uk-UA');
             html += `
                 <tr class="hotel-price-row" data-index="${index}" style="cursor: pointer;">
                     <td class="p-3 hotel-price-cell">
-                        <div class="fw-semibold">${offer.date}</div>
-                        <div class="small text-muted">з ${offer.departure}</div>
+                        <div class="fw-semibold">${escapeHtml(offer.date)}</div>
+                        <div class="small text-muted">з ${escapeHtml(offer.departure)}</div>
                     </td>
                     <td class="p-3 hotel-price-cell">${offer.nights} ночей</td>
-                    <td class="p-3 hotel-price-cell">${offer.room}</td>
+                    <td class="p-3 hotel-price-cell">${escapeHtml(offer.room)}</td>
                     <td class="p-3 hotel-price-cell">
-                        <div class="fw-semibold">AI</div>
-                        <div class="small text-muted">${offer.food}</div>
+                        <div class="fw-semibold">${offer.food.includes('включено') ? 'AI' : 'BB'}</div>
+                        <div class="small text-muted">${escapeHtml(offer.food)}</div>
                     </td>
                     <td class="p-3 hotel-price-cell fw-bold text-danger" style="font-size: 1.1rem;">${priceFormatted} грн</td>
                     <td class="p-3 hotel-price-cell">
-                        <button class="btn btn-sm rounded-3 px-3" style="background: var(--primary-color); color: white; border: none;" onclick="event.stopPropagation(); bookTour('${offer.date}')">
+                        <button class="btn btn-sm rounded-3 px-3" style="background: var(--primary-color); color: white; border: none;" onclick="event.stopPropagation(); window.bookTour('${escapeHtml(offer.date)}')">
                             Забронювати
                         </button>
                     </td>
                 </tr>
             `;
         });
+
         html += `
                 </tbody>
             </table>
@@ -1080,6 +1208,7 @@ function goToSearchPage() {
                 <button class="btn btn-outline-secondary btn-sm rounded-pill px-4" onclick="window.location.href='/search/'">Показати ще пропозиції</button>
             </div>
         `;
+
         tableContainer.innerHTML = html;
 
         document.querySelectorAll('.hotel-price-row').forEach(row => {
@@ -1106,11 +1235,23 @@ function goToSearchPage() {
         }
     };
 
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Запускаємо ініціалізацію
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initHotelPricesBlock);
     } else {
         initHotelPricesBlock();
     }
+
+    // Експортуємо функцію для ручного виклику
+    window.loadDepartureCities = loadDepartureCities;
+    window.reloadHotelPrices = loadHotelPrices;
 })();
 </script>
 
