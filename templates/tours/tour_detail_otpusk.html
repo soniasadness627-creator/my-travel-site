@@ -682,7 +682,22 @@
     }
     /* ========== ПРИХОВУЄМО ОРИГІНАЛЬНИЙ БЛОК ПОШУКУ OTPUSK ========== */
 /* Цей блок дублює ваш кастомний блок "Ціни на тури в готель", тому ховаємо його */
-
+/* Оригінальний блок пошуку Otpusk - тимчасово показуємо для налагодження */
+.new_f-wrapper {
+    /* ТИМЧАСОВО ПОКАЗУЄМО, ЩОБ БАЧИТИ ДАНІ */
+    display: block !important;
+    visibility: visible !important;
+    height: auto !important;
+    overflow: visible !important;
+    margin: 20px 0 !important;
+    padding: 20px !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    border: 2px solid red !important; /* ДЛЯ НАГЛЯДНОСТІ */
+}
 
 </style>
 <style>
@@ -697,7 +712,10 @@
     flex-direction: column !important;
 }
 
-
+.new_f-container {
+    order: 2 !important; /* Оригінальний пошук відправляємо вниз */
+    margin-top: 30px !important;
+}
 
 #hotelPricesSection ~ *:not(.new_f-container) {
     order: 3 !important;
@@ -1830,174 +1848,6 @@
     setTimeout(initPriceCalendar, 3000);
     setTimeout(initPriceCalendar, 5000);
     setTimeout(initPriceCalendar, 8000);
-})();
-// ========== ВИПРАВЛЕННЯ: БЕРЕМО ДАНІ БЕЗПОСЕРЕДНЬО З КАЛЕНДАРЯ ==========
-(function fixPriceTableFromCalendar() {
-    console.log('🔧 Запуск виправлення таблиці цін...');
-
-    // Функція для отримання дат з календаря
-    function getDatesFromYourCalendar() {
-        const dates = [];
-        const calendarCells = document.querySelectorAll('#calendarTableContainer td[data-date]');
-
-        console.log('📅 Знайдено комірок календаря з data-date:', calendarCells.length);
-
-        calendarCells.forEach(cell => {
-            const dateAttr = cell.getAttribute('data-date');
-            const priceAttr = cell.getAttribute('data-price');
-            if (dateAttr && priceAttr) {
-                const date = new Date(dateAttr);
-                const day = date.getDate();
-                const monthNames = ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'];
-                const month = monthNames[date.getMonth()];
-                const dateKey = `${day} ${month}`;
-                dates.push({
-                    date: dateKey,
-                    price: parseInt(priceAttr)
-                });
-                console.log(`   Додано дату: ${dateKey} = ${priceAttr} грн`);
-            }
-        });
-
-        return dates;
-    }
-
-    // Функція для оновлення таблиці
-    function updatePriceTableFromCalendar() {
-        const tableContainer = document.getElementById('hotelPricesTable');
-        if (!tableContainer) {
-            console.log('❌ Таблиця цін не знайдена');
-            return;
-        }
-
-        const calendarDates = getDatesFromYourCalendar();
-
-        if (calendarDates.length === 0) {
-            console.log('❌ Немає дат у календарі');
-            return;
-        }
-
-        const selectedDeparture = document.getElementById('searchDeparture')?.value || 'Кишинева';
-        const nights = document.getElementById('searchNights')?.value || '7';
-        const currentAdults = parseInt(document.getElementById('searchAdults')?.value) || 2;
-
-        // Отримуємо базову ціну
-        const basePriceElem = document.querySelector('.new_t-order-price .new_price');
-        let basePrice = 0;
-        if (basePriceElem) {
-            const priceMatch = basePriceElem.innerText.match(/\d+/g);
-            if (priceMatch) {
-                basePrice = parseInt(priceMatch.join(''));
-            }
-        }
-        const pricePerAdult = basePrice / 2;
-
-        // Отримуємо інформацію про номер та харчування
-        const importantElements = document.querySelectorAll('.new_t-tour-tab-col-2 .new_t-important');
-        const room = importantElements[0]?.innerText?.trim() || 'Standard Room';
-        const food = importantElements[1]?.innerText?.trim() || 'Все включено';
-
-        // Формуємо HTML таблиці
-        let html = `
-            <style>
-                .hotel-price-table td, .hotel-price-table th {
-                    vertical-align: middle !important;
-                }
-                .departure-date {
-                    font-weight: 600;
-                    font-size: 1rem;
-                }
-            </style>
-            <table class="table table-hover mb-0 hotel-price-table" style="min-width: 600px;">
-                <thead class="bg-light">
-                    <tr>
-                        <th class="p-3">Дата вильоту</th>
-                        <th class="p-3">Тривалість</th>
-                        <th class="p-3">Дата заїзду</th>
-                        <th class="p-3">Харчування</th>
-                        <th class="p-3">Вартість (${currentAdults} дорослих)</th>
-                        <th class="p-3"></th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        for (const calDate of calendarDates) {
-            const adjustedPrice = Math.round(pricePerAdult * currentAdults);
-            const priceFormatted = adjustedPrice.toLocaleString('uk-UA');
-
-            // Розраховуємо дату заїзду (+2 дні)
-            let arrivalDate = calDate.date;
-            const dayMatch = calDate.date.match(/\d+/);
-            if (dayMatch) {
-                const newDay = parseInt(dayMatch[0]) + 2;
-                arrivalDate = calDate.date.replace(/\d+/, newDay);
-            }
-
-            html += `
-                <tr class="hotel-price-row" style="cursor: pointer;" onclick="window.bookTour('${calDate.date}', ${currentAdults})">
-                    <td class="p-3 hotel-price-cell">
-                        <div class="fw-semibold departure-date">${calDate.date}</div>
-                        <div class="small text-muted">з ${selectedDeparture}</div>
-                    </td>
-                    <td class="p-3 hotel-price-cell text-center">${nights.replace(/[^0-9]/g, '') || '7'} ночей</td>
-                    <td class="p-3 hotel-price-cell">
-                        <div class="fw-semibold">${arrivalDate}</div>
-                        <div class="small text-muted">заїзд</div>
-                    </td>
-                    <td class="p-3 hotel-price-cell">
-                        <div class="fw-semibold">${food.includes('сніданок') ? 'BB' : 'AI'}</div>
-                        <div class="small text-muted">${food.substring(0, 30)}</div>
-                    </td>
-                    <td class="p-3 hotel-price-cell fw-bold text-danger" style="font-size: 1.1rem; white-space: nowrap;">
-                        ${priceFormatted} ₴
-                    </td>
-                    <td class="p-3 hotel-price-cell">
-                        <button class="btn btn-sm rounded-3 px-3" style="background: var(--primary-color); color: white; border: none;" onclick="event.stopPropagation(); window.bookTour('${calDate.date}', ${currentAdults})">
-                            Забронювати
-                        </button>
-                    </td>
-                </tr>
-            `;
-        }
-
-        html += `
-                </tbody>
-            </table>
-            <div class="text-center py-3 border-top">
-                <button class="btn btn-outline-primary btn-sm rounded-pill px-4" onclick="window.reloadHotelPrices()" style="border-color: var(--primary-color); color: var(--primary-color);">
-                    <i class="fa-regular fa-arrows-rotate me-1"></i> Оновити пропозиції
-                </button>
-            </div>
-        `;
-
-        tableContainer.innerHTML = html;
-        console.log('✅ Таблицю цін оновлено з календаря, кількість рядків:', calendarDates.length);
-    }
-
-    // Запускаємо оновлення через певні інтервали
-    setTimeout(() => {
-        updatePriceTableFromCalendar();
-    }, 1500);
-
-    setTimeout(() => {
-        updatePriceTableFromCalendar();
-    }, 3000);
-
-    setTimeout(() => {
-        updatePriceTableFromCalendar();
-    }, 5000);
-
-    // Також додаємо спостерігач за оновленням календаря
-    const observer = new MutationObserver(() => {
-        const calendarTable = document.querySelector('#calendarTableContainer .calendar-table');
-        if (calendarTable && calendarTable.querySelectorAll('td[data-date]').length > 0) {
-            console.log('🔄 Календар оновлено, оновлюємо таблицю цін');
-            updatePriceTableFromCalendar();
-        }
-    });
-    observer.observe(document.getElementById('calendarTableContainer'), { childList: true, subtree: true });
-    setTimeout(() => observer.disconnect(), 30000);
 })();
 </script>
 
@@ -3719,40 +3569,5 @@ setTimeout(function() {
     console.log('📅 Головна дата:', mainDate ? mainDate.innerText : 'не знайдено');
 
 }, 3000);
-</script>
-<script>
-// ФОРСУЄМО ЗАВАНТАЖЕННЯ ДАНИХ ВІДЖЕТА
-(function forceWidgetLoad() {
-    console.log('🚀 Форсуємо завантаження даних...');
-
-    // Пробуємо викликати функцію оновлення віджета
-    setTimeout(() => {
-        if (typeof window.updatePrices !== 'undefined') {
-            window.updatePrices();
-        }
-
-        // Шукаємо кнопку "Ще" і натискаємо її
-        const moreBtn = document.querySelector('.new_t-change-date');
-        if (moreBtn) {
-            moreBtn.click();
-            console.log('✅ Натиснуто кнопку "Ще" для завантаження дат');
-        }
-
-        // Пробуємо викликати будь-яку функцію перезавантаження
-        if (typeof window.reloadCalendar !== 'undefined') {
-            window.reloadCalendar();
-        }
-
-        // Примусове оновлення сторінки через 5 секунд, якщо дані не з'явилися
-        setTimeout(() => {
-            const modalRows = document.querySelectorAll('.new_t-date-modal-table tbody tr');
-            if (modalRows.length === 0) {
-                console.warn('⚠️ Дані не завантажилися, пробуємо ще раз...');
-                const reloadBtn = document.querySelector('.new_f-form-submit');
-                if (reloadBtn) reloadBtn.click();
-            }
-        }, 3000);
-    }, 1000);
-})();
 </script>
 {% endblock %}
