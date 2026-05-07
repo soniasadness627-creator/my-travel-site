@@ -1458,6 +1458,28 @@
             padding: 8px 4px;
         }
     }
+    /* Стилі для навігації календаря */
+.calendar-nav-wrapper {
+    user-select: none;
+}
+
+.calendar-nav-wrapper button {
+    cursor: pointer;
+}
+
+.calendar-nav-wrapper button:active {
+    transform: scale(0.95);
+}
+
+@media (max-width: 640px) {
+    .calendar-nav-wrapper {
+        padding: 6px 10px;
+    }
+    .calendar-nav-wrapper button {
+        width: 32px;
+        height: 32px;
+    }
+}
 </style>
 
 <script>
@@ -3588,5 +3610,177 @@ setTimeout(function() {
     console.log('📅 Головна дата:', mainDate ? mainDate.innerText : 'не знайдено');
 
 }, 3000);
+</script>
+<script>
+// ========== ДОДАЄМО ПЕРЕМИКАННЯ МІСЯЦІВ ДО КАЛЕНДАРЯ ==========
+(function addCalendarNavigation() {
+    // Чекаємо поки календар завантажиться
+    setTimeout(() => {
+        const calendarSection = document.getElementById('priceCalendarSection');
+        const calendarContainer = document.getElementById('calendarTableContainer');
+
+        if (!calendarSection || !calendarContainer) return;
+
+        // Отримуємо поточний місяць з календаря
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+
+        // Отримуємо початкову дату з URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const odParam = urlParams.get('od');
+        if (odParam) {
+            const date = new Date(odParam);
+            if (!isNaN(date.getTime())) {
+                currentMonth = date.getMonth();
+                currentYear = date.getFullYear();
+            }
+        }
+
+        // Створюємо панель навігації
+        const navPanel = document.createElement('div');
+        navPanel.className = 'calendar-nav-panel';
+        navPanel.style.cssText = `
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background: #f8fafc;
+            border-radius: 12px;
+            gap: 10px;
+            flex-wrap: wrap;
+        `;
+
+        // Кнопка попереднього місяця
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'calendar-nav-btn';
+        prevBtn.innerHTML = '‹';
+        prevBtn.style.cssText = `
+            width: 36px;
+            height: 36px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--primary-color);
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        `;
+        prevBtn.onmouseover = () => {
+            prevBtn.style.background = 'var(--primary-color)';
+            prevBtn.style.color = 'white';
+            prevBtn.style.borderColor = 'var(--primary-color)';
+        };
+        prevBtn.onmouseout = () => {
+            prevBtn.style.background = 'white';
+            prevBtn.style.color = 'var(--primary-color)';
+            prevBtn.style.borderColor = '#e2e8f0';
+        };
+
+        // Кнопка наступного місяця
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'calendar-nav-btn';
+        nextBtn.innerHTML = '›';
+        nextBtn.style.cssText = `
+            width: 36px;
+            height: 36px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--primary-color);
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        `;
+        nextBtn.onmouseover = () => {
+            nextBtn.style.background = 'var(--primary-color)';
+            nextBtn.style.color = 'white';
+            nextBtn.style.borderColor = 'var(--primary-color)';
+        };
+        nextBtn.onmouseout = () => {
+            nextBtn.style.background = 'white';
+            nextBtn.style.color = 'var(--primary-color)';
+            nextBtn.style.borderColor = '#e2e8f0';
+        };
+
+        // Відображення поточного місяця
+        const monthDisplay = document.createElement('div');
+        monthDisplay.className = 'calendar-month-display';
+        monthDisplay.style.cssText = `
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            flex: 1;
+            text-align: center;
+        `;
+
+        const monthNames = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень',
+                            'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+
+        function updateMonthDisplay() {
+            monthDisplay.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+        }
+
+        // Функція перемикання місяця
+        function changeMonth(delta) {
+            currentMonth += delta;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+
+            updateMonthDisplay();
+
+            // Оновлюємо календар
+            if (typeof renderCalendar === 'function') {
+                // Перевизначаємо функцію отримання місяця
+                const originalGetMonthYear = window.getCurrentMonthYearFromUrl;
+                window.getCurrentMonthYearFromUrl = function() {
+                    return { month: currentMonth, year: currentYear };
+                };
+                renderCalendar();
+                // Відновлюємо оригінальну функцію
+                setTimeout(() => {
+                    window.getCurrentMonthYearFromUrl = originalGetMonthYear;
+                }, 100);
+            } else {
+                // Якщо немає глобальної функції, запускаємо оновлення
+                if (typeof updateCalendar === 'function') {
+                    updateCalendar();
+                } else {
+                    location.reload();
+                }
+            }
+        }
+
+        prevBtn.onclick = () => changeMonth(-1);
+        nextBtn.onclick = () => changeMonth(1);
+
+        // Збираємо панель
+        navPanel.appendChild(prevBtn);
+        navPanel.appendChild(monthDisplay);
+        navPanel.appendChild(nextBtn);
+
+        // Вставляємо панель перед календарем
+        const cardBody = calendarSection.querySelector('.card-body');
+        if (cardBody) {
+            cardBody.insertBefore(navPanel, calendarContainer);
+        }
+
+        updateMonthDisplay();
+
+        console.log('✅ Навігація календаря додана');
+
+    }, 1000);
+})();
 </script>
 {% endblock %}
