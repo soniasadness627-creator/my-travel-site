@@ -745,173 +745,70 @@ function goToSearchPage() {
     }
 </style>
 
-// ========== ВИПРАВЛЕНИЙ БЛОК "ЦІНИ НА ТУРИ В ГОТЕЛЬ" ==========
-<div class="container mt-5 mb-5" id="hotelPricesSection" style="display: none;">
-    <div class="d-flex flex-column gap-4">
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <h3 class="fw-bold mb-0" style="color: #000000;" id="hotelPricesTitle"></h3>
-            <div class="bg-light py-2 px-3 rounded-3 d-none d-md-flex align-items-center gap-2">
-                <i class="fa-regular fa-fire-flame-curved text-danger"></i>
-                <span class="small text-secondary">Ми знайшли найкращу ціну на цей готель</span>
-            </div>
-        </div>
-
-        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white" style="background: #f8fafc;">
-            <form id="hotelSearchForm" class="row g-3 align-items-end">
-                <div class="col-md-3 col-sm-6">
-                    <label class="form-label small text-secondary mb-1">Звідки</label>
-                    <div class="d-flex align-items-center border rounded-3 p-2 bg-white">
-                        <i class="fa-regular fa-location-dot text-muted me-2"></i>
-                        <select class="form-select border-0 bg-transparent shadow-none ps-0" id="searchDeparture" style="font-weight: 500;">
-                            <option value="">Виберіть місто</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <label class="form-label small text-secondary mb-1">Початок туру</label>
-                    <div class="d-flex align-items-center border rounded-3 p-2 bg-white">
-                        <i class="fa-regular fa-calendar text-muted me-2"></i>
-                        <input type="text" class="form-control border-0 bg-transparent shadow-none ps-0" id="searchDateRange" placeholder="Оберіть дати" style="font-weight: 500;">
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <label class="form-label small text-secondary mb-1">Тривалість</label>
-                    <div class="d-flex align-items-center border rounded-3 p-2 bg-white">
-                        <i class="fa-regular fa-moon text-muted me-2"></i>
-                        <select class="form-select border-0 bg-transparent shadow-none ps-0" id="searchNights">
-                            <option value="7">6-8 ночей</option>
-                            <option value="5">4-6 ночей</option>
-                            <option value="6">5-7 ночей</option>
-                            <option value="8">7-9 ночей</option>
-                            <option value="9">8-10 ночей</option>
-                            <option value="10">9-11 ночей</option>
-                            <option value="11">10-12 ночей</option>
-                            <option value="12">11-13 ночей</option>
-                            <option value="13">12-14 ночей</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <label class="form-label small text-secondary mb-1">Туристи</label>
-                    <div class="d-flex align-items-center border rounded-3 p-2 bg-white">
-                        <i class="fa-regular fa-user text-muted me-2"></i>
-                        <select class="form-select border-0 bg-transparent shadow-none ps-0" id="searchAdults">
-                            <option value="2">2 дорослих</option>
-                            <option value="1">1 дорослий</option>
-                            <option value="3">3 дорослих</option>
-                            <option value="4">4 дорослих</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <button type="submit" class="btn w-100 rounded-3 py-2" style="background: var(--primary-color); color: white; font-weight: 500; border: none;">
-                        <i class="fa-regular fa-magnifying-glass me-2"></i> Шукати
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-            <div class="table-responsive" id="hotelPricesTable">
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Завантаження...</span>
-                    </div>
-                    <p class="mt-3 text-muted">Завантаження пропозицій...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    #hotelSearchForm select, #hotelSearchForm input {
-        cursor: pointer;
-    }
-    #hotelSearchForm select:focus, #hotelSearchForm input:focus {
-        outline: none;
-        box-shadow: none;
-    }
-    .hotel-price-row {
-        transition: background 0.2s ease;
-        cursor: pointer;
-    }
-    .hotel-price-row:hover {
-        background: #f8fafc;
-    }
-    .hotel-price-row.selected {
-        background: #fff3e0;
-        border-left: 3px solid var(--primary-color);
-    }
-    @media (max-width: 768px) {
-        .hotel-price-cell {
-            padding: 12px 8px !important;
-            font-size: 0.85rem;
-        }
-    }
-</style>
-
 <script>
 (function() {
     let flatpickrInstance = null;
     let departureCitiesLoaded = false;
 
-    // Функція для отримання міст вильоту з оригінального блоку
+    // Функція для отримання міст вильоту
     function loadDepartureCities() {
         const departureSelect = document.getElementById('searchDeparture');
         if (!departureSelect || departureCitiesLoaded) return;
 
-        // Спосіб 1: Шукаємо в оригінальному блоці .new_f-dropdown
-        const fromElement = document.querySelector('.new_f-dropdown-btn-text');
-        if (fromElement && fromElement.innerText) {
-            const currentCity = fromElement.innerText.trim();
-            // Додаємо поточне місто як опцію
-            if (!Array.from(departureSelect.options).some(opt => opt.text === currentCity)) {
-                const option = document.createElement('option');
-                option.value = currentCity;
-                option.textContent = currentCity;
-                departureSelect.appendChild(option);
-                departureSelect.value = currentCity;
-            }
+        // Очищаємо select, залишаємо тільки перший option
+        while (departureSelect.options.length > 1) {
+            departureSelect.remove(1);
         }
-
-        // Спосіб 2: Шукаємо всі можливі міста з різних місць в DOM
-        const possibleCitySelectors = [
-            '.new_f-dropdown-item',
-            '.new_t-date-modal-body-top',
-            '.new_f-dropdown-btn-text',
-            '[class*="departure"]',
-            '[class*="from"]'
-        ];
 
         const cities = new Set();
 
-        // Додаємо поточне місто з URL параметра (якщо є)
-        const urlParams = new URLSearchParams(window.location.search);
-        const odCity = urlParams.get('od');
-        if (odCity && odCity.length > 2) {
-            cities.add(odCity);
+        // Спосіб 1: Отримуємо місто з .new_f-dropdown-btn-text (поточне місто)
+        const fromElement = document.querySelector('.new_f-dropdown-btn-text');
+        if (fromElement && fromElement.innerText) {
+            let currentCity = fromElement.innerText.trim();
+            currentCity = currentCity.replace(/^з\s+/i, '').trim();
+            if (currentCity && currentCity.length > 1 && currentCity.length < 30) {
+                cities.add(currentCity);
+            }
         }
 
-        // Збираємо міста з DOM
-        possibleCitySelectors.forEach(selector => {
-            document.querySelectorAll(selector).forEach(el => {
-                let cityText = el.innerText?.trim();
-                if (cityText && cityText.length > 2 && cityText.length < 30 &&
-                    !cityText.includes('дата') && !cityText.includes('тривалість') &&
-                    !cityText.includes('ночей') && !cityText.includes('дн') &&
-                    !cityText.includes('тис') && !cityText.includes('грн') &&
-                    !cityText.match(/^\d+$/)) {
-
-                    cityText = cityText.replace(/^з\s+/i, '').replace(/\([^)]*\)/g, '').trim();
-                    if (cityText && cityText.length > 1 && cityText.length < 20) {
-                        cities.add(cityText);
-                    }
+        // Спосіб 2: Отримуємо міста з модального вікна дат
+        const modalHeaders = document.querySelectorAll('.new_t-date-modal-body-top');
+        modalHeaders.forEach(header => {
+            let text = header.innerText.trim();
+            // Шукаємо текст типу "Дати та тривалість (з Кишинева)"
+            const match = text.match(/\(з\s+([^)]+)\)/);
+            if (match && match[1]) {
+                let city = match[1].trim();
+                if (city && city.length > 1 && city.length < 30) {
+                    cities.add(city);
                 }
-            });
+            }
         });
 
-        // Список популярних міст вильоту
+        // Спосіб 3: Отримуємо міста з тексту "з Місто" в різних місцях
+        const allText = document.body.innerText;
+        const regex = /з\s+([А-ЯІЇЄҐ][а-яіїєґ]+(?:[-\s][А-ЯІЇЄҐ][а-яіїєґ]+)?)/gi;
+        let match;
+        while ((match = regex.exec(allText)) !== null) {
+            let city = match[1].trim();
+            if (city && city.length > 1 && city.length < 25 &&
+                !city.includes('до') && !city.includes('від') &&
+                !city.includes('ночей') && !city.includes('днів') &&
+                !city.includes('травня') && !city.includes('червня')) {
+                cities.add(city);
+            }
+        }
+
+        // Спосіб 4: Отримуємо з атрибутів data-*
+        document.querySelectorAll('[data-departure], [data-from], [data-city]').forEach(el => {
+            let city = el.getAttribute('data-departure') || el.getAttribute('data-from') || el.getAttribute('data-city');
+            if (city && city.length > 1 && city.length < 25) {
+                cities.add(city);
+            }
+        });
+
+        // Список популярних міст вильоту (для заповнення, якщо мало)
         const defaultCities = [
             'Кишинева', 'Києва', 'Львова', 'Одеси', 'Харкова', 'Дніпра',
             'Варшави', 'Кракова', 'Праги', 'Будапешта', 'Відня', 'Бухареста',
@@ -919,42 +816,35 @@ function goToSearchPage() {
         ];
 
         // Додаємо всі знайдені міста
+        let hasCities = false;
         cities.forEach(city => {
-            if (!Array.from(departureSelect.options).some(opt => opt.text === city)) {
+            hasCities = true;
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            departureSelect.appendChild(option);
+        });
+
+        // Якщо не знайшли жодного міста, додаємо стандартні
+        if (!hasCities || departureSelect.options.length <= 2) {
+            defaultCities.forEach(city => {
                 const option = document.createElement('option');
                 option.value = city;
                 option.textContent = city;
                 departureSelect.appendChild(option);
-            }
-        });
-
-        // Якщо міст мало (< 3), додаємо стандартні
-        if (departureSelect.options.length <= 2) {
-            defaultCities.forEach(city => {
-                if (!Array.from(departureSelect.options).some(opt => opt.text === city)) {
-                    const option = document.createElement('option');
-                    option.value = city;
-                    option.textContent = city;
-                    departureSelect.appendChild(option);
-                }
             });
         }
 
-        // Встановлюємо значення за замовчуванням
-        const fromElement2 = document.querySelector('.new_f-dropdown-btn-text');
-        if (fromElement2 && fromElement2.innerText) {
-            const defaultCity = fromElement2.innerText.trim();
-            if (Array.from(departureSelect.options).some(opt => opt.text === defaultCity)) {
-                departureSelect.value = defaultCity;
-            } else if (departureSelect.options.length > 1) {
-                departureSelect.selectedIndex = 1;
-            }
+        // Встановлюємо значення за замовчуванням (поточне місто)
+        const defaultCity = fromElement ? fromElement.innerText.trim().replace(/^з\s+/i, '') : '';
+        if (defaultCity && Array.from(departureSelect.options).some(opt => opt.text === defaultCity)) {
+            departureSelect.value = defaultCity;
         } else if (departureSelect.options.length > 1) {
             departureSelect.selectedIndex = 1;
         }
 
         departureCitiesLoaded = true;
-        console.log('✅ Міста вильоту завантажено:', Array.from(departureSelect.options).map(o => o.text).join(', '));
+        console.log('✅ Міста вильоту завантажено:', Array.from(departureSelect.options).map(o => o.text).slice(0, 10).join(', ') + (departureSelect.options.length > 10 ? '...' : ''));
     }
 
     function initHotelPricesBlock() {
@@ -965,10 +855,13 @@ function goToSearchPage() {
         const hotelName = document.querySelector('.new_t-header-title')?.innerText?.trim() || 'Готель';
         if (titleEl) titleEl.textContent = `Ціни на тури в готель ${hotelName}`;
 
-        setTimeout(loadDepartureCities, 500);
-        setTimeout(loadDepartureCities, 1500);
-        setTimeout(loadDepartureCities, 3000);
+        // Завантажуємо міста вильоту з затримками
+        const loadAttempts = [300, 800, 1500, 3000, 5000];
+        loadAttempts.forEach(delay => {
+            setTimeout(loadDepartureCities, delay);
+        });
 
+        // Ініціалізуємо Flatpickr
         if (typeof flatpickr !== 'undefined' && !flatpickrInstance) {
             const startDate = window.od || (new URLSearchParams(window.location.search).get('od')) || '2026-05-21';
             const nights = window.ol || (new URLSearchParams(window.location.search).get('ol')) || '7';
@@ -1093,7 +986,7 @@ function goToSearchPage() {
                 room: room,
                 food: food,
                 price: price,
-                departure: selectedDeparture || document.querySelector('.new_f-dropdown-btn-text')?.innerText?.trim() || 'Кишинева'
+                departure: selectedDeparture || document.querySelector('.new_f-dropdown-btn-text')?.innerText?.trim()?.replace(/^з\s+/i, '') || 'Кишинева'
             });
         }
 
@@ -1161,7 +1054,7 @@ function goToSearchPage() {
             return;
         }
 
-        // Показуємо перші 5 пропозицій, решту ховаємо
+        // Показуємо перші 5 пропозицій
         const initialOffers = offers.slice(0, 5);
         const remainingOffers = offers.slice(5);
         const hasMore = remainingOffers.length > 0;
@@ -1189,28 +1082,27 @@ function goToSearchPage() {
                         <div class="fw-semibold">${escapeHtml(offer.date)}</div>
                         <div class="small text-muted">з ${escapeHtml(offer.departure)}</div>
                     </td>
-                    <td class="p-3 hotel-price-cell">${offer.nights} ночей</td>
-                    <td class="p-3 hotel-price-cell">${escapeHtml(offer.room)}</td>
+                    <td class="p-3 hotel-price-cell">${offer.nights} ночей<\/td>
+                    <td class="p-3 hotel-price-cell">${escapeHtml(offer.room)}<\/td>
                     <td class="p-3 hotel-price-cell">
                         <div class="fw-semibold">${offer.food.includes('включено') ? 'AI' : 'BB'}</div>
                         <div class="small text-muted">${escapeHtml(offer.food)}</div>
-                    </td>
-                    <td class="p-3 hotel-price-cell fw-bold text-danger" style="font-size: 1.1rem;">${priceFormatted} грн</td>
+                    <\/td>
+                    <td class="p-3 hotel-price-cell fw-bold text-danger" style="font-size: 1.1rem;">${priceFormatted} грн<\/td>
                     <td class="p-3 hotel-price-cell">
                         <button class="btn btn-sm rounded-3 px-3" style="background: var(--primary-color); color: white; border: none;" onclick="event.stopPropagation(); window.bookTour('${escapeHtml(offer.date)}')">
                             Забронювати
                         </button>
-                    </td>
-                </tr>
+                    <\/td>
+                <\/tr>
             `;
         });
 
         html += `
                 </tbody>
-            </table>
+            <\/table>
         `;
 
-        // КНОПКА "ПОКАЗАТИ ЩЕ" - тепер просто довантажує пропозиції, а не переходить на /search/
         if (hasMore) {
             html += `
                 <div class="text-center py-3 border-top">
@@ -1231,7 +1123,6 @@ function goToSearchPage() {
 
         tableContainer.innerHTML = html;
 
-        // Обробник для рядків таблиці
         document.querySelectorAll('.hotel-price-row').forEach(row => {
             row.addEventListener('click', function() {
                 document.querySelectorAll('.hotel-price-row').forEach(r => r.classList.remove('selected'));
@@ -1239,7 +1130,6 @@ function goToSearchPage() {
             });
         });
 
-        // Обробник для кнопки "Показати ще"
         if (hasMore) {
             const showMoreBtn = document.getElementById('showMoreOffersBtn');
             if (showMoreBtn) {
@@ -1250,7 +1140,6 @@ function goToSearchPage() {
         }
     }
 
-    // Функція для завантаження додаткових пропозицій
     function loadMoreOffers(moreOffers) {
         const tableContainer = document.getElementById('hotelPricesTable');
         if (!tableContainer) return;
@@ -1260,7 +1149,6 @@ function goToSearchPage() {
         const buttonContainer = tableContainer.querySelector('.text-center.border-top');
 
         if (tbody && moreOffers.length > 0) {
-            // Додаємо нові рядки
             moreOffers.forEach((offer, index) => {
                 const priceFormatted = parseInt(offer.price).toLocaleString('uk-UA');
                 const row = document.createElement('tr');
@@ -1271,19 +1159,19 @@ function goToSearchPage() {
                     <td class="p-3 hotel-price-cell">
                         <div class="fw-semibold">${escapeHtml(offer.date)}</div>
                         <div class="small text-muted">з ${escapeHtml(offer.departure)}</div>
-                    </td>
-                    <td class="p-3 hotel-price-cell">${offer.nights} ночей</td>
-                    <td class="p-3 hotel-price-cell">${escapeHtml(offer.room)}</td>
+                    <\/td>
+                    <td class="p-3 hotel-price-cell">${offer.nights} ночей<\/td>
+                    <td class="p-3 hotel-price-cell">${escapeHtml(offer.room)}<\/td>
                     <td class="p-3 hotel-price-cell">
                         <div class="fw-semibold">${offer.food.includes('включено') ? 'AI' : 'BB'}</div>
                         <div class="small text-muted">${escapeHtml(offer.food)}</div>
-                    </td>
-                    <td class="p-3 hotel-price-cell fw-bold text-danger" style="font-size: 1.1rem;">${priceFormatted} грн</td>
+                    <\/td>
+                    <td class="p-3 hotel-price-cell fw-bold text-danger" style="font-size: 1.1rem;">${priceFormatted} грн<\/td>
                     <td class="p-3 hotel-price-cell">
                         <button class="btn btn-sm rounded-3 px-3" style="background: var(--primary-color); color: white; border: none;" onclick="event.stopPropagation(); window.bookTour('${escapeHtml(offer.date)}')">
                             Забронювати
                         </button>
-                    </td>
+                    <\/td>
                 `;
 
                 row.addEventListener('click', function() {
@@ -1294,12 +1182,10 @@ function goToSearchPage() {
                 tbody.appendChild(row);
             });
 
-            // Видаляємо кнопку "Показати ще"
             if (buttonContainer) {
                 buttonContainer.remove();
             }
 
-            // Показуємо повідомлення
             const successMsg = document.createElement('div');
             successMsg.className = 'text-center py-2 text-success small';
             successMsg.innerHTML = '<i class="fa-regular fa-check-circle me-1"></i> Завантажено всі пропозиції';
@@ -1338,10 +1224,9 @@ function goToSearchPage() {
         initHotelPricesBlock();
     }
 
-    // Експортуємо функції для ручного виклику
+    // Експортуємо функції
     window.loadDepartureCities = loadDepartureCities;
     window.reloadHotelPrices = loadHotelPrices;
-    window.loadMoreOffers = loadMoreOffers;
 })();
 </script>
 
