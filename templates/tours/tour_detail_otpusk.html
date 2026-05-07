@@ -3783,4 +3783,329 @@ setTimeout(function() {
     }, 1000);
 })();
 </script>
+<script>
+// ========== ВИПРАВЛЕНА НАВІГАЦІЯ КАЛЕНДАРЯ (БЕЗ ПЕРЕЗАВАНТАЖЕННЯ) ==========
+(function addFixedCalendarNavigation() {
+    let retryCount = 0;
+    const maxRetries = 20;
+
+    function initNavigation() {
+        const calendarSection = document.getElementById('priceCalendarSection');
+        const calendarContainer = document.getElementById('calendarTableContainer');
+
+        if (!calendarSection || !calendarContainer) {
+            retryCount++;
+            if (retryCount < maxRetries) {
+                setTimeout(initNavigation, 500);
+            }
+            return;
+        }
+
+        // Перевіряємо, чи вже додана навігація
+        if (calendarSection.querySelector('.calendar-nav-panel')) {
+            console.log('✅ Навігація вже існує');
+            return;
+        }
+
+        // Отримуємо поточний місяць/рік
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const odParam = urlParams.get('od');
+        if (odParam) {
+            const date = new Date(odParam);
+            if (!isNaN(date.getTime())) {
+                currentMonth = date.getMonth();
+                currentYear = date.getFullYear();
+            }
+        }
+
+        // Створюємо панель навігації
+        const navPanel = document.createElement('div');
+        navPanel.className = 'calendar-nav-panel';
+        navPanel.style.cssText = `
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background: #f8fafc;
+            border-radius: 12px;
+            gap: 10px;
+            flex-wrap: wrap;
+        `;
+
+        // Ліва кнопка
+        const prevBtn = document.createElement('button');
+        prevBtn.innerHTML = '‹';
+        prevBtn.style.cssText = `
+            width: 36px;
+            height: 36px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--primary-color);
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        `;
+
+        // Права кнопка
+        const nextBtn = document.createElement('button');
+        nextBtn.innerHTML = '›';
+        nextBtn.style.cssText = `
+            width: 36px;
+            height: 36px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--primary-color);
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        `;
+
+        // Відображення місяця
+        const monthDisplay = document.createElement('div');
+        monthDisplay.style.cssText = `
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            flex: 1;
+            text-align: center;
+        `;
+
+        const monthNames = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень',
+                            'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+
+        function updateMonthDisplay() {
+            monthDisplay.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+        }
+
+        // ========== ГОЛОВНА ФУНКЦІЯ - ОНОВЛЕННЯ КАЛЕНДАРЯ БЕЗ ПЕРЕЗАВАНТАЖЕННЯ ==========
+        function refreshCalendar() {
+            // Отримуємо поточну кількість ночей з форми
+            const nightsSelect = document.getElementById('searchNights');
+            let currentNights = 7;
+            if (nightsSelect) {
+                const val = nightsSelect.value;
+                if (val.includes('-')) {
+                    currentNights = parseInt(val.split('-')[0]) + 1;
+                } else {
+                    currentNights = parseInt(val);
+                }
+            }
+
+            // Отримуємо дані цін з DOM
+            const calendarPrices = collectCalendarDataForMonth(currentMonth, currentYear);
+
+            // Рендеримо календар
+            renderCalendarWithData(currentMonth, currentYear, currentNights, calendarPrices);
+        }
+
+        // Збір даних для конкретного місяця
+        function collectCalendarDataForMonth(month, year) {
+            const prices = [];
+
+            // Шукаємо всі доступні дати
+            const modalRows = document.querySelectorAll('.new_t-date-modal-table tbody tr');
+
+            modalRows.forEach(row => {
+                const dateSpan = row.querySelector('td:first-child span');
+                if (!dateSpan) return;
+
+                let dateText = dateSpan.innerText.trim();
+                const priceCells = row.querySelectorAll('td');
+
+                for (let i = 1; i < priceCells.length && i <= 14; i++) {
+                    const cellText = priceCells[i].innerText.trim();
+                    if (cellText !== '—' && cellText !== '-' && cellText.match(/\d/)) {
+                        const priceMatch = cellText.match(/(\d[\d\s]*\d)/);
+                        if (priceMatch) {
+                            const price = parseInt(priceMatch[0].replace(/\s/g, ''));
+                            prices.push({ date: dateText, price: price, nights: i });
+                        }
+                    }
+                }
+            });
+
+            return prices;
+        }
+
+        // Рендер календаря
+        function renderCalendarWithData(month, year, nights, prices) {
+            const container = document.getElementById('calendarTableContainer');
+            if (!container) return;
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const firstDay = new Date(year, month, 1).getDay();
+            const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+
+            let html = `<table class="calendar-table">
+                <thead><tr><th>Дата вильоту</th><th>Тривалість: ${nights} ночей</th></tr></thead>
+                <tbody>`;
+
+            let dayCounter = 1;
+            for (let week = 0; week < 6 && dayCounter <= daysInMonth; week++) {
+                html += '<tr>';
+                for (let dow = 0; dow < 7; dow++) {
+                    if (week === 0 && dow < startOffset) {
+                        html += '<td class="no-price" style="background: #f1f5f9;"></td>';
+                    } else if (dayCounter <= daysInMonth) {
+                        const date = new Date(year, month, dayCounter);
+                        const formattedDate = formatDateForComparison(date);
+
+                        // Шукаємо ціну для цієї дати
+                        let price = null;
+                        for (const p of prices) {
+                            if (p.date.toLowerCase().includes(formattedDate) ||
+                                p.date.toLowerCase().includes(dayCounter.toString())) {
+                                if (p.nights === nights || !price) {
+                                    price = p.price;
+                                }
+                            }
+                        }
+
+                        if (price && price > 0) {
+                            html += `<td class="has-price" data-date="${date.toISOString()}" data-price="${price}" onclick="selectCalendarDate('${date.toISOString()}', ${price}, ${nights})">
+                                <div class="fw-semibold">${formatDateForDisplay(date)}</div>
+                                <div class="small fw-bold" style="color: var(--primary-color)">${price.toLocaleString()} грн</div>
+                               </td>`;
+                        } else {
+                            html += `<td class="no-price">
+                                <div class="fw-semibold">${formatDateForDisplay(date)}</div>
+                                <div class="small text-muted">немає турів</div>
+                               </td>`;
+                        }
+                        dayCounter++;
+                    } else {
+                        html += '<td class="no-price" style="background: #f1f5f9;"></td>';
+                    }
+                }
+                html += '</tr>';
+            }
+
+            html += `</tbody></table>
+            <div class="text-center mt-3"><small class="text-muted">✔️ Зелений фон — найнижча ціна в місяці</small></div>`;
+
+            container.innerHTML = html;
+        }
+
+        function formatDateForDisplay(date) {
+            const months = ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'];
+            return `${date.getDate()} ${months[date.getMonth()]}`;
+        }
+
+        function formatDateForComparison(date) {
+            const months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня',
+                           'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
+            return `${date.getDate()} ${months[date.getMonth()]}`;
+        }
+
+        // Функція зміни місяця (БЕЗ ПЕРЕЗАВАНТАЖЕННЯ)
+        function changeMonth(delta) {
+            currentMonth += delta;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+
+            updateMonthDisplay();
+            refreshCalendar();
+        }
+
+        // Навішуємо події
+        prevBtn.onclick = () => changeMonth(-1);
+        nextBtn.onclick = () => changeMonth(1);
+
+        // Hover ефекти
+        [prevBtn, nextBtn].forEach(btn => {
+            btn.onmouseover = () => {
+                btn.style.background = 'var(--primary-color)';
+                btn.style.color = 'white';
+                btn.style.borderColor = 'var(--primary-color)';
+            };
+            btn.onmouseout = () => {
+                btn.style.background = 'white';
+                btn.style.color = 'var(--primary-color)';
+                btn.style.borderColor = '#e2e8f0';
+            };
+        });
+
+        navPanel.appendChild(prevBtn);
+        navPanel.appendChild(monthDisplay);
+        navPanel.appendChild(nextBtn);
+
+        const cardBody = calendarSection.querySelector('.card-body');
+        if (cardBody) {
+            cardBody.insertBefore(navPanel, calendarContainer);
+        }
+
+        updateMonthDisplay();
+
+        // Слухаємо зміну кількості ночей - оновлюємо календар
+        const nightsSelect = document.getElementById('searchNights');
+        if (nightsSelect) {
+            nightsSelect.addEventListener('change', function() {
+                refreshCalendar();
+            });
+        }
+
+        // Слухаємо зміну кількості дорослих
+        const adultsSelect = document.getElementById('searchAdults');
+        if (adultsSelect) {
+            adultsSelect.addEventListener('change', function() {
+                refreshCalendar();
+            });
+        }
+
+        console.log('✅ Виправлена навігація календаря додана (без reload)');
+
+        // Початковий рендер
+        setTimeout(refreshCalendar, 200);
+    }
+
+    initNavigation();
+})();
+
+// Допоміжна функція для вибору дати (глобальна)
+window.selectCalendarDate = function(dateISO, price, nights) {
+    const selectedDate = new Date(dateISO);
+
+    // Знаходимо поле дати
+    const dateInput = document.querySelector('#searchDateRange');
+    if (dateInput && window.flatpickrInstance) {
+        const endDate = new Date(selectedDate);
+        endDate.setDate(endDate.getDate() + nights);
+        window.flatpickrInstance.setDate([selectedDate, endDate]);
+    }
+
+    // Оновлюємо таблицю пропозицій
+    const tableContainer = document.getElementById('hotelPricesTable');
+    if (tableContainer) {
+        tableContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => {
+            if (window.reloadHotelPrices) window.reloadHotelPrices();
+        }, 300);
+    }
+
+    // Візуальне підсвічування
+    document.querySelectorAll('.calendar-table td').forEach(td => {
+        td.classList.remove('selected-date');
+    });
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.add('selected-date');
+    }
+};
+</script>
 {% endblock %}
