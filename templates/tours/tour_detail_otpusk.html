@@ -3452,4 +3452,33 @@ setTimeout(() => {
     console.log('👋 Спостерігач зупинено');
 }, 15000);
 </script>
+<script>
+// Переміщуємо календар всередину модуля після блоку цін
+function fixCalendarPosition() {
+    const calendar = document.getElementById('priceCalendarSection');
+    const pricesBlock = document.getElementById('hotelPricesSection');
+    const module = document.getElementById('otpusk-tour-module');
+
+    if (calendar && pricesBlock && module) {
+        // Якщо календар не є нащадком модуля, переміщуємо його
+        if (!module.contains(calendar)) {
+            // Вставляємо календар після блоку цін
+            pricesBlock.insertAdjacentElement('afterend', calendar);
+            console.log('✅ Календар переміщено в правильне місце');
+            calendar.style.display = 'block';
+        }
+    } else {
+        setTimeout(fixCalendarPosition, 500);
+    }
+}
+
+// Запускаємо після завантаження
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fixCalendarPosition);
+} else {
+    fixCalendarPosition();
+}
+setTimeout(fixCalendarPosition, 1500);
+setTimeout(fixCalendarPosition, 3000);
+</script>
 {% endblock %}
