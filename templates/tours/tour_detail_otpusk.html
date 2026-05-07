@@ -849,6 +849,21 @@ function goToSearchPage() {
             font-size: 0.85rem;
         }
     }
+    /* ========== ПРИХОВУЄМО ОРИГІНАЛЬНИЙ БЛОК ПОШУКУ OTPUSK ========== */
+/* Цей блок дублює ваш кастомний блок "Ціни на тури в готель", тому ховаємо його */
+.new_f-wrapper {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
 </style>
 
 <script>
