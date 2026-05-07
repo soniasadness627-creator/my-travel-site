@@ -889,7 +889,6 @@ function goToSearchPage() {
 </style>
 <script>
 (function() {
-
 window.flatpickrInstance = null;
     let currentAdults = 2;
     let basePrice = 0;
@@ -1146,25 +1145,25 @@ window.flatpickrInstance = null;
         setTimeout(loadDepartureCities, 3000);
         setInterval(collectAvailableDates, 5000);
 
-        if (typeof flatpickr !== 'undefined' && !flatpickrInstance) {
-            const urlParams = new URLSearchParams(window.location.search);
-            const startDate = urlParams.get('od') || '2026-05-21';
-            const nights = parseInt(urlParams.get('ol')) || 7;
-            const endDate = new Date(startDate);
-            endDate.setDate(endDate.getDate() + nights);
+        if (typeof flatpickr !== 'undefined' && !window.flatpickrInstance) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const startDate = urlParams.get('od') || '2026-05-21';
+    const nights = parseInt(urlParams.get('ol')) || 7;
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + nights);
 
-            flatpickrInstance = flatpickr('#searchDateRange', {
-                mode: 'range',
-                dateFormat: 'd M, Y',
-                locale: 'uk',
-                defaultDate: [new Date(startDate), endDate],
-                onChange: function(selectedDates, dateStr, instance) {
-                    if (selectedDates.length === 2) {
-                        checkAndNotifyAvailability(selectedDates[0]);
-                    }
-                }
-            });
+    window.flatpickrInstance = flatpickr('#searchDateRange', {
+        mode: 'range',
+        dateFormat: 'd M, Y',
+        locale: 'uk',
+        defaultDate: [new Date(startDate), endDate],
+        onChange: function(selectedDates, dateStr, instance) {
+            if (selectedDates.length === 2) {
+                checkAndNotifyAvailability(selectedDates[0]);
+            }
         }
+    });
+}
 
         const adultsSelect = document.getElementById('searchAdults');
         if (adultsSelect) {
@@ -1238,37 +1237,37 @@ window.flatpickrInstance = null;
     }
 
     function handleFormSubmit(e) {
-        e.preventDefault();
+    e.preventDefault();
 
-        // Перевіряємо вибрану дату
-        if (flatpickrInstance && flatpickrInstance.selectedDates.length === 2) {
-            const startDate = flatpickrInstance.selectedDates[0];
-            const availability = isDateAvailable(startDate);
+    // Перевіряємо вибрану дату
+    if (window.flatpickrInstance && window.flatpickrInstance.selectedDates.length === 2) {
+        const startDate = window.flatpickrInstance.selectedDates[0];
+        const availability = isDateAvailable(startDate);
 
-            if (!availability.available) {
-                const dateStr = startDate.toLocaleDateString('uk-UA');
-                const tableContainer = document.getElementById('hotelPricesTable');
-                if (tableContainer) {
-                    tableContainer.innerHTML = `
-                        <div class="text-center py-5">
-                            <div class="mb-3">
-                                <i class="fa-regular fa-calendar-xmark fa-4x text-warning"></i>
-                            </div>
-                            <h5 class="text-warning">⚠️ Турів немає на обрану дату</h5>
-                            <p class="text-muted">На дату <strong>${dateStr}</strong> немає доступних турів.</p>
-                            <p class="text-muted small">💡 Будь ласка, оберіть іншу дату для пошуку</p>
-                            <button class="btn btn-outline-primary btn-sm mt-2" onclick="window.reloadHotelPrices()">
-                                <i class="fa-regular fa-arrows-rotate me-1"></i> Оновити пошук
-                            </button>
+        if (!availability.available) {
+            const dateStr = startDate.toLocaleDateString('uk-UA');
+            const tableContainer = document.getElementById('hotelPricesTable');
+            if (tableContainer) {
+                tableContainer.innerHTML = `
+                    <div class="text-center py-5">
+                        <div class="mb-3">
+                            <i class="fa-regular fa-calendar-xmark fa-4x text-warning"></i>
                         </div>
-                    `;
-                }
-                return;
+                        <h5 class="text-warning">⚠️ Турів немає на обрану дату</h5>
+                        <p class="text-muted">На дату <strong>${dateStr}</strong> немає доступних турів.</p>
+                        <p class="text-muted small">💡 Будь ласка, оберіть іншу дату для пошуку</p>
+                        <button class="btn btn-outline-primary btn-sm mt-2" onclick="window.reloadHotelPrices()">
+                            <i class="fa-regular fa-arrows-rotate me-1"></i> Оновити пошук
+                        </button>
+                    </div>
+                `;
             }
+            return;
         }
-
-        loadHotelPrices();
     }
+
+    loadHotelPrices();
+}
 
     function loadHotelPrices() {
         const tableContainer = document.getElementById('hotelPricesTable');
