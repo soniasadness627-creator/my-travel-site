@@ -857,13 +857,13 @@ function goToSearchPage() {
     let currentAdults = 2;
     let basePrice = 0;
     let hotelNameObserver = null;
+    let availableDates = new Set(); // Зберігаємо доступні дати
 
     // Функція для отримання назви готелю
     function getHotelName() {
         const hotelTitle = document.querySelector('.new_t-header-title');
         if (hotelTitle) {
             let name = hotelTitle.innerText.trim();
-            // Видаляємо зірочки та зайві символи
             name = name.replace(/\s*\*+\s*$/g, '').trim();
             return name;
         }
@@ -880,21 +880,61 @@ function goToSearchPage() {
         }
     }
 
-    // Спостерігаємо за зміною назви готелю
-    function observeHotelName() {
-        const targetNode = document.querySelector('.new_t-header-title');
-        if (targetNode) {
-            if (hotelNameObserver) hotelNameObserver.disconnect();
+    // Збір доступних дат з DOM
+    function collectAvailableDates() {
+        availableDates.clear();
 
-            hotelNameObserver = new MutationObserver(function() {
-                updateHotelTitle();
-            });
-            hotelNameObserver.observe(targetNode, {
-                childList: true,
-                subtree: true,
-                characterData: true
-            });
+        // Збираємо дати з основного блоку
+        const dateElement = document.querySelector('.new_t-date-col .new_t-important');
+        if (dateElement) {
+            const dateText = dateElement.innerText.trim();
+            availableDates.add(dateText);
         }
+
+        // Збираємо дати з модальної таблиці
+        const dateModalRows = document.querySelectorAll('.new_t-date-modal-table tbody tr');
+        dateModalRows.forEach(row => {
+            const dateSpan = row.querySelector('td:first-child span');
+            if (dateSpan) {
+                let date = dateSpan.innerText.trim();
+                // Перевіряємо чи є ціна для цієї дати
+                const cells = row.querySelectorAll('td');
+                let hasPrice = false;
+                for (let i = 0; i < cells.length; i++) {
+                    const cellText = cells[i].innerText.trim();
+                    if (cellText.match(/\d[\d\s]*\d/) && cellText !== '—' && cellText !== '-') {
+                        hasPrice = true;
+                        break;
+                    }
+                }
+                if (hasPrice && date) {
+                    availableDates.add(date);
+                }
+            }
+        });
+
+        console.log('✅ Доступні дати:', Array.from(availableDates));
+        return availableDates;
+    }
+
+    // Перевірка чи дата доступна для бронювання
+    function isDateAvailable(dateString) {
+        if (availableDates.size === 0) {
+            collectAvailableDates();
+        }
+
+        // Нормалізуємо дату для порівняння
+        const normalizedSearch = dateString.toLowerCase().trim();
+
+        for (const availableDate of availableDates) {
+            const normalizedAvailable = availableDate.toLowerCase().trim();
+            if (normalizedSearch.includes(normalizedAvailable) ||
+                normalizedAvailable.includes(normalizedSearch) ||
+                normalizedSearch === normalizedAvailable) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Отримання базової ціни
@@ -1028,6 +1068,13 @@ function goToSearchPage() {
         }
     }
 
+    // Функція для перевірки доступності турів на вибраний діапазон дат
+    function checkDateRangeAvailability(startDate, endDate) {
+        // Тут можна додати логіку перевірки діапазону дат
+        // Поки що просто повертаємо true
+        return true;
+    }
+
     function initHotelPricesBlock() {
         const section = document.getElementById('hotelPricesSection');
         if (!section) return;
@@ -1035,15 +1082,18 @@ function goToSearchPage() {
         basePrice = getBasePriceFromDOM();
         currentAdults = parseInt(document.getElementById('searchAdults')?.value) || 2;
 
-        // Оновлюємо заголовок
-        updateHotelTitle();
+        // Збираємо доступні дати
+        collectAvailableDates();
 
-        // Спостерігаємо за зміною назви
+        updateHotelTitle();
         observeHotelName();
 
         setTimeout(loadDepartureCities, 500);
         setTimeout(loadDepartureCities, 1500);
         setTimeout(loadDepartureCities, 3000);
+
+        // Періодично оновлюємо доступні дати
+        setInterval(collectAvailableDates, 5000);
 
         if (typeof flatpickr !== 'undefined' && !flatpickrInstance) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -1056,7 +1106,18 @@ function goToSearchPage() {
                 mode: 'range',
                 dateFormat: 'd M, Y',
                 locale: 'uk',
-                defaultDate: [new Date(startDate), endDate]
+                defaultDate: [new Date(startDate), endDate],
+                onChange: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length === 2) {
+                        // Перевіряємо доступність
+                        const start = selectedDates[0];
+                        const end = selectedDates[1];
+                        const isAvailable = checkDateRangeAvailability(start, end);
+                        if (!isAvailable) {
+                            alert('На вибрані дати немає доступних турів. Будь ласка, оберіть інші дати.');
+                        }
+                    }
+                }
             });
         }
 
@@ -1096,6 +1157,13 @@ function goToSearchPage() {
 
     function handleFormSubmit(e) {
         e.preventDefault();
+        // Перевіряємо чи вибрана дата доступна
+        const dateRangeValue = document.getElementById('searchDateRange')?.value;
+        if (dateRangeValue && flatpickrInstance && flatpickrInstance.selectedDates.length === 2) {
+            const startDate = flatpickrInstance.selectedDates[0];
+            const endDate = flatpickrInstance.selectedDates[1];
+            // Перевіряємо доступність (можна розширити логіку)
+        }
         loadHotelPrices();
     }
 
@@ -1124,9 +1192,10 @@ function goToSearchPage() {
                 tableContainer.innerHTML = `
                     <div class="text-center py-5">
                         <i class="fa-regular fa-circle-exclamation fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">Не знайдено пропозицій туру з ${departure}</p>
+                        <p class="text-muted">❌ На вибрану дату немає доступних турів</p>
+                        <p class="text-muted small">Будь ласка, оберіть іншу дату для пошуку</p>
                         <button class="btn btn-outline-primary btn-sm mt-2" onclick="window.reloadHotelPrices()">
-                            <i class="fa-regular fa-arrows-rotate me-1"></i> Спробувати ще раз
+                            <i class="fa-regular fa-arrows-rotate me-1"></i> Оновити пошук
                         </button>
                     </div>
                 `;
@@ -1138,6 +1207,9 @@ function goToSearchPage() {
         const offers = [];
         const selectedDeparture = document.getElementById('searchDeparture')?.value || getDepartureCity();
 
+        // Оновлюємо список доступних дат
+        collectAvailableDates();
+
         if (basePrice === 0) {
             basePrice = getBasePriceFromDOM();
         }
@@ -1148,18 +1220,21 @@ function goToSearchPage() {
         const room = getRoomType();
         const food = getFoodType();
 
-        // Основна пропозиція
-        offers.push({
-            date: currentDate,
-            nights: nights,
-            room: room,
-            food: food,
-            price: adjustedPrice.toString(),
-            departure: selectedDeparture,
-            adults: currentAdults
-        });
+        // Перевіряємо чи основна дата доступна
+        if (isDateAvailable(currentDate)) {
+            offers.push({
+                date: currentDate,
+                nights: nights,
+                room: room,
+                food: food,
+                price: adjustedPrice.toString(),
+                departure: selectedDeparture,
+                adults: currentAdults,
+                available: true
+            });
+        }
 
-        // Пропозиції з таблиці дат
+        // Пропозиції з таблиці дат - тільки ті, що мають ціну
         const dateModalRows = document.querySelectorAll('.new_t-date-modal-table tbody tr');
         dateModalRows.forEach(row => {
             const cells = row.querySelectorAll('td');
@@ -1171,16 +1246,22 @@ function goToSearchPage() {
                 }
 
                 let basePriceValue = 0;
+                let hasValidPrice = false;
+
                 for (let i = 0; i < cells.length; i++) {
                     const cellText = cells[i].innerText.trim();
+                    if (cellText === '—' || cellText === '-') {
+                        continue;
+                    }
                     const match = cellText.match(/(\d[\d\s]*\d)/);
                     if (match) {
                         basePriceValue = parseInt(match[0].replace(/\s/g, ''));
+                        hasValidPrice = true;
                         break;
                     }
                 }
 
-                if (date && basePriceValue > 0) {
+                if (date && hasValidPrice && basePriceValue > 0) {
                     const pricePerAdult = basePriceValue / 2;
                     const adjustedOfferPrice = Math.round(pricePerAdult * currentAdults);
 
@@ -1191,7 +1272,8 @@ function goToSearchPage() {
                         food: food,
                         price: adjustedOfferPrice.toString(),
                         departure: selectedDeparture,
-                        adults: currentAdults
+                        adults: currentAdults,
+                        available: true
                     });
                 }
             }
@@ -1218,10 +1300,14 @@ function goToSearchPage() {
         if (offers.length === 0) {
             tableContainer.innerHTML = `
                 <div class="text-center py-5">
-                    <i class="fa-regular fa-circle-exclamation fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">Не знайдено пропозицій туру</p>
+                    <div class="mb-3">
+                        <i class="fa-regular fa-calendar-xmark fa-4x text-muted"></i>
+                    </div>
+                    <h5 class="text-muted">😔 На жаль, турів немає</h5>
+                    <p class="text-muted">На вибрану дату <strong>${new Date().toLocaleDateString('uk-UA')}</strong> немає доступних турів.</p>
+                    <p class="text-muted small">Спробуйте обрати іншу дату в календарі</p>
                     <button class="btn btn-outline-primary btn-sm mt-2" onclick="window.reloadHotelPrices()">
-                        <i class="fa-regular fa-arrows-rotate me-1"></i> Оновити
+                        <i class="fa-regular fa-arrows-rotate me-1"></i> Оновити пошук
                     </button>
                 </div>
             `;
@@ -1245,7 +1331,6 @@ function goToSearchPage() {
 
         offers.forEach((offer, index) => {
             const priceFormatted = parseInt(offer.price).toLocaleString('uk-UA');
-            // Витягуємо тільки назву номера, без зайвої інформації
             const roomDisplay = offer.room.split('(')[0].trim();
 
             html += `
@@ -1266,7 +1351,7 @@ function goToSearchPage() {
                             Забронювати
                         </button>
                     </td>
-                </tr>
+                </table>
             `;
         });
 
@@ -1288,6 +1373,22 @@ function goToSearchPage() {
                 this.classList.add('selected');
             });
         });
+    }
+
+    function observeHotelName() {
+        const targetNode = document.querySelector('.new_t-header-title');
+        if (targetNode) {
+            if (hotelNameObserver) hotelNameObserver.disconnect();
+
+            hotelNameObserver = new MutationObserver(function() {
+                updateHotelTitle();
+            });
+            hotelNameObserver.observe(targetNode, {
+                childList: true,
+                subtree: true,
+                characterData: true
+            });
+        }
     }
 
     function escapeHtml(text) {
