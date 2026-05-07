@@ -2844,61 +2844,65 @@ if (document.readyState === 'loading') {
 }
 </script>
 <script>
-// Функція для оновлення назви готелю в блоці "Ціни на тури в готель"
-function updateHotelNameInPricesBlock() {
+// Функція для отримання та оновлення назви готелю
+function setHotelNameInPricesBlock() {
     const hotelTitleElement = document.querySelector('.new_t-header-title');
     const pricesTitleElement = document.getElementById('hotelPricesTitle');
 
     if (hotelTitleElement && pricesTitleElement) {
+        // Отримуємо назву готелю
         let hotelName = hotelTitleElement.innerText.trim();
-        // Видаляємо зірочки та зайві символи
+        // Видаляємо зірочки в кінці, якщо є
         hotelName = hotelName.replace(/\s*\*+\s*$/g, '').trim();
-        pricesTitleElement.textContent = `Ціни на тури в готель ${hotelName}`;
-        console.log('✅ Назву готелю оновлено:', hotelName);
-        return true;
+        // Видаляємо HTML теги, якщо вони є
+        hotelName = hotelName.replace(/<[^>]*>/g, '').trim();
+
+        if (hotelName && hotelName !== 'Готель') {
+            pricesTitleElement.textContent = `Ціни на тури в готель ${hotelName}`;
+            console.log('✅ Назва готелю оновлена:', hotelName);
+            return true;
+        }
     }
     return false;
 }
 
-// Запускаємо оновлення кілька разів з затримкою (чекаємо поки віджет завантажиться)
-function tryUpdateHotelName(attempt = 0) {
-    if (updateHotelNameInPricesBlock()) return;
-    if (attempt < 20) {
-        setTimeout(() => tryUpdateHotelName(attempt + 1), 500);
-    }
+// Запускаємо оновлення багаторазово з різними затримками
+function forceUpdateHotelName() {
+    const delays = [100, 300, 500, 800, 1000, 1500, 2000, 3000, 5000];
+    delays.forEach(delay => {
+        setTimeout(() => {
+            setHotelNameInPricesBlock();
+        }, delay);
+    });
 }
 
-// Запускаємо після завантаження сторінки
+// Запускаємо при завантаженні сторінки
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => tryUpdateHotelName());
+    document.addEventListener('DOMContentLoaded', forceUpdateHotelName);
 } else {
-    tryUpdateHotelName();
+    forceUpdateHotelName();
 }
 
-// Також запускаємо через деякий час, бо віджет завантажується асинхронно
-setTimeout(() => tryUpdateHotelName(), 1500);
-setTimeout(() => tryUpdateHotelName(), 3000);
-setTimeout(() => tryUpdateHotelName(), 5000);
-
-// Спостерігаємо за змінами назви готелю (якщо користувач переходить між турами)
-const hotelObserver = new MutationObserver(function() {
-    updateHotelNameInPricesBlock();
+// Також додаємо спостерігач, який стежить за появою елемента
+const hotelNameObserver = new MutationObserver(function(mutations) {
+    const hotelTitle = document.querySelector('.new_t-header-title');
+    const pricesTitle = document.getElementById('hotelPricesTitle');
+    if (hotelTitle && pricesTitle && !pricesTitle.textContent.includes(hotelTitle.innerText.trim().replace(/\s*\*+\s*$/g, ''))) {
+        setHotelNameInPricesBlock();
+    }
 });
 
-// Починаємо спостерігати за елементом, коли він з'явиться
-function startObserving() {
-    const hotelTitle = document.querySelector('.new_t-header-title');
-    if (hotelTitle) {
-        hotelObserver.observe(hotelTitle, {
-            childList: true,
-            subtree: true,
-            characterData: true
-        });
-        console.log('✅ Розпочато спостереження за зміною назви готелю');
-    } else {
-        setTimeout(startObserving, 500);
-    }
-}
-startObserving();
+// Запускаємо спостерігач
+hotelNameObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+    characterData: true
+});
+
+// Зупиняємо спостерігач через 15 секунд, щоб не навантажувати браузер
+setTimeout(() => {
+    hotelNameObserver.disconnect();
+    console.log('👋 Спостерігач зупинено');
+}, 15000);
 </script>
 {% endblock %}
