@@ -854,16 +854,50 @@ function goToSearchPage() {
 <script>
 (function() {
     let flatpickrInstance = null;
-    let currentAdults = 2; // Поточна кількість дорослих
-    let basePrice = 0;     // Базова ціна (за 2 дорослих)
+    let currentAdults = 2;
+    let basePrice = 0;
+    let hotelNameObserver = null;
 
     // Функція для отримання назви готелю
     function getHotelName() {
         const hotelTitle = document.querySelector('.new_t-header-title');
-        return hotelTitle ? hotelTitle.innerText.trim() : 'Готель';
+        if (hotelTitle) {
+            let name = hotelTitle.innerText.trim();
+            // Видаляємо зірочки та зайві символи
+            name = name.replace(/\s*\*+\s*$/g, '').trim();
+            return name;
+        }
+        return 'Готель';
     }
 
-    // Отримання базової ціни з DOM
+    // Оновлення заголовка блоку
+    function updateHotelTitle() {
+        const titleEl = document.getElementById('hotelPricesTitle');
+        if (titleEl) {
+            const hotelName = getHotelName();
+            titleEl.textContent = `Ціни на тури в готель ${hotelName}`;
+            console.log('✅ Назву готелю оновлено:', hotelName);
+        }
+    }
+
+    // Спостерігаємо за зміною назви готелю
+    function observeHotelName() {
+        const targetNode = document.querySelector('.new_t-header-title');
+        if (targetNode) {
+            if (hotelNameObserver) hotelNameObserver.disconnect();
+
+            hotelNameObserver = new MutationObserver(function() {
+                updateHotelTitle();
+            });
+            hotelNameObserver.observe(targetNode, {
+                childList: true,
+                subtree: true,
+                characterData: true
+            });
+        }
+    }
+
+    // Отримання базової ціни
     function getBasePriceFromDOM() {
         const priceElement = document.querySelector('.new_t-order-price .new_price');
         if (priceElement) {
@@ -873,24 +907,75 @@ function goToSearchPage() {
                 return parseInt(priceMatch[0].replace(/\s/g, ''));
             }
         }
-        return 42243; // ціна за замовчуванням для прикладу
+        return 42243;
     }
 
-    // Перерахунок ціни в залежності від кількості туристів
+    // Перерахунок ціни
     function recalculatePrice(adults) {
         if (basePrice === 0) {
             basePrice = getBasePriceFromDOM();
         }
-
-        // Проста логіка: ціна пропорційна кількості дорослих
-        // (2 дорослих = базова ціна)
         const pricePerAdult = basePrice / 2;
-        const newPrice = Math.round(pricePerAdult * adults);
-
-        return newPrice;
+        return Math.round(pricePerAdult * adults);
     }
 
-    // Функція для отримання міст вильоту
+    // Отримання дати
+    function getCurrentDate() {
+        const dateElement = document.querySelector('.new_t-date-col .new_t-important');
+        if (dateElement) {
+            return dateElement.innerText.trim();
+        }
+        const urlParams = new URLSearchParams(window.location.search);
+        const odParam = urlParams.get('od');
+        if (odParam) {
+            const d = new Date(odParam);
+            return d.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+        return 'Дата не вказана';
+    }
+
+    // Отримання міста вильоту
+    function getDepartureCity() {
+        const fromElement = document.querySelector('.new_f-dropdown-btn-text');
+        if (fromElement && fromElement.innerText) {
+            return fromElement.innerText.trim().replace(/^з\s+/i, '').trim();
+        }
+        return 'Кишинева';
+    }
+
+    // Отримання типу номера
+    function getRoomType() {
+        const roomElement = document.querySelector('.new_t-tour-tab-col-2 .new_t-important');
+        if (roomElement && roomElement.innerText) {
+            return roomElement.innerText.trim();
+        }
+        return 'Standard Room';
+    }
+
+    // Отримання типу харчування
+    function getFoodType() {
+        const foodElements = document.querySelectorAll('.new_t-tour-tab-col-2 .new_t-important');
+        if (foodElements.length > 1 && foodElements[1].innerText) {
+            return foodElements[1].innerText.trim();
+        }
+        return 'Все включено';
+    }
+
+    // Отримання тривалості
+    function getNights() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const olParam = urlParams.get('ol');
+        if (olParam) return olParam;
+
+        const nightsElement = document.querySelector('.new_t-duration-container');
+        if (nightsElement) {
+            const nightsMatch = nightsElement.innerText.match(/\d+/);
+            if (nightsMatch) return nightsMatch[0];
+        }
+        return '7';
+    }
+
+    // Завантаження міст вильоту
     function loadDepartureCities() {
         const departureSelect = document.getElementById('searchDeparture');
         if (!departureSelect) return;
@@ -900,31 +985,21 @@ function goToSearchPage() {
         }
 
         const cities = new Set();
-
-        const fromElement = document.querySelector('.new_f-dropdown-btn-text');
-        if (fromElement && fromElement.innerText) {
-            let currentCity = fromElement.innerText.trim();
-            currentCity = currentCity.replace(/^з\s+/i, '').trim();
-            if (currentCity && currentCity.length > 1) {
-                cities.add(currentCity);
-            }
-        }
+        const currentCity = getDepartureCity();
+        cities.add(currentCity);
 
         const modalHeaders = document.querySelectorAll('.new_t-date-modal-body-top');
         modalHeaders.forEach(header => {
             let text = header.innerText.trim();
             const match = text.match(/\(з\s+([^)]+)\)/);
             if (match && match[1]) {
-                let city = match[1].trim();
-                if (city && city.length > 1) {
-                    cities.add(city);
-                }
+                cities.add(match[1].trim());
             }
         });
 
         const defaultCities = [
             'Кишинева', 'Києва', 'Львова', 'Одеси', 'Варшави',
-            'Праги', 'Будапешта', 'Відня', 'Бухареста'
+            'Праги', 'Будапешта', 'Відня', 'Бухареста', 'Вільнюса'
         ];
 
         cities.forEach(city => {
@@ -943,39 +1018,13 @@ function goToSearchPage() {
             });
         }
 
-        if (fromElement && fromElement.innerText) {
-            const defaultCity = fromElement.innerText.trim().replace(/^з\s+/i, '');
+        if (currentCity) {
             for (let i = 0; i < departureSelect.options.length; i++) {
-                if (departureSelect.options[i].text === defaultCity) {
+                if (departureSelect.options[i].text === currentCity) {
                     departureSelect.selectedIndex = i;
                     break;
                 }
             }
-        }
-
-        console.log('✅ Міста завантажено:', departureSelect.options.length);
-    }
-
-    // Оновлення назви блоку при зміні готелю
-    function updateHotelName() {
-        const titleEl = document.getElementById('hotelPricesTitle');
-        if (titleEl) {
-            const hotelName = getHotelName();
-            titleEl.textContent = `Ціни на тури в готель ${hotelName}`;
-        }
-    }
-
-    // Спостерігаємо за змінами назви готелю
-    function observeHotelNameChanges() {
-        const hotelTitleElement = document.querySelector('.new_t-header-title');
-        if (hotelTitleElement) {
-            const observer = new MutationObserver(function() {
-                updateHotelName();
-                // Також оновлюємо базову ціну при зміні готелю
-                basePrice = getBasePriceFromDOM();
-                loadHotelPrices();
-            });
-            observer.observe(hotelTitleElement, { childList: true, subtree: true, characterData: true });
         }
     }
 
@@ -983,17 +1032,19 @@ function goToSearchPage() {
         const section = document.getElementById('hotelPricesSection');
         if (!section) return;
 
-        // Отримуємо базову ціну
         basePrice = getBasePriceFromDOM();
         currentAdults = parseInt(document.getElementById('searchAdults')?.value) || 2;
 
-        updateHotelName();
+        // Оновлюємо заголовок
+        updateHotelTitle();
+
+        // Спостерігаємо за зміною назви
+        observeHotelName();
 
         setTimeout(loadDepartureCities, 500);
         setTimeout(loadDepartureCities, 1500);
         setTimeout(loadDepartureCities, 3000);
 
-        // Ініціалізуємо Flatpickr
         if (typeof flatpickr !== 'undefined' && !flatpickrInstance) {
             const urlParams = new URLSearchParams(window.location.search);
             const startDate = urlParams.get('od') || '2026-05-21';
@@ -1009,26 +1060,19 @@ function goToSearchPage() {
             });
         }
 
-        // Обробник зміни кількості туристів
         const adultsSelect = document.getElementById('searchAdults');
         if (adultsSelect) {
-            adultsSelect.addEventListener('change', function() {
-                currentAdults = parseInt(this.value);
-                loadHotelPrices(); // Перезавантажуємо пропозиції з новою ціною
-            });
+            adultsSelect.removeEventListener('change', handleAdultsChange);
+            adultsSelect.addEventListener('change', handleAdultsChange);
         }
 
-        // Обробник форми
         const form = document.getElementById('hotelSearchForm');
         if (form) {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                loadHotelPrices();
-            });
+            form.removeEventListener('submit', handleFormSubmit);
+            form.addEventListener('submit', handleFormSubmit);
         }
 
-        // Спостерігаємо за зміною ціни в оригінальному блоці
-        const observer = new MutationObserver(function() {
+        const priceObserver = new MutationObserver(function() {
             const newBasePrice = getBasePriceFromDOM();
             if (newBasePrice !== basePrice) {
                 basePrice = newBasePrice;
@@ -1038,22 +1082,29 @@ function goToSearchPage() {
 
         const priceElement = document.querySelector('.new_t-order-price');
         if (priceElement) {
-            observer.observe(priceElement, { childList: true, subtree: true, characterData: true });
+            priceObserver.observe(priceElement, { childList: true, subtree: true, characterData: true });
         }
 
         loadHotelPrices();
         section.style.display = 'block';
-        observeHotelNameChanges();
+    }
+
+    function handleAdultsChange() {
+        currentAdults = parseInt(document.getElementById('searchAdults')?.value) || 2;
+        loadHotelPrices();
+    }
+
+    function handleFormSubmit(e) {
+        e.preventDefault();
+        loadHotelPrices();
     }
 
     function loadHotelPrices() {
         const tableContainer = document.getElementById('hotelPricesTable');
         if (!tableContainer) return;
 
-        const departure = document.getElementById('searchDeparture')?.value || 'Кишинева';
-        const nights = document.getElementById('searchNights')?.value || '7';
-
-        // Отримуємо актуальну кількість туристів
+        const departure = document.getElementById('searchDeparture')?.value || getDepartureCity();
+        const nights = document.getElementById('searchNights')?.value || getNights();
         currentAdults = parseInt(document.getElementById('searchAdults')?.value) || 2;
 
         tableContainer.innerHTML = `
@@ -1085,58 +1136,21 @@ function goToSearchPage() {
 
     function collectOffersFromDOM() {
         const offers = [];
-        const selectedDeparture = document.getElementById('searchDeparture')?.value || '';
+        const selectedDeparture = document.getElementById('searchDeparture')?.value || getDepartureCity();
 
-        // Отримуємо базову ціну
         if (basePrice === 0) {
             basePrice = getBasePriceFromDOM();
         }
 
-        // Перераховуємо ціну для поточної кількості туристів
         const adjustedPrice = recalculatePrice(currentAdults);
+        const currentDate = getCurrentDate();
+        const nights = getNights();
+        const room = getRoomType();
+        const food = getFoodType();
 
-        // Отримуємо дату
-        let dateText = '';
-        const dateElement = document.querySelector('.new_t-date-col .new_t-important');
-        if (dateElement) {
-            dateText = dateElement.innerText.trim();
-        } else {
-            const urlParams = new URLSearchParams(window.location.search);
-            const odParam = urlParams.get('od');
-            if (odParam) {
-                const d = new Date(odParam);
-                dateText = d.toLocaleDateString('uk-UA');
-            }
-        }
-
-        // Отримуємо тривалість
-        let nights = '7';
-        const urlParams = new URLSearchParams(window.location.search);
-        const olParam = urlParams.get('ol');
-        if (olParam) nights = olParam;
-        const nightsElement = document.querySelector('.new_t-duration-container');
-        if (nightsElement) {
-            const nightsMatch = nightsElement.innerText.match(/\d+/);
-            if (nightsMatch) nights = nightsMatch[0];
-        }
-
-        // Отримуємо тип номера
-        let room = 'Standard Room';
-        const roomElement = document.querySelector('.new_t-tour-tab-col-2 .new_t-important');
-        if (roomElement && roomElement.innerText) {
-            room = roomElement.innerText.trim();
-        }
-
-        // Отримуємо харчування
-        let food = 'Все включено';
-        const foodElements = document.querySelectorAll('.new_t-tour-tab-col-2 .new_t-important');
-        if (foodElements.length > 1) {
-            food = foodElements[1].innerText.trim();
-        }
-
-        // Додаємо основну пропозицію з перерахованою ціною
+        // Основна пропозиція
         offers.push({
-            date: dateText || 'Поточна дата',
+            date: currentDate,
             nights: nights,
             room: room,
             food: food,
@@ -1145,11 +1159,11 @@ function goToSearchPage() {
             adults: currentAdults
         });
 
-        // Шукаємо пропозиції в таблиці дат і перераховуємо їх ціни
+        // Пропозиції з таблиці дат
         const dateModalRows = document.querySelectorAll('.new_t-date-modal-table tbody tr');
         dateModalRows.forEach(row => {
             const cells = row.querySelectorAll('td');
-            if (cells.length > 1) {
+            if (cells.length > 0) {
                 let date = '';
                 const dateSpan = row.querySelector('td:first-child span');
                 if (dateSpan) {
@@ -1167,7 +1181,6 @@ function goToSearchPage() {
                 }
 
                 if (date && basePriceValue > 0) {
-                    // Перераховуємо ціну для цієї пропозиції
                     const pricePerAdult = basePriceValue / 2;
                     const adjustedOfferPrice = Math.round(pricePerAdult * currentAdults);
 
@@ -1232,25 +1245,28 @@ function goToSearchPage() {
 
         offers.forEach((offer, index) => {
             const priceFormatted = parseInt(offer.price).toLocaleString('uk-UA');
+            // Витягуємо тільки назву номера, без зайвої інформації
+            const roomDisplay = offer.room.split('(')[0].trim();
+
             html += `
                 <tr class="hotel-price-row" data-index="${index}" style="cursor: pointer;">
                     <td class="p-3 hotel-price-cell">
                         <div class="fw-semibold">${escapeHtml(offer.date)}</div>
-                        <div class="small text-muted">з ${escapeHtml(offer.departure || 'Кишинева')}</div>
+                        <div class="small text-muted">з ${escapeHtml(offer.departure)}</div>
                     </td>
                     <td class="p-3 hotel-price-cell">${offer.nights} ночей</td>
-                    <td class="p-3 hotel-price-cell">${escapeHtml(offer.room)}</td>
+                    <td class="p-3 hotel-price-cell">${escapeHtml(roomDisplay)}</td>
                     <td class="p-3 hotel-price-cell">
                         <div class="fw-semibold">${offer.food.includes('включено') ? 'AI' : 'BB'}</div>
                         <div class="small text-muted">${escapeHtml(offer.food)}</div>
                     </td>
                     <td class="p-3 hotel-price-cell fw-bold text-danger" style="font-size: 1.1rem;">${priceFormatted} грн</td>
                     <td class="p-3 hotel-price-cell">
-                        <button class="btn btn-sm rounded-3 px-3" style="background: var(--primary-color); color: white; border: none;" onclick="event.stopPropagation(); window.bookTour('${escapeHtml(offer.date)}', ${offer.adults || currentAdults})">
+                        <button class="btn btn-sm rounded-3 px-3" style="background: var(--primary-color); color: white; border: none;" onclick="event.stopPropagation(); window.bookTour('${escapeHtml(offer.date)}', ${offer.adults})">
                             Забронювати
                         </button>
                     </td>
-                 </tr>
+                </tr>
             `;
         });
 
