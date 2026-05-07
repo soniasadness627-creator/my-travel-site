@@ -888,7 +888,7 @@ function goToSearchPage() {
 
         // Додаємо поточне місто з URL параметра (якщо є)
         const urlParams = new URLSearchParams(window.location.search);
-        const odCity = urlParams.get('od'); // може бути код міста
+        const odCity = urlParams.get('od');
         if (odCity && odCity.length > 2) {
             cities.add(odCity);
         }
@@ -903,7 +903,6 @@ function goToSearchPage() {
                     !cityText.includes('тис') && !cityText.includes('грн') &&
                     !cityText.match(/^\d+$/)) {
 
-                    // Очищаємо текст від зайвого
                     cityText = cityText.replace(/^з\s+/i, '').replace(/\([^)]*\)/g, '').trim();
                     if (cityText && cityText.length > 1 && cityText.length < 20) {
                         cities.add(cityText);
@@ -912,7 +911,7 @@ function goToSearchPage() {
             });
         });
 
-        // Список популярних міст вильоту (Україна, Молдова, Польща, Румунія)
+        // Список популярних міст вильоту
         const defaultCities = [
             'Кишинева', 'Києва', 'Львова', 'Одеси', 'Харкова', 'Дніпра',
             'Варшави', 'Кракова', 'Праги', 'Будапешта', 'Відня', 'Бухареста',
@@ -966,12 +965,10 @@ function goToSearchPage() {
         const hotelName = document.querySelector('.new_t-header-title')?.innerText?.trim() || 'Готель';
         if (titleEl) titleEl.textContent = `Ціни на тури в готель ${hotelName}`;
 
-        // Завантажуємо міста вильоту з невеликою затримкою (чекаємо поки віджет завантажиться)
         setTimeout(loadDepartureCities, 500);
         setTimeout(loadDepartureCities, 1500);
         setTimeout(loadDepartureCities, 3000);
 
-        // Ініціалізуємо Flatpickr
         if (typeof flatpickr !== 'undefined' && !flatpickrInstance) {
             const startDate = window.od || (new URLSearchParams(window.location.search).get('od')) || '2026-05-21';
             const nights = window.ol || (new URLSearchParams(window.location.search).get('ol')) || '7';
@@ -1029,7 +1026,7 @@ function goToSearchPage() {
                     <div class="text-center py-5">
                         <i class="fa-regular fa-circle-exclamation fa-3x text-muted mb-3"></i>
                         <p class="text-muted">Не знайдено пропозицій туру з ${departure}</p>
-                        <button class="btn btn-outline-primary btn-sm mt-2" onclick="loadDepartureCities(); setTimeout(() => loadHotelPrices(), 500);">
+                        <button class="btn btn-outline-primary btn-sm mt-2" onclick="window.loadDepartureCities(); setTimeout(() => window.reloadHotelPrices(), 500);">
                             <i class="fa-regular fa-arrows-rotate me-1"></i> Спробувати ще раз
                         </button>
                     </div>
@@ -1111,7 +1108,6 @@ function goToSearchPage() {
                     date = dateSpan.innerText.trim();
                 }
 
-                // Шукаємо ціну в рядочку
                 let priceValue = '';
                 for (let i = 0; i < cells.length; i++) {
                     const cellText = cells[i].innerText.trim();
@@ -1157,10 +1153,18 @@ function goToSearchPage() {
                 <div class="text-center py-5">
                     <i class="fa-regular fa-circle-exclamation fa-3x text-muted mb-3"></i>
                     <p class="text-muted">Не знайдено пропозицій туру</p>
+                    <button class="btn btn-outline-primary btn-sm mt-2" onclick="window.reloadHotelPrices()">
+                        <i class="fa-regular fa-arrows-rotate me-1"></i> Оновити
+                    </button>
                 </div>
             `;
             return;
         }
+
+        // Показуємо перші 5 пропозицій, решту ховаємо
+        const initialOffers = offers.slice(0, 5);
+        const remainingOffers = offers.slice(5);
+        const hasMore = remainingOffers.length > 0;
 
         let html = `
             <table class="table table-hover mb-0" style="min-width: 600px;">
@@ -1177,7 +1181,7 @@ function goToSearchPage() {
                 <tbody>
         `;
 
-        offers.forEach((offer, index) => {
+        initialOffers.forEach((offer, index) => {
             const priceFormatted = parseInt(offer.price).toLocaleString('uk-UA');
             html += `
                 <tr class="hotel-price-row" data-index="${index}" style="cursor: pointer;">
@@ -1204,19 +1208,104 @@ function goToSearchPage() {
         html += `
                 </tbody>
             </table>
-            <div class="text-center py-3 border-top">
-                <button class="btn btn-outline-secondary btn-sm rounded-pill px-4" onclick="window.location.href='/search/'">Показати ще пропозиції</button>
-            </div>
         `;
+
+        // КНОПКА "ПОКАЗАТИ ЩЕ" - тепер просто довантажує пропозиції, а не переходить на /search/
+        if (hasMore) {
+            html += `
+                <div class="text-center py-3 border-top">
+                    <button class="btn btn-outline-primary btn-sm rounded-pill px-4" id="showMoreOffersBtn" style="border-color: var(--primary-color); color: var(--primary-color);">
+                        <i class="fa-regular fa-plus me-1"></i> Показати ще ${remainingOffers.length} пропозицій
+                    </button>
+                </div>
+            `;
+        } else {
+            html += `
+                <div class="text-center py-3 border-top">
+                    <button class="btn btn-outline-secondary btn-sm rounded-pill px-4" onclick="window.reloadHotelPrices()" style="border-color: var(--primary-color); color: var(--primary-color);">
+                        <i class="fa-regular fa-arrows-rotate me-1"></i> Оновити пропозиції
+                    </button>
+                </div>
+            `;
+        }
 
         tableContainer.innerHTML = html;
 
+        // Обробник для рядків таблиці
         document.querySelectorAll('.hotel-price-row').forEach(row => {
             row.addEventListener('click', function() {
                 document.querySelectorAll('.hotel-price-row').forEach(r => r.classList.remove('selected'));
                 this.classList.add('selected');
             });
         });
+
+        // Обробник для кнопки "Показати ще"
+        if (hasMore) {
+            const showMoreBtn = document.getElementById('showMoreOffersBtn');
+            if (showMoreBtn) {
+                showMoreBtn.addEventListener('click', function() {
+                    loadMoreOffers(remainingOffers);
+                });
+            }
+        }
+    }
+
+    // Функція для завантаження додаткових пропозицій
+    function loadMoreOffers(moreOffers) {
+        const tableContainer = document.getElementById('hotelPricesTable');
+        if (!tableContainer) return;
+
+        const existingTable = tableContainer.querySelector('table');
+        const tbody = existingTable?.querySelector('tbody');
+        const buttonContainer = tableContainer.querySelector('.text-center.border-top');
+
+        if (tbody && moreOffers.length > 0) {
+            // Додаємо нові рядки
+            moreOffers.forEach((offer, index) => {
+                const priceFormatted = parseInt(offer.price).toLocaleString('uk-UA');
+                const row = document.createElement('tr');
+                row.className = 'hotel-price-row';
+                row.setAttribute('data-index', (tbody.children.length + index));
+                row.style.cursor = 'pointer';
+                row.innerHTML = `
+                    <td class="p-3 hotel-price-cell">
+                        <div class="fw-semibold">${escapeHtml(offer.date)}</div>
+                        <div class="small text-muted">з ${escapeHtml(offer.departure)}</div>
+                    </td>
+                    <td class="p-3 hotel-price-cell">${offer.nights} ночей</td>
+                    <td class="p-3 hotel-price-cell">${escapeHtml(offer.room)}</td>
+                    <td class="p-3 hotel-price-cell">
+                        <div class="fw-semibold">${offer.food.includes('включено') ? 'AI' : 'BB'}</div>
+                        <div class="small text-muted">${escapeHtml(offer.food)}</div>
+                    </td>
+                    <td class="p-3 hotel-price-cell fw-bold text-danger" style="font-size: 1.1rem;">${priceFormatted} грн</td>
+                    <td class="p-3 hotel-price-cell">
+                        <button class="btn btn-sm rounded-3 px-3" style="background: var(--primary-color); color: white; border: none;" onclick="event.stopPropagation(); window.bookTour('${escapeHtml(offer.date)}')">
+                            Забронювати
+                        </button>
+                    </td>
+                `;
+
+                row.addEventListener('click', function() {
+                    document.querySelectorAll('.hotel-price-row').forEach(r => r.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+
+                tbody.appendChild(row);
+            });
+
+            // Видаляємо кнопку "Показати ще"
+            if (buttonContainer) {
+                buttonContainer.remove();
+            }
+
+            // Показуємо повідомлення
+            const successMsg = document.createElement('div');
+            successMsg.className = 'text-center py-2 text-success small';
+            successMsg.innerHTML = '<i class="fa-regular fa-check-circle me-1"></i> Завантажено всі пропозиції';
+            tableContainer.appendChild(successMsg);
+            setTimeout(() => successMsg.remove(), 3000);
+        }
     }
 
     window.bookTour = function(date) {
@@ -1249,9 +1338,10 @@ function goToSearchPage() {
         initHotelPricesBlock();
     }
 
-    // Експортуємо функцію для ручного виклику
+    // Експортуємо функції для ручного виклику
     window.loadDepartureCities = loadDepartureCities;
     window.reloadHotelPrices = loadHotelPrices;
+    window.loadMoreOffers = loadMoreOffers;
 })();
 </script>
 
