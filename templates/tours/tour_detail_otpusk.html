@@ -2843,4 +2843,62 @@ if (document.readyState === 'loading') {
     tryMove();
 }
 </script>
+<script>
+// Функція для оновлення назви готелю в блоці "Ціни на тури в готель"
+function updateHotelNameInPricesBlock() {
+    const hotelTitleElement = document.querySelector('.new_t-header-title');
+    const pricesTitleElement = document.getElementById('hotelPricesTitle');
+
+    if (hotelTitleElement && pricesTitleElement) {
+        let hotelName = hotelTitleElement.innerText.trim();
+        // Видаляємо зірочки та зайві символи
+        hotelName = hotelName.replace(/\s*\*+\s*$/g, '').trim();
+        pricesTitleElement.textContent = `Ціни на тури в готель ${hotelName}`;
+        console.log('✅ Назву готелю оновлено:', hotelName);
+        return true;
+    }
+    return false;
+}
+
+// Запускаємо оновлення кілька разів з затримкою (чекаємо поки віджет завантажиться)
+function tryUpdateHotelName(attempt = 0) {
+    if (updateHotelNameInPricesBlock()) return;
+    if (attempt < 20) {
+        setTimeout(() => tryUpdateHotelName(attempt + 1), 500);
+    }
+}
+
+// Запускаємо після завантаження сторінки
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => tryUpdateHotelName());
+} else {
+    tryUpdateHotelName();
+}
+
+// Також запускаємо через деякий час, бо віджет завантажується асинхронно
+setTimeout(() => tryUpdateHotelName(), 1500);
+setTimeout(() => tryUpdateHotelName(), 3000);
+setTimeout(() => tryUpdateHotelName(), 5000);
+
+// Спостерігаємо за змінами назви готелю (якщо користувач переходить між турами)
+const hotelObserver = new MutationObserver(function() {
+    updateHotelNameInPricesBlock();
+});
+
+// Починаємо спостерігати за елементом, коли він з'явиться
+function startObserving() {
+    const hotelTitle = document.querySelector('.new_t-header-title');
+    if (hotelTitle) {
+        hotelObserver.observe(hotelTitle, {
+            childList: true,
+            subtree: true,
+            characterData: true
+        });
+        console.log('✅ Розпочато спостереження за зміною назви готелю');
+    } else {
+        setTimeout(startObserving, 500);
+    }
+}
+startObserving();
+</script>
 {% endblock %}
