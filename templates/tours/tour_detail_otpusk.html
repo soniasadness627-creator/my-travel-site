@@ -3590,5 +3590,59 @@ setTimeout(function() {
 }, 3000);
 </script>
 
+<script>
+// ========== ПОВНЕ ОНОВЛЕННЯ КАЛЕНДАРЯ ПРИ ЗМІНІ ПАРАМЕТРІВ ==========
+(function fixFullCalendarUpdate() {
+    // Функція для оновлення всього блоку цін
+    function fullUpdate() {
+        // Оновлюємо таблицю з пропозиціями
+        if (typeof window.reloadHotelPrices === 'function') {
+            window.reloadHotelPrices();
+        }
 
+        // Оновлюємо календар - знаходимо функцію renderCalendar
+        setTimeout(() => {
+            // Шукаємо функцію renderCalendar в замиканні
+            const calendarContainer = document.getElementById('calendarTableContainer');
+            if (calendarContainer) {
+                // Просто перестворюємо календар заново, викликаючи loadHotelPrices
+                // яке оновить і календар теж
+                if (typeof window.reloadHotelPrices === 'function') {
+                    window.reloadHotelPrices();
+                }
+            }
+        }, 200);
+    }
+
+    // ПЕРЕХОПЛЮЄМО події ДО того, як їх оброблять інші скрипти
+    const nightsSelect = document.getElementById('searchNights');
+    if (nightsSelect) {
+        // Видаляємо всі старі обробники
+        const newNightsSelect = nightsSelect.cloneNode(true);
+        nightsSelect.parentNode.replaceChild(newNightsSelect, nightsSelect);
+
+        newNightsSelect.addEventListener('change', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // Змінюємо значення
+            fullUpdate();
+        });
+    }
+
+    const adultsSelect = document.getElementById('searchAdults');
+    if (adultsSelect) {
+        // Видаляємо всі старі обробники
+        const newAdultsSelect = adultsSelect.cloneNode(true);
+        adultsSelect.parentNode.replaceChild(newAdultsSelect, adultsSelect);
+
+        newAdultsSelect.addEventListener('change', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            fullUpdate();
+        });
+    }
+
+    console.log('✅ Фікс оновлення календаря активовано');
+})();
+</script>
 {% endblock %}
