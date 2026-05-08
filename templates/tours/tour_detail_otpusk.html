@@ -2829,8 +2829,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             if (filteredTours.length === 0) {
                 if (messageDiv) {
-                    messageDiv.innerHTML = `😔 Не знайдено готелів у ціновому діапазоні ±5000 грн<br><small>Поточна ціна: ${currentPrice.toLocaleString()} грн</small>`;
-                    messageDiv.style.display = 'block';
                 }
                 section.style.display = 'block';
                 return;
