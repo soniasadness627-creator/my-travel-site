@@ -14,6 +14,13 @@ urlpatterns = [
     # Сторінка результатів пошуку Otpusk
     path('search-otpusk/', views.search_otpusk, name='search_otpusk'),
 
+    # Сторінка результатів пошуку для популярних напрямків
+    path('search-otpusk-by-country/', views.search_otpusk_by_country, name='search_otpusk_by_country'),
+
+    # ========== НОВИЙ МАРШРУТ ==========
+    path('tour-detail/', views.tour_detail_otpusk, name='tour_detail_otpusk'),
+    # ==================================
+
     # Консультація
     path('consultation/', views.ConsultationCreateView.as_view(), name='consultation'),
 
