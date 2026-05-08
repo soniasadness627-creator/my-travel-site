@@ -918,4 +918,94 @@ document.addEventListener('DOMContentLoaded', function() {
     color: white !important;
 }
 </style>
+<!-- ========== СТИЛІ ДЛЯ КАЛЕНДАРЯ (ЧЕРВОНИЙ ТА ЧОРНИЙ) ========== -->
+<style>
+/* Календар - зміна кольорів з зелених на червоні */
+.ui-datepicker-calendar .ui-state-default {
+    background: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #ddd !important;
+}
+
+/* Дні, коли є тури - червоний фон */
+.ui-datepicker-calendar .new_ceil-tours-exists .ui-state-default {
+    background: #ff6b6b !important;
+    color: white !important;
+    border-color: #ff6b6b !important;
+    font-weight: bold !important;
+}
+
+/* Дні, коли немає турів - блідо-червоний */
+.ui-datepicker-calendar .new_ceil-no-tours .ui-state-default {
+    background: #ffe0e0 !important;
+    color: #cc0000 !important;
+    border-color: #ffcccc !important;
+}
+
+/* Поточний день (сьогодні) */
+.ui-datepicker-calendar .ui-datepicker-today .ui-state-default {
+    background: #ff4444 !important;
+    color: white !important;
+    border-color: #ff4444 !important;
+    font-weight: bold !important;
+}
+
+/* Вибрані дні */
+.ui-datepicker-calendar .ui-state-active {
+    background: #cc0000 !important;
+    color: white !important;
+    border-color: #cc0000 !important;
+}
+
+/* Ховер ефект */
+.ui-datepicker-calendar .ui-state-default:hover {
+    background: #ff8888 !important;
+    color: white !important;
+    transform: scale(1.05) !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Текст місяця та року - чорний */
+.ui-datepicker .ui-datepicker-title {
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+
+/* Навігація (стрілки) */
+.ui-datepicker .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-next {
+    color: #cc0000 !important;
+}
+
+/* Дні тижня (Пн, Вт, Ср...) - чорний */
+.ui-datepicker-calendar thead th span {
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+
+/* Заголовок календаря */
+.ui-datepicker-header {
+    background: #fff0f0 !important;
+    border-bottom: 1px solid #ffcccc !important;
+}
+
+/* Вихідні дні (субота, неділя) - червонуватий відтінок */
+.ui-datepicker-calendar .ui-datepicker-week-end .ui-state-default {
+    background: #fff0f0 !important;
+    color: #cc0000 !important;
+}
+
+/* Вихідні з турами */
+.ui-datepicker-calendar .ui-datepicker-week-end.new_ceil-tours-exists .ui-state-default {
+    background: #ff6b6b !important;
+    color: white !important;
+}
+
+/* Вихідні без турів */
+.ui-datepicker-calendar .ui-datepicker-week-end.new_ceil-no-tours .ui-state-default {
+    background: #ffe0e0 !important;
+    color: #cc0000 !important;
+}
+</style>
+
 {% endblock %}
