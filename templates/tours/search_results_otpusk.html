@@ -585,4 +585,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 </style>
+<style>
+/* ========== ГОЛОВНИЙ ФІКС - ПОКАЗУЄМО ВСІ ТУРИ НА ВСІХ ПРИСТРОЯХ ========== */
+.new_r-item-wrap,
+.new_r-container,
+.new_r-wrapper {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* Видаляємо будь-яке приховування */
+[style*="display: none"],
+[style*="display:none"] {
+    display: block !important;
+}
+</style>
 {% endblock %}
