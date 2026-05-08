@@ -38,30 +38,7 @@
         </div>
     </div>
 </div>
-<!-- ДІАГНОСТИЧНИЙ БЛОК -->
-<div style="background: #f8d7da; padding: 15px; margin-bottom: 20px; border: 1px solid #f5c6cb; border-radius: 8px; font-family: monospace;">
-    <strong>🔍 ДІАГНОСТИКА:</strong><br>
-    URL: <span id="diag-url"></span><br>
-    hid: <span id="diag-hid"></span><br>
-    oid: <span id="diag-oid"></span><br>
-    od: <span id="diag-od"></span><br>
-    ol: <span id="diag-ol"></span><br>
-    <span id="diag-msg"></span>
-</div>
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const hash = window.location.hash;
-    document.getElementById('diag-url').innerText = window.location.href;
-    document.getElementById('diag-hid').innerText = urlParams.get('hid') || (hash.match(/hid=(\d+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
-    document.getElementById('diag-oid').innerText = urlParams.get('oid') || (hash.match(/oid=([\d]+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
-    document.getElementById('diag-od').innerText = urlParams.get('od') || (hash.match(/od=([\d-]+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
-    document.getElementById('diag-ol').innerText = urlParams.get('ol') || (hash.match(/ol=(\d+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
-    if (urlParams.get('hid') && urlParams.get('oid')) {
-        document.getElementById('diag-msg').innerHTML = '✅ Параметри передаються коректно';
-    } else {
-        document.getElementById('diag-msg').innerHTML = '⚠️ ПАРАМЕТРИ НЕ ПЕРЕДАЮТЬСЯ!';
-    }
-</script>
+
 <style>
 /* ========== ОСНОВНІ СТИЛІ ========== */
 
@@ -172,25 +149,6 @@ span.currency {
     fill: #FFD700 !important;
 }
 
-/* ========== ФІЛЬТРИ ========== */
-.new_f-ext-container {
-    display: block !important;
-    background: #f8f9fa !important;
-    border-radius: 16px !important;
-    padding: 20px !important;
-    border: 1px solid #e2e8f0 !important;
-}
-
-.new_f-ext-btn,
-.new_f-dropdown-body-top {
-    display: none !important;
-}
-
-.new_f-dropdown-item.selected {
-    background: var(--primary-color) !important;
-    color: white !important;
-}
-
 /* ========== КАРТКИ ТУРІВ ========== */
 
 /* Контейнер результатів */
@@ -205,7 +163,6 @@ span.currency {
     width: 100% !important;
 }
 
-/* ПРИМУСОВО ПЕРЕВИЗНАЧАЄМО СІТКУ */
 .new_r-wrapper:before,
 .new_r-wrapper:after {
     display: none !important;
@@ -240,8 +197,6 @@ span.currency {
 .new_r-item-img {
     width: 280px !important;
     height: auto !important;
-    min-height: auto !important;
-    max-height: auto !important;
     object-fit: cover !important;
     display: block !important;
     flex-shrink: 0 !important;
@@ -253,13 +208,11 @@ span.currency {
     flex-shrink: 0 !important;
     width: 280px !important;
     height: auto !important;
-    min-height: auto !important;
-    max-height: auto !important;
     background-size: cover !important;
     background-position: center !important;
 }
 
-/* ========== РЕЙТИНГ - ВСІ КВАДРАТНІ (p8, p7, p6, p5) ========== */
+/* ========== РЕЙТИНГ - КВАДРАТНІ ========== */
 .new_r-item-rating-container,
 .new_r-p8,
 .new_r-p7,
@@ -304,17 +257,13 @@ span.currency {
     color: #555 !important;
 }
 
-/* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ */
-.new_r-item-rating-container::before,
+/* ХОВАЄМО КРУГЛІ ЕЛЕМЕНТИ */
 .new_r-item-rating-container .slice,
 .new_r-item-rating-container .bar,
 .new_r-item-rating-container .fill,
 .new_r-item-rating-container svg,
-.new_r-item-rating-container circle,
-.new_r-item-rating-container path {
+.new_r-item-rating-container circle {
     display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
 }
 
 /* ТІЛО КАРТКИ */
@@ -324,12 +273,8 @@ span.currency {
     flex-direction: column !important;
     justify-content: space-between !important;
     flex: 1 !important;
-    min-width: 0 !important;
-    min-height: auto !important;
-    height: auto !important;
 }
 
-/* НАЗВА ГОТЕЛЮ */
 .new_r-item-hotel {
     font-size: 1.3rem !important;
     font-weight: 700 !important;
@@ -346,7 +291,6 @@ span.currency {
     gap: 4px !important;
 }
 
-/* МІСЦЕЗНАХОДЖЕННЯ */
 .new_r-item-geo {
     display: flex !important;
     align-items: center !important;
@@ -356,7 +300,6 @@ span.currency {
     margin: 0 0 12px 0 !important;
 }
 
-/* ХАРЧУВАННЯ */
 .new_r-item-food {
     display: inline-block !important;
     background: #e2e8f0 !important;
@@ -369,14 +312,12 @@ span.currency {
     font-weight: 500 !important;
 }
 
-/* ДЕТАЛІ ВИЛЬОТУ */
 .new_r-item-table {
     display: flex !important;
     flex-wrap: wrap !important;
     gap: 20px !important;
     margin: 5px 0 10px 0 !important;
     width: 100% !important;
-    box-sizing: border-box !important;
 }
 
 .new_r-item-col {
@@ -385,26 +326,8 @@ span.currency {
     gap: 20px !important;
     flex-wrap: wrap !important;
     width: 100% !important;
-    box-sizing: border-box !important;
 }
 
-.new_r-item-from,
-.new_r-item-date {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    font-size: 0.9rem !important;
-    color: #555 !important;
-    white-space: normal !important;
-}
-
-.new_r-item-icon {
-    width: 18px !important;
-    height: 18px !important;
-    fill: #888 !important;
-}
-
-/* ЦІНА */
 .new_r-item-price {
     display: flex !important;
     justify-content: flex-end !important;
@@ -415,20 +338,13 @@ span.currency {
     gap: 8px !important;
     flex-wrap: wrap !important;
     width: 100% !important;
-    box-sizing: border-box !important;
 }
 
 .new_price-value {
     font-size: 1.4rem !important;
 }
 
-.new_price-desc {
-    font-size: 0.85rem !important;
-    color: #666 !important;
-    font-weight: normal !important;
-}
-
-/* АДАПТИВ - ПРИ ЗМЕНШЕННІ ЕКРАНУ */
+/* АДАПТИВ */
 @media (max-width: 1400px) {
     .new_r-item-col {
         flex-direction: column !important;
@@ -436,27 +352,17 @@ span.currency {
     }
 }
 
-/* ========== МОБІЛЬНА ВЕРСІЯ ========== */
 @media (max-width: 768px) {
     #otpusk-search-module {
         padding: 15px !important;
         margin: 0 15px !important;
     }
 
-    .new_r-item-wrap {
-        margin-bottom: 20px !important;
-    }
-
     .new_r-item {
         flex-direction: column !important;
-        min-height: auto !important;
     }
 
-    .new_r-item-img {
-        width: 100% !important;
-        height: 220px !important;
-    }
-
+    .new_r-item-img,
     .new_r-lazy-img {
         width: 100% !important;
         height: 220px !important;
@@ -504,15 +410,14 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(document.body, { childList: true, subtree: true });
 });
 
-// КОЛІР РАМКИ РЕЙТИНГУ (ДЛЯ ВСІХ КЛАСІВ - p8, p7, p6, p5)
+// КОЛІР РАМКИ РЕЙТИНГУ
 document.addEventListener('DOMContentLoaded', function() {
     function updateRatingBorderColor() {
         const ratingContainers = document.querySelectorAll('.new_r-p8, .new_r-p7, .new_r-p6, .new_r-p5, .new_r-item-rating-container');
         ratingContainers.forEach(function(container) {
             const ratingValueElement = container.querySelector('.new_r-item-rating-value');
             if (!ratingValueElement) return;
-            const ratingText = ratingValueElement.textContent || ratingValueElement.innerText;
-            const rating = parseFloat(ratingText);
+            const rating = parseFloat(ratingValueElement.textContent);
             if (isNaN(rating)) return;
             let color;
             if (rating < 5) color = '#ef4444';
@@ -526,20 +431,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const observer = new MutationObserver(function() { updateRatingBorderColor(); });
     observer.observe(document.body, { childList: true, subtree: true });
 });
-</script>
-<script>
-// ========== ПЕРЕХОПЛЕННЯ КЛІКІВ НА ТУРИ (ПОКРАЩЕНИЙ) ==========
-(function() {
-    console.log('Скрипт перехоплення активовано');
 
+// ПЕРЕХОПЛЕННЯ КЛІКІВ НА ТУРИ
+(function() {
     function extractParamsFromUrl(url) {
-        // Шукаємо параметри в різних форматах
         let hid = url.match(/hid=(\d+)/)?.[1];
         let oid = url.match(/oid=([\d]+)/)?.[1];
         let od = url.match(/od=([\d-]+)/)?.[1];
         let ol = url.match(/ol=(\d+)/)?.[1];
-
-        // Якщо не знайшли в прямому вигляді, шукаємо в хеші
         if (!hid) {
             let hash = url.split('#')[1] || '';
             hid = hash.match(/hid=(\d+)/)?.[1];
@@ -547,173 +446,45 @@ document.addEventListener('DOMContentLoaded', function() {
             od = hash.match(/od=([\d-]+)/)?.[1];
             ol = hash.match(/ol=(\d+)/)?.[1];
         }
-
         return { hid, oid, od, ol };
     }
 
     function handleTourClick(event) {
-        // Шукаємо елемент, на який клікнули
         let target = event.target.closest('.new_r-item, .new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
         if (!target) return;
-
-        // Отримуємо URL
         let url = target.href || target.getAttribute('data-uri') || '';
-
-        // Якщо клікнули на картку, але не на посилання - шукаємо посилання всередині
         if (!url && target.classList.contains('new_r-item')) {
             let link = target.querySelector('a');
             if (link) url = link.href;
         }
-
         if (!url || (!url.includes('hid=') && !url.includes('#!'))) return;
-
         event.preventDefault();
-        event.stopPropagation();
-
         let params = extractParamsFromUrl(url);
-
         if (params.hid && params.oid) {
             let baseUrl = window.location.pathname.startsWith('/a/')
                 ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
                 : '/tour-detail/';
-
-            let newUrl = `${baseUrl}?hid=${params.hid}&oid=${params.oid}&od=${params.od || ''}&ol=${params.ol || ''}`;
-            console.log('Перенаправляємо на:', newUrl);
-            window.location.href = newUrl;
-        } else {
-            console.log('Не знайдено параметри туру в URL:', url);
+            window.location.href = `${baseUrl}?hid=${params.hid}&oid=${params.oid}&od=${params.od || ''}&ol=${params.ol || ''}`;
         }
     }
-
-    // Додаємо обробник кліків
     document.addEventListener('click', handleTourClick);
 })();
-</script>
-<script>
-// ========== ЗБЕРІГАЄМО URL ПОШУКУ ДЛЯ КНОПКИ "ПОВЕРНУТИСЯ" ==========
-(function() {
-    // Зберігаємо поточний URL при завантаженні сторінки
-    localStorage.setItem('lastSearchUrl', window.location.href);
-    console.log('Збережено URL пошуку:', window.location.href);
 
-    // Також зберігаємо при кліку на тур (на випадок, якщо URL зміниться)
+// ЗБЕРІГАННЯ URL ПОШУКУ
+(function() {
+    localStorage.setItem('lastSearchUrl', window.location.href);
     document.addEventListener('click', function(e) {
-        const tourLink = e.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
-        if (tourLink) {
+        if (e.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true')) {
             localStorage.setItem('lastSearchUrl', window.location.href);
-            console.log('Оновлено URL пошуку перед переходом:', window.location.href);
         }
     });
 })();
 </script>
 
-
-
-
+<!-- ========== МОБІЛЬНІ ФІЛЬТРИ - ПРАЦЮЮЧА ВЕРСІЯ ========== -->
 <style>
-/* ========== ФІКС РЕЙТИНГУ – ТІЛЬКИ КВАДРАТ, БЕЗ КРУГІВ ========== */
-.new_r-item-rating-container .slice,
-.new_r-item-rating-container .bar,
-.new_r-item-rating-container .fill,
-.new_r-item-rating-container svg,
-.new_r-item-rating-container circle,
-.new_r-item-rating-container path,
-.new_r-item-rating-container .new_r-pies,
-.new_r-p8 .slice,
-.new_r-p8 .bar,
-.new_r-p8 .fill,
-.new_r-p7 .slice,
-.new_r-p7 .bar,
-.new_r-p7 .fill,
-.new_r-p6 .slice,
-.new_r-p6 .bar,
-.new_r-p6 .fill,
-.new_r-p5 .slice,
-.new_r-p5 .bar,
-.new_r-p5 .fill {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    width: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
-}
-
-.new_r-item-rating-container,
-.new_r-p8,
-.new_r-p7,
-.new_r-p6,
-.new_r-p5 {
-    position: absolute !important;
-    top: 12px !important;
-    right: 12px !important;
-    z-index: 10 !important;
-    width: 65px !important;
-    height: 65px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: white !important;
-    border-radius: 12px !important;
-    border-width: 2px !important;
-    border-style: solid !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-    overflow: hidden !important;
-}
-
 @media (max-width: 768px) {
-    .new_r-item-rating-container,
-    .new_r-p8,
-    .new_r-p7,
-    .new_r-p6,
-    .new_r-p5 {
-        width: 55px !important;
-        height: 55px !important;
-        border-radius: 10px !important;
-    }
-    .new_r-item-rating-value {
-        font-size: 1rem !important;
-    }
-    .new_r-item-rating-rev {
-        font-size: 0.45rem !important;
-    }
-    .new_r-item-rating-rev span {
-        font-size: 0.65rem !important;
-    }
-}
-
-.new_r-item-rating-value {
-    font-weight: 800 !important;
-    font-size: 1.2rem !important;
-    margin: 0 0 2px 0 !important;
-    line-height: 1 !important;
-}
-
-.new_r-item-rating-rev {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    font-size: 0.55rem !important;
-    color: #666 !important;
-    line-height: 1.2 !important;
-}
-
-.new_r-item-rating-rev span {
-    font-weight: 700 !important;
-    font-size: 0.7rem !important;
-    color: #555 !important;
-}
-
-.new_r-item-rating-container * {
-    max-width: 100% !important;
-}
-</style>
-
-<style>
-/* ========== МОБІЛЬНІ ФІЛЬТРИ - ОДИН ПРАЦЮЮЧИЙ БЛОК ========== */
-@media (max-width: 768px) {
-    /* Кнопка для відкриття */
+    /* Кнопка відкриття */
     .filter-open-btn {
         display: block !important;
         position: fixed !important;
@@ -731,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function() {
         cursor: pointer !important;
     }
 
-    /* Контейнер фільтрів - спочатку прихований */
+    /* Контейнер фільтрів */
     .new_f-ext-container {
         position: fixed !important;
         top: auto !important;
@@ -751,25 +522,11 @@ document.addEventListener('DOMContentLoaded', function() {
         display: block !important;
     }
 
-    /* Відкритий стан */
     .new_f-ext-container.open {
         transform: translateY(0) !important;
     }
 
-    /* Показуємо оригінальний вміст фільтрів */
-    .new_f-ext-container .new_f-ext-body,
-    .new_f-ext-container .new_f-ext-col,
-    .new_f-ext-container .new_f-ext-bl,
-    .new_f-ext-container .new_f-ext-bl-title,
-    .new_f-ext-container .new_f-ext-bl-body,
-    .new_f-ext-container label,
-    .new_f-ext-container input {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
-
-    /* Заголовок фільтрів */
+    /* Заголовок */
     .new_f-ext-container .new_f-dropdown-body-top {
         display: block !important;
         font-size: 18px !important;
@@ -828,84 +585,48 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 
 <script>
-// ========== МОБІЛЬНІ ФІЛЬТРИ - ТІЛЬКИ ОДИН СКРИПТ ==========
+// ========== МОБІЛЬНІ ФІЛЬТРИ ==========
 (function() {
     if (window.innerWidth > 768) return;
 
-    function initMobileFilters() {
-        const filtersContainer = document.querySelector('.new_f-ext-container');
-
-        if (!filtersContainer) {
-            console.log('⏳ Фільтри ще не завантажились...');
-            return false;
-        }
-
-        console.log('✅ Знайдено оригінальні фільтри');
-
-        // Переконуємось, що вміст видимий
-        filtersContainer.style.display = 'block';
-
-        // Додаємо заголовок, якщо його немає
-        if (!filtersContainer.querySelector('.new_f-dropdown-body-top')) {
-            const header = document.createElement('div');
-            header.className = 'new_f-dropdown-body-top';
-            header.innerHTML = 'Фільтри <div class="new_f-dropdown-body-close">×</div>';
-            filtersContainer.insertBefore(header, filtersContainer.firstChild);
-        }
-
-        // Додаємо кнопку для відкриття
-        if (!document.querySelector('.filter-open-btn')) {
-            const openBtn = document.createElement('button');
-            openBtn.className = 'filter-open-btn';
-            openBtn.innerHTML = '🔍 Фільтри';
-            document.body.appendChild(openBtn);
-
-            openBtn.addEventListener('click', function() {
-                filtersContainer.classList.add('open');
-                console.log('Відкрито фільтри');
-            });
-        }
-
-        // Закриття по хрестику
-        const closeBtn = filtersContainer.querySelector('.new_f-dropdown-body-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function() {
-                filtersContainer.classList.remove('open');
-            });
-        }
-
-        // Закриття по кнопці "Відміна"
-        const cancelBtn = filtersContainer.querySelector('.new_f-dropdown-btn-cancel');
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', function() {
-                filtersContainer.classList.remove('open');
-            });
-        }
-
-        // Закриття після "Застосувати"
-        const applyBtn = filtersContainer.querySelector('.new_f-dropdown-btn-apply');
-        if (applyBtn) {
-            applyBtn.addEventListener('click', function() {
-                setTimeout(function() {
-                    filtersContainer.classList.remove('open');
-                }, 500);
-            });
-        }
-
-        return true;
-    }
-
-    // Запускаємо пошук фільтрів кілька разів
     let attempts = 0;
     const interval = setInterval(function() {
-        attempts++;
-        if (initMobileFilters()) {
+        const filtersContainer = document.querySelector('.new_f-ext-container');
+
+        if (filtersContainer) {
             clearInterval(interval);
-            console.log('✅ Мобільні фільтри готові');
-        } else if (attempts > 30) {
-            clearInterval(interval);
-            console.log('❌ Фільтри не знайдені');
+            console.log('✅ Фільтри знайдені');
+
+            // Додаємо заголовок
+            if (!filtersContainer.querySelector('.new_f-dropdown-body-top')) {
+                const header = document.createElement('div');
+                header.className = 'new_f-dropdown-body-top';
+                header.innerHTML = 'Фільтри <div class="new_f-dropdown-body-close">×</div>';
+                filtersContainer.insertBefore(header, filtersContainer.firstChild);
+            }
+
+            // Додаємо кнопку
+            if (!document.querySelector('.filter-open-btn')) {
+                const btn = document.createElement('button');
+                btn.className = 'filter-open-btn';
+                btn.innerHTML = '🔍 Фільтри';
+                document.body.appendChild(btn);
+                btn.onclick = () => filtersContainer.classList.add('open');
+            }
+
+            // Закриття
+            const closeBtn = filtersContainer.querySelector('.new_f-dropdown-body-close');
+            if (closeBtn) closeBtn.onclick = () => filtersContainer.classList.remove('open');
+
+            const cancelBtn = filtersContainer.querySelector('.new_f-dropdown-btn-cancel');
+            if (cancelBtn) cancelBtn.onclick = () => filtersContainer.classList.remove('open');
+
+            const applyBtn = filtersContainer.querySelector('.new_f-dropdown-btn-apply');
+            if (applyBtn) applyBtn.onclick = () => setTimeout(() => filtersContainer.classList.remove('open'), 500);
         }
+
+        attempts++;
+        if (attempts > 30) clearInterval(interval);
     }, 500);
 })();
 </script>
