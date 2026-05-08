@@ -1146,4 +1146,38 @@ document.addEventListener('DOMContentLoaded', function() {
     color: #000000 !important;
 }
 </style>
+<style>
+/* ========== ЗМІНА КОЛЬОРУ ГАЛОЧОК (ЧЕКБОКСІВ) НА ЧОРНИЙ ========== */
+
+/* Всі чекбокси в фільтрах */
+.new_f-ext-container input[type="checkbox"],
+.new_f-ext-container input[type="radio"],
+.new_f-services-label-wrap input[type="checkbox"],
+.new_f-services-label-wrap input[type="radio"],
+.new_f-ext-bl-body input[type="checkbox"],
+.new_f-ext-bl-body input[type="radio"] {
+    accent-color: #000000 !important;
+    filter: none !important;
+}
+
+/* Додатково для браузерів, які не підтримують accent-color */
+.new_f-ext-container input[type="checkbox"]:checked,
+.new_f-services-label-wrap input[type="checkbox"]:checked {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+}
+
+/* Радіо-кнопки */
+.new_f-ext-container input[type="radio"]:checked,
+.new_f-services-label-wrap input[type="radio"]:checked {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+}
+
+/* Для WebKit браузерів (Chrome, Safari) */
+.new_f-ext-container input[type="checkbox"]:checked,
+.new_f-ext-container input[type="radio"]:checked {
+    filter: brightness(0) !important;
+}
+</style>
 {% endblock %}
