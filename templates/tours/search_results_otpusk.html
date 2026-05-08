@@ -1,13 +1,25 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Результати пошуку турів{% endblock %}
+{% block title %}
+    {% if selected_country %}
+        Тури в {{ selected_country }} - Результати пошуку
+    {% else %}
+        Результати пошуку турів
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="container my-5">
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-4">
-            <h2 class="text-center mb-4" style="color: var(--primary-color);">Результати пошуку турів</h2>
+            <h2 class="text-center mb-4" style="color: var(--primary-color);">
+                {% if selected_country %}
+                    Тури в {{ selected_country }}
+                {% else %}
+                    Результати пошуку турів
+                {% endif %}
+            </h2>
             <div id="otpusk-search-module">
                 <script>
                     var osGeo = '';
@@ -18,6 +30,14 @@
                     var osHotelCategory = '';
                     var osFood = '';
                     var osTransport = '';
+
+                    // Автоматично підставляємо країну з параметрів запиту
+                    var urlParams = new URLSearchParams(window.location.search);
+                    var countryParam = urlParams.get('country');
+                    if (countryParam) {
+                        var osGeo = countryParam;
+                    }
+
                     var osTarget = '';
                     var osContainer = null;
                     var osTourContainer = null;
@@ -25,7 +45,7 @@
                     var osTourTargetBlank = false;
                     var osOrderUrl = null;
                     var osCurrency = 'converted';
-                    var osAutoStart = false;
+                    var osAutoStart = true;  // Автоматичний пошук при завантаженні
                 </script>
                 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
                 <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
@@ -38,30 +58,136 @@
         </div>
     </div>
 </div>
-<!-- ДІАГНОСТИЧНИЙ БЛОК -->
-<div style="background: #f8d7da; padding: 15px; margin-bottom: 20px; border: 1px solid #f5c6cb; border-radius: 8px; font-family: monospace;">
-    <strong>🔍 ДІАГНОСТИКА:</strong><br>
-    URL: <span id="diag-url"></span><br>
-    hid: <span id="diag-hid"></span><br>
-    oid: <span id="diag-oid"></span><br>
-    od: <span id="diag-od"></span><br>
-    ol: <span id="diag-ol"></span><br>
-    <span id="diag-msg"></span>
+
+<!-- ========== БЛОК КОНСУЛЬТАЦІЇ ========== -->
+<div class="row justify-content-center my-5">
+    <div class="col-12 col-md-10 col-lg-8">
+        <div class="card border-0 shadow-sm" id="consultationCard">
+            <div class="card-body p-4 p-md-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">
+                    Довірте вибір спеціалістам
+                </h5>
+                <p class="text-muted mb-0">
+                    Залишіть заявку, щоб отримати персональний підбір турів
+                </p>
+                <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
+                    <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
+                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
+                             style="width: 40px; height: 40px;">
+                            <i class="fa-regular fa-user text-secondary"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold" style="font-size: 0.95rem;">
+                                {% if agent_site %}
+                                    {{ agent_site.user.get_full_name|default:agent_site.user.username }}
+                                {% else %}
+                                    {{ random_agent.get_full_name|default:random_agent.username }}
+                                {% endif %}
+                            </div>
+                            <div class="text-muted" style="font-size: 0.8rem;">
+                                9 років досвіду в туризмі
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
+                        <form id="consultationForm" novalidate>
+                            {% csrf_token %}
+                            <input type="hidden" name="consultation_submit" value="1">
+                            <div class="mb-3">
+                                <input type="text" name="name" id="consultationName" class="form-control" placeholder="Ваше ім'я" required>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-4">
+                                    <select name="country_code" class="form-select" required>
+                                        <option value="+380" selected>🇺🇦 +380</option>
+                                        <option value="+48">🇵🇱 +48</option>
+                                        <option value="+1">🇺🇸 +1</option>
+                                        <option value="+44">🇬🇧 +44</option>
+                                        <option value="+49">🇩🇪 +49</option>
+                                        <option value="+33">🇫🇷 +33</option>
+                                    </select>
+                                </div>
+                                <div class="col-8">
+                                    <input type="tel" name="phone" id="consultationPhone" class="form-control" placeholder="XXXXXXXXX" required
+                                           pattern="[0-9]+"
+                                           title="Тільки цифри (приклад: 501234567)"
+                                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)"
+                                           onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                </div>
+                            </div>
+                            <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">
+                                Залишити запит
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const hash = window.location.hash;
-    document.getElementById('diag-url').innerText = window.location.href;
-    document.getElementById('diag-hid').innerText = urlParams.get('hid') || (hash.match(/hid=(\d+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
-    document.getElementById('diag-oid').innerText = urlParams.get('oid') || (hash.match(/oid=([\d]+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
-    document.getElementById('diag-od').innerText = urlParams.get('od') || (hash.match(/od=([\d-]+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
-    document.getElementById('diag-ol').innerText = urlParams.get('ol') || (hash.match(/ol=(\d+)/) || [])[1] || '❌ НЕ ЗНАЙДЕНО';
-    if (urlParams.get('hid') && urlParams.get('oid')) {
-        document.getElementById('diag-msg').innerHTML = '✅ Параметри передаються коректно';
-    } else {
-        document.getElementById('diag-msg').innerHTML = '⚠️ ПАРАМЕТРИ НЕ ПЕРЕДАЮТЬСЯ!';
-    }
+// ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
+(function() {
+    const submitBtn = document.getElementById('submitConsultationBtn');
+    if (!submitBtn) return;
+
+    submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Збираємо дані з форми
+        const name = document.getElementById('consultationName')?.value || '';
+        const phone = document.getElementById('consultationPhone')?.value || '';
+        const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+        // Валідація
+        if (!name.trim()) {
+            console.log('Введіть ім\'я');
+            return;
+        }
+        if (!phone.trim()) {
+            console.log('Введіть телефон');
+            return;
+        }
+
+        // Визначаємо URL
+        let ajaxUrl = '/consultation-ajax/';
+        {% if agent_site %}
+        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
+        {% endif %}
+
+        // Відправляємо
+        fetch(ajaxUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: new URLSearchParams({
+                'name': name,
+                'phone': phone,
+                'country_code': countryCode,
+                'consultation_submit': '1'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Очищуємо форму
+                document.getElementById('consultationName').value = '';
+                document.getElementById('consultationPhone').value = '';
+                console.log('Заявка відправлена');
+            }
+        })
+        .catch(error => {
+            console.error('Помилка:', error);
+        });
+    });
+})();
 </script>
+
 <style>
 /* ========== ОСНОВНІ СТИЛІ ========== */
 
@@ -436,6 +562,37 @@ span.currency {
     }
 }
 
+/* ========== БЛОК КОНСУЛЬТАЦІЇ ========== */
+.agent-card {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+@media (max-width: 768px) {
+    .consult-row {
+        flex-direction: column !important;
+        gap: 1.5rem !important;
+    }
+    .form-block {
+        order: 1;
+        width: 100%;
+    }
+    .agent-block {
+        order: 2;
+        width: 100%;
+        justify-content: center;
+    }
+    .agent-block .rounded-circle {
+        margin-right: 0 !important;
+        margin-bottom: 0.5rem;
+    }
+    .card-body.p-4.p-md-5 {
+        padding: 1.5rem !important;
+    }
+}
+
 /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
 @media (max-width: 768px) {
     #otpusk-search-module {
@@ -526,89 +683,191 @@ document.addEventListener('DOMContentLoaded', function() {
     const observer = new MutationObserver(function() { updateRatingBorderColor(); });
     observer.observe(document.body, { childList: true, subtree: true });
 });
-</script>
-<script>
-// ========== ПЕРЕХОПЛЕННЯ КЛІКІВ НА ТУРИ (ПОКРАЩЕНИЙ) ==========
-(function() {
-    console.log('Скрипт перехоплення активовано');
 
-    function extractParamsFromUrl(url) {
-        // Шукаємо параметри в різних форматах
-        let hid = url.match(/hid=(\d+)/)?.[1];
-        let oid = url.match(/oid=([\d]+)/)?.[1];
-        let od = url.match(/od=([\d-]+)/)?.[1];
-        let ol = url.match(/ol=(\d+)/)?.[1];
-
-        // Якщо не знайшли в прямому вигляді, шукаємо в хеші
-        if (!hid) {
-            let hash = url.split('#')[1] || '';
-            hid = hash.match(/hid=(\d+)/)?.[1];
-            oid = hash.match(/oid=([\d]+)/)?.[1];
-            od = hash.match(/od=([\d-]+)/)?.[1];
-            ol = hash.match(/ol=(\d+)/)?.[1];
-        }
-
-        return { hid, oid, od, ol };
+// ВИПАДКОВИЙ ФОН ДЛЯ КОНСУЛЬТАЦІЇ
+document.addEventListener('DOMContentLoaded', function() {
+    const colors = ['#c4edd4', '#ccfbfb', '#FFC0CB'];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const card = document.getElementById('consultationCard');
+    if (card) {
+        card.style.backgroundColor = randomColor;
+        card.style.color = '#434343';
+        const cardBody = card.querySelector('.card-body');
+        if (cardBody) cardBody.style.backgroundColor = 'transparent';
     }
+});
 
-    function handleTourClick(event) {
-        // Шукаємо елемент, на який клікнули
-        let target = event.target.closest('.new_r-item, .new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
-        if (!target) return;
-
-        // Отримуємо URL
-        let url = target.href || target.getAttribute('data-uri') || '';
-
-        // Якщо клікнули на картку, але не на посилання - шукаємо посилання всередині
-        if (!url && target.classList.contains('new_r-item')) {
-            let link = target.querySelector('a');
-            if (link) url = link.href;
-        }
-
-        if (!url || (!url.includes('hid=') && !url.includes('#!'))) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        let params = extractParamsFromUrl(url);
-
-        if (params.hid && params.oid) {
-            let baseUrl = window.location.pathname.startsWith('/a/')
-                ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
-                : '/tour-detail/';
-
-            let newUrl = `${baseUrl}?hid=${params.hid}&oid=${params.oid}&od=${params.od || ''}&ol=${params.ol || ''}`;
-            console.log('Перенаправляємо на:', newUrl);
-            window.location.href = newUrl;
-        } else {
-            console.log('Не знайдено параметри туру в URL:', url);
-        }
-    }
-
-    // Додаємо обробник кліків
-    document.addEventListener('click', handleTourClick);
-})();
-</script>
-<script>
-// ========== ЗБЕРІГАЄМО URL ПОШУКУ ДЛЯ КНОПКИ "ПОВЕРНУТИСЯ" ==========
-(function() {
-    // Зберігаємо поточний URL при завантаженні сторінки
-    localStorage.setItem('lastSearchUrl', window.location.href);
-    console.log('Збережено URL пошуку:', window.location.href);
-
-    // Також зберігаємо при кліку на тур (на випадок, якщо URL зміниться)
-    document.addEventListener('click', function(e) {
-        const tourLink = e.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
-        if (tourLink) {
-            localStorage.setItem('lastSearchUrl', window.location.href);
-            console.log('Оновлено URL пошуку перед переходом:', window.location.href);
-        }
+// Захист поля телефону
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInputs = document.querySelectorAll('#consultationForm input[name="phone"]');
+    phoneInputs.forEach(function(phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15);
+        });
     });
+});
+</script>
+<style>
+/* ========== ВИПРАВЛЕННЯ ДЛЯ МОБІЛЬНИХ ФІЛЬТРІВ ========== */
+@media (max-width: 768px) {
+    /* Фікс для фільтрів - вони не повинні перекривати всю сторінку */
+    .new_f-ext-container {
+        position: fixed !important;
+        top: auto !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        max-height: 70vh !important;
+        overflow-y: auto !important;
+        background: white !important;
+        border-radius: 20px 20px 0 0 !important;
+        z-index: 10000 !important;
+        transform: translateY(100%) !important;
+        transition: transform 0.3s ease !important;
+        padding: 20px !important;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.2) !important;
+        margin: 0 !important;
+    }
+
+    .new_f-ext-container.open {
+        transform: translateY(0) !important;
+    }
+
+    .filter-open-btn {
+        display: block !important;
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        z-index: 9999 !important;
+        background: var(--primary-color) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 50px !important;
+        padding: 12px 24px !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+        cursor: pointer !important;
+    }
+
+    .filter-open-btn i {
+        margin-right: 8px !important;
+    }
+
+    .new_f-ext-container .new_f-dropdown-body-close {
+        display: block !important;
+        position: absolute !important;
+        top: 15px !important;
+        right: 20px !important;
+        font-size: 28px !important;
+        cursor: pointer !important;
+        color: #666 !important;
+        z-index: 10 !important;
+    }
+
+    .new_f-ext-container .new_f-dropdown-body-top {
+        display: block !important;
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        padding: 0 0 15px 0 !important;
+        margin-bottom: 15px !important;
+        border-bottom: 1px solid #eee !important;
+        color: #333 !important;
+    }
+
+    .new_f-ext-container .new_f-dropdown-body-bottom {
+        display: flex !important;
+        gap: 10px !important;
+        margin-top: 20px !important;
+        padding-top: 15px !important;
+        border-top: 1px solid #eee !important;
+    }
+
+    .new_f-ext-container .new_f-dropdown-bottom-btn {
+        flex: 1 !important;
+        text-align: center !important;
+        padding: 12px !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+    }
+
+    .new_f-ext-container .new_f-dropdown-btn-cancel {
+        background: #f1f5f9 !important;
+        color: #333 !important;
+    }
+
+    .new_f-ext-container .new_f-dropdown-btn-apply {
+        background: var(--primary-color) !important;
+        color: white !important;
+    }
+
+    .new_f-ext-btn {
+        display: block !important;
+        cursor: pointer !important;
+    }
+
+    .new_f-ext-btn-container {
+        margin-top: 10px !important;
+    }
+}
+</style>
+
+<script>
+// ========== МОБІЛЬНІ ФІЛЬТРИ З ВИСУВАННЯМ ==========
+(function() {
+    if (window.innerWidth > 768) return;
+
+    setTimeout(function() {
+        const filtersContainer = document.querySelector('.new_f-ext-container');
+        const filterBtn = document.querySelector('.new_f-ext-btn');
+
+        if (!filtersContainer || !filterBtn) return;
+
+        if (!filtersContainer.querySelector('.new_f-dropdown-body-top')) {
+            const header = document.createElement('div');
+            header.className = 'new_f-dropdown-body-top';
+            header.innerHTML = 'Фільтри <div class="new_f-dropdown-body-close">×</div>';
+            filtersContainer.insertBefore(header, filtersContainer.firstChild);
+        }
+
+        if (!document.querySelector('.filter-open-btn')) {
+            const openBtn = document.createElement('button');
+            openBtn.className = 'filter-open-btn';
+            openBtn.innerHTML = '<i class="fa-regular fa-filter"></i> Фільтри';
+            document.body.appendChild(openBtn);
+
+            openBtn.addEventListener('click', function() {
+                filtersContainer.classList.add('open');
+            });
+        }
+
+        const closeBtn = filtersContainer.querySelector('.new_f-dropdown-body-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                filtersContainer.classList.remove('open');
+            });
+        }
+
+        const cancelBtn = filtersContainer.querySelector('.new_f-dropdown-btn-cancel');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                filtersContainer.classList.remove('open');
+            });
+        }
+
+        const applyBtn = filtersContainer.querySelector('.new_f-dropdown-btn-apply');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', function() {
+                setTimeout(() => {
+                    filtersContainer.classList.remove('open');
+                }, 500);
+            });
+        }
+
+        console.log('✅ Мобільні фільтри налаштовано');
+    }, 1000);
 })();
 </script>
-
-
-
 
 <style>
 /* ========== ФІКС РЕЙТИНГУ – ТІЛЬКИ КВАДРАТ, БЕЗ КРУГІВ ========== */
@@ -805,228 +1064,8 @@ document.addEventListener('DOMContentLoaded', function() {
     margin-left: 0 !important;
     margin-right: 0 !important;
     padding-left: 0 !important;
-    padding-right: 0 !important;
+    padding_right: 0 !important;
     width: 100% !important;
 }
 </style>
-<style>
-/* ========== ЦЕНТРУВАННЯ ГОЛОВНОГО БЛОКУ ПОШУКУ ========== */
-
-/* Основний контейнер */
-.container.my-5 {
-    padding-left: 15px !important;
-    padding-right: 15px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    width: 100% !important;
-    max-width: 1200px !important;
-}
-
-/* Картка, що містить модуль пошуку */
-.container.my-5 .card {
-    margin-left: auto !important;
-    margin-right: auto !important;
-    width: 100% !important;
-    max-width: 100% !important;
-}
-
-/* Модуль пошуку */
-#otpusk-search-module {
-    margin: 0 auto !important;
-    display: block !important;
-    width: 100% !important;
-}
-
-/* Для десктопу - обмежуємо ширину */
-@media (min-width: 992px) {
-    .container.my-5 {
-        max-width: 1200px !important;
-    }
-
-    #otpusk-search-module {
-        max-width: 100% !important;
-    }
-}
-
-/* Для мобільних - забезпечуємо відступи */
-@media (max-width: 768px) {
-    .container.my-5 {
-        padding-left: 10px !important;
-        padding-right: 10px !important;
-    }
-
-    #otpusk-search-module {
-        padding: 12px !important;
-        margin: 0 !important;
-    }
-}
-</style>
-
-<style>
-/* ========== МОБІЛЬНІ ФІЛЬТРИ ========== */
-@media (max-width: 768px) {
-    .filter-open-btn {
-        display: block !important;
-        position: fixed !important;
-        bottom: 20px !important;
-        right: 20px !important;
-        z-index: 9999 !important;
-        background: #d12389 !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 50px !important;
-        padding: 12px 24px !important;
-        font-size: 14px !important;
-        font-weight: 600 !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
-        cursor: pointer !important;
-    }
-
-    .new_f-ext-container {
-        position: fixed !important;
-        top: auto !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        max-height: 70vh !important;
-        overflow-y: auto !important;
-        background: white !important;
-        border-radius: 20px 20px 0 0 !important;
-        z-index: 10000 !important;
-        transform: translateY(100%) !important;
-        transition: transform 0.3s ease !important;
-        padding: 20px !important;
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.2) !important;
-        margin: 0 !important;
-    }
-
-    .new_f-ext-container.open {
-        transform: translateY(0) !important;
-    }
-
-    .new_f-ext-container .new_f-dropdown-body-close {
-        display: block !important;
-        position: absolute !important;
-        top: 15px !important;
-        right: 20px !important;
-        font-size: 28px !important;
-        cursor: pointer !important;
-        color: #666 !important;
-        z-index: 10 !important;
-    }
-
-    .new_f-ext-container .new_f-dropdown-body-top {
-        display: block !important;
-        font-size: 18px !important;
-        font-weight: 600 !important;
-        padding: 0 0 15px 0 !important;
-        margin-bottom: 15px !important;
-        border-bottom: 1px solid #eee !important;
-        color: #333 !important;
-        position: relative !important;
-    }
-
-    .new_f-ext-container .new_f-dropdown-body-bottom {
-        display: flex !important;
-        gap: 10px !important;
-        margin-top: 20px !important;
-        padding-top: 15px !important;
-        border-top: 1px solid #eee !important;
-    }
-
-    .new_f-ext-container .new_f-dropdown-bottom-btn {
-        flex: 1 !important;
-        text-align: center !important;
-        padding: 12px !important;
-        border-radius: 10px !important;
-        font-weight: 600 !important;
-        cursor: pointer !important;
-    }
-
-    .new_f-ext-container .new_f-dropdown-btn-cancel {
-        background: #f1f5f9 !important;
-        color: #333 !important;
-    }
-
-    .new_f-ext-container .new_f-dropdown-btn-apply {
-        background: #d12389 !important;
-        color: white !important;
-    }
-
-    .new_r-container {
-        padding-bottom: 80px !important;
-    }
-}
-</style>
-
-<script>
-// ========== МОБІЛЬНІ ФІЛЬТРИ ==========
-(function() {
-    if (window.innerWidth > 768) return;
-
-    function initFilters() {
-        const filtersContainer = document.querySelector('.new_f-ext-container');
-
-        if (!filtersContainer) {
-            console.log('Фільтри не знайдені, чекаємо...');
-            return false;
-        }
-
-        console.log('Фільтри знайдені, налаштовуємо');
-
-        if (!filtersContainer.querySelector('.new_f-dropdown-body-top')) {
-            const header = document.createElement('div');
-            header.className = 'new_f-dropdown-body-top';
-            header.innerHTML = 'Фільтри <div class="new_f-dropdown-body-close">×</div>';
-            filtersContainer.insertBefore(header, filtersContainer.firstChild);
-        }
-
-        if (!document.querySelector('.filter-open-btn')) {
-            const openBtn = document.createElement('button');
-            openBtn.className = 'filter-open-btn';
-            openBtn.innerHTML = '🔍 Фільтри';
-            document.body.appendChild(openBtn);
-
-            openBtn.onclick = function() {
-                filtersContainer.classList.add('open');
-            };
-        }
-
-        const closeBtn = filtersContainer.querySelector('.new_f-dropdown-body-close');
-        if (closeBtn) {
-            closeBtn.onclick = function() {
-                filtersContainer.classList.remove('open');
-            };
-        }
-
-        const cancelBtn = filtersContainer.querySelector('.new_f-dropdown-btn-cancel');
-        if (cancelBtn) {
-            cancelBtn.onclick = function() {
-                filtersContainer.classList.remove('open');
-            };
-        }
-
-        const applyBtn = filtersContainer.querySelector('.new_f-dropdown-btn-apply');
-        if (applyBtn) {
-            applyBtn.onclick = function() {
-                setTimeout(() => filtersContainer.classList.remove('open'), 500);
-            };
-        }
-
-        return true;
-    }
-
-    let attempts = 0;
-    const interval = setInterval(function() {
-        attempts++;
-        if (initFilters()) {
-            clearInterval(interval);
-            console.log('✅ Мобільні фільтри готові!');
-        } else if (attempts > 20) {
-            clearInterval(interval);
-            console.log('❌ Фільтри не знайдені');
-        }
-    }, 500);
-})();
-</script>
 {% endblock %}
