@@ -8,7 +8,8 @@ saerch_results_otpusk.html
 <div class="container my-5">
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-4">
-<h2 class="mb-4" style="color: #000000; text-align: left;">Результати пошуку турів</h2>            <div id="otpusk-search-module">
+<h2 class="mb-4" style="color: #000000; text-align: left;">Результати пошуку турів</h2>
+            <div id="otpusk-search-module">
                 <script>
                     var osGeo = '';
                     var osDefaultDeparture = '';
@@ -1177,4 +1178,13 @@ document.addEventListener('DOMContentLoaded', function() {
     box-shadow: 0 0 0 2px #000000 inset !important;
 }
 </style>
+<script>
+// ========== ЗМІНА ТЕКСТУ КНОПКИ "ЗНАЙТИ" НА "ПОШУК" ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const searchBtn = document.querySelector('.new_f-form-submit');
+    if (searchBtn) {
+        searchBtn.textContent = 'Пошук';
+    }
+});
+</script>
 {% endblock %}
