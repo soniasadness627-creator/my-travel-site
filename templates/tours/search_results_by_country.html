@@ -707,5 +707,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<style>
+/* Приховуємо фільтри на мобільних пристроях */
+@media (max-width: 768px) {
+    .new_f-ext-container {
+        display: none !important;
+    }
 
+    /* Зменшуємо відступи */
+    .new_r-container {
+        margin-top: 0 !important;
+    }
+}
+</style>
 {% endblock %}
