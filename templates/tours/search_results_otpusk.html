@@ -584,6 +584,63 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 })();
 </script>
+<script>
+// ========== МОБІЛЬНІ ФІЛЬТРИ З ВИСУВАННЯМ ==========
+(function() {
+    if (window.innerWidth > 768) return;
+
+    setTimeout(function() {
+        const filtersContainer = document.querySelector('.new_f-ext-container');
+        const filterBtn = document.querySelector('.new_f-ext-btn');
+
+        if (!filtersContainer || !filterBtn) return;
+
+        if (!filtersContainer.querySelector('.new_f-dropdown-body-top')) {
+            const header = document.createElement('div');
+            header.className = 'new_f-dropdown-body-top';
+            header.innerHTML = 'Фільтри <div class="new_f-dropdown-body-close">×</div>';
+            filtersContainer.insertBefore(header, filtersContainer.firstChild);
+        }
+
+        if (!document.querySelector('.filter-open-btn')) {
+            const openBtn = document.createElement('button');
+            openBtn.className = 'filter-open-btn';
+            openBtn.innerHTML = '<i class="fa-regular fa-filter"></i> Фільтри';
+            document.body.appendChild(openBtn);
+
+            openBtn.addEventListener('click', function() {
+                filtersContainer.classList.add('open');
+            });
+        }
+
+        const closeBtn = filtersContainer.querySelector('.new_f-dropdown-body-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                filtersContainer.classList.remove('open');
+            });
+        }
+
+        const cancelBtn = filtersContainer.querySelector('.new_f-dropdown-btn-cancel');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                filtersContainer.classList.remove('open');
+            });
+        }
+
+        const applyBtn = filtersContainer.querySelector('.new_f-dropdown-btn-apply');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', function() {
+                setTimeout(() => {
+                    filtersContainer.classList.remove('open');
+                }, 500);
+            });
+        }
+
+        console.log('✅ Мобільні фільтри налаштовано');
+    }, 1000);
+})();
+</script>
+
 <style>
 /* ========== ФІКС РЕЙТИНГУ – ТІЛЬКИ КВАДРАТ, БЕЗ КРУГІВ ========== */
 .new_r-item-rating-container .slice,
