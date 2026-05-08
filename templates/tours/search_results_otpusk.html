@@ -750,11 +750,13 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 <style>
-/* ========== ФІЛЬТРИ - ПРОСТО ЗБІЛЬШУЄМО ВИСОТУ ========== */
+/* ========== ФІЛЬТРИ - ВЕРТИКАЛЬНИЙ СТОВПЧИК ДЛЯ ВСІХ ЕКРАНІВ ========== */
+
+/* Основний контейнер фільтрів */
 .new_f-ext-container {
     display: block !important;
     height: auto !important;
-    min-height: 500px !important;
+    min-height: auto !important;
     max-height: none !important;
     overflow: visible !important;
     margin: 20px 0 !important;
@@ -762,40 +764,121 @@ document.addEventListener('DOMContentLoaded', function() {
     background: #f8f9fa !important;
     border-radius: 16px !important;
     border: 1px solid #e2e8f0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
-/* Примусово показуємо весь вміст */
-.new_f-ext-body,
-.new_f-ext-col,
-.new_f-ext-bl,
-.new_f-ext-bl-title,
-.new_f-ext-bl-body,
-.slider-container,
-.new_f-services-label-wrap {
-    display: block !important;
-    visibility: visible !important;
-    height: auto !important;
-    overflow: visible !important;
-}
-
-/* Сітка фільтрів */
+/* ВСІ блоки фільтрів - вертикально */
 .new_f-ext-body {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 20px !important;
+    display: block !important;
+    width: 100% !important;
 }
 
 .new_f-ext-col {
-    flex: 1 !important;
-    min-width: 250px !important;
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 25px !important;
+    min-width: 100% !important;
 }
 
-/* Ховаємо непотрібні елементи */
+/* Заголовки блоків */
+.new_f-ext-bl-title {
+    font-weight: 700 !important;
+    font-size: 16px !important;
+    margin: 0 0 12px 0 !important;
+    padding-bottom: 8px !important;
+    color: #333 !important;
+    border-bottom: 2px solid #e0e0e0 !important;
+    display: block !important;
+}
+
+/* Чекбокси та радіо - кожен з нового рядка */
+.new_f-ext-bl-body label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-bottom: 10px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    width: 100% !important;
+}
+
+/* Чекбокси та радіо інпути */
+.new_f-ext-bl-body input {
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+}
+
+/* Текст поруч з чекбоксами */
+.new_f-ext-bl-body span {
+    font-size: 14px !important;
+    color: #555 !important;
+}
+
+/* Слайдер (оцінки, ціна) */
+.slider-container {
+    margin: 15px 0 !important;
+    padding: 10px 0 !important;
+    width: 100% !important;
+}
+
+.ui-slider {
+    margin: 10px 0 20px 0 !important;
+    width: 100% !important;
+}
+
+.new_f-ext-scale {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+    margin-top: 10px !important;
+}
+
+.new_f-ext-scale-item {
+    font-size: 12px !important;
+}
+
+/* Кнопка очищення */
+.new_f-ext-clear-btn {
+    background: #e2e8f0 !important;
+    padding: 12px 20px !important;
+    border-radius: 8px !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    margin-top: 25px !important;
+    display: block !important;
+    width: 100% !important;
+    font-weight: 600 !important;
+}
+
+/* Ховаємо непотрібне */
 .new_f-ext-btn-container,
 .new_f-ext-btn,
 .new_f-dropdown-body-top,
-.new_f-dropdown-body-bottom {
+.new_f-dropdown-body-bottom,
+.filter-open-btn,
+.mobile-filters-toggle,
+.new_f-dropdown-body-close {
     display: none !important;
+}
+
+/* Для мобільних - додаткові відступи */
+@media (max-width: 768px) {
+    .new_f-ext-container {
+        padding: 15px !important;
+        margin: 15px 0 !important;
+    }
+
+    .new_f-ext-bl-title {
+        font-size: 15px !important;
+    }
+
+    .new_f-ext-bl-body label {
+        font-size: 13px !important;
+        margin-bottom: 8px !important;
+    }
 }
 </style>
 {% endblock %}
