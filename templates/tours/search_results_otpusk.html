@@ -1200,4 +1200,46 @@ document.addEventListener('DOMContentLoaded', function() {
     box-shadow: 0 0 0 rgba(0,0,0,0) !important;
 }
 </style>
+<style>
+/* ========== ЗМІНА КОЛЬОРУ ВИБРАНИХ ЕЛЕМЕНТІВ ТУРИСТІВ НА КОЛІР АГЕНЦІЇ ========== */
+
+/* Активний елемент вибору кількості дорослих */
+.new_f-people-item.active {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Ховер ефект для неактивних елементів */
+.new_f-people-item:hover {
+    background: var(--primary-light) !important;
+    border-color: var(--primary-light) !important;
+    color: white !important;
+}
+
+/* Активний елемент вибору віку дитини */
+.new_f-children-age-item.active {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Ховер ефект для віку дитини */
+.new_f-children-age-item:hover {
+    background: var(--primary-light) !important;
+    border-color: var(--primary-light) !important;
+    color: white !important;
+}
+
+/* Кнопка "Додати дитину" */
+.new_f-children-accordion-btn {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+.new_f-children-accordion-btn:hover {
+    background: var(--primary-dark) !important;
+    color: white !important;
+}
+</style>
 {% endblock %}
