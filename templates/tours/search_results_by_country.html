@@ -1070,5 +1070,129 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 </style>
+<style>
+/* ========== ГЛОБАЛЬНЕ ВИРІВНЮВАННЯ ВСІХ БЛОКІВ ========== */
 
+/* Контейнер для всього контенту */
+.container.my-5 {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: 1200px !important;
+    width: 100% !important;
+}
+
+/* Картка з модулем пошуку */
+.card.shadow-sm.border-0.rounded-4 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+}
+
+.card-body.p-4 {
+    padding: 20px !important;
+}
+
+/* Блок із цінами */
+.new_r-container {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+}
+
+/* Блок з турами */
+.new_r-wrapper {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Кожна картка туру */
+.new_r-item-wrap {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+}
+
+/* Сама картка */
+.new_r-item {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+}
+
+/* ========== БЛОК КОНСУЛЬТАЦІЇ ========== */
+/* Видаляємо зайві рамки */
+#consultationCard {
+    border: none !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+#consultationCard .card-body {
+    background-color: transparent !important;
+}
+
+/* Рядок з агентом та формою */
+.consult-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important;
+}
+
+/* Блок агента */
+.agent-block {
+    flex-shrink: 0 !important;
+    background: rgba(255, 255, 255, 0.55) !important;
+    backdrop-filter: blur(6px) !important;
+    border-radius: 16px !important;
+    padding: 12px 24px !important;
+}
+
+/* Блок форми */
+.form-block {
+    flex: 1 !important;
+    min-width: 260px !important;
+    max-width: 400px !important;
+}
+
+/* Мобільна версія */
+@media (max-width: 768px) {
+    .consult-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 20px !important;
+    }
+
+    .agent-block {
+        width: 100% !important;
+        justify-content: center !important;
+        text-align: center !important;
+    }
+
+    .form-block {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .card-body.p-4 {
+        padding: 15px !important;
+    }
+}
+
+/* Десктопна версія */
+@media (min-width: 769px) {
+    .agent-block {
+        width: auto !important;
+    }
+
+    .form-block {
+        width: auto !important;
+    }
+}
+</style>
 {% endblock %}
