@@ -3591,30 +3591,29 @@ setTimeout(function() {
 </script>
 
 <script>
-// ========== ФІКС: ЗМІНА ЦІНИ ПРИ ЗМІНІ КІЛЬКОСТІ НОЧЕЙ ==========
+// ========== ФІКС: ЗМІНА ЦІНИ ТА ХАРЧУВАННЯ ==========
 (function() {
-    // Функція для отримання оригінальної ціни та ночей з першого рядка
+    // Отримання оригінальних даних
     function getOriginalData() {
         const firstRow = document.querySelector('#hotelPricesTable .hotel-price-row');
         if (!firstRow) return null;
 
         const nightsCell = firstRow.querySelector('td:nth-child(2)');
         const priceCell = firstRow.querySelector('td:nth-child(5)');
+        const foodCell = firstRow.querySelector('td:nth-child(4)');
 
         if (!nightsCell || !priceCell) return null;
 
         const nightsMatch = nightsCell.innerText.match(/(\d+)/);
         const priceMatch = priceCell.innerText.match(/(\d[\d\s]*\d)/);
 
-        if (!nightsMatch || !priceMatch) return null;
-
         return {
-            nights: parseInt(nightsMatch[0]),
-            price: parseInt(priceMatch[0].replace(/\s/g, ''))
+            nights: nightsMatch ? parseInt(nightsMatch[0]) : null,
+            price: priceMatch ? parseInt(priceMatch[0].replace(/\s/g, '')) : null,
+            food: foodCell ? foodCell.innerText.trim() : 'BB'
         };
     }
 
-    // Функція для отримання вибраної кількості ночей
     function getSelectedNights() {
         const select = document.getElementById('searchNights');
         if (!select) return null;
@@ -3625,16 +3624,32 @@ setTimeout(function() {
         return parseInt(val);
     }
 
-    // Оновлення всіх цін
+    function getFoodType() {
+        // Отримуємо тип харчування з оригінального віджета
+        const foodElement = document.querySelector('.new_t-tour-tab-col-2 .new_t-important');
+        if (foodElement && foodElement.innerText) {
+            let food = foodElement.innerText.trim();
+            if (food.includes('Все включено')) return 'Все включено';
+            if (food.includes('BB')) return 'BB';
+            if (food.includes('HB')) return 'HB';
+            if (food.includes('FB')) return 'FB';
+            return food;
+        }
+        return 'BB';
+    }
+
     function updateAllPrices() {
         const original = getOriginalData();
-        if (!original) {
+        if (!original || !original.nights || !original.price) {
             setTimeout(updateAllPrices, 500);
             return;
         }
 
         const selectedNights = getSelectedNights();
-        if (!selectedNights || original.nights === selectedNights) return;
+        if (!selectedNights) return;
+
+        // Отримуємо правильне харчування
+        const foodType = getFoodType();
 
         // Перерахунок ціни
         const pricePerNight = original.price / original.nights;
@@ -3645,9 +3660,17 @@ setTimeout(function() {
         allRows.forEach(row => {
             const nightsCell = row.querySelector('td:nth-child(2)');
             const priceCell = row.querySelector('td:nth-child(5)');
+            const foodCell = row.querySelector('td:nth-child(4)');
+
             if (nightsCell && priceCell) {
                 nightsCell.innerHTML = `${selectedNights} ночей`;
                 priceCell.innerHTML = `${newPrice.toLocaleString()} ₴`;
+                if (foodCell && foodCell.innerText !== foodType) {
+                    const foodDiv = foodCell.querySelector('.fw-semibold');
+                    if (foodDiv) {
+                        foodDiv.innerHTML = foodType === 'Все включено' ? 'AI' : foodType;
+                    }
+                }
             }
         });
 
@@ -3656,10 +3679,7 @@ setTimeout(function() {
         calendarCells.forEach(cell => {
             const priceDiv = cell.querySelector('.small.fw-bold');
             if (priceDiv) {
-                const oldPriceMatch = priceDiv.innerText.match(/(\d[\d\s]*\d)/);
-                if (oldPriceMatch) {
-                    priceDiv.innerHTML = `${newPrice.toLocaleString()} грн`;
-                }
+                priceDiv.innerHTML = `${newPrice.toLocaleString()} грн`;
             }
         });
 
@@ -3669,7 +3689,7 @@ setTimeout(function() {
             calendarHeader.innerHTML = `Тривалість: ${selectedNights} ночей`;
         }
 
-        console.log(`✅ Ціну оновлено: ${original.price}₴ за ${original.nights} ночей → ${newPrice}₴ за ${selectedNights} ночей`);
+        console.log(`✅ Оновлено: ${original.price}₴/${original.nights} ночей → ${newPrice}₴/${selectedNights} ночей, харчування: ${foodType}`);
     }
 
     // Слідкуємо за змінами
@@ -3683,9 +3703,10 @@ setTimeout(function() {
         adultsSelect.addEventListener('change', () => setTimeout(updateAllPrices, 100));
     }
 
-    // Запуск при завантаженні
+    // Запуск
     setTimeout(updateAllPrices, 1500);
     setTimeout(updateAllPrices, 3000);
+    setTimeout(updateAllPrices, 5000);
 })();
 </script>
 {% endblock %}
