@@ -1802,16 +1802,10 @@
 
         // Слідкуємо за зміною тривалості у верхній формі
         const nightsSelect = document.getElementById('searchNights');
-if (nightsSelect) {
-    nightsSelect.removeEventListener('change', updateCalendar);
-    nightsSelect.addEventListener('change', function() {
-        setTimeout(() => {
-            renderCalendar();
-            // Також оновлюємо таблицю пропозицій
-            if (window.reloadHotelPrices) window.reloadHotelPrices();
-        }, 100);
-    });
-}
+        if (nightsSelect) {
+            nightsSelect.removeEventListener('change', updateCalendar);
+            nightsSelect.addEventListener('change', updateCalendar);
+        }
 
         // Слідкуємо за зміною кількості туристів (для оновлення цін)
         const adultsSelect = document.getElementById('searchAdults');
@@ -3631,5 +3625,14 @@ setTimeout(function() {
         console.log('✅ Оновлення календаря при зміні туристів - додано');
     }
 })();
+</script>
+<script>
+// Просте виправлення - оновлюємо сторінку при зміні кількості ночей
+document.getElementById('searchNights')?.addEventListener('change', function() {
+    location.reload();
+});
+document.getElementById('searchAdults')?.addEventListener('change', function() {
+    location.reload();
+});
 </script>
 {% endblock %}
