@@ -754,7 +754,7 @@ document.addEventListener('DOMContentLoaded', function() {
 .new_f-ext-container {
     display: block !important;
     height: auto !important;
-    min-height: 800px !important;
+    min-height: 1000px !important;
     max-height: none !important;
     overflow: visible !important;
     margin: 20px 0 !important;
@@ -798,58 +798,5 @@ document.addEventListener('DOMContentLoaded', function() {
     display: none !important;
 }
 </style>
-<style>
-/* ========== ФІЛЬТРИ ВЕРТИКАЛЬНО ========== */
-.new_f-ext-container {
-    display: block !important;
-    height: auto !important;
-    min-height: auto !important;
-    overflow: visible !important;
-    margin: 20px 0 !important;
-    padding: 20px !important;
-    background: #f8f9fa !important;
-    border-radius: 16px !important;
-}
 
-/* Робимо всі колонки вертикальними */
-.new_f-ext-body,
-.new_f-ext-col,
-.new_f-ext-bl {
-    display: block !important;
-    width: 100% !important;
-    float: none !important;
-    clear: both !important;
-}
-
-.new_f-ext-col {
-    margin-bottom: 25px !important;
-}
-
-/* Кожен чекбокс з нового рядка */
-.new_f-ext-bl-body label {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    margin-bottom: 10px !important;
-}
-
-/* Ховаємо зайве */
-.new_f-dropdown-body-top,
-.new_f-dropdown-body-bottom,
-.new_f-ext-btn-container,
-.filter-open-btn {
-    display: none !important;
-}
-
-/* Кнопка очищення */
-.new_f-ext-clear-btn {
-    background: #e2e8f0 !important;
-    padding: 12px !important;
-    text-align: center !important;
-    cursor: pointer !important;
-    margin-top: 20px !important;
-    display: block !important;
-    border-radius: 8px !important;
-}
-</style>
 {% endblock %}
