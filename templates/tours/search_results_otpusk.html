@@ -1051,9 +1051,9 @@ document.addEventListener('DOMContentLoaded', function() {
     background: transparent !important;
 }
 
-/* Значення фільтра */
+/* Значення фільтра - ТІЛЬКИ ЧЕРВОНИЙ ТЕКСТ, БЕЗ ФОНУ */
 .new_r-filter-value {
-    background: #ffe0e0 !important;
+    background: transparent !important;
     color: #cc0000 !important;
 }
 
@@ -1062,14 +1062,15 @@ document.addEventListener('DOMContentLoaded', function() {
     border-color: #ffcccc !important;
 }
 
-/* Бейдж фільтра */
+/* Бейдж фільтра - СІРИЙ ФОН */
 .new_r-filter {
-    background: #fff0f0 !important;
-    border-color: #ffcccc !important;
+    background: #e0e0e0 !important;
+    border-color: #cccccc !important;
+    border-radius: 20px !important;
+    padding: 4px 10px !important;
     display: inline-flex !important;
     align-items: center !important;
-    padding: 4px 8px !important;
-    border-radius: 20px !important;
+    gap: 5px !important;
 }
 </style>
 {% endblock %}
