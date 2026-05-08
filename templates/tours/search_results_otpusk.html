@@ -892,4 +892,143 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 </style>
+<!-- ========== АДАПТИВНІ ФІЛЬТРИ ДЛЯ МОБІЛЬНИХ ========== -->
+<style>
+/* ========== ФІЛЬТРИ - АДАПТИВНІ, НЕ ПЕРЕКРИВАЮТЬ ТУРИ ========== */
+
+/* Перевизначаємо стилі фільтрів для мобільних */
+@media (max-width: 768px) {
+    /* Фільтри - звичайний блок, не фіксований */
+    .new_f-ext-container {
+        position: relative !important;
+        top: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        transform: none !important;
+        max-height: none !important;
+        overflow: visible !important;
+        display: block !important;
+        background: #f8f9fa !important;
+        border-radius: 16px !important;
+        padding: 12px !important;
+        margin: 15px 0 !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: none !important;
+    }
+
+    /* Прибираємо кнопку відкриття */
+    .filter-open-btn {
+        display: none !important;
+    }
+
+    /* Фільтри завжди видимі */
+    .new_f-ext-container.open {
+        transform: none !important;
+    }
+
+    /* Сітка фільтрів - 2 колонки */
+    .new_f-ext-body {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    .new_f-ext-col {
+        width: 100% !important;
+        min-width: 0 !important;
+        background: white !important;
+        padding: 10px !important;
+        border-radius: 12px !important;
+        margin: 0 !important;
+    }
+
+    /* Заголовки */
+    .new_f-ext-bl-title {
+        font-size: 12px !important;
+        margin-bottom: 8px !important;
+        font-weight: 700 !important;
+    }
+
+    /* Чекбокси вертикально */
+    .new_f-ext-bl-body {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 5px !important;
+    }
+
+    .new_f-ext-bl-body label {
+        display: flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        font-size: 11px !important;
+        margin: 0 !important;
+        white-space: normal !important;
+    }
+
+    /* Кнопка очищення */
+    .new_f-ext-clear-btn {
+        grid-column: span 2 !important;
+        margin-top: 10px !important;
+        padding: 8px !important;
+        font-size: 12px !important;
+        text-align: center !important;
+    }
+
+    /* Ховаємо непотрібні елементи */
+    .new_f-dropdown-body-top,
+    .new_f-dropdown-body-bottom,
+    .new_f-ext-btn-container {
+        display: none !important;
+    }
+}
+
+/* Для дуже маленьких екранів - 1 колонка */
+@media (max-width: 480px) {
+    .new_f-ext-body {
+        grid-template-columns: 1fr !important;
+    }
+
+    .new_f-ext-clear-btn {
+        grid-column: span 1 !important;
+    }
+}
+
+/* Прибираємо непотрібні стилі, які заважають */
+.new_f-ext-btn,
+.new_f-dropdown-body-top,
+.new_f-dropdown-body-bottom {
+    display: none !important;
+}
+</style>
+
+<script>
+// ========== ВИПРАВЛЕННЯ ДЛЯ МОБІЛЬНИХ ФІЛЬТРІВ ==========
+(function() {
+    if (window.innerWidth > 768) return;
+
+    setTimeout(function() {
+        const filtersContainer = document.querySelector('.new_f-ext-container');
+        if (filtersContainer) {
+            // Видаляємо зайві елементи
+            const topEl = filtersContainer.querySelector('.new_f-dropdown-body-top');
+            if (topEl) topEl.remove();
+
+            const bottomEl = filtersContainer.querySelector('.new_f-dropdown-body-bottom');
+            if (bottomEl) bottomEl.remove();
+
+            // Видаляємо кнопку відкриття, якщо вона є
+            const openBtn = document.querySelector('.filter-open-btn');
+            if (openBtn) openBtn.remove();
+
+            // Фільтри завжди видимі
+            filtersContainer.classList.remove('open');
+            filtersContainer.style.position = 'relative';
+            filtersContainer.style.transform = 'none';
+
+            console.log('✅ Мобільні фільтри адаптовані');
+        }
+    }, 1000);
+})();
+</script>
 {% endblock %}
