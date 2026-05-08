@@ -3589,42 +3589,6 @@ setTimeout(function() {
 
 }, 3000);
 </script>
-<script>
-// ========== ФІКС: ОНОВЛЕННЯ КАЛЕНДАРЯ ПРИ ЗМІНІ КІЛЬКОСТІ НОЧЕЙ ==========
-(function fixCalendarUpdate() {
-    // Функція оновлення календаря
-    function updateCalendarOnChange() {
-        setTimeout(() => {
-            // Знаходимо календар і оновлюємо його
-            const calendarContainer = document.getElementById('calendarTableContainer');
-            if (calendarContainer && calendarContainer.querySelector('.calendar-table')) {
-                // Перевіряємо чи є функція renderCalendar
-                if (typeof renderCalendar === 'function') {
-                    renderCalendar();
-                } else {
-                    // Якщо немає, шукаємо інший спосіб
-                    location.reload();
-                }
-            }
-        }, 100);
-    }
 
-    // Слідкуємо за зміною кількості ночей
-    const nightsSelect = document.getElementById('searchNights');
-    if (nightsSelect) {
-        nightsSelect.removeEventListener('change', updateCalendarOnChange);
-        nightsSelect.addEventListener('change', updateCalendarOnChange);
-        console.log('✅ Оновлення календаря при зміні ночей - додано');
-    }
-
-    // Слідкуємо за зміною кількості туристів
-    const adultsSelect = document.getElementById('searchAdults');
-    if (adultsSelect) {
-        adultsSelect.removeEventListener('change', updateCalendarOnChange);
-        adultsSelect.addEventListener('change', updateCalendarOnChange);
-        console.log('✅ Оновлення календаря при зміні туристів - додано');
-    }
-})();
-</script>
 
 {% endblock %}
