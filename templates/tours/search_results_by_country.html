@@ -136,25 +136,29 @@
         e.preventDefault();
         e.stopPropagation();
 
+        // Збираємо дані з форми
         const name = document.getElementById('consultationName')?.value || '';
         const phone = document.getElementById('consultationPhone')?.value || '';
         const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
+        // Валідація
         if (!name.trim()) {
-            alert('Введіть ім\'я');
+            console.log('Введіть ім\'я');
             return;
         }
         if (!phone.trim()) {
-            alert('Введіть телефон');
+            console.log('Введіть телефон');
             return;
         }
 
+        // Визначаємо URL
         let ajaxUrl = '/consultation-ajax/';
         {% if agent_site %}
         ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
         {% endif %}
 
+        // Відправляємо
         fetch(ajaxUrl, {
             method: 'POST',
             headers: {
@@ -171,16 +175,14 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                // Очищуємо форму
                 document.getElementById('consultationName').value = '';
                 document.getElementById('consultationPhone').value = '';
-                alert('Заявка відправлена! Ми зателефонуємо вам найближчим часом.');
-            } else {
-                alert('Помилка: ' + (data.error || 'Спробуйте пізніше'));
+                console.log('Заявка відправлена');
             }
         })
         .catch(error => {
             console.error('Помилка:', error);
-            alert('Помилка з\'єднання. Спробуйте пізніше.');
         });
     });
 })();
@@ -343,7 +345,7 @@ span.currency {
     margin-bottom: 24px !important;
 }
 
-/* КАРТКА ТУРУ - клікабельна */
+/* КАРТКА ТУРУ */
 .new_r-item {
     background: white !important;
     border-radius: 16px !important;
@@ -358,12 +360,6 @@ span.currency {
     width: 100% !important;
     min-height: 0 !important;
     height: auto !important;
-    cursor: pointer !important;
-}
-
-.new_r-item:hover {
-    transform: translateY(-3px) !important;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* ФОТО */
@@ -711,96 +707,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
 <style>
 /* Приховуємо фільтри на мобільних пристроях */
 @media (max-width: 768px) {
     .new_f-ext-container {
         display: none !important;
     }
+
+    /* Зменшуємо відступи */
     .new_r-container {
         margin-top: 0 !important;
     }
-}
-</style>
-
-<script>
-// ========== ПЕРЕХІД НА СТОРІНКУ ДЕТАЛЕЙ ТУРУ ==========
-(function() {
-    function getTourParamsFromCard(card) {
-        const link = card.querySelector('a');
-        if (!link) return null;
-
-        const href = link.getAttribute('href');
-        if (!href) return null;
-
-        const urlParams = new URLSearchParams(href.split('?')[1]);
-        const hid = urlParams.get('hid');
-        const oid = urlParams.get('oid');
-        const od = urlParams.get('od');
-        const ol = urlParams.get('ol');
-
-        if (hid && oid && od && ol) {
-            return { hid, oid, od, ol };
-        }
-        return null;
-    }
-
-    function addClickHandlers() {
-        const tourCards = document.querySelectorAll('.new_r-item');
-
-        tourCards.forEach(card => {
-            if (card.hasAttribute('data-click-handler')) return;
-            card.setAttribute('data-click-handler', 'true');
-
-            card.addEventListener('click', function(e) {
-                if (e.target.closest('.btn')) return;
-
-                const params = getTourParamsFromCard(card);
-                if (!params) {
-                    console.log('Не вдалося отримати параметри туру');
-                    return;
-                }
-
-                // ВИПРАВЛЕНО: використовуємо правильний URL '/tour-detail/'
-                let detailUrl = `/tour-detail/?hid=${params.hid}&oid=${params.oid}&od=${params.od}&ol=${params.ol}`;
-
-                const agentSlug = window.location.pathname.split('/')[2];
-                if (agentSlug && agentSlug !== 'search-otpusk-by-country') {
-                    detailUrl = `/a/${agentSlug}/tour-detail/?hid=${params.hid}&oid=${params.oid}&od=${params.od}&ol=${params.ol}`;
-                }
-
-                console.log('Перехід на деталі туру:', detailUrl);
-                window.location.href = detailUrl;
-            });
-        });
-    }
-
-    const observer = new MutationObserver(function() {
-        addClickHandlers();
-    });
-
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-
-    setTimeout(addClickHandlers, 1000);
-    setTimeout(addClickHandlers, 2000);
-    setTimeout(addClickHandlers, 3000);
-    setTimeout(addClickHandlers, 5000);
-
-    console.log('✅ Обробник кліків на тури додано');
-})();
-</script>
-
-<style>
-/* Кнопка "Детальніше" не повинна викликати перехід */
-.new_r-item .btn,
-.new_r-item .btn-primary,
-.new_r-item .btn-outline-primary {
-    position: relative !important;
-    z-index: 10 !important;
 }
 </style>
 {% endblock %}
