@@ -3591,185 +3591,95 @@ setTimeout(function() {
 </script>
 
 <script>
-// ========== ПОВНЕ ОНОВЛЕННЯ КАЛЕНДАРЯ ПРИ ЗМІНІ ПАРАМЕТРІВ ==========
-(function fixFullCalendarUpdate() {
-    // Функція для оновлення всього блоку цін
-    function fullUpdate() {
-        // Оновлюємо таблицю з пропозиціями
-        if (typeof window.reloadHotelPrices === 'function') {
-            window.reloadHotelPrices();
-        }
+// ========== ПРОСТИЙ ФІКС ДЛЯ ПЕРЕРАХУНКУ ЦІН ==========
+(function() {
+    // Отримуємо оригінальну ціну та кількість ночей з таблиці
+    function getOriginalPriceAndNights() {
+        const priceRow = document.querySelector('#hotelPricesTable .hotel-price-row');
+        if (!priceRow) return null;
 
-        // Оновлюємо календар - знаходимо функцію renderCalendar
-        setTimeout(() => {
-            // Шукаємо функцію renderCalendar в замиканні
-            const calendarContainer = document.getElementById('calendarTableContainer');
-            if (calendarContainer) {
-                // Просто перестворюємо календар заново, викликаючи loadHotelPrices
-                // яке оновить і календар теж
-                if (typeof window.reloadHotelPrices === 'function') {
-                    window.reloadHotelPrices();
-                }
-            }
-        }, 200);
+        const priceCell = priceRow.querySelector('td:nth-child(5)');
+        const nightsCell = priceRow.querySelector('td:nth-child(2)');
+
+        if (!priceCell || !nightsCell) return null;
+
+        const priceMatch = priceCell.innerText.match(/(\d[\d\s]*\d)/);
+        const nightsMatch = nightsCell.innerText.match(/(\d+)/);
+
+        if (!priceMatch || !nightsMatch) return null;
+
+        return {
+            price: parseInt(priceMatch[0].replace(/\s/g, '')),
+            nights: parseInt(nightsMatch[0])
+        };
     }
 
-    // ПЕРЕХОПЛЮЄМО події ДО того, як їх оброблять інші скрипти
-    const nightsSelect = document.getElementById('searchNights');
-    if (nightsSelect) {
-        // Видаляємо всі старі обробники
-        const newNightsSelect = nightsSelect.cloneNode(true);
-        nightsSelect.parentNode.replaceChild(newNightsSelect, nightsSelect);
-
-        newNightsSelect.addEventListener('change', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            // Змінюємо значення
-            fullUpdate();
-        });
-    }
-
-    const adultsSelect = document.getElementById('searchAdults');
-    if (adultsSelect) {
-        // Видаляємо всі старі обробники
-        const newAdultsSelect = adultsSelect.cloneNode(true);
-        adultsSelect.parentNode.replaceChild(newAdultsSelect, adultsSelect);
-
-        newAdultsSelect.addEventListener('change', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            fullUpdate();
-        });
-    }
-
-    console.log('✅ Фікс оновлення календаря активовано');
-})();
-</script>
-<script>
-// ========== КАЛЕНДАР З ПЕРЕРАХУНКОМ ЦІН ==========
-(function fixPrices() {
-    // Функція для перерахунку ціни на основі кількості ночей
-    function recalculatePriceForNights(originalPrice, originalNights, newNights) {
-        if (!originalPrice || originalPrice === 0) return null;
-        // Ціна за ніч
-        const pricePerNight = originalPrice / originalNights;
-        // Нова ціна
-        return Math.round(pricePerNight * newNights);
-    }
-
-    // Отримуємо оригінальну кількість ночей з URL
-    function getOriginalNights() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const ol = urlParams.get('ol');
-        return ol ? parseInt(ol) : 7;
-    }
-
-    // Отримуємо поточну кількість ночей з форми
-    function getCurrentNights() {
-        const select = document.getElementById('searchNights');
-        if (select) {
-            const val = select.value;
-            if (val.includes('-')) return parseInt(val.split('-')[0]) + 1;
-            return parseInt(val);
-        }
-        return 7;
-    }
-
-    // Функція оновлення всіх цін
+    // Оновлюємо всі ціни
     function updateAllPrices() {
-        const originalNights = getOriginalNights();
-        const currentNights = getCurrentNights();
-
-        if (originalNights === currentNights) {
-            console.log('Кількість ночей не змінилась');
+        const original = getOriginalPriceAndNights();
+        if (!original) {
+            setTimeout(updateAllPrices, 500);
             return;
         }
 
-        console.log(`Перерахунок цін: було ${originalNights} ночей, стало ${currentNights} ночей`);
+        const nightsSelect = document.getElementById('searchNights');
+        let newNights = original.nights;
+        if (nightsSelect) {
+            const val = nightsSelect.value;
+            if (val.includes('-')) newNights = parseInt(val.split('-')[0]) + 1;
+            else newNights = parseInt(val);
+        }
 
-        // Оновлюємо ціни в таблиці пропозицій
-        const priceRows = document.querySelectorAll('#hotelPricesTable .hotel-price-row');
-        let updatedCount = 0;
+        if (original.nights === newNights) return;
 
-        priceRows.forEach(row => {
+        // Ціна за одну ніч
+        const pricePerNight = original.price / original.nights;
+        // Нова ціна
+        const newPrice = Math.round(pricePerNight * newNights);
+
+        // Оновлюємо всі рядки в таблиці
+        const allRows = document.querySelectorAll('#hotelPricesTable .hotel-price-row');
+        allRows.forEach(row => {
             const nightsCell = row.querySelector('td:nth-child(2)');
             const priceCell = row.querySelector('td:nth-child(5)');
-
             if (nightsCell && priceCell) {
-                // Отримуємо поточну кількість ночей в рядку
-                const nightsText = nightsCell.innerText;
-                const nightsMatch = nightsText.match(/(\d+)/);
-                const rowNights = nightsMatch ? parseInt(nightsMatch[0]) : originalNights;
-
-                // Отримуємо поточну ціну
-                const priceText = priceCell.innerText;
-                const priceMatch = priceText.match(/(\d[\d\s]*\d)/);
-                const originalPrice = priceMatch ? parseInt(priceMatch[0].replace(/\s/g, '')) : null;
-
-                if (originalPrice && rowNights) {
-                    const newPrice = recalculatePriceForNights(originalPrice, rowNights, currentNights);
-                    if (newPrice) {
-                        priceCell.innerHTML = `${newPrice.toLocaleString()} ₴`;
-                        updatedCount++;
-                    }
-                    // Оновлюємо текст кількості ночей
-                    nightsCell.innerHTML = `${currentNights} ночей`;
-                }
+                nightsCell.innerHTML = `${newNights} ночей`;
+                priceCell.innerHTML = `${newPrice.toLocaleString()} ₴`;
             }
         });
 
-        // Оновлюємо ціни в календарі
+        // Оновлюємо календар
         const calendarCells = document.querySelectorAll('.calendar-table td.has-price, .calendar-table td.lowest-price');
         calendarCells.forEach(cell => {
-            const priceAttr = cell.getAttribute('data-price');
-            const nightsAttr = cell.getAttribute('data-nights');
-            if (priceAttr && nightsAttr) {
-                const originalPrice = parseInt(priceAttr);
-                const originalNightsVal = parseInt(nightsAttr);
-                const newPrice = recalculatePriceForNights(originalPrice, originalNightsVal, currentNights);
-                if (newPrice) {
-                    const priceDiv = cell.querySelector('.small.fw-bold');
-                    if (priceDiv) {
-                        priceDiv.innerHTML = `${newPrice.toLocaleString()} грн`;
-                    }
-                    cell.setAttribute('data-price', newPrice);
-                    cell.setAttribute('data-nights', currentNights);
-                }
+            const priceDiv = cell.querySelector('.small.fw-bold');
+            if (priceDiv) {
+                priceDiv.innerHTML = `${newPrice.toLocaleString()} грн`;
             }
         });
 
         // Оновлюємо заголовок календаря
         const calendarHeader = document.querySelector('.calendar-table thead th:nth-child(2)');
         if (calendarHeader) {
-            calendarHeader.innerHTML = `Тривалість: ${currentNights} ночей`;
+            calendarHeader.innerHTML = `Тривалість: ${newNights} ночей`;
         }
 
-        console.log(`✅ Оновлено ${updatedCount} цін для ${currentNights} ночей`);
+        console.log(`✅ Ціни оновлено: ${original.price} грн за ${original.nights} ночей → ${newPrice} грн за ${newNights} ночей`);
     }
 
-    // Слідкуємо за зміною кількості ночей
+    // Слідкуємо за зміною кількості ночей та туристів
     const nightsSelect = document.getElementById('searchNights');
     if (nightsSelect) {
-        // Видаляємо старі обробники
-        const newSelect = nightsSelect.cloneNode(true);
-        nightsSelect.parentNode.replaceChild(newSelect, nightsSelect);
-
-        newSelect.addEventListener('change', function() {
-            setTimeout(() => {
-                updateAllPrices();
-                // Також оновлюємо загальну вартість у верхньому блоці
-                if (typeof window.reloadHotelPrices === 'function') {
-                    // Не перезавантажуємо, а просто оновлюємо ціни
-                }
-            }, 100);
-        });
-        console.log('✅ Фікс перерахунку цін активовано');
+        nightsSelect.addEventListener('change', () => setTimeout(updateAllPrices, 100));
     }
 
-    // Виконуємо один раз при завантаженні
+    const adultsSelect = document.getElementById('searchAdults');
+    if (adultsSelect) {
+        adultsSelect.addEventListener('change', () => setTimeout(updateAllPrices, 100));
+    }
+
+    // Запускаємо при завантаженні
     setTimeout(updateAllPrices, 1000);
     setTimeout(updateAllPrices, 2000);
-    setTimeout(updateAllPrices, 3000);
 })();
 </script>
 {% endblock %}
