@@ -1068,4 +1068,56 @@ document.addEventListener('DOMContentLoaded', function() {
     width: 100% !important;
 }
 </style>
+<style>
+/* ========== ЦЕНТРУВАННЯ ГОЛОВНОГО БЛОКУ ПОШУКУ ========== */
+
+/* Основний контейнер */
+.container.my-5 {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    max-width: 1200px !important;
+}
+
+/* Картка, що містить модуль пошуку */
+.container.my-5 .card {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Модуль пошуку */
+#otpusk-search-module {
+    margin: 0 auto !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+/* Для десктопу - обмежуємо ширину */
+@media (min-width: 992px) {
+    .container.my-5 {
+        max-width: 1200px !important;
+    }
+
+    #otpusk-search-module {
+        max-width: 100% !important;
+    }
+}
+
+/* Для мобільних - забезпечуємо відступи */
+@media (max-width: 768px) {
+    .container.my-5 {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+    #otpusk-search-module {
+        padding: 12px !important;
+        margin: 0 !important;
+    }
+}
+</style>
 {% endblock %}
