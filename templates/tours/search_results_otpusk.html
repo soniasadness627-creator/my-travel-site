@@ -1201,6 +1201,21 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 <style>
+/* ========== ПРИБИРАЄМО ТІНЬ З БЛОКУ ПОШУКУ ========== */
+#otpusk-search-module {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+
+/* Якщо тінь ще десь є */
+.new_f-container,
+.new_f-wrapper,
+.new_os {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+</style>
+<style>
 /* ========== ЗМІНА КОЛЬОРУ ВИБРАНИХ ЕЛЕМЕНТІВ ТУРИСТІВ НА КОЛІР АГЕНЦІЇ ========== */
 
 /* Активний елемент вибору кількості дорослих */
@@ -1239,6 +1254,38 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .new_f-children-accordion-btn:hover {
     background: var(--primary-dark) !important;
+    color: white !important;
+}
+</style>
+<style>
+/* ========== ЗМІНА КОЛЬОРУ ВИБРАНОГО ВІКУ ДИТИНИ НА КОЛІР АГЕНЦІЇ ========== */
+
+/* Кнопка вибраного віку дитини */
+.new_f-children-list-item {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Ховер ефект для віку дитини */
+.new_f-children-list-item:hover {
+    background: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
+    color: white !important;
+}
+
+/* Кнопка видалення дитини (хрестик) */
+.new_f-children-list-item .delete,
+.new_f-children-list-item i.fa-close,
+.new_f-children-list-item i.fa-times {
+    color: white !important;
+}
+
+/* Можливі інші елементи вибору дітей */
+.new_f-children-age-item.active,
+.new_f-children-age-item.selected {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
     color: white !important;
 }
 </style>
