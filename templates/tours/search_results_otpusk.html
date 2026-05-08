@@ -481,7 +481,7 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 </script>
 
-<!-- ========== СТИЛІ ДЛЯ ФІЛЬТРІВ - ОРИГІНАЛ НА МІСЦІ ========== -->
+<!-- ========== СТИЛІ ДЛЯ ФІЛЬТРІВ ========== -->
 <style>
 /* ========== ФІЛЬТРИ - ОРИГІНАЛЬНІ, КОМПАКТНІ, ПІД ФОРМОЮ ========== */
 
@@ -585,22 +585,67 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 </style>
-<style>
-/* ========== ГОЛОВНИЙ ФІКС - ПОКАЗУЄМО ВСІ ТУРИ НА ВСІХ ПРИСТРОЯХ ========== */
-.new_r-item-wrap,
-.new_r-container,
-.new_r-wrapper {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    height: auto !important;
-    overflow: visible !important;
-}
 
-/* Видаляємо будь-яке приховування */
-[style*="display: none"],
-[style*="display:none"] {
-    display: block !important;
+<!-- ========== ФІКС ДЛЯ МОБІЛЬНИХ - ПОКАЗУЄМО ТУРИ ========== -->
+<style>
+@media (max-width: 768px) {
+    /* Примусово показуємо контейнер з турами */
+    .new_r-container,
+    .new_r-wrapper,
+    .new_r-item-wrap {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        min-height: auto !important;
+        overflow: visible !important;
+    }
+
+    /* Видаляємо будь-яке приховування */
+    .new_r-item-wrap[style*="display: none"],
+    .new_r-item-wrap[style*="display:none"] {
+        display: block !important;
+    }
+
+    .new_r-container {
+        min-height: 500px !important;
+    }
 }
 </style>
+
+<script>
+// ========== ПРИМУСОВЕ ПОКАЗУЄМО ТУРИ НА МОБІЛЬНИХ ==========
+(function() {
+    function showToursOnMobile() {
+        if (window.innerWidth > 768) return;
+
+        setTimeout(function() {
+            const tourWraps = document.querySelectorAll('.new_r-item-wrap');
+            const containers = document.querySelectorAll('.new_r-container, .new_r-wrapper');
+
+            containers.forEach(function(container) {
+                if (container) {
+                    container.style.display = 'block';
+                    container.style.visibility = 'visible';
+                    container.style.height = 'auto';
+                    container.style.minHeight = '500px';
+                }
+            });
+
+            tourWraps.forEach(function(tour) {
+                if (tour) {
+                    tour.style.display = 'block';
+                    tour.style.visibility = 'visible';
+                    tour.style.opacity = '1';
+                }
+            });
+
+            console.log('✅ Турів на мобільному знайдено:', tourWraps.length);
+        }, 1500);
+    }
+
+    showToursOnMobile();
+    window.addEventListener('resize', showToursOnMobile);
+})();
+</script>
 {% endblock %}
