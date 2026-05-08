@@ -711,27 +711,9 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 
 <style>
-/* ========== МОБІЛЬНІ ФІЛЬТРИ ========== */
+/* ========== ВИПРАВЛЕННЯ ДЛЯ МОБІЛЬНИХ ФІЛЬТРІВ НА СТОРІНЦІ РЕЗУЛЬТАТІВ ========== */
 @media (max-width: 768px) {
-    /* Кнопка для відкриття */
-    .filter-open-btn {
-        display: block !important;
-        position: fixed !important;
-        bottom: 20px !important;
-        right: 20px !important;
-        z-index: 9999 !important;
-        background: #d12389 !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 50px !important;
-        padding: 12px 24px !important;
-        font-size: 14px !important;
-        font-weight: 600 !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
-        cursor: pointer !important;
-    }
-
-    /* Контейнер фільтрів - спочатку прихований внизу */
+    /* Фільтри - висувні знизу */
     .new_f-ext-container {
         position: fixed !important;
         top: auto !important;
@@ -750,35 +732,54 @@ document.addEventListener('DOMContentLoaded', function() {
         margin: 0 !important;
     }
 
-    /* Відкритий стан */
     .new_f-ext-container.open {
         transform: translateY(0) !important;
     }
 
-    /* Заголовок фільтрів */
+    /* Кнопка відкриття фільтрів */
+    .filter-open-btn {
+        display: block !important;
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        z-index: 9999 !important;
+        background: var(--primary-color) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 50px !important;
+        padding: 12px 24px !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+        cursor: pointer !important;
+    }
+
+    .filter-open-btn i {
+        margin-right: 8px !important;
+    }
+
+    /* Елементи керування фільтрами */
+    .new_f-ext-container .new_f-dropdown-body-close {
+        display: block !important;
+        position: absolute !important;
+        top: 15px !important;
+        right: 20px !important;
+        font-size: 28px !important;
+        cursor: pointer !important;
+        color: #666 !important;
+        z-index: 10 !important;
+    }
+
     .new_f-ext-container .new_f-dropdown-body-top {
         display: block !important;
         font-size: 18px !important;
         font-weight: 600 !important;
-        padding-bottom: 15px !important;
+        padding: 0 0 15px 0 !important;
         margin-bottom: 15px !important;
         border-bottom: 1px solid #eee !important;
         color: #333 !important;
-        position: relative !important;
     }
 
-    /* Кнопка закриття */
-    .new_f-ext-container .new_f-dropdown-body-close {
-        display: block !important;
-        position: absolute !important;
-        top: 0 !important;
-        right: 0 !important;
-        font-size: 28px !important;
-        cursor: pointer !important;
-        color: #666 !important;
-    }
-
-    /* Кнопки внизу фільтрів */
     .new_f-ext-container .new_f-dropdown-body-bottom {
         display: flex !important;
         gap: 10px !important;
@@ -793,7 +794,6 @@ document.addEventListener('DOMContentLoaded', function() {
         padding: 12px !important;
         border-radius: 10px !important;
         font-weight: 600 !important;
-        cursor: pointer !important;
     }
 
     .new_f-ext-container .new_f-dropdown-btn-cancel {
@@ -802,40 +802,52 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     .new_f-ext-container .new_f-dropdown-btn-apply {
-        background: #d12389 !important;
+        background: var(--primary-color) !important;
         color: white !important;
     }
 
-    /* Відступ для турів, щоб не перекривалися кнопкою */
+    .new_f-ext-btn {
+        display: block !important;
+        cursor: pointer !important;
+    }
+
+    .new_f-ext-btn-container {
+        margin-top: 10px !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* Фікс для контейнера з турами - щоб не перекривався */
     .new_r-container {
+        margin-top: 20px !important;
         padding-bottom: 80px !important;
+    }
+
+    /* Кнопка "Знайти ще" */
+    .new_r-show-more-results {
+        margin-bottom: 80px !important;
+    }
+}
+
+/* ========== ПРИБИРАЄМО ДІАГНОСТИЧНИЙ БЛОК НА МОБІЛЬНИХ ========== */
+@media (max-width: 768px) {
+    div[style*="background: #f8d7da"] {
+        display: none !important;
     }
 }
 </style>
 
 <script>
-// ========== МОБІЛЬНІ ФІЛЬТРИ ==========
+// ========== МОБІЛЬНІ ФІЛЬТРИ ДЛЯ СТОРІНКИ РЕЗУЛЬТАТІВ ==========
 (function() {
-    // Тільки для мобільних
     if (window.innerWidth > 768) return;
 
-    let isInitialized = false;
-
-    function initMobileFilters() {
-        // Шукаємо оригінальний контейнер фільтрів
+    setTimeout(function() {
         const filtersContainer = document.querySelector('.new_f-ext-container');
+        const filterBtn = document.querySelector('.new_f-ext-btn');
 
-        if (!filtersContainer) {
-            console.log('⏳ Фільтри ще не завантажились, чекаємо...');
-            return false;
-        }
+        if (!filtersContainer || !filterBtn) return;
 
-        if (isInitialized) return true;
-        isInitialized = true;
-
-        console.log('✅ Оригінальні фільтри знайдені');
-
-        // Додаємо заголовок, якщо його немає в оригіналі
+        // Додаємо заголовок, якщо його немає
         if (!filtersContainer.querySelector('.new_f-dropdown-body-top')) {
             const header = document.createElement('div');
             header.className = 'new_f-dropdown-body-top';
@@ -843,28 +855,22 @@ document.addEventListener('DOMContentLoaded', function() {
             filtersContainer.insertBefore(header, filtersContainer.firstChild);
         }
 
-        // Додаємо кнопку для відкриття фільтрів (якщо ще немає)
+        // Додаємо кнопку відкриття, якщо її немає
         if (!document.querySelector('.filter-open-btn')) {
             const openBtn = document.createElement('button');
             openBtn.className = 'filter-open-btn';
-            openBtn.innerHTML = '🔍 Фільтри';
+            openBtn.innerHTML = '<i class="fa-regular fa-filter"></i> Фільтри';
             document.body.appendChild(openBtn);
 
-            // Відкриття фільтрів
-            openBtn.addEventListener('click', function(e) {
-                e.preventDefault();
+            openBtn.addEventListener('click', function() {
                 filtersContainer.classList.add('open');
-                console.log('Відкрито фільтри');
             });
         }
 
-        // Закриття по хрестику
+        // Закриття по кнопці "×"
         const closeBtn = filtersContainer.querySelector('.new_f-dropdown-body-close');
         if (closeBtn) {
-            // Видаляємо старі обробники, щоб не дублювати
-            const newCloseBtn = closeBtn.cloneNode(true);
-            closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
-            newCloseBtn.addEventListener('click', function() {
+            closeBtn.addEventListener('click', function() {
                 filtersContainer.classList.remove('open');
             });
         }
@@ -872,44 +878,72 @@ document.addEventListener('DOMContentLoaded', function() {
         // Закриття по кнопці "Відміна"
         const cancelBtn = filtersContainer.querySelector('.new_f-dropdown-btn-cancel');
         if (cancelBtn) {
-            const newCancelBtn = cancelBtn.cloneNode(true);
-            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-            newCancelBtn.addEventListener('click', function() {
+            cancelBtn.addEventListener('click', function() {
                 filtersContainer.classList.remove('open');
             });
         }
 
-        // Закриття після "Застосувати"
+        // Закриття після застосування фільтрів
         const applyBtn = filtersContainer.querySelector('.new_f-dropdown-btn-apply');
         if (applyBtn) {
-            const newApplyBtn = applyBtn.cloneNode(true);
-            applyBtn.parentNode.replaceChild(newApplyBtn, applyBtn);
-            newApplyBtn.addEventListener('click', function() {
+            applyBtn.addEventListener('click', function() {
                 setTimeout(function() {
                     filtersContainer.classList.remove('open');
                 }, 500);
             });
         }
 
-        return true;
-    }
-
-    // Шукаємо фільтри кожні 500 мс (модуль отпусk.com завантажується динамічно)
-    let attempts = 0;
-    const maxAttempts = 30;
-
-    const interval = setInterval(function() {
-        attempts++;
-        const success = initMobileFilters();
-
-        if (success) {
-            clearInterval(interval);
-            console.log('✅ Мобільні фільтри успішно налаштовано!');
-        } else if (attempts >= maxAttempts) {
-            clearInterval(interval);
-            console.log('❌ Не вдалося знайти фільтри після ' + maxAttempts + ' спроб');
-        }
-    }, 500);
+        console.log('✅ Мобільні фільтри для результатів налаштовано');
+    }, 1000);
 })();
 </script>
+
+<style>
+/* ========== ДОДАТКОВИЙ ФІКС ДЛЯ ВІДОБРАЖЕННЯ ТУРІВ ========== */
+
+/* Забезпечуємо видимість результатів */
+.new_r-wrapper {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.new_r-item-wrap {
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* Фікс для контейнера з результатами */
+.new_results-map-overlay {
+    display: none !important;
+}
+
+/* Фікс для зони прокрутки */
+.new_r-container {
+    overflow-x: hidden !important;
+}
+
+/* Для мобільних - забезпечуємо відступи */
+@media (max-width: 768px) {
+    .container.my-5 {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+    .card-body.p-4 {
+        padding: 1rem !important;
+    }
+
+    #otpusk-search-module {
+        padding: 12px !important;
+        margin: 0 !important;
+    }
+
+    /* Забезпечуємо видимість списку турів */
+    .new_r-container {
+        display: block !important;
+        min-height: 400px !important;
+    }
+}
+</style>
 {% endblock %}
