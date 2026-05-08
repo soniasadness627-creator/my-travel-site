@@ -1147,37 +1147,34 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 <style>
-/* ========== ЗМІНА КОЛЬОРУ ГАЛОЧОК (ЧЕКБОКСІВ) НА ЧОРНИЙ ========== */
+/* ========== ЗМІНА КОЛЬОРУ ГАЛОЧОК НА ЧОРНИЙ ========== */
 
-/* Всі чекбокси в фільтрах */
+/* Змінюємо колір чекбоксів через filter */
 .new_f-ext-container input[type="checkbox"],
-.new_f-ext-container input[type="radio"],
 .new_f-services-label-wrap input[type="checkbox"],
-.new_f-services-label-wrap input[type="radio"],
-.new_f-ext-bl-body input[type="checkbox"],
-.new_f-ext-bl-body input[type="radio"] {
-    accent-color: #000000 !important;
-    filter: none !important;
-}
-
-/* Додатково для браузерів, які не підтримують accent-color */
-.new_f-ext-container input[type="checkbox"]:checked,
-.new_f-services-label-wrap input[type="checkbox"]:checked {
-    background-color: #000000 !important;
-    border-color: #000000 !important;
-}
-
-/* Радіо-кнопки */
-.new_f-ext-container input[type="radio"]:checked,
-.new_f-services-label-wrap input[type="radio"]:checked {
-    background-color: #000000 !important;
-    border-color: #000000 !important;
-}
-
-/* Для WebKit браузерів (Chrome, Safari) */
-.new_f-ext-container input[type="checkbox"]:checked,
-.new_f-ext-container input[type="radio"]:checked {
+.new_f-ext-bl-body input[type="checkbox"] {
     filter: brightness(0) !important;
+}
+
+/* Змінюємо колір радіо-кнопок */
+.new_f-ext-container input[type="radio"],
+.new_f-services-label-wrap input[type="radio"],
+.new_f-ext-bl-body input[type="radio"] {
+    filter: brightness(0) !important;
+}
+
+/* Для checked стану - чорний */
+.new_f-ext-container input[type="checkbox"]:checked,
+.new_f-services-label-wrap input[type="checkbox"]:checked,
+.new_f-ext-bl-body input[type="checkbox"]:checked {
+    filter: brightness(0) !important;
+    accent-color: #000000 !important;
+}
+
+/* Якщо filter не працює, використовуємо box-shadow */
+.new_f-ext-container input[type="checkbox"]:checked {
+    background-color: #000000 !important;
+    box-shadow: 0 0 0 2px #000000 inset !important;
 }
 </style>
 {% endblock %}
