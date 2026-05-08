@@ -1144,172 +1144,113 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 
 <script>
-// ========== МОБІЛЬНІ ФІЛЬТРИ - ПОКРАЩЕНА ВЕРСІЯ ==========
+// ========== ПРОСТІ МОБІЛЬНІ ФІЛЬТРИ ==========
 (function() {
     if (window.innerWidth > 768) return;
 
-    // Функція для ініціалізації фільтрів
-    function initMobileFilters() {
-        const filtersContainer = document.querySelector('.new_f-ext-container');
+    // Чекаємо поки завантажиться сторінка
+    setTimeout(function() {
+        // Знаходимо контейнер з фільтрами
+        const filtersBlock = document.querySelector('.new_f-ext-container');
 
-        if (!filtersContainer) {
-            console.log('⏳ Фільтри ще не завантажились, чекаємо...');
-            return false;
+        if (!filtersBlock) {
+            console.log('Фільтри не знайдені');
+            return;
         }
 
-        console.log('✅ Знайдено контейнер фільтрів');
+        // Ховаємо фільтри
+        filtersBlock.style.display = 'none';
 
-        // Додаємо стилі для фільтрів
-        if (!document.getElementById('mobile-filters-styles')) {
-            const style = document.createElement('style');
-            style.id = 'mobile-filters-styles';
-            style.textContent = `
-                @media (max-width: 768px) {
-                    .new_f-ext-container {
-                        position: fixed !important;
-                        top: auto !important;
-                        bottom: 0 !important;
-                        left: 0 !important;
-                        right: 0 !important;
-                        max-height: 70vh !important;
-                        overflow-y: auto !important;
-                        background: white !important;
-                        border-radius: 20px 20px 0 0 !important;
-                        z-index: 10000 !important;
-                        transform: translateY(100%) !important;
-                        transition: transform 0.3s ease !important;
-                        padding: 20px !important;
-                        box-shadow: 0 -5px 20px rgba(0,0,0,0.2) !important;
-                        margin: 0 !important;
-                    }
-                    .new_f-ext-container.open {
-                        transform: translateY(0) !important;
-                    }
-                    .mobile-filters-toggle {
-                        display: block !important;
-                        position: fixed !important;
-                        bottom: 20px !important;
-                        right: 20px !important;
-                        z-index: 9999 !important;
-                        background: #d12389 !important;
-                        color: white !important;
-                        border: none !important;
-                        border-radius: 50px !important;
-                        padding: 12px 24px !important;
-                        font-size: 14px !important;
-                        font-weight: 600 !important;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
-                        cursor: pointer !important;
-                    }
-                    .mobile-filters-toggle i {
-                        margin-right: 8px !important;
-                    }
-                    .new_f-ext-container .filters-header {
-                        display: block !important;
-                        font-size: 18px !important;
-                        font-weight: 600 !important;
-                        padding-bottom: 15px !important;
-                        margin-bottom: 15px !important;
-                        border-bottom: 1px solid #eee !important;
-                        position: relative !important;
-                    }
-                    .new_f-ext-container .filters-header .close-filters {
-                        position: absolute !important;
-                        right: 0 !important;
-                        top: 0 !important;
-                        font-size: 28px !important;
-                        cursor: pointer !important;
-                        color: #666 !important;
-                    }
-                    .new_f-ext-container .new_f-dropdown-body-bottom {
-                        display: flex !important;
-                        gap: 10px !important;
-                        margin-top: 20px !important;
-                        padding-top: 15px !important;
-                        border-top: 1px solid #eee !important;
-                    }
-                    .new_f-ext-container .new_f-dropdown-bottom-btn {
-                        flex: 1 !important;
-                        text-align: center !important;
-                        padding: 12px !important;
-                        border-radius: 10px !important;
-                        font-weight: 600 !important;
-                        cursor: pointer !important;
-                    }
-                    .new_r-container {
-                        padding-bottom: 80px !important;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-        }
+        // Створюємо кнопку для відкриття
+        const filterButton = document.createElement('button');
+        filterButton.innerHTML = '🔍 Фільтри';
+        filterButton.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: #d12389;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+        `;
+        document.body.appendChild(filterButton);
 
-        // Додаємо заголовок, якщо немає
-        if (!filtersContainer.querySelector('.filters-header')) {
-            const header = document.createElement('div');
-            header.className = 'filters-header';
-            header.innerHTML = 'Фільтри <span class="close-filters">×</span>';
-            filtersContainer.insertBefore(header, filtersContainer.firstChild);
+        // Створюємо модальне вікно для фільтрів
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+        `;
 
-            const closeBtn = header.querySelector('.close-filters');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', function() {
-                    filtersContainer.classList.remove('open');
-                });
+        // Додаємо заголовок
+        const modalHeader = document.createElement('div');
+        modalHeader.style.cssText = `
+            background: #d12389;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+        `;
+        modalHeader.innerHTML = `
+            <span>Фільтри</span>
+            <button style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">✕</button>
+        `;
+
+        // Додаємо тіло з фільтрами
+        const modalBody = document.createElement('div');
+        modalBody.style.cssText = 'padding: 15px; flex: 1;';
+
+        // Копіюємо вміст фільтрів
+        modalBody.appendChild(filtersBlock.cloneNode(true));
+
+        modal.appendChild(modalHeader);
+        modal.appendChild(modalBody);
+        document.body.appendChild(modal);
+
+        // Закриття по хрестику
+        modalHeader.querySelector('button').onclick = function() {
+            modal.style.display = 'none';
+        };
+
+        // Відкриття по кнопці
+        filterButton.onclick = function() {
+            modal.style.display = 'flex';
+            // Оновлюємо вміст фільтрів (якщо змінився)
+            const newContent = document.querySelector('.new_f-ext-container');
+            if (newContent) {
+                modalBody.innerHTML = '';
+                modalBody.appendChild(newContent.cloneNode(true));
             }
-        }
+        };
 
-        // Додаємо кнопку відкриття
-        if (!document.querySelector('.mobile-filters-toggle')) {
-            const toggleBtn = document.createElement('button');
-            toggleBtn.className = 'mobile-filters-toggle';
-            toggleBtn.innerHTML = '<i class="fa-regular fa-filter"></i> Фільтри';
-            document.body.appendChild(toggleBtn);
+        // Закриття при кліку на фон
+        modal.onclick = function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
 
-            toggleBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                filtersContainer.classList.add('open');
-                console.log('Відкрито фільтри');
-            });
-        }
-
-        // Закриття по кнопках
-        const cancelBtn = filtersContainer.querySelector('.new_f-dropdown-btn-cancel');
-        const applyBtn = filtersContainer.querySelector('.new_f-dropdown-btn-apply');
-
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', function() {
-                filtersContainer.classList.remove('open');
-            });
-        }
-
-        if (applyBtn) {
-            applyBtn.addEventListener('click', function() {
-                setTimeout(function() {
-                    filtersContainer.classList.remove('open');
-                }, 500);
-            });
-        }
-
-        return true;
-    }
-
-    // Спробуємо кілька разів з інтервалом
-    let attempts = 0;
-    const maxAttempts = 20;
-
-    const interval = setInterval(function() {
-        attempts++;
-        const success = initMobileFilters();
-
-        if (success) {
-            clearInterval(interval);
-            console.log('✅ Мобільні фільтри успішно налаштовано за ' + attempts + ' спроб');
-        } else if (attempts >= maxAttempts) {
-            clearInterval(interval);
-            console.log('❌ Не вдалося знайти фільтри після ' + maxAttempts + ' спроб');
-        }
-    }, 500);
+        console.log('✅ Мобільні фільтри готові');
+    }, 2000);
 })();
 </script>
 {% endblock %}
