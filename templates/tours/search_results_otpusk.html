@@ -1014,20 +1014,41 @@ document.addEventListener('DOMContentLoaded', function() {
     background: #ff4444 !important;
     color: white !important;
     border-color: #ff4444 !important;
+    border-radius: 20px !important;
+    padding: 5px 12px !important;
+    font-size: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
 }
 
 .new_r-filters-reset:hover {
     background: #cc0000 !important;
+    transform: scale(1.02) !important;
 }
 
-/* Хрестик для видалення окремого фільтра */
+/* Хрестик для видалення окремого фільтра - БІЛИЙ, БЕЗ ФОНУ */
 .new_r-filter-reset {
-    background: #ff4444 !important;
-    color: white !important;
+    background: transparent !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin-left: 6px !important;
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
 }
 
 .new_r-filter-reset:hover {
-    background: #cc0000 !important;
+    color: #ff9999 !important;
+    transform: scale(1.1) !important;
+    background: transparent !important;
 }
 
 /* Значення фільтра */
@@ -1045,22 +1066,10 @@ document.addEventListener('DOMContentLoaded', function() {
 .new_r-filter {
     background: #fff0f0 !important;
     border-color: #ffcccc !important;
-}
-
-/* Кнопка "Скинути фільтри" */
-.new_r-filters-reset {
-    background: #ff4444 !important;
-    color: white !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 4px 8px !important;
     border-radius: 20px !important;
-    padding: 5px 12px !important;
-    font-size: 12px !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-}
-
-.new_r-filters-reset:hover {
-    background: #cc0000 !important;
-    transform: scale(1.02) !important;
 }
 </style>
 {% endblock %}
