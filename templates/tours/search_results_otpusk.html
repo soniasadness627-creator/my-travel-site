@@ -481,153 +481,79 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 </script>
 
-<!-- ========== МОБІЛЬНІ ФІЛЬТРИ - ПРАЦЮЮЧА ВЕРСІЯ ========== -->
 <style>
+/* ========== ФІЛЬТРИ - ПРОСТО АДАПТИВНІ ПІД ФОРМОЮ ========== */
+
+/* Контейнер фільтрів - завжди видимий */
+.new_f-ext-container {
+    display: block !important;
+    background: #f8f9fa !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    margin-top: 15px !important;
+    margin-bottom: 20px !important;
+    border: 1px solid #e2e8f0 !important;
+    position: relative !important;
+}
+
+/* Кнопка "Розширений пошук" - ховаємо, вона не потрібна */
+.new_f-ext-btn-container,
+.new_f-ext-btn,
+.new_f-ext-btn-text,
+.new_f-ext-btn-filters-num {
+    display: none !important;
+}
+
+/* Заголовки блоків фільтрів */
+.new_f-ext-bl-title {
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+    color: #333 !important;
+}
+
+/* Стилі для чекбоксів */
+.new_f-ext-bl-body label {
+    display: inline-block !important;
+    margin-right: 12px !important;
+    margin-bottom: 8px !important;
+}
+
+/* Кнопка "Очистити фільтри" */
+.new_f-ext-clear-btn {
+    margin-top: 15px !important;
+    padding: 8px 16px !important;
+    background: #e2e8f0 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    text-align: center !important;
+    font-size: 13px !important;
+}
+
+/* Для мобільних - фільтри адаптивні, не перекривають тури */
 @media (max-width: 768px) {
-    /* Кнопка відкриття */
-    .filter-open-btn {
-        display: block !important;
-        position: fixed !important;
-        bottom: 20px !important;
-        right: 20px !important;
-        z-index: 9999 !important;
-        background: #d12389 !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 50px !important;
-        padding: 12px 24px !important;
-        font-size: 14px !important;
-        font-weight: 600 !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
-        cursor: pointer !important;
-    }
-
-    /* Контейнер фільтрів */
     .new_f-ext-container {
-        position: fixed !important;
-        top: auto !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        max-height: 80vh !important;
-        overflow-y: auto !important;
-        background: white !important;
-        border-radius: 20px 20px 0 0 !important;
-        z-index: 10000 !important;
-        transform: translateY(100%) !important;
-        transition: transform 0.3s ease !important;
-        padding: 20px !important;
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.2) !important;
-        margin: 0 !important;
-        display: block !important;
-    }
-
-    .new_f-ext-container.open {
-        transform: translateY(0) !important;
-    }
-
-    /* Заголовок */
-    .new_f-ext-container .new_f-dropdown-body-top {
-        display: block !important;
-        font-size: 18px !important;
-        font-weight: 600 !important;
-        padding-bottom: 15px !important;
-        margin-bottom: 15px !important;
-        border-bottom: 1px solid #eee !important;
-        color: #333 !important;
         position: relative !important;
+        top: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        transform: none !important;
+        max-height: none !important;
+        padding: 15px !important;
+        margin: 15px 0 !important;
+        border-radius: 12px !important;
     }
 
-    /* Кнопка закриття */
-    .new_f-ext-container .new_f-dropdown-body-close {
-        display: block !important;
-        position: absolute !important;
-        top: 0 !important;
-        right: 0 !important;
-        font-size: 28px !important;
-        cursor: pointer !important;
-        color: #666 !important;
+    /* Колонки фільтрів в ряд на мобільних */
+    .new_f-ext-col {
+        width: 100% !important;
+        margin-bottom: 20px !important;
     }
 
-    /* Кнопки внизу */
-    .new_f-ext-container .new_f-dropdown-body-bottom {
+    .new_f-ext-body {
         display: flex !important;
-        gap: 10px !important;
-        margin-top: 20px !important;
-        padding-top: 15px !important;
-        border-top: 1px solid #eee !important;
-    }
-
-    .new_f-ext-container .new_f-dropdown-bottom-btn {
-        flex: 1 !important;
-        text-align: center !important;
-        padding: 12px !important;
-        border-radius: 10px !important;
-        font-weight: 600 !important;
-        cursor: pointer !important;
-    }
-
-    .new_f-ext-container .new_f-dropdown-btn-cancel {
-        background: #f1f5f9 !important;
-        color: #333 !important;
-    }
-
-    .new_f-ext-container .new_f-dropdown-btn-apply {
-        background: #d12389 !important;
-        color: white !important;
-    }
-
-    /* Відступ для турів */
-    .new_r-container {
-        padding-bottom: 80px !important;
+        flex-direction: column !important;
     }
 }
 </style>
-
-<script>
-// ========== МОБІЛЬНІ ФІЛЬТРИ ==========
-(function() {
-    if (window.innerWidth > 768) return;
-
-    let attempts = 0;
-    const interval = setInterval(function() {
-        const filtersContainer = document.querySelector('.new_f-ext-container');
-
-        if (filtersContainer) {
-            clearInterval(interval);
-            console.log('✅ Фільтри знайдені');
-
-            // Додаємо заголовок
-            if (!filtersContainer.querySelector('.new_f-dropdown-body-top')) {
-                const header = document.createElement('div');
-                header.className = 'new_f-dropdown-body-top';
-                header.innerHTML = 'Фільтри <div class="new_f-dropdown-body-close">×</div>';
-                filtersContainer.insertBefore(header, filtersContainer.firstChild);
-            }
-
-            // Додаємо кнопку
-            if (!document.querySelector('.filter-open-btn')) {
-                const btn = document.createElement('button');
-                btn.className = 'filter-open-btn';
-                btn.innerHTML = '🔍 Фільтри';
-                document.body.appendChild(btn);
-                btn.onclick = () => filtersContainer.classList.add('open');
-            }
-
-            // Закриття
-            const closeBtn = filtersContainer.querySelector('.new_f-dropdown-body-close');
-            if (closeBtn) closeBtn.onclick = () => filtersContainer.classList.remove('open');
-
-            const cancelBtn = filtersContainer.querySelector('.new_f-dropdown-btn-cancel');
-            if (cancelBtn) cancelBtn.onclick = () => filtersContainer.classList.remove('open');
-
-            const applyBtn = filtersContainer.querySelector('.new_f-dropdown-btn-apply');
-            if (applyBtn) applyBtn.onclick = () => setTimeout(() => filtersContainer.classList.remove('open'), 500);
-        }
-
-        attempts++;
-        if (attempts > 30) clearInterval(interval);
-    }, 500);
-})();
-</script>
 {% endblock %}
