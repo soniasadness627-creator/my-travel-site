@@ -607,11 +607,157 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 })();
 </script>
+<!-- ========== АДАПТИВНІ ФІЛЬТРИ ДЛЯ МОБІЛЬНИХ ========== -->
 <style>
+/* ========== ФІЛЬТРИ - АДАПТИВНІ, НЕ ПЕРЕКРИВАЮТЬ ТУРИ ========== */
+
+/* Основний контейнер модуля пошуку - обмежуємо ширину */
+#otpusk-search-module {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+/* Контейнер фільтрів */
+.new_f-ext-container {
+    display: block !important;
+    background: #f8f9fa !important;
+    border-radius: 16px !important;
+    padding: 15px !important;
+    margin: 15px 0 !important;
+    border: 1px solid #e2e8f0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: auto !important;
+}
+
+/* Сітка фільтрів */
+.new_f-ext-body {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 15px !important;
+}
+
+.new_f-ext-col {
+    flex: 1 !important;
+    min-width: 180px !important;
+    background: white !important;
+    padding: 10px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+}
+
+/* Заголовки */
+.new_f-ext-bl-title {
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    margin-bottom: 8px !important;
+    color: #333 !important;
+    padding-bottom: 5px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Чекбокси - вертикально, компактно */
+.new_f-ext-bl-body {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+}
+
+.new_f-ext-bl-body label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 12px !important;
+    cursor: pointer !important;
+    margin: 0 !important;
+}
+
+/* Кнопка очищення */
+.new_f-ext-clear-btn {
+    background: #e2e8f0 !important;
+    padding: 8px 15px !important;
+    border-radius: 8px !important;
+    font-size: 12px !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+    margin-top: 10px !important;
+    text-align: center !important;
+}
+
+/* Ховаємо непотрібні елементи */
+.new_f-ext-btn-container,
+.new_f-ext-btn,
+.new_f-dropdown-body-top,
+.new_f-dropdown-body-bottom,
+.filter-open-btn {
+    display: none !important;
+}
+
+/* Слайдери */
+.slider-container {
+    min-width: 140px !important;
+}
+
+/* МОБІЛЬНА ВЕРСІЯ - 2 КОЛОНКИ, КОМПАКТНО */
 @media (max-width: 768px) {
     .new_f-ext-container {
-        display: none !important;
+        padding: 10px !important;
+        margin: 10px 0 !important;
+        overflow-x: hidden !important;
     }
+
+    /* 2 колонки на мобільних */
+    .new_f-ext-body {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    .new_f-ext-col {
+        min-width: 0 !important;
+        padding: 8px !important;
+        margin: 0 !important;
+    }
+
+    .new_f-ext-bl-title {
+        font-size: 12px !important;
+        margin-bottom: 6px !important;
+    }
+
+    .new_f-ext-bl-body label {
+        font-size: 11px !important;
+        gap: 4px !important;
+    }
+
+    .new_f-ext-clear-btn {
+        grid-column: span 2 !important;
+        padding: 6px 12px !important;
+        font-size: 11px !important;
+    }
+}
+
+/* Для дуже маленьких екранів - 1 колонка */
+@media (max-width: 480px) {
+    .new_f-ext-body {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+
+    .new_f-ext-clear-btn {
+        grid-column: span 1 !important;
+    }
+}
+
+/* Забезпечуємо, щоб тури були видимі */
+.new_r-container,
+.new_r-wrapper {
+    width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+.new_r-item {
+    max-width: 100% !important;
+    overflow: hidden !important;
 }
 </style>
 {% endblock %}
