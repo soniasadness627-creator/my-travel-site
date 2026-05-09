@@ -3782,56 +3782,58 @@ setTimeout(function() {
     }
 }
 </style>
-<style>
-/* ========== ПРИХОВУЄМО МОДАЛЬНЕ ВІКНО ДО НАТИСКАННЯ КНОПКИ "ЩЕ" ========== */
-.new_t-modal-wrap {
-    display: none !important;
-}
-
-/* Показуємо тільки коли активне */
-.new_t-modal-wrap[style*="display: block"] {
-    display: flex !important;
-}
-
-@media (max-width: 768px) {
-    .new_t-modal,
-    .new_t-modal-wrap,
-    .new_t-modal-wrap[style*="display: block"] {
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        right: auto !important;
-        bottom: auto !important;
-        transform: translate(-50%, -50%) !important;
-        width: 90% !important;
-        max-width: 350px !important;
-        max-height: 85vh !important;
-        height: auto !important;
-        min-height: 400px !important;
-        border-radius: 20px !important;
-        background: white !important;
-        z-index: 10000 !important;
-        overflow: hidden !important;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
-        display: flex !important;
-        flex-direction: column !important;
+<script>
+// ========== ХОВАЄМО МОДАЛЬНЕ ВІКНО ПРИ ЗАВАНТАЖЕННІ ==========
+(function() {
+    // Знаходимо і ховаємо модальне вікно
+    function hideModal() {
+        const modal = document.querySelector('.new_t-modal-wrap');
+        if (modal) {
+            modal.style.display = 'none';
+            console.log('Модальне вікно приховано');
+        }
     }
 
-    .new_t-modal-body-middle {
-        flex: 1 !important;
-        overflow-y: auto !important;
-        padding: 15px !important;
-    }
+    // Ховаємо одразу
+    hideModal();
 
-    .new_t-date-modal-table-container {
-        overflow-x: auto !important;
-    }
+    // Спостерігаємо за змінами (якщо віджети додаються пізніше)
+    const observer = new MutationObserver(function() {
+        const modal = document.querySelector('.new_t-modal-wrap');
+        if (modal && modal.style.display !== 'none') {
+            modal.style.display = 'none';
+        }
+    });
 
-    .new_t-date-modal-table td,
-    .new_t-date-modal-table th {
-        padding: 12px 6px !important;
-        white-space: nowrap !important;
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Через 5 секунд зупиняємо спостерігач
+    setTimeout(() => observer.disconnect(), 5000);
+})();
+
+// ========== ВІДКРИВАЄМО МОДАЛКУ ТІЛЬКИ ПРИ КЛІКУ ==========
+document.addEventListener('click', function(e) {
+    // Шукаємо кнопку "Ще"
+    if (e.target.closest('.new_t-change-date') ||
+        e.target.closest('.new_t-change-people') ||
+        e.target.closest('.new_t-change-food')) {
+
+        setTimeout(function() {
+            const modal = document.querySelector('.new_t-modal-wrap');
+            if (modal) {
+                modal.style.display = 'flex';
+                // Центруємо
+                modal.style.position = 'fixed';
+                modal.style.top = '50%';
+                modal.style.left = '50%';
+                modal.style.transform = 'translate(-50%, -50%)';
+                modal.style.width = '90%';
+                modal.style.maxWidth = '350px';
+                modal.style.maxHeight = '85vh';
+                modal.style.borderRadius = '20px';
+            }
+        }, 50);
     }
-}
-</style>
+});
+</script>
 {% endblock %}
