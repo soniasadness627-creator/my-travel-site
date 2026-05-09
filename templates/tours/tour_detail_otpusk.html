@@ -3728,11 +3728,130 @@ setTimeout(function() {
     color: white !important;
 }
 </style>
+<style>
+@media (max-width: 768px) {
+    /* Збільшуємо висоту модального вікна */
+    .new_t-modal,
+    .new_t-modal-wrap {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        right: auto !important;
+        bottom: auto !important;
+        transform: translate(-50%, -50%) !important;
+        width: 90% !important;
+        max-width: 350px !important;
+        /* ЗМІНЮЄМО ВИСОТУ - робимо більше */
+        max-height: 85vh !important;
+        height: auto !important;
+        min-height: 400px !important;
+        border-radius: 20px !important;
+        background: white !important;
+        z-index: 10000 !important;
+        overflow: hidden !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* Контент, що прокручується - заповнює весь простір */
+    .new_t-modal-body-middle {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        max-height: none !important;
+        padding: 15px !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    /* Таблиця - робимо більш читабельною */
+    .new_t-date-modal-table {
+        width: 100% !important;
+        font-size: 14px !important;
+    }
+
+    .new_t-date-modal-table td,
+    .new_t-date-modal-table th {
+        padding: 12px 6px !important;
+        white-space: nowrap !important;
+    }
+
+    /* Контейнер таблиці - горизонтальна прокрутка */
+    .new_t-date-modal-table-container {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+}
+</style>
 <script>
-// ========== ПРИМУСОВЕ ВІДКРИТТЯ МОДАЛЬНИХ ВІКОН ПРИ НАТИСКАННІ "ЩЕ" ==========
+// ========== ХОВАЄМО МОДАЛЬНЕ ВІКНО ПРИ ЗАВАНТАЖЕННІ ==========
 (function() {
-    // Функція для відкриття модального вікна
-    function showModal(modal) {
+    // Знаходимо і ховаємо модальне вікно
+    function hideModal() {
+        const modal = document.querySelector('.new_t-modal-wrap');
+        if (modal) {
+            modal.style.display = 'none';
+            console.log('Модальне вікно приховано');
+        }
+    }
+
+    // Ховаємо одразу
+    hideModal();
+
+    // Спостерігаємо за змінами (якщо віджети додаються пізніше)
+    const observer = new MutationObserver(function() {
+        const modal = document.querySelector('.new_t-modal-wrap');
+        if (modal && modal.style.display !== 'none') {
+            modal.style.display = 'none';
+        }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Через 5 секунд зупиняємо спостерігач
+    setTimeout(() => observer.disconnect(), 5000);
+})();
+
+// ========== ВІДКРИВАЄМО МОДАЛКУ ТІЛЬКИ ПРИ КЛІКУ ==========
+document.addEventListener('click', function(e) {
+    // Шукаємо кнопку "Ще"
+    if (e.target.closest('.new_t-change-date') ||
+        e.target.closest('.new_t-change-people') ||
+        e.target.closest('.new_t-change-food')) {
+
+        setTimeout(function() {
+            const modal = document.querySelector('.new_t-modal-wrap');
+            if (modal) {
+                modal.style.display = 'flex';
+                // Центруємо
+                modal.style.position = 'fixed';
+                modal.style.top = '50%';
+                modal.style.left = '50%';
+                modal.style.transform = 'translate(-50%, -50%)';
+                modal.style.width = '90%';
+                modal.style.maxWidth = '350px';
+                modal.style.maxHeight = '85vh';
+                modal.style.borderRadius = '20px';
+            }
+        }, 50);
+    }
+});
+</script>
+<script>
+// ========== ПРИМУСОВЕ ВІДКРИТТЯ ТА ЗАКРИТТЯ ВСІХ МОДАЛЬНИХ ВІКОН ==========
+(function() {
+    // Функція для закриття всіх модалок
+    function closeAllModals() {
+        // Закриваємо модалку дат/харчування
+        const tourModal = document.querySelector('.new_t-modal-wrap');
+        if (tourModal) tourModal.style.display = 'none';
+
+        // Закриваємо модалку туристів
+        const peopleDropdown = document.querySelector('.new_t-change-people-dropdown');
+        if (peopleDropdown) peopleDropdown.style.display = 'none';
+    }
+
+    // Функція для відкриття модалки дат
+    function showDateModal(modal) {
         if (!modal) return;
         modal.style.display = 'flex';
         modal.style.position = 'fixed';
@@ -3748,7 +3867,6 @@ setTimeout(function() {
         modal.style.overflow = 'hidden';
         modal.style.flexDirection = 'column';
 
-        // Налаштовуємо прокрутку контенту
         const content = modal.querySelector('.new_t-modal-body-middle');
         if (content) {
             content.style.overflowY = 'auto';
@@ -3756,12 +3874,37 @@ setTimeout(function() {
             content.style.padding = '15px';
         }
 
-        // Робимо хрестик клікабельним
         const closeBtn = modal.querySelector('.new_t-modal-body-close');
         if (closeBtn) {
             closeBtn.onclick = function(e) {
                 e.preventDefault();
-                modal.style.display = 'none';
+                closeAllModals();
+            };
+        }
+    }
+
+    // Функція для відкриття модалки туристів
+    function showPeopleModal(dropdown) {
+        if (!dropdown) return;
+        dropdown.style.display = 'block';
+        dropdown.style.position = 'fixed';
+        dropdown.style.top = '50%';
+        dropdown.style.left = '50%';
+        dropdown.style.transform = 'translate(-50%, -50%)';
+        dropdown.style.width = '90%';
+        dropdown.style.maxWidth = '350px';
+        dropdown.style.maxHeight = '70vh';
+        dropdown.style.borderRadius = '20px';
+        dropdown.style.backgroundColor = 'white';
+        dropdown.style.zIndex = '100000';
+        dropdown.style.overflow = 'auto';
+
+        // Знаходимо хрестик в модалці туристів
+        const closeBtn = dropdown.querySelector('.new_f-dropdown-body-close');
+        if (closeBtn) {
+            closeBtn.onclick = function(e) {
+                e.preventDefault();
+                closeAllModals();
             };
         }
     }
@@ -3770,74 +3913,60 @@ setTimeout(function() {
     function addClickHandlers() {
         // Кнопка для дат
         const dateBtn = document.querySelector('.new_t-change-date');
-        if (dateBtn && !dateBtn.hasAttribute('data-modal-handler')) {
-            dateBtn.setAttribute('data-modal-handler', 'true');
+        if (dateBtn && !dateBtn.hasAttribute('data-fixed')) {
+            dateBtn.setAttribute('data-fixed', 'true');
             dateBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
+                closeAllModals();
                 const modal = document.querySelector('.new_t-modal-wrap');
-                if (modal) showModal(modal);
+                if (modal) showDateModal(modal);
             });
         }
 
         // Кнопка для туристів
         const peopleBtn = document.querySelector('.new_t-change-people');
-        if (peopleBtn && !peopleBtn.hasAttribute('data-modal-handler')) {
-            peopleBtn.setAttribute('data-modal-handler', 'true');
+        if (peopleBtn && !peopleBtn.hasAttribute('data-fixed')) {
+            peopleBtn.setAttribute('data-fixed', 'true');
             peopleBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                // Для туристів інша модалка
+                closeAllModals();
                 const dropdown = document.querySelector('.new_t-change-people-dropdown');
-                if (dropdown) {
-                    dropdown.style.display = 'block';
-                    dropdown.style.position = 'fixed';
-                    dropdown.style.top = '50%';
-                    dropdown.style.left = '50%';
-                    dropdown.style.transform = 'translate(-50%, -50%)';
-                    dropdown.style.width = '90%';
-                    dropdown.style.maxWidth = '350px';
-                    dropdown.style.maxHeight = '70vh';
-                    dropdown.style.borderRadius = '20px';
-                    dropdown.style.backgroundColor = 'white';
-                    dropdown.style.zIndex = '100000';
-                    dropdown.style.overflow = 'auto';
-                }
+                if (dropdown) showPeopleModal(dropdown);
             });
         }
 
         // Кнопка для харчування
         const foodBtn = document.querySelector('.new_t-change-food');
-        if (foodBtn && !foodBtn.hasAttribute('data-modal-handler')) {
-            foodBtn.setAttribute('data-modal-handler', 'true');
+        if (foodBtn && !foodBtn.hasAttribute('data-fixed')) {
+            foodBtn.setAttribute('data-fixed', 'true');
             foodBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
+                closeAllModals();
                 const modal = document.querySelector('.new_t-modal-wrap');
-                if (modal) showModal(modal);
+                if (modal) showDateModal(modal);
             });
         }
     }
 
-    // Запускаємо пошук кнопок кожну секунду (бо вони можуть з'явитися пізніше)
+    // Додаємо закриття для кнопок "Відміна" та "Застосувати" в модалці туристів
+    document.addEventListener('click', function(e) {
+        if (e.target.classList && e.target.classList.contains('new_f-dropdown-btn-cancel')) {
+            closeAllModals();
+        }
+        if (e.target.classList && e.target.classList.contains('new_f-dropdown-btn-apply')) {
+            setTimeout(closeAllModals, 300);
+        }
+    });
+
+    // Запускаємо пошук кнопок
     setInterval(addClickHandlers, 1000);
     setTimeout(addClickHandlers, 500);
 
-    // Додаємо закриття по кліку на хрестик в модалці туристів
-    document.addEventListener('click', function(e) {
-        if (e.target.classList && e.target.classList.contains('new_f-dropdown-body-close')) {
-            const dropdown = document.querySelector('.new_t-change-people-dropdown');
-            if (dropdown) dropdown.style.display = 'none';
-        }
-        if (e.target.classList && e.target.classList.contains('new_f-dropdown-btn-cancel')) {
-            const dropdown = document.querySelector('.new_t-change-people-dropdown');
-            if (dropdown) dropdown.style.display = 'none';
-        }
-        if (e.target.classList && e.target.classList.contains('new_f-dropdown-btn-apply')) {
-            const dropdown = document.querySelector('.new_t-change-people-dropdown');
-            if (dropdown) dropdown.style.display = 'none';
-        }
-    });
+    // Приховуємо всі модалки при завантаженні
+    closeAllModals();
 })();
 </script>
 {% endblock %}
