@@ -3756,6 +3756,8 @@ setTimeout(function() {
             modal.style.zIndex = '100000';
             modal.style.overflow = 'hidden';
             modal.style.flexDirection = 'column';
+            modal.style.right = 'auto';
+            modal.style.bottom = 'auto';
         }
     }
 
@@ -3763,18 +3765,121 @@ setTimeout(function() {
         closeAllModals();
         const modal = document.querySelector('.new_t-change-people-dropdown');
         if (modal) {
-            modal.style.display = 'block';
-            modal.style.position = 'fixed';
-            modal.style.top = '50%';
-            modal.style.left = '50%';
-            modal.style.transform = 'translate(-50%, -50%)';
-            modal.style.width = '90%';
-            modal.style.maxWidth = '350px';
-            modal.style.maxHeight = '70vh';
-            modal.style.borderRadius = '20px';
-            modal.style.backgroundColor = 'white';
-            modal.style.zIndex = '100000';
-            modal.style.overflow = 'auto';
+            // Перебиваємо всі стилі, які можуть конфліктувати
+            modal.style.cssText = `
+                display: block !important;
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                right: auto !important;
+                bottom: auto !important;
+                transform: translate(-50%, -50%) !important;
+                width: 90% !important;
+                max-width: 360px !important;
+                max-height: 70vh !important;
+                height: auto !important;
+                min-height: auto !important;
+                border-radius: 20px !important;
+                background-color: white !important;
+                z-index: 100000 !important;
+                overflow: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
+            `;
+
+            // Переконуємося, що внутрішній контент має правильну ширину
+            const wrap = modal.querySelector('.new_f-dropdown-body-wrap');
+            if (wrap) {
+                wrap.style.cssText = `
+                    display: flex !important;
+                    flex-direction: column !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                `;
+            }
+
+            const list = modal.querySelector('.new_f-dropdown-list');
+            if (list) {
+                list.style.cssText = `
+                    flex: 1 !important;
+                    overflow-y: auto !important;
+                    padding: 10px !important;
+                `;
+            }
+
+            const top = modal.querySelector('.new_f-dropdown-body-top');
+            if (top) {
+                top.style.cssText = `
+                    background: var(--primary-color) !important;
+                    color: white !important;
+                    padding: 15px !important;
+                    font-weight: bold !important;
+                    position: sticky !important;
+                    top: 0 !important;
+                    z-index: 10 !important;
+                    display: flex !important;
+                    justify-content: space-between !important;
+                    align-items: center !important;
+                `;
+            }
+
+            const closeBtn = modal.querySelector('.new_f-dropdown-body-close');
+            if (closeBtn) {
+                closeBtn.style.cssText = `
+                    cursor: pointer !important;
+                    width: 30px !important;
+                    height: 30px !important;
+                    background: rgba(255,255,255,0.2) !important;
+                    border-radius: 50% !important;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    font-size: 20px !important;
+                `;
+            }
+
+            const bottom = modal.querySelector('.new_f-dropdown-body-bottom');
+            if (bottom) {
+                bottom.style.cssText = `
+                    display: flex !important;
+                    gap: 10px !important;
+                    padding: 15px !important;
+                    border-top: 1px solid #eee !important;
+                    position: sticky !important;
+                    bottom: 0 !important;
+                    background: white !important;
+                `;
+            }
+
+            const cancelBtn = modal.querySelector('.new_f-dropdown-btn-cancel');
+            if (cancelBtn) {
+                cancelBtn.style.cssText = `
+                    flex: 1 !important;
+                    background: #f1f5f9 !important;
+                    border: none !important;
+                    padding: 12px !important;
+                    border-radius: 8px !important;
+                    cursor: pointer !important;
+                    text-align: center !important;
+                    color: #333 !important;
+                `;
+            }
+
+            const applyBtn = modal.querySelector('.new_f-dropdown-btn-apply');
+            if (applyBtn) {
+                applyBtn.style.cssText = `
+                    flex: 1 !important;
+                    background: var(--primary-color) !important;
+                    border: none !important;
+                    padding: 12px !important;
+                    border-radius: 8px !important;
+                    cursor: pointer !important;
+                    text-align: center !important;
+                    color: white !important;
+                `;
+            }
         }
     }
 
@@ -3834,18 +3939,136 @@ setTimeout(function() {
 
 <style>
 /* ========== СТИЛІ ДЛЯ МОДАЛЬНИХ ВІКОН ========== */
-.new_t-modal-wrap,
+
+/* Перебиваємо всі конфліктні стилі Otpusk */
 .new_t-change-people-dropdown {
+    display: none !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90% !important;
+    max-width: 360px !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: 70vh !important;
+    background: white !important;
+    border-radius: 20px !important;
+    z-index: 100000 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
+}
+
+/* Коли модалка активна - показуємо */
+.new_t-change-people-dropdown[style*="display: block"] {
+    display: block !important;
+}
+
+/* Стилі для внутрішніх елементів */
+.new_t-change-people-dropdown .new_f-dropdown-body-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+}
+
+.new_t-change-people-dropdown .new_f-dropdown-list {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding: 15px !important;
+}
+
+.new_t-change-people-dropdown .new_f-people-list {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+}
+
+.new_t-change-people-dropdown .new_f-people-item {
+    width: calc(25% - 10px) !important;
+    text-align: center !important;
+    padding: 10px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+}
+
+.new_t-change-people-dropdown .new_f-people-item.active {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Хрестик закриття */
+.new_t-change-people-dropdown .new_f-dropdown-body-close {
+    cursor: pointer !important;
+    width: 30px !important;
+    height: 30px !important;
+    background: rgba(255,255,255,0.2) !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 20px !important;
+}
+
+/* Кнопки внизу */
+.new_t-change-people-dropdown .new_f-dropdown-body-bottom {
+    display: flex !important;
+    gap: 10px !important;
+    padding: 15px !important;
+    border-top: 1px solid #e2e8f0 !important;
+    background: white !important;
+}
+
+.new_t-change-people-dropdown .new_f-dropdown-btn-cancel {
+    flex: 1 !important;
+    background: #f1f5f9 !important;
+    border: none !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    text-align: center !important;
+    color: #333 !important;
+}
+
+.new_t-change-people-dropdown .new_f-dropdown-btn-apply {
+    flex: 1 !important;
+    background: var(--primary-color) !important;
+    border: none !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    text-align: center !important;
+    color: white !important;
+}
+
+/* Модалка дат */
+.new_t-modal-wrap {
     display: none !important;
 }
 
-.new_t-modal-wrap[style*="display: flex"],
-.new_t-change-people-dropdown[style*="display: block"] {
+.new_t-modal-wrap[style*="display: flex"] {
     display: flex !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90% !important;
+    max-width: 350px !important;
+    max-height: 85vh !important;
+    background: white !important;
+    border-radius: 20px !important;
+    z-index: 100000 !important;
+    overflow: hidden !important;
+    flex-direction: column !important;
 }
 
-.new_t-modal-body-close,
-.new_f-dropdown-body-close {
+.new_t-modal-body-close {
     cursor: pointer !important;
     width: 32px !important;
     height: 32px !important;
