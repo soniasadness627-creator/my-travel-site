@@ -3729,53 +3729,154 @@ setTimeout(function() {
 }
 </style>
 <script>
-// ПРОСТИЙ ФІКС ДЛЯ КНОПКИ "ЩЕ"
+// ========== ПРАВИЛЬНИЙ ФІКС ДЛЯ МОДАЛЬНОГО ВІКНА (ТІЛЬКИ ПРИ КЛІКУ) ==========
 (function() {
-    // Шукаємо оригінальну функцію і перевизначаємо
-    const originalAddEvent = window.addEventListener;
+    // Знаходимо СВОЮ кнопку "Ще" (яка в блоці дат)
+    let realMoreButton = null;
 
-    // Функція яка буде показувати модалку правильно
-    function showModalCorrectly() {
-        const modal = document.querySelector('[class*="new_t-modal"]');
-        if (modal && modal.style) {
-            modal.style.display = 'block';
+    // Функція для пошуку правильної кнопки
+    function findRealMoreButton() {
+        // Шукаємо кнопку в блоці дат
+        const dateBlock = document.querySelector('.new_t-date-col');
+        if (dateBlock) {
+            const btn = dateBlock.querySelector('.new_t-change, .new_t-change-people, [class*="change"]');
+            if (btn) return btn;
+        }
+        // Альтернативний пошук
+        return document.querySelector('.new_t-change-people, .new_t-change-date');
+    }
+
+    // Функція для правильної позиції модалки (без білого екрану)
+    function fixModalPosition() {
+        const modal = document.querySelector('.new_t-modal, .new_t-modal-wrap');
+        if (modal && modal.style.display === 'block') {
+            // Не чіпаємо стилі, тільки позицію
             modal.style.position = 'fixed';
-            modal.style.top = '60px';
+            modal.style.top = 'auto';
             modal.style.bottom = '0';
             modal.style.left = '0';
             modal.style.right = '0';
-            modal.style.backgroundColor = 'white';
-            modal.style.zIndex = '10000';
+            modal.style.maxHeight = '80vh';
             modal.style.borderRadius = '20px 20px 0 0';
+            modal.style.overflowY = 'auto';
+            modal.style.zIndex = '10000';
         }
     }
 
-    // Шукаємо всі кнопки "Ще" і додаємо обробник
-    function fixAllMoreButtons() {
-        const allButtons = document.querySelectorAll('.new_t-change-people, .new_t-change-date, [class*="change-people"], [class*="change-date"]');
-        allButtons.forEach(btn => {
-            if (!btn.hasAttribute('data-fixed')) {
-                btn.setAttribute('data-fixed', 'true');
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setTimeout(showModalCorrectly, 50);
-                });
-            }
-        });
+    // Додаємо обробник на реальну кнопку
+    function addClickListener() {
+        const btn = findRealMoreButton();
+        if (btn && !btn.hasAttribute('data-modal-fixed')) {
+            btn.setAttribute('data-modal-fixed', 'true');
+
+            // Зберігаємо оригінальний обробник
+            const originalClick = btn.onclick;
+
+            btn.addEventListener('click', function(e) {
+                // Не перешкоджаємо оригінальній події
+                setTimeout(fixModalPosition, 100);
+                setTimeout(fixModalPosition, 300);
+            });
+            console.log('✅ Кнопка "Ще" знайдена та налаштована');
+            return true;
+        }
+        return false;
     }
 
-    // Запускаємо
-    setInterval(fixAllMoreButtons, 2000);
-    setTimeout(fixAllMoreButtons, 500);
-
-    // Додаємо закриття на хрестик
+    // Закриття модалки по хрестику
     document.addEventListener('click', function(e) {
+        // Якщо клікнули на хрестик
         if (e.target.classList && e.target.classList.contains('new_t-modal-body-close')) {
-            const modal = document.querySelector('[class*="new_t-modal"]');
-            if (modal) modal.style.display = 'none';
+            const modal = document.querySelector('.new_t-modal, .new_t-modal-wrap');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Якщо клікнули на затемнення
+        if (e.target.classList && e.target.classList.contains('modal-backdrop')) {
+            const modal = document.querySelector('.new_t-modal, .new_t-modal-wrap');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) backdrop.remove();
         }
     });
+
+    // Запускаємо пошук кнопки кілька разів
+    setTimeout(addClickListener, 1000);
+    setTimeout(addClickListener, 2000);
+    setTimeout(addClickListener, 3000);
+
+    // Спостерігаємо за появою модалки, щоб поправити позицію
+    const modalObserver = new MutationObserver(function() {
+        const modal = document.querySelector('.new_t-modal, .new_t-modal-wrap');
+        if (modal && modal.style.display === 'block') {
+            fixModalPosition();
+        }
+    });
+    modalObserver.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['style'] });
+
+    // ВИДАЛЯЄМО АВТОМАТИЧНИЙ КЛІК, ЯКИЙ ВІДКРИВАЄ МОДАЛКУ ПРИ ЗАВАНТАЖЕННІ
+    // Знаходимо і відключаємо той setTimeout, який виконує findAndClick
+    const originalSetTimeout = window.setTimeout;
+    window.setTimeout = function(fn, delay) {
+        // Блокуємо автоматичний клік по кнопці "Ще" при завантаженні
+        if (delay === 2000 && fn.toString().includes('findAndClick')) {
+            console.log('🚫 Автоматичний клік по кнопці "Ще" заблоковано');
+            return 0;
+        }
+        return originalSetTimeout(fn, delay);
+    };
 })();
 </script>
+
+<style>
+/* ========== СТИЛІ ДЛЯ МОДАЛЬНОГО ВІКНА НА МОБІЛЬНИХ (ТІЛЬКИ ПРИ ВІДКРИТТІ) ========== */
+@media (max-width: 768px) {
+    .new_t-modal,
+    .new_t-modal-wrap {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: auto !important;
+        max-height: 80vh !important;
+        border-radius: 20px 20px 0 0 !important;
+        background: white !important;
+        z-index: 10000 !important;
+        overflow-y: auto !important;
+        transform: translateY(0) !important;
+    }
+
+    /* Хрестик закриття */
+    .new_t-modal-body-close {
+        position: sticky !important;
+        top: 10px !important;
+        float: right !important;
+        width: 36px !important;
+        height: 36px !important;
+        background: var(--primary-color) !important;
+        color: white !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 24px !important;
+        cursor: pointer !important;
+        z-index: 10001 !important;
+        margin: 10px 15px 0 0 !important;
+        border: none !important;
+    }
+
+    /* Контент, що прокручується */
+    .new_t-modal-body-middle {
+        max-height: calc(80vh - 60px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 20px !important;
+    }
+}
+</style>
 {% endblock %}
