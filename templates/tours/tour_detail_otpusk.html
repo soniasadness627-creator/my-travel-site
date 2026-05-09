@@ -3728,5 +3728,246 @@ setTimeout(function() {
     color: white !important;
 }
 </style>
+<!-- ========== ФІКС ДЛЯ МОБІЛЬНИХ МОДАЛЬНИХ ВІКОН (iPhone 393px) ========== -->
+<style>
+@media (max-width: 480px) {
+    /* Опускаємо кнопки "Ще" вниз */
+    .new_t-change-btn.new_t-change-people,
+    .new_t-change-btn.new_t-change-date,
+    .new_t-change-btn.new_t-change-food {
+        top: auto !important;
+        bottom: 0 !important;
+        position: relative !important;
+        margin-top: 10px !important;
+    }
 
+    /* Модальне вікно для туристів */
+    .new_f-dropdown-body {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: auto !important;
+        max-height: 70vh !important;
+        border-radius: 20px 20px 0 0 !important;
+        background: white !important;
+        z-index: 100000 !important;
+        overflow-y: auto !important;
+        transform: translateY(0) !important;
+        box-shadow: 0 -2px 20px rgba(0,0,0,0.15) !important;
+    }
+
+    /* Заголовок модального вікна */
+    .new_f-dropdown-body-top {
+        position: sticky !important;
+        top: 0 !important;
+        background: var(--primary-color) !important;
+        color: white !important;
+        padding: 15px !important;
+        font-weight: 600 !important;
+        z-index: 10 !important;
+        border-radius: 20px 20px 0 0 !important;
+    }
+
+    /* Хрестик закриття */
+    .new_f-dropdown-body-close {
+        position: absolute !important;
+        top: 12px !important;
+        right: 15px !important;
+        width: 32px !important;
+        height: 32px !important;
+        background: rgba(255,255,255,0.2) !important;
+        color: white !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 22px !important;
+        cursor: pointer !important;
+        z-index: 1000001 !important;
+    }
+
+    /* Контент з прокруткою */
+    .new_f-dropdown-list {
+        max-height: calc(70vh - 120px) !important;
+        overflow-y: auto !important;
+        padding: 15px !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    /* Кнопки внизу */
+    .new_f-dropdown-body-bottom {
+        position: sticky !important;
+        bottom: 0 !important;
+        background: white !important;
+        padding: 12px !important;
+        border-top: 1px solid #e2e8f0 !important;
+        display: flex !important;
+        gap: 10px !important;
+        z-index: 10 !important;
+    }
+
+    .new_f-dropdown-body-bottom .new_f-dropdown-btn-cancel,
+    .new_f-dropdown-body-bottom .new_f-dropdown-btn-apply {
+        flex: 1 !important;
+        padding: 12px !important;
+        border-radius: 8px !important;
+        text-align: center !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+    }
+
+    .new_f-dropdown-body-bottom .new_f-dropdown-btn-apply {
+        background: var(--primary-color) !important;
+        color: white !important;
+        border: none !important;
+    }
+
+    .new_f-dropdown-body-bottom .new_f-dropdown-btn-cancel {
+        background: #f1f5f9 !important;
+        color: #64748b !important;
+        border: none !important;
+    }
+
+    /* Список віку дітей */
+    .new_f-children-accordion-body {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 10px 0 !important;
+    }
+
+    .new_f-children-age-item {
+        width: calc(20% - 8px) !important;
+        padding: 10px !important;
+        text-align: center !important;
+        background: #f8fafc !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+    }
+
+    .new_f-children-age-item.active {
+        background: var(--primary-color) !important;
+        color: white !important;
+    }
+}
+</style>
+
+<script>
+// ========== ФІКС ДЛЯ ВІДКРИТТЯ І ЗАКРИТТЯ МОДАЛОК НА МОБІЛЬНИХ ==========
+(function() {
+    // Функція для закриття всіх модальних вікон
+    function closeAllModals() {
+        // Закриваємо модалку з туристами
+        const peopleModal = document.querySelector('.new_t-change-people-dropdown');
+        if (peopleModal) {
+            peopleModal.style.display = 'none';
+        }
+        // Закриваємо інші модалки
+        const otherModals = document.querySelectorAll('.new_f-dropdown-body, .new_t-modal-wrap');
+        otherModals.forEach(modal => {
+            if (modal.style.display === 'block') {
+                modal.style.display = 'none';
+            }
+        });
+    }
+
+    // Додаємо обробник на всі кнопки "Ще"
+    function fixMoreButtons() {
+        const buttons = document.querySelectorAll('.new_t-change-people, .new_t-change-date, .new_t-change-food');
+        buttons.forEach(btn => {
+            if (btn.hasAttribute('data-fixed')) return;
+            btn.setAttribute('data-fixed', 'true');
+
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Закриваємо інші модалки перед відкриттям
+                closeAllModals();
+
+                // Знаходимо відповідну модалку
+                let modal = null;
+                if (btn.classList.contains('new_t-change-people')) {
+                    modal = document.querySelector('.new_t-change-people-dropdown');
+                } else if (btn.classList.contains('new_t-change-date')) {
+                    modal = document.querySelector('.new_t-date-modal-wrap, .new_t-modal-wrap');
+                } else if (btn.classList.contains('new_t-change-food')) {
+                    modal = document.querySelector('.new_t-modal-wrap');
+                }
+
+                if (modal) {
+                    setTimeout(() => {
+                        modal.style.display = 'block';
+                        // Прокручуємо до модалки
+                        modal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 50);
+                }
+            });
+        });
+    }
+
+    // Додаємо обробник на хрестики закриття
+    function fixCloseButtons() {
+        const closeButtons = document.querySelectorAll('.new_f-dropdown-body-close, .new_t-modal-body-close');
+        closeButtons.forEach(btn => {
+            btn.removeEventListener('click', closeAllModals);
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                closeAllModals();
+            });
+        });
+    }
+
+    // Додаємо обробник на кнопки "Відміна" та "Застосувати"
+    function fixActionButtons() {
+        const cancelBtns = document.querySelectorAll('.new_f-dropdown-btn-cancel');
+        const applyBtns = document.querySelectorAll('.new_f-dropdown-btn-apply');
+
+        cancelBtns.forEach(btn => {
+            btn.removeEventListener('click', closeAllModals);
+            btn.addEventListener('click', closeAllModals);
+        });
+
+        applyBtns.forEach(btn => {
+            btn.removeEventListener('click', closeAllModals);
+            btn.addEventListener('click', closeAllModals);
+        });
+    }
+
+    // Спостерігаємо за змінами в DOM
+    const observer = new MutationObserver(() => {
+        fixMoreButtons();
+        fixCloseButtons();
+        fixActionButtons();
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Запускаємо початкову ініціалізацію
+    setTimeout(() => {
+        fixMoreButtons();
+        fixCloseButtons();
+        fixActionButtons();
+    }, 1000);
+
+    // Свайп вниз для закриття на мобільних
+    let touchStartY = 0;
+    document.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        const diff = e.touches[0].clientY - touchStartY;
+        if (diff > 80) {
+            const activeModal = document.querySelector('.new_f-dropdown-body[style*="display: block"], .new_t-modal-wrap[style*="display: block"]');
+            if (activeModal) {
+                closeAllModals();
+                touchStartY = 0;
+            }
+        }
+    });
+})();
+</script>
 {% endblock %}
