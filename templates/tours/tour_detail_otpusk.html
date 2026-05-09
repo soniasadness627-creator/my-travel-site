@@ -3729,61 +3729,88 @@ setTimeout(function() {
 }
 </style>
 <style>
-/* ========== ФІКС ДЛЯ МОДАЛЬНОГО ВІКНА "ДАТИ ТА ТРИВАЛІСТЬ" ========== */
-/* Працює так само, як з мапою та відгуками */
+/* ========== МОДАЛЬНЕ ВІКНО ПО ЦЕНТРУ НА МОБІЛЬНИХ ========== */
+@media (max-width: 768px) {
+    /* Центруємо модальне вікно */
+    .new_t-modal,
+    .new_t-modal-wrap {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        right: auto !important;
+        bottom: auto !important;
+        transform: translate(-50%, -50%) !important;
+        width: 90% !important;
+        max-width: 350px !important;
+        max-height: 80vh !important;
+        border-radius: 20px !important;
+        background: white !important;
+        z-index: 10000 !important;
+        overflow: hidden !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
+    }
 
-/* Опускаємо основне модальне вікно вниз на 60px */
-.new_t-modal,
-.new_t-modal-wrap {
-    top: 60px !important;
-    bottom: auto !important;
-    left: 0 !important;
-    right: 0 !important;
-    height: auto !important;
-    max-height: calc(100% - 60px) !important;
-    border-radius: 20px 20px 0 0 !important;
-    overflow-y: auto !important;
-}
+    /* Затемнення фону */
+    .new_t-modal::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: -1;
+    }
 
-/* Робимо хрестик закриття таким самим, як у мапі */
-.new_t-modal-body-close {
-    background: rgba(0, 0, 0, 0.2) !important;
-    border-radius: 50% !important;
-    width: 30px !important;
-    height: 30px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 22px !important;
-    font-weight: bold !important;
-    cursor: pointer !important;
-    color: white !important;
-    position: absolute !important;
-    top: 10px !important;
-    right: 15px !important;
-    z-index: 10 !important;
-}
+    /* Хрестик закриття */
+    .new_t-modal-body-close {
+        position: absolute !important;
+        top: 12px !important;
+        right: 12px !important;
+        width: 32px !important;
+        height: 32px !important;
+        background: var(--primary-color) !important;
+        color: white !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 20px !important;
+        cursor: pointer !important;
+        z-index: 10001 !important;
+        border: none !important;
+    }
 
-.new_t-modal-body-close:hover {
-    background: rgba(0, 0, 0, 0.4) !important;
-}
+    /* Заголовок */
+    .new_t-modal-body-top {
+        background: var(--primary-color) !important;
+        color: white !important;
+        padding: 15px !important;
+        padding-right: 50px !important;
+        font-weight: 600 !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 5 !important;
+    }
 
-/* Заголовок модалки - робимо схожим на мапу */
-.new_t-modal-body-top {
-    position: sticky !important;
-    top: 0 !important;
-    background: var(--primary-color) !important;
-    color: white !important;
-    padding: 12px 15px !important;
-    z-index: 5 !important;
-    border-radius: 20px 20px 0 0 !important;
-}
+    /* Контент з прокруткою */
+    .new_t-modal-body-middle {
+        max-height: calc(80vh - 60px) !important;
+        overflow-y: auto !important;
+        padding: 15px !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
 
-/* Контент з прокруткою */
-.new_t-modal-body-middle {
-    max-height: calc(100vh - 140px) !important;
-    overflow-y: auto !important;
-    padding: 15px !important;
+    /* Таблиця */
+    .new_t-date-modal-table {
+        font-size: 12px !important;
+        width: 100% !important;
+    }
+
+    .new_t-date-modal-table th,
+    .new_t-date-modal-table td {
+        padding: 8px 4px !important;
+    }
 }
 </style>
 {% endblock %}
