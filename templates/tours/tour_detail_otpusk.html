@@ -3783,63 +3783,9 @@ setTimeout(function() {
 }
 </style>
 <script>
-// ========== ХОВАЄМО МОДАЛЬНЕ ВІКНО ПРИ ЗАВАНТАЖЕННІ ==========
+// ========== ЄДИНИЙ ПРАВИЛЬНИЙ ФІКС ДЛЯ ВСІХ МОДАЛЬНИХ ВІКОН ==========
 (function() {
-    // Знаходимо і ховаємо модальне вікно
-    function hideModal() {
-        const modal = document.querySelector('.new_t-modal-wrap');
-        if (modal) {
-            modal.style.display = 'none';
-            console.log('Модальне вікно приховано');
-        }
-    }
-
-    // Ховаємо одразу
-    hideModal();
-
-    // Спостерігаємо за змінами (якщо віджети додаються пізніше)
-    const observer = new MutationObserver(function() {
-        const modal = document.querySelector('.new_t-modal-wrap');
-        if (modal && modal.style.display !== 'none') {
-            modal.style.display = 'none';
-        }
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // Через 5 секунд зупиняємо спостерігач
-    setTimeout(() => observer.disconnect(), 5000);
-})();
-
-// ========== ВІДКРИВАЄМО МОДАЛКУ ТІЛЬКИ ПРИ КЛІКУ ==========
-document.addEventListener('click', function(e) {
-    // Шукаємо кнопку "Ще"
-    if (e.target.closest('.new_t-change-date') ||
-        e.target.closest('.new_t-change-people') ||
-        e.target.closest('.new_t-change-food')) {
-
-        setTimeout(function() {
-            const modal = document.querySelector('.new_t-modal-wrap');
-            if (modal) {
-                modal.style.display = 'flex';
-                // Центруємо
-                modal.style.position = 'fixed';
-                modal.style.top = '50%';
-                modal.style.left = '50%';
-                modal.style.transform = 'translate(-50%, -50%)';
-                modal.style.width = '90%';
-                modal.style.maxWidth = '350px';
-                modal.style.maxHeight = '85vh';
-                modal.style.borderRadius = '20px';
-            }
-        }, 50);
-    }
-});
-</script>
-<script>
-// ========== ПРОСТИЙ ФІКС ДЛЯ ВСІХ МОДАЛЬНИХ ВІКОН ==========
-(function() {
-    // Закриваємо всі модальні вікна
+    // Функція для закриття всіх модалок
     function closeAllModals() {
         const dateModal = document.querySelector('.new_t-modal-wrap');
         if (dateModal) dateModal.style.display = 'none';
@@ -3848,7 +3794,7 @@ document.addEventListener('click', function(e) {
         if (peopleModal) peopleModal.style.display = 'none';
     }
 
-    // Відкриваємо модалку дат
+    // Функція для відкриття модалки дат/харчування
     function openDateModal() {
         closeAllModals();
         const modal = document.querySelector('.new_t-modal-wrap');
@@ -3864,11 +3810,12 @@ document.addEventListener('click', function(e) {
             modal.style.borderRadius = '20px';
             modal.style.backgroundColor = 'white';
             modal.style.zIndex = '100000';
-            modal.style.overflow = 'auto';
+            modal.style.overflow = 'hidden';
+            modal.style.flexDirection = 'column';
         }
     }
 
-    // Відкриваємо модалку туристів
+    // Функція для відкриття модалки туристів
     function openPeopleModal() {
         closeAllModals();
         const modal = document.querySelector('.new_t-change-people-dropdown');
@@ -3889,32 +3836,37 @@ document.addEventListener('click', function(e) {
     }
 
     // Додаємо обробники на кнопки
-    const dateBtn = document.querySelector('.new_t-change-date');
-    const peopleBtn = document.querySelector('.new_t-change-people');
-    const foodBtn = document.querySelector('.new_t-change-food');
+    function addHandlers() {
+        const dateBtn = document.querySelector('.new_t-change-date');
+        const peopleBtn = document.querySelector('.new_t-change-people');
+        const foodBtn = document.querySelector('.new_t-change-food');
 
-    if (dateBtn) {
-        dateBtn.onclick = function(e) {
-            e.preventDefault();
-            openDateModal();
-        };
+        if (dateBtn && !dateBtn.hasAttribute('data-fixed')) {
+            dateBtn.setAttribute('data-fixed', 'true');
+            dateBtn.onclick = function(e) {
+                e.preventDefault();
+                openDateModal();
+            };
+        }
+
+        if (peopleBtn && !peopleBtn.hasAttribute('data-fixed')) {
+            peopleBtn.setAttribute('data-fixed', 'true');
+            peopleBtn.onclick = function(e) {
+                e.preventDefault();
+                openPeopleModal();
+            };
+        }
+
+        if (foodBtn && !foodBtn.hasAttribute('data-fixed')) {
+            foodBtn.setAttribute('data-fixed', 'true');
+            foodBtn.onclick = function(e) {
+                e.preventDefault();
+                openDateModal();
+            };
+        }
     }
 
-    if (peopleBtn) {
-        peopleBtn.onclick = function(e) {
-            e.preventDefault();
-            openPeopleModal();
-        };
-    }
-
-    if (foodBtn) {
-        foodBtn.onclick = function(e) {
-            e.preventDefault();
-            openDateModal();
-        };
-    }
-
-    // Закриття через хрестик
+    // Закриття через хрестик та кнопки
     document.addEventListener('click', function(e) {
         if (e.target.classList && (
             e.target.classList.contains('new_t-modal-body-close') ||
@@ -3923,7 +3875,6 @@ document.addEventListener('click', function(e) {
             closeAllModals();
         }
 
-        // Закриття через кнопки "Відміна" та "Застосувати"
         if (e.target.classList && (
             e.target.classList.contains('new_f-dropdown-btn-cancel') ||
             e.target.classList.contains('new_f-dropdown-btn-apply')
@@ -3934,29 +3885,31 @@ document.addEventListener('click', function(e) {
 
     // Приховуємо всі модалки при завантаженні
     closeAllModals();
+
+    // Шукаємо кнопки кожну секунду (бо вони можуть з'явитися пізніше)
+    setInterval(addHandlers, 1000);
+    setTimeout(addHandlers, 500);
 })();
 </script>
 
 <style>
 /* ========== СТИЛІ ДЛЯ МОДАЛЬНИХ ВІКОН ========== */
-.new_t-modal-wrap {
-    display: none !important;
-}
-
+.new_t-modal-wrap,
 .new_t-change-people-dropdown {
     display: none !important;
 }
 
-/* Коли модалка активна - показуємо */
-.new_t-modal-wrap[style*="display: flex"],
-.new_t-change-people-dropdown[style*="display: block"] {
-    display: flex !important;
-}
-
-/* Хрестик закриття */
 .new_t-modal-body-close,
 .new_f-dropdown-body-close {
     cursor: pointer !important;
+    width: 32px !important;
+    height: 32px !important;
+    background: var(--primary-color) !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
 }
 </style>
 {% endblock %}
