@@ -3728,128 +3728,33 @@ setTimeout(function() {
     color: white !important;
 }
 </style>
-// ========== ПРИМУСОВЕ ВІДКРИТТЯ МОДАЛЬНИХ ВІКОН ==========
+<script>
+// ========== ФІКС ТІЛЬКИ ДЛЯ ПУСТОГО ВІКНА (НЕ ЧІПАЄМО РОБОЧІ МОДАЛКИ) ==========
 (function() {
-    // Функція для відкриття модального вікна (дати/харчування)
-    function showModal(modal) {
-        if (!modal) return;
-        modal.style.display = 'flex';
-        modal.style.position = 'fixed';
-        modal.style.top = '50%';
-        modal.style.left = '50%';
-        modal.style.transform = 'translate(-50%, -50%)';
-        modal.style.width = '90%';
-        modal.style.maxWidth = '350px';
-        modal.style.maxHeight = '85vh';
-        modal.style.borderRadius = '20px';
-        modal.style.backgroundColor = 'white';
-        modal.style.zIndex = '100000';
-        modal.style.overflow = 'hidden';
-        modal.style.flexDirection = 'column';
+    // Знаходимо пусту модалку, яка заважає
+    const emptyModal = document.querySelector('.new_t-modal-wrap');
 
-        const content = modal.querySelector('.new_t-modal-body-middle');
-        if (content) {
-            content.style.overflowY = 'auto';
-            content.style.flex = '1';
-            content.style.padding = '15px';
-        }
-
-        const closeBtn = modal.querySelector('.new_t-modal-body-close');
-        if (closeBtn) {
-            closeBtn.onclick = function(e) {
-                e.preventDefault();
-                modal.style.display = 'none';
-            };
+    // Якщо пуста модалка існує і вона порожня - ховаємо її назавжди
+    if (emptyModal) {
+        // Перевіряємо чи це пуста модалка (без корисного контенту)
+        const hasUsefulContent = emptyModal.querySelector('.new_t-date-modal-table');
+        if (!hasUsefulContent) {
+            emptyModal.style.display = 'none';
+            // Також видаляємо її з DOM, щоб не заважала
+            // emptyModal.remove(); // якщо хочете повністю видалити - розкоментуйте
         }
     }
 
-    // Функція для відкриття модалки туристів
-    function showPeopleModal(dropdown) {
-        if (!dropdown) return;
-        dropdown.style.display = 'block';
-        dropdown.style.position = 'fixed';
-        dropdown.style.top = '50%';
-        dropdown.style.left = '50%';
-        dropdown.style.transform = 'translate(-50%, -50%)';
-        dropdown.style.width = '90%';
-        dropdown.style.maxWidth = '350px';
-        dropdown.style.maxHeight = '70vh';
-        dropdown.style.borderRadius = '20px';
-        dropdown.style.backgroundColor = 'white';
-        dropdown.style.zIndex = '100000';
-        dropdown.style.overflow = 'auto';
-
-        const closeBtn = dropdown.querySelector('.new_f-dropdown-body-close');
-        if (closeBtn) {
-            closeBtn.onclick = function(e) {
-                e.preventDefault();
-                dropdown.style.display = 'none';
-            };
-        }
-    }
-
-    function addClickHandlers() {
-        const dateBtn = document.querySelector('.new_t-change-date');
-        if (dateBtn && !dateBtn.hasAttribute('data-modal-handler')) {
-            dateBtn.setAttribute('data-modal-handler', 'true');
-            dateBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const modal = document.querySelector('.new_t-modal-wrap');
-                if (modal) showModal(modal);
-            });
-        }
-
-        const peopleBtn = document.querySelector('.new_t-change-people');
-        if (peopleBtn && !peopleBtn.hasAttribute('data-modal-handler')) {
-            peopleBtn.setAttribute('data-modal-handler', 'true');
-            peopleBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const dropdown = document.querySelector('.new_t-change-people-dropdown');
-                if (dropdown) showPeopleModal(dropdown);
-            });
-        }
-
-        const foodBtn = document.querySelector('.new_t-change-food');
-        if (foodBtn && !foodBtn.hasAttribute('data-modal-handler')) {
-            foodBtn.setAttribute('data-modal-handler', 'true');
-            foodBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const modal = document.querySelector('.new_t-modal-wrap');
-                if (modal) showModal(modal);
-            });
-        }
-    }
-
-    addClickHandlers();
-    setInterval(addClickHandlers, 1000);
-    setTimeout(addClickHandlers, 500);
-
-    document.addEventListener('click', function(e) {
-        if (e.target.classList && e.target.classList.contains('new_f-dropdown-btn-cancel')) {
-            const dropdown = document.querySelector('.new_t-change-people-dropdown');
-            if (dropdown) dropdown.style.display = 'none';
-        }
-        if (e.target.classList && e.target.classList.contains('new_f-dropdown-btn-apply')) {
-            const dropdown = document.querySelector('.new_t-change-people-dropdown');
-            if (dropdown) dropdown.style.display = 'none';
-        }
-    });
+    // Не чіпаємо кнопки "Ще" - вони працюють нормально
+    // Не додаємо свої обробники - не заважаємо оригінальним
 })();
 </script>
 
 <style>
-/* ========== СТИЛІ ДЛЯ МОДАЛЬНИХ ВІКОН ========== */
-.new_t-modal-wrap,
-.new_t-change-people-dropdown {
+/* Тільки ховаємо пусту модалку, якщо вона з'являється */
+.new_t-modal-wrap:empty,
+.new_t-modal-wrap:has(.new_t-modal-body:empty) {
     display: none !important;
-}
-
-.new_t-modal-body-close,
-.new_f-dropdown-body-close {
-    cursor: pointer !important;
 }
 </style>
 {% endblock %}
