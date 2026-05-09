@@ -3729,9 +3729,8 @@ setTimeout(function() {
 }
 </style>
 <style>
-/* ========== МОДАЛЬНЕ ВІКНО ПО ЦЕНТРУ НА МОБІЛЬНИХ ========== */
 @media (max-width: 768px) {
-    /* Центруємо модальне вікно */
+    /* Збільшуємо висоту модального вікна */
     .new_t-modal,
     .new_t-modal-wrap {
         position: fixed !important;
@@ -3742,74 +3741,44 @@ setTimeout(function() {
         transform: translate(-50%, -50%) !important;
         width: 90% !important;
         max-width: 350px !important;
-        max-height: 80vh !important;
+        /* ЗМІНЮЄМО ВИСОТУ - робимо більше */
+        max-height: 85vh !important;
+        height: auto !important;
+        min-height: 400px !important;
         border-radius: 20px !important;
         background: white !important;
         z-index: 10000 !important;
         overflow: hidden !important;
         box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
-    }
-
-    /* Затемнення фону */
-    .new_t-modal::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: -1;
-    }
-
-    /* Хрестик закриття */
-    .new_t-modal-body-close {
-        position: absolute !important;
-        top: 12px !important;
-        right: 12px !important;
-        width: 32px !important;
-        height: 32px !important;
-        background: var(--primary-color) !important;
-        color: white !important;
-        border-radius: 50% !important;
         display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-size: 20px !important;
-        cursor: pointer !important;
-        z-index: 10001 !important;
-        border: none !important;
+        flex-direction: column !important;
     }
 
-    /* Заголовок */
-    .new_t-modal-body-top {
-        background: var(--primary-color) !important;
-        color: white !important;
-        padding: 15px !important;
-        padding-right: 50px !important;
-        font-weight: 600 !important;
-        position: sticky !important;
-        top: 0 !important;
-        z-index: 5 !important;
-    }
-
-    /* Контент з прокруткою */
+    /* Контент, що прокручується - заповнює весь простір */
     .new_t-modal-body-middle {
-        max-height: calc(80vh - 60px) !important;
+        flex: 1 !important;
         overflow-y: auto !important;
+        max-height: none !important;
         padding: 15px !important;
         -webkit-overflow-scrolling: touch !important;
     }
 
-    /* Таблиця */
+    /* Таблиця - робимо більш читабельною */
     .new_t-date-modal-table {
-        font-size: 12px !important;
         width: 100% !important;
+        font-size: 14px !important;
     }
 
-    .new_t-date-modal-table th,
-    .new_t-date-modal-table td {
-        padding: 8px 4px !important;
+    .new_t-date-modal-table td,
+    .new_t-date-modal-table th {
+        padding: 12px 6px !important;
+        white-space: nowrap !important;
+    }
+
+    /* Контейнер таблиці - горизонтальна прокрутка */
+    .new_t-date-modal-table-container {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
     }
 }
 </style>
