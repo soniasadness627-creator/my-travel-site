@@ -2217,15 +2217,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    setTimeout(function findAndClick() {
-        const btn = document.querySelector('.new_t-change-people');
-        if (btn) {
-            btn.click();
-            console.log('Клік по кнопці "Ще" виконано');
-        } else {
-            setTimeout(findAndClick, 1000);
-        }
-    }, 2000);
+
 });
 
 function initLightbox() {
@@ -3833,7 +3825,7 @@ setTimeout(function() {
 </script>
 
 <style>
-/* ========== СТИЛІ ДЛЯ МОДАЛЬНОГО ВІКНА НА МОБІЛЬНИХ (ВИПРАВЛЕНО) ========== */
+/* ========== СТИЛІ ДЛЯ МОДАЛЬНОГО ВІКНА НА МОБІЛЬНИХ (ТІЛЬКИ ПРИ ВІДКРИТТІ) ========== */
 @media (max-width: 768px) {
     .new_t-modal,
     .new_t-modal-wrap {
@@ -3842,13 +3834,12 @@ setTimeout(function() {
         left: 0 !important;
         right: 0 !important;
         top: auto !important;
-        max-height: 70vh !important;  /* Зменшено з 80vh до 70vh */
+        max-height: 80vh !important;
         border-radius: 20px 20px 0 0 !important;
         background: white !important;
         z-index: 10000 !important;
         overflow-y: auto !important;
         transform: translateY(0) !important;
-        padding-bottom: 70px !important; /* Додаємо місце для кнопок внизу */
     }
 
     /* Хрестик закриття */
@@ -3873,75 +3864,276 @@ setTimeout(function() {
 
     /* Контент, що прокручується */
     .new_t-modal-body-middle {
-        max-height: calc(60vh) !important; /* Обмежуємо висоту */
+        max-height: calc(80vh - 60px) !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
         padding-bottom: 20px !important;
     }
-
-    /* Фіксуємо кнопки "Застосувати" та "Відміна" внизу */
-    .new_t-modal-body-bottom {
-        position: sticky !important;
+}
+</style>
+<style>
+/* ========== ВИПРАВЛЕННЯ ДЛЯ ВСІХ МОДАЛЬНИХ ВІКОН ========== */
+@media (max-width: 768px) {
+    /* Всі модальні вікна */
+    .new_t-modal-wrap,
+    .new_t-modal {
+        position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
         right: 0 !important;
+        top: auto !important;
+        max-height: 65vh !important;
+        border-radius: 20px 20px 0 0 !important;
         background: white !important;
-        padding: 15px !important;
-        border-top: 1px solid #e2e8f0 !important;
+        z-index: 10000 !important;
+        overflow: hidden !important;
         display: flex !important;
-        gap: 10px !important;
-        z-index: 10002 !important;
-    }
-
-    .new_t-modal-body-bottom .new_f-dropdown-btn-apply,
-    .new_t-modal-body-bottom .new_f-dropdown-btn-cancel {
-        flex: 1 !important;
-        padding: 12px !important;
-        border-radius: 8px !important;
-        text-align: center !important;
-        font-weight: 600 !important;
-    }
-
-    .new_t-modal-body-bottom .new_f-dropdown-btn-apply {
-        background: var(--primary-color) !important;
-        color: white !important;
-        border: none !important;
-    }
-
-    .new_t-modal-body-bottom .new_f-dropdown-btn-cancel {
-        background: #f1f5f9 !important;
-        color: #64748b !important;
-        border: none !important;
-    }
-
-    /* Контейнер з датами */
-    .new_t-date-modal-table-container {
-        padding: 10px !important;
-        overflow-x: auto !important;
-    }
-
-    /* Таблиця */
-    .new_t-date-modal-table {
-        font-size: 12px !important;
-        width: 100% !important;
-    }
-
-    .new_t-date-modal-table th,
-    .new_t-date-modal-table td {
-        padding: 8px 4px !important;
-        white-space: nowrap !important;
+        flex-direction: column !important;
     }
 
     /* Заголовок модалки */
     .new_t-modal-body-top {
         position: sticky !important;
         top: 0 !important;
-        background: white !important;
+        background: var(--primary-color) !important;
+        color: white !important;
         padding: 15px !important;
         font-weight: 600 !important;
-        border-bottom: 1px solid #e2e8f0 !important;
-        z-index: 5 !important;
+        z-index: 10 !important;
+        border-radius: 20px 20px 0 0 !important;
+    }
+
+    /* Контент, що прокручується */
+    .new_t-modal-body-middle {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 15px !important;
+        max-height: calc(65vh - 120px) !important;
+    }
+
+    /* Хрестик закриття */
+    .new_t-modal-body-close {
+        position: absolute !important;
+        top: 12px !important;
+        right: 15px !important;
+        width: 32px !important;
+        height: 32px !important;
+        background: rgba(255,255,255,0.2) !important;
+        color: white !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 20px !important;
+        cursor: pointer !important;
+        z-index: 10001 !important;
+        border: none !important;
+    }
+
+    /* Кнопки внизу */
+    .new_t-modal-body-bottom,
+    .new_f-dropdown-btn-apply,
+    .new_f-dropdown-btn-cancel {
+        position: sticky !important;
+        bottom: 0 !important;
+        background: white !important;
+        padding: 12px !important;
+        border-top: 1px solid #e2e8f0 !important;
+        z-index: 10 !important;
+    }
+
+    /* Таблиця з датами - горизонтальний скрол */
+    .new_t-date-modal-table-container {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .new_t-date-modal-table {
+        min-width: 500px !important;
+        font-size: 12px !important;
+    }
+
+    .new_t-date-modal-table th,
+    .new_t-date-modal-table td {
+        padding: 10px 8px !important;
+        white-space: nowrap !important;
+    }
+
+    /* Таблиця з номерами та харчуванням */
+    .new_t-modal-table-container {
+        overflow-x: auto !important;
+    }
+
+    .new_t-modal-table {
+        width: 100% !important;
+        font-size: 13px !important;
+    }
+
+    .new_t-modal-table td,
+    .new_t-modal-table th {
+        padding: 12px 8px !important;
+    }
+
+    /* Стрілки навігації */
+    .new_t-date-change {
+        width: 28px !important;
+        height: 28px !important;
+        background: rgba(0,0,0,0.5) !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .new_t-date-change svg {
+        width: 14px !important;
+        height: 14px !important;
+        fill: white !important;
     }
 }
 </style>
+
+<script>
+// ========== УНІВЕРСАЛЬНИЙ ФІКС ДЛЯ ВСІХ МОДАЛЬНИХ ВІКОН ==========
+(function() {
+    // Функція для виправлення позиції модалки
+    function fixModal(modal) {
+        if (!modal) return;
+
+        // Встановлюємо правильні стилі
+        modal.style.position = 'fixed';
+        modal.style.bottom = '0';
+        modal.style.left = '0';
+        modal.style.right = '0';
+        modal.style.top = 'auto';
+        modal.style.maxHeight = '65vh';
+        modal.style.borderRadius = '20px 20px 0 0';
+        modal.style.backgroundColor = 'white';
+        modal.style.zIndex = '10000';
+        modal.style.overflow = 'hidden';
+        modal.style.display = 'flex';
+        modal.style.flexDirection = 'column';
+
+        // Знаходимо контент і налаштовуємо прокрутку
+        const content = modal.querySelector('.new_t-modal-body-middle');
+        if (content) {
+            content.style.overflowY = 'auto';
+            content.style.flex = '1';
+            content.style.maxHeight = 'calc(65vh - 120px)';
+            content.style.padding = '15px';
+        }
+
+        // Робимо хрестик клікабельним
+        const closeBtn = modal.querySelector('.new_t-modal-body-close');
+        if (closeBtn) {
+            closeBtn.style.position = 'absolute';
+            closeBtn.style.top = '12px';
+            closeBtn.style.right = '15px';
+            closeBtn.style.width = '32px';
+            closeBtn.style.height = '32px';
+            closeBtn.style.background = 'rgba(255,255,255,0.2)';
+            closeBtn.style.borderRadius = '50%';
+            closeBtn.style.display = 'flex';
+            closeBtn.style.alignItems = 'center';
+            closeBtn.style.justifyContent = 'center';
+            closeBtn.style.cursor = 'pointer';
+            closeBtn.style.zIndex = '10001';
+            closeBtn.style.border = 'none';
+
+            // Додаємо обробник закриття
+            closeBtn.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                modal.style.display = 'none';
+            };
+        }
+    }
+
+    // Спостерігаємо за появою модальних вікон
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1) {
+                    // Перевіряємо чи це модальне вікно
+                    let modal = null;
+                    if (node.classList && node.classList.contains('new_t-modal-wrap')) {
+                        modal = node;
+                    } else if (node.querySelector) {
+                        modal = node.querySelector('.new_t-modal-wrap');
+                    }
+
+                    if (modal && modal.style.display !== 'none') {
+                        setTimeout(function() {
+                            fixModal(modal);
+                        }, 50);
+                    }
+                }
+            });
+        });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Також перевіряємо вже існуючі модалки
+    setInterval(function() {
+        const modals = document.querySelectorAll('.new_t-modal-wrap');
+        modals.forEach(function(modal) {
+            if (modal.style.display !== 'none') {
+                fixModal(modal);
+            }
+        });
+    }, 500);
+})();
+</script>
+
+<script>
+// ========== ПЕРЕХОПЛЮЄМО КНОПКУ "ЩЕ" ДЛЯ ТУРИСТІВ ==========
+(function() {
+    function fixMoreButtons() {
+        // Шукаємо всі кнопки "Ще"
+        const buttons = document.querySelectorAll('.new_t-change-people, .new_t-change, [class*="change-people"]');
+
+        buttons.forEach(function(btn) {
+            if (btn.getAttribute('data-fixed')) return;
+            btn.setAttribute('data-fixed', 'true');
+
+            btn.addEventListener('click', function(e) {
+                // Даємо час на відкриття модалки
+                setTimeout(function() {
+                    const modal = document.querySelector('.new_t-modal-wrap');
+                    if (modal) {
+                        modal.style.display = 'block';
+                        fixModalPosition(modal);
+                    }
+                }, 100);
+            });
+        });
+    }
+
+    function fixModalPosition(modal) {
+        modal.style.position = 'fixed';
+        modal.style.bottom = '0';
+        modal.style.left = '0';
+        modal.style.right = '0';
+        modal.style.top = 'auto';
+        modal.style.maxHeight = '65vh';
+        modal.style.borderRadius = '20px 20px 0 0';
+        modal.style.backgroundColor = 'white';
+        modal.style.zIndex = '10000';
+        modal.style.overflow = 'hidden';
+        modal.style.display = 'flex';
+        modal.style.flexDirection = 'column';
+
+        const content = modal.querySelector('.new_t-modal-body-middle');
+        if (content) {
+            content.style.overflowY = 'auto';
+            content.style.maxHeight = 'calc(65vh - 120px)';
+        }
+    }
+
+    setInterval(fixMoreButtons, 1000);
+    setTimeout(fixMoreButtons, 500);
+})();
+</script>
 {% endblock %}
