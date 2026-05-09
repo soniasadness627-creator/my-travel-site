@@ -3728,5 +3728,133 @@ setTimeout(function() {
     color: white !important;
 }
 </style>
+<style>
+/* ========== ФІКС МОДАЛЬНОГО ВІКНА ДЛЯ МОБІЛЬНИХ (ДАТИ ТА ТРИВАЛІСТЬ) ========== */
+@media (max-width: 768px) {
+    /* Основний контейнер модалки - опускаємо трохи вниз */
+    .new_t-modal,
+    .new_t-modal-wrap,
+    div[class*="new_t-modal"][style*="position: fixed"] {
+        top: 60px !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        position: fixed !important;
+        height: auto !important;
+        max-height: calc(100vh - 60px) !important;
+        border-radius: 20px 20px 0 0 !important;
+        background: white !important;
+        z-index: 10000 !important;
+        overflow-y: auto !important;
+    }
 
+    /* Контент всередині модалки */
+    .new_t-modal-body,
+    .new_t-modal-body-middle {
+        overflow-y: auto !important;
+        max-height: calc(100vh - 140px) !important;
+        padding-bottom: 20px !important;
+    }
+
+    /* Заголовок модалки */
+    .new_t-modal-body-top {
+        position: sticky !important;
+        top: 0 !important;
+        background: white !important;
+        padding: 15px !important;
+        z-index: 5 !important;
+        border-bottom: 1px solid #eee !important;
+        font-weight: 600 !important;
+    }
+
+    /* Хрестик закриття - робимо більшим та видимим */
+    .new_t-modal-body-close,
+    .new_t-modal-header .close,
+    div[class*="modal-close"] {
+        position: fixed !important;
+        top: 70px !important;
+        right: 15px !important;
+        width: 40px !important;
+        height: 40px !important;
+        background: var(--primary-color) !important;
+        color: white !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 24px !important;
+        font-weight: bold !important;
+        cursor: pointer !important;
+        z-index: 10001 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+    }
+
+    /* Стрілки навігації в модалці */
+    .new_t-date-change {
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        width: 32px !important;
+        height: 32px !important;
+        background: rgba(0,0,0,0.5) !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .new_t-date-change svg {
+        width: 16px !important;
+        height: 16px !important;
+        fill: white !important;
+    }
+
+    /* Таблиця з датами */
+    .new_t-date-modal-table {
+        font-size: 12px !important;
+    }
+
+    .new_t-date-modal-table th,
+    .new_t-date-modal-table td {
+        padding: 10px 6px !important;
+    }
+
+    /* Забезпечуємо прокрутку */
+    .new_t-modal-body-middle {
+        max-height: calc(100vh - 120px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+}
+
+/* Для дуже маленьких екранів (до 480px) */
+@media (max-width: 480px) {
+    .new_t-modal,
+    .new_t-modal-wrap,
+    div[class*="new_t-modal"][style*="position: fixed"] {
+        top: 50px !important;
+        max-height: calc(100vh - 50px) !important;
+    }
+
+    .new_t-modal-body-close {
+        top: 60px !important;
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 20px !important;
+    }
+
+    .new_t-date-modal-table th,
+    .new_t-date-modal-table td {
+        padding: 8px 4px !important;
+        font-size: 11px !important;
+    }
+
+    .new_t-head-nights {
+        font-size: 11px !important;
+    }
+
+    .new_t-head-days {
+        font-size: 10px !important;
+    }
+}
+</style>
 {% endblock %}
