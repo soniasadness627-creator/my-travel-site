@@ -3705,4 +3705,27 @@ setTimeout(function() {
     setTimeout(updateAllPrices, 5000);
 })();
 </script>
+<style>
+/* ========== КОЛІР ПРИ НАВЕДЕННІ НА SELECT ========== */
+#searchDeparture:hover,
+#searchNights:hover,
+#searchAdults:hover {
+    border-color: var(--primary-color) !important;
+}
+
+#searchDeparture:focus,
+#searchNights:focus,
+#searchAdults:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(209, 35, 137, 0.2) !important;
+}
+
+/* Колір вибраної опції */
+#searchDeparture option:checked,
+#searchNights option:checked,
+#searchAdults option:checked {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+</style>
 {% endblock %}
