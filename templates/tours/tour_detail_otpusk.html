@@ -3739,8 +3739,6 @@ setTimeout(function() {
     function closeAllModals() {
         if (dateModal) dateModal.style.display = 'none';
         if (peopleModal) peopleModal.style.display = 'none';
-        // Розблоковуємо прокрутку сторінки
-        document.body.style.overflow = '';
     }
 
     // Функція відкриття модалки з датами
@@ -3759,8 +3757,6 @@ setTimeout(function() {
             dateModal.style.zIndex = '100000';
             dateModal.style.borderRadius = '20px';
             dateModal.style.overflow = 'auto';
-            // Блокуємо прокрутку сторінки
-            document.body.style.overflow = 'hidden';
         }
     }
 
@@ -3781,8 +3777,6 @@ setTimeout(function() {
             peopleModal.style.borderRadius = '20px';
             peopleModal.style.overflow = 'auto';
             peopleModal.style.padding = '0';
-            // Блокуємо прокрутку сторінки
-            document.body.style.overflow = 'hidden';
         }
     }
 
@@ -3858,7 +3852,7 @@ setTimeout(function() {
     display: none !important;
 }
 
-/* Стилі для контенту модалки туристів - щоб все було видно */
+/* Стилі для контенту модалки туристів */
 .new_t-change-people-dropdown .new_f-dropdown-list {
     display: block !important;
     max-height: none !important;
