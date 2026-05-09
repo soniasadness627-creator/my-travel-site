@@ -2217,15 +2217,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    setTimeout(function findAndClick() {
-        const btn = document.querySelector('.new_t-change-people');
-        if (btn) {
-            btn.click();
-            console.log('Клік по кнопці "Ще" виконано');
-        } else {
-            setTimeout(findAndClick, 1000);
-        }
-    }, 2000);
+
 });
 
 function initLightbox() {
