@@ -3728,31 +3728,63 @@ setTimeout(function() {
     color: white !important;
 }
 </style>
-<!-- ========== ПРОСТИЙ ФІКС ДЛЯ МОДАЛЬНИХ ВІКОН ========== -->
+<script>
+// ========== ВИМИКАЄМО АВТОМАТИЧНЕ ВІДКРИТТЯ МОДАЛКИ ==========
+(function() {
+    // Знаходимо і вимикаємо автоматичний клік по кнопці "Ще"
+    const originalSetTimeout = window.setTimeout;
+    window.setTimeout = function(fn, delay) {
+        // Блокуємо саме той setTimeout, який викликає findAndClick
+        if (fn.toString().includes('findAndClick') ||
+            (delay === 2000 && fn.toString().includes('.new_t-change-people'))) {
+            console.log('❌ Автоматичний клік по кнопці "Ще" заблоковано');
+            return 0;
+        }
+        return originalSetTimeout(fn, delay);
+    };
+
+    // Також перехоплюємо сам click подію при завантаженні
+    document.addEventListener('DOMContentLoaded', function() {
+        // Шукаємо і видаляємо атрибут, який може викликати автоматичне відкриття
+        const moreBtn = document.querySelector('.new_t-change-people');
+        if (moreBtn) {
+            // Вимикаємо автоматичний клік
+            moreBtn.removeAttribute('data-auto-click');
+        }
+    });
+})();
+</script>
+
 <style>
+/* ========== ВИПРАВЛЕННЯ ПОЗИЦІЇ МОДАЛЬНОГО ВІКНА ========== */
 @media (max-width: 768px) {
-    /* Зміщуємо модальне вікно вниз на 80px від верхнього краю */
-    .new_t-change-people-dropdown,
+    /* Модальне вікно - прибираємо автоматичне відкриття, тільки при кліку */
     .new_f-dropdown-body,
-    .new_t-modal-wrap,
-    .new_t-modal {
-        top: 80px !important;
+    .new_t-change-people-dropdown {
+        top: 100px !important;
         bottom: auto !important;
         left: 10px !important;
         right: 10px !important;
-        width: auto !important;
-        max-height: calc(100vh - 100px) !important;
+        max-height: calc(100vh - 120px) !important;
         border-radius: 20px !important;
-        overflow-y: auto !important;
         position: fixed !important;
         z-index: 100000 !important;
         background: white !important;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.2) !important;
+        display: none !important; /* За замовчуванням закрита */
+    }
+
+    /* Коли відкрита - показуємо */
+    .new_f-dropdown-body[style*="display: block"],
+    .new_t-change-people-dropdown[style*="display: block"] {
+        display: block !important;
     }
 
     /* Хрестик закриття */
-    .new_f-dropdown-body-close,
-    .new_t-modal-body-close {
+    .new_f-dropdown-body-close {
+        position: sticky !important;
+        top: 10px !important;
+        float: right !important;
         width: 36px !important;
         height: 36px !important;
         background: var(--primary-color) !important;
@@ -3761,19 +3793,28 @@ setTimeout(function() {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        font-size: 24px !important;
+        font-size: 22px !important;
         cursor: pointer !important;
-        float: right !important;
         margin: 10px !important;
+        z-index: 10 !important;
     }
 
-    /* Прокрутка контенту */
-    .new_f-dropdown-list,
-    .new_t-modal-body-middle {
-        max-height: calc(100vh - 180px) !important;
+    /* Кнопки внизу */
+    .new_f-dropdown-body-bottom {
+        position: sticky !important;
+        bottom: 0 !important;
+        background: white !important;
+        padding: 12px !important;
+        border-top: 1px solid #eee !important;
+        display: flex !important;
+        gap: 10px !important;
+    }
+
+    /* Прокрутка */
+    .new_f-dropdown-list {
+        max-height: calc(100vh - 200px) !important;
         overflow-y: auto !important;
         padding: 15px !important;
-        -webkit-overflow-scrolling: touch !important;
     }
 }
 </style>
