@@ -3728,35 +3728,31 @@ setTimeout(function() {
     color: white !important;
 }
 </style>
-<!-- ========== ФІКС ДЛЯ МОБІЛЬНИХ - ОПУСКАЄМО МОДАЛЬНЕ ВІКНО ========== -->
+<!-- ========== ПРОСТИЙ ФІКС ДЛЯ МОДАЛЬНИХ ВІКОН ========== -->
 <style>
 @media (max-width: 768px) {
-    /* Опускаємо модальне вікно для кнопки "Ще" */
+    /* Зміщуємо модальне вікно вниз на 80px від верхнього краю */
+    .new_t-change-people-dropdown,
     .new_f-dropdown-body,
-    .new_t-change-people-dropdown {
-        top: 80px !important;
-        bottom: auto !important;
-        max-height: calc(100vh - 100px) !important;
-        border-radius: 20px !important;
-        overflow-y: auto !important;
-    }
-
-    /* Також для модалок дат та харчування */
     .new_t-modal-wrap,
     .new_t-modal {
         top: 80px !important;
         bottom: auto !important;
+        left: 10px !important;
+        right: 10px !important;
+        width: auto !important;
         max-height: calc(100vh - 100px) !important;
         border-radius: 20px !important;
         overflow-y: auto !important;
+        position: fixed !important;
+        z-index: 100000 !important;
+        background: white !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
     }
 
-    /* Робимо хрестик більш помітним та клікабельним */
+    /* Хрестик закриття */
     .new_f-dropdown-body-close,
     .new_t-modal-body-close {
-        position: sticky !important;
-        top: 10px !important;
-        float: right !important;
         width: 36px !important;
         height: 36px !important;
         background: var(--primary-color) !important;
@@ -3767,16 +3763,17 @@ setTimeout(function() {
         justify-content: center !important;
         font-size: 24px !important;
         cursor: pointer !important;
-        margin: 5px 10px 0 0 !important;
-        z-index: 100001 !important;
+        float: right !important;
+        margin: 10px !important;
     }
 
-    /* Контент з прокруткою */
+    /* Прокрутка контенту */
     .new_f-dropdown-list,
     .new_t-modal-body-middle {
         max-height: calc(100vh - 180px) !important;
         overflow-y: auto !important;
         padding: 15px !important;
+        -webkit-overflow-scrolling: touch !important;
     }
 }
 </style>
