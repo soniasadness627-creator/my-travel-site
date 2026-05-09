@@ -4087,53 +4087,143 @@ setTimeout(function() {
 })();
 </script>
 
-<script>
-// ========== ПЕРЕХОПЛЮЄМО КНОПКУ "ЩЕ" ДЛЯ ТУРИСТІВ ==========
-(function() {
-    function fixMoreButtons() {
-        // Шукаємо всі кнопки "Ще"
-        const buttons = document.querySelectorAll('.new_t-change-people, .new_t-change, [class*="change-people"]');
-
-        buttons.forEach(function(btn) {
-            if (btn.getAttribute('data-fixed')) return;
-            btn.setAttribute('data-fixed', 'true');
-
-            btn.addEventListener('click', function(e) {
-                // Даємо час на відкриття модалки
-                setTimeout(function() {
-                    const modal = document.querySelector('.new_t-modal-wrap');
-                    if (modal) {
-                        modal.style.display = 'block';
-                        fixModalPosition(modal);
-                    }
-                }, 100);
-            });
-        });
+<!-- ========== ПРОСТИЙ ФІКС ДЛЯ МОДАЛЬНИХ ВІКОН НА МОБІЛЬНИХ ========== -->
+<style>
+@media (max-width: 768px) {
+    /* Модальне вікно - притискаємо до низу */
+    .new_t-modal-wrap,
+    .new_t-modal {
+        position: fixed !important;
+        top: auto !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        max-height: 70vh !important;
+        border-radius: 20px 20px 0 0 !important;
+        background: #fff !important;
+        z-index: 100001 !important;
+        overflow-y: auto !important;
     }
 
-    function fixModalPosition(modal) {
-        modal.style.position = 'fixed';
-        modal.style.bottom = '0';
-        modal.style.left = '0';
-        modal.style.right = '0';
-        modal.style.top = 'auto';
-        modal.style.maxHeight = '65vh';
-        modal.style.borderRadius = '20px 20px 0 0';
-        modal.style.backgroundColor = 'white';
-        modal.style.zIndex = '10000';
-        modal.style.overflow = 'hidden';
-        modal.style.display = 'flex';
-        modal.style.flexDirection = 'column';
+    /* Заголовок */
+    .new_t-modal-body-top {
+        position: sticky !important;
+        top: 0 !important;
+        background: var(--primary-color) !important;
+        color: #fff !important;
+        padding: 15px !important;
+        z-index: 10 !important;
+    }
 
-        const content = modal.querySelector('.new_t-modal-body-middle');
-        if (content) {
-            content.style.overflowY = 'auto';
-            content.style.maxHeight = 'calc(65vh - 120px)';
+    /* Контент */
+    .new_t-modal-body-middle {
+        overflow-y: auto !important;
+        max-height: calc(70vh - 60px) !important;
+        padding: 15px !important;
+    }
+
+    /* Хрестик */
+    .new_t-modal-body-close {
+        position: sticky !important;
+        top: 10px !important;
+        float: right !important;
+        width: 36px !important;
+        height: 36px !important;
+        background: #fff !important;
+        color: var(--primary-color) !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 24px !important;
+        cursor: pointer !important;
+        z-index: 100002 !important;
+        margin: 5px 10px 0 0 !important;
+        border: 1px solid #eee !important;
+    }
+
+    /* Таблиця з датами */
+    .new_t-date-modal-table-container {
+        overflow-x: auto !important;
+    }
+
+    .new_t-date-modal-table {
+        min-width: 500px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+<script>
+(function() {
+    // Функція для закриття модалки
+    function closeModal() {
+        const modal = document.querySelector('.new_t-modal-wrap, .new_t-modal');
+        if (modal) {
+            modal.style.display = 'none';
         }
     }
 
-    setInterval(fixMoreButtons, 1000);
-    setTimeout(fixMoreButtons, 500);
+    // Додаємо обробник на хрестик
+    function addCloseHandler() {
+        const closeBtn = document.querySelector('.new_t-modal-body-close');
+        if (closeBtn) {
+            closeBtn.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                closeModal();
+            };
+        }
+    }
+
+    // Слідкуємо за появою модалки
+    const observer = new MutationObserver(function() {
+        const modal = document.querySelector('.new_t-modal-wrap, .new_t-modal');
+        if (modal && modal.style.display !== 'none') {
+            addCloseHandler();
+        }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Також додаємо закриття по кліку на фон
+    document.addEventListener('click', function(e) {
+        if (e.target.classList && e.target.classList.contains('new_t-modal-body-close')) {
+            closeModal();
+        }
+    });
+})();
+</script>
+
+<script>
+// ВИДАЛЯЄМО АВТОМАТИЧНИЙ КЛІК ПО КНОПЦІ "ЩЕ"
+(function() {
+    // Шукаємо і видаляємо setTimeout який викликає findAndClick
+    const originalSetTimeout = window.setTimeout;
+    let findAndClickBlocked = false;
+
+    window.setTimeout = function(fn, delay) {
+        // Блокуємо автоматичний клік
+        if (delay === 2000 && fn.toString().includes('findAndClick')) {
+            console.log('Автоматичний клік заблоковано');
+            return 0;
+        }
+        return originalSetTimeout(fn, delay);
+    };
+
+    // Також перехоплюємо сам click
+    document.addEventListener('click', function(e) {
+        // Якщо клік по кнопці "Ще" - нічого не блокуємо, все працює нормально
+        if (e.target.classList && e.target.classList.contains('new_t-change-people')) {
+            // Даємо час на відкриття модалки
+            setTimeout(function() {
+                const modal = document.querySelector('.new_t-modal-wrap');
+                if (modal) {
+                    modal.style.display = 'block';
+                }
+            }, 50);
+        }
+    });
 })();
 </script>
 {% endblock %}
