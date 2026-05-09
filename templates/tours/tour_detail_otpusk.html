@@ -3782,4 +3782,56 @@ setTimeout(function() {
     }
 }
 </style>
+<style>
+/* ========== ПРИХОВУЄМО МОДАЛЬНЕ ВІКНО ДО НАТИСКАННЯ КНОПКИ "ЩЕ" ========== */
+.new_t-modal-wrap {
+    display: none !important;
+}
+
+/* Показуємо тільки коли активне */
+.new_t-modal-wrap[style*="display: block"] {
+    display: flex !important;
+}
+
+@media (max-width: 768px) {
+    .new_t-modal,
+    .new_t-modal-wrap,
+    .new_t-modal-wrap[style*="display: block"] {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        right: auto !important;
+        bottom: auto !important;
+        transform: translate(-50%, -50%) !important;
+        width: 90% !important;
+        max-width: 350px !important;
+        max-height: 85vh !important;
+        height: auto !important;
+        min-height: 400px !important;
+        border-radius: 20px !important;
+        background: white !important;
+        z-index: 10000 !important;
+        overflow: hidden !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .new_t-modal-body-middle {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        padding: 15px !important;
+    }
+
+    .new_t-date-modal-table-container {
+        overflow-x: auto !important;
+    }
+
+    .new_t-date-modal-table td,
+    .new_t-date-modal-table th {
+        padding: 12px 6px !important;
+        white-space: nowrap !important;
+    }
+}
+</style>
 {% endblock %}
