@@ -3801,49 +3801,22 @@ setTimeout(function() {
 })();
 </script>
 <style>
-/* ========== ТІЛЬКИ ДЛЯ МОБІЛЬНИХ (змінюємо ТІЛЬКИ ДАТИ/ХАРЧУВАННЯ) ========== */
+/* ========== ТІЛЬКИ ДЛЯ МОБІЛЬНИХ (МІНІМАЛЬНИЙ ВАРІАНТ) ========== */
 @media (max-width: 768px) {
-    /* Тільки для модалки дат/харчування - змінюємо розміри в мобільній версії */
     .new_t-modal-wrap {
         width: 90% !important;
         max-width: 350px !important;
-        max-height: 85vh !important;
         border-radius: 20px !important;
         position: fixed !important;
         top: 50% !important;
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
-        background: white !important;
-        z-index: 100000 !important;
-        overflow: auto !important;
     }
 }
 
-/* ДЛЯ ПК - НІЯКИХ ЗМІН! Залишаємо як є */
-/* Немає CSS для ПК - все працює в оригінальному вигляді */
-
-/* Тільки центрування на всіх пристроях (без зміни розмірів) */
-.new_t-modal-wrap {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    background: white !important;
-    z-index: 100000 !important;
-    overflow: auto !important;
-}
-
-/* Хрестик закриття - для всіх пристроїв */
+/* Хрестик закриття */
 .new_t-modal-body-close {
     cursor: pointer !important;
 }
-
-/* Кнопки в модалці */
-.new_f-dropdown-btn-cancel,
-.new_f-dropdown-btn-apply {
-    cursor: pointer !important;
-}
-
-/* БЛОК ТУРИСТІВ - НЕ ЧІПАЄМО ВЗАГАЛІ */
 </style>
 {% endblock %}
