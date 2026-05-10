@@ -3728,134 +3728,142 @@ setTimeout(function() {
     color: white !important;
 }
 </style>
-<style>
-/* ========== ФІКС ДЛЯ МОДАЛЬНИХ ВІКОН НА МОБІЛЬНИХ ========== */
-
-/* Ховаємо пусту модалку, яка заважає */
-.new_t-modal-wrap {
-    display: none !important;
-}
-
-/* Показуємо модалку тільки якщо вона має корисний контент */
-.new_t-modal-wrap:has(.new_t-date-modal-table) {
-    display: flex !important;
-}
-
-/* Для модалки туристів - показуємо нормально */
-.new_t-change-people-dropdown {
-    display: none !important;
-}
-
-.new_t-change-people-dropdown[style*="display: block"] {
-    display: block !important;
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 90% !important;
-    max-width: 350px !important;
-    max-height: 70vh !important;
-    background: white !important;
-    border-radius: 20px !important;
-    z-index: 100000 !important;
-    overflow: auto !important;
-}
-
-/* Робимо хрестик клікабельним */
-.new_f-dropdown-body-close {
-    cursor: pointer !important;
-}
-
-/* Кнопки в модалці туристів */
-.new_f-dropdown-btn-cancel,
-.new_f-dropdown-btn-apply {
-    cursor: pointer !important;
-}
-</style>
 <script>
-// ========== ВІДКРИТТЯ МОДАЛКИ ТУРИСТІВ ==========
+// ========== ПРОСТИЙ ФІКС ДЛЯ МОДАЛЬНИХ ВІКОН ==========
 (function() {
-    // Шукаємо кнопку і модалку
-    const peopleBtn = document.querySelector('.new_t-change-people');
-    const dropdown = document.querySelector('.new_t-change-people-dropdown');
+    // Знаходимо всі модалки
+    const dateModal = document.querySelector('.new_t-modal-wrap');
+    const peopleModal = document.querySelector('.new_t-change-people-dropdown');
 
-    if (peopleBtn && dropdown) {
-        // Видаляємо старі обробники
-        const newBtn = peopleBtn.cloneNode(true);
-        peopleBtn.parentNode.replaceChild(newBtn, peopleBtn);
+    // Функція закриття всіх модалок
+    function closeAllModals() {
+        if (dateModal) dateModal.style.display = 'none';
+        if (peopleModal) peopleModal.style.display = 'none';
+    }
 
-        // Додаємо новий обробник
-        newBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
+    // Функція відкриття модалки з датами
+    function openDateModal() {
+        closeAllModals();
+        if (dateModal) {
+            dateModal.style.display = 'flex';
+            dateModal.style.position = 'fixed';
+            dateModal.style.top = '50%';
+            dateModal.style.left = '50%';
+            dateModal.style.transform = 'translate(-50%, -50%)';
+            dateModal.style.width = '90%';
+            dateModal.style.maxWidth = '350px';
+            dateModal.style.maxHeight = '85vh';
+            dateModal.style.backgroundColor = 'white';
+            dateModal.style.zIndex = '100000';
+            dateModal.style.borderRadius = '20px';
+            dateModal.style.overflow = 'auto';
+        }
+    }
 
-            // Відкриваємо модалку
-            dropdown.style.display = 'block';
-            dropdown.style.position = 'fixed';
-            dropdown.style.top = '50%';
-            dropdown.style.left = '50%';
-            dropdown.style.transform = 'translate(-50%, -50%)';
-            dropdown.style.width = '90%';
-            dropdown.style.maxWidth = '350px';
-            dropdown.style.maxHeight = '70vh';
-            dropdown.style.backgroundColor = 'white';
-            dropdown.style.zIndex = '1000000';
-            dropdown.style.borderRadius = '20px';
-            dropdown.style.overflow = 'auto';
-            dropdown.style.padding = '0';
-        });
+    // Функція відкриття модалки з туристами
+    function openPeopleModal() {
+        closeAllModals();
+        if (peopleModal) {
+            peopleModal.style.display = 'block';
+            peopleModal.style.position = 'fixed';
+            peopleModal.style.top = '50%';
+            peopleModal.style.left = '50%';
+            peopleModal.style.transform = 'translate(-50%, -50%)';
+            peopleModal.style.width = '90%';
+            peopleModal.style.maxWidth = '350px';
+            peopleModal.style.maxHeight = '70vh';
+            peopleModal.style.backgroundColor = 'white';
+            peopleModal.style.zIndex = '100000';
+            peopleModal.style.borderRadius = '20px';
+            peopleModal.style.overflow = 'auto';
+            peopleModal.style.padding = '0';
+        }
+    }
 
-        // Закриття через хрестик
-        const closeBtn = dropdown.querySelector('.new_f-dropdown-body-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function(e) {
+    // Додаємо обробники на кнопки "Ще"
+    function addButtonHandlers() {
+        // Кнопка дат
+        const dateBtn = document.querySelector('.new_t-change-date');
+        if (dateBtn && !dateBtn.hasAttribute('data-modal-fixed')) {
+            dateBtn.setAttribute('data-modal-fixed', 'true');
+            dateBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                dropdown.style.display = 'none';
+                e.stopPropagation();
+                openDateModal();
             });
         }
 
-        // Закриття через кнопку "Відміна"
-        const cancelBtn = dropdown.querySelector('.new_f-dropdown-btn-cancel');
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', function() {
-                dropdown.style.display = 'none';
+        // Кнопка туристів
+        const peopleBtn = document.querySelector('.new_t-change-people');
+        if (peopleBtn && !peopleBtn.hasAttribute('data-modal-fixed')) {
+            peopleBtn.setAttribute('data-modal-fixed', 'true');
+            peopleBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                openPeopleModal();
             });
         }
 
-        // Закриття через кнопку "Застосувати"
-        const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
-        if (applyBtn) {
-            applyBtn.addEventListener('click', function() {
-                setTimeout(function() {
-                    dropdown.style.display = 'none';
-                }, 300);
+        // Кнопка харчування
+        const foodBtn = document.querySelector('.new_t-change-food');
+        if (foodBtn && !foodBtn.hasAttribute('data-modal-fixed')) {
+            foodBtn.setAttribute('data-modal-fixed', 'true');
+            foodBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                openDateModal();
             });
         }
     }
+
+    // Закриття по кліку на хрестик
+    document.addEventListener('click', function(e) {
+        if (e.target.classList && (
+            e.target.classList.contains('new_t-modal-body-close') ||
+            e.target.classList.contains('new_f-dropdown-body-close')
+        )) {
+            closeAllModals();
+        }
+
+        // Закриття по кнопках "Відміна" та "Застосувати"
+        if (e.target.classList && (
+            e.target.classList.contains('new_f-dropdown-btn-cancel') ||
+            e.target.classList.contains('new_f-dropdown-btn-apply')
+        )) {
+            setTimeout(closeAllModals, 100);
+        }
+    });
+
+    // Запускаємо пошук кнопок
+    addButtonHandlers();
+    setInterval(addButtonHandlers, 1000);
+
+    // Приховуємо всі модалки при завантаженні
+    closeAllModals();
 })();
 </script>
 
 <style>
-/* ========== СТИЛІ ДЛЯ ТУРИСТІВ ========== */
+/* ========== СТИЛІ ДЛЯ МОДАЛЬНИХ ВІКОН ========== */
 
-/* Ховаємо модалку за замовчуванням */
+/* Ховаємо всі модалки за замовчуванням */
+.new_t-modal-wrap,
 .new_t-change-people-dropdown {
     display: none !important;
 }
 
-/* Коли модалка відкрита - показуємо */
-.new_t-change-people-dropdown[style*="display: block"] {
+/* Стилі для контенту модалки туристів */
+.new_t-change-people-dropdown .new_f-dropdown-list {
     display: block !important;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
+    max-height: none !important;
+    overflow: visible !important;
 }
 
-/* Кнопки вибору туристів */
 .new_t-change-people-dropdown .new_f-people-list {
     display: flex !important;
     flex-wrap: wrap !important;
     gap: 10px !important;
-    margin-bottom: 20px !important;
-    padding: 15px !important;
+    margin-bottom: 15px !important;
 }
 
 .new_t-change-people-dropdown .new_f-people-item {
@@ -3874,16 +3882,47 @@ setTimeout(function() {
     border-color: var(--primary-color) !important;
 }
 
-/* Заголовок */
+/* Стилі для секції дітей */
+.new_t-change-people-dropdown .new_f-children-container {
+    margin-top: 15px !important;
+}
+
+.new_t-change-people-dropdown .new_f-children-accordion-btn {
+    background: #f8f9fa !important;
+    padding: 10px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    text-align: center !important;
+}
+
+.new_t-change-people-dropdown .new_f-children-accordion-body {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    margin-top: 10px !important;
+}
+
+.new_t-change-people-dropdown .new_f-children-age-item {
+    flex: 0 0 calc(25% - 10px) !important;
+    text-align: center !important;
+    padding: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+}
+
+/* Заголовок модалки */
 .new_t-change-people-dropdown .new_f-dropdown-body-top {
-    background: var(--primary-color) !important;
-    color: white !important;
-    padding: 15px !important;
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
+    background: var(--primary-color) !important;
+    color: white !important;
+    padding: 15px !important;
+    font-weight: bold !important;
     position: sticky !important;
     top: 0 !important;
+    z-index: 10 !important;
 }
 
 /* Хрестик */
@@ -3896,6 +3935,7 @@ setTimeout(function() {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    font-size: 20px !important;
 }
 
 /* Кнопки внизу */
@@ -3907,6 +3947,7 @@ setTimeout(function() {
     background: white !important;
     position: sticky !important;
     bottom: 0 !important;
+    z-index: 10 !important;
 }
 
 .new_f-dropdown-btn-cancel {
@@ -3916,6 +3957,7 @@ setTimeout(function() {
     padding: 12px !important;
     border-radius: 8px !important;
     cursor: pointer !important;
+    text-align: center !important;
 }
 
 .new_f-dropdown-btn-apply {
@@ -3925,6 +3967,20 @@ setTimeout(function() {
     padding: 12px !important;
     border-radius: 8px !important;
     cursor: pointer !important;
+    text-align: center !important;
+    color: white !important;
+}
+
+/* Модалка дат */
+.new_t-modal-body-close {
+    cursor: pointer !important;
+    width: 32px !important;
+    height: 32px !important;
+    background: var(--primary-color) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     color: white !important;
 }
 </style>
