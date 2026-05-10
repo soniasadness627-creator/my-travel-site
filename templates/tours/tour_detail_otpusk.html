@@ -3801,39 +3801,10 @@ setTimeout(function() {
 })();
 </script>
 <style>
-/* ========== ТІЛЬКИ ДЛЯ МОБІЛЬНИХ - ЗМІНА РОЗМІРІВ МОДАЛОК ========== */
-@media (max-width: 768px) {
-    /* Для модалки дат/харчування */
-    .new_t-modal-wrap {
-        width: 90% !important;
-        max-width: 350px !important;
-        max-height: 85vh !important;
-        border-radius: 20px !important;
-    }
+/* ========== ТІЛЬКИ ДЛЯ МОДАЛКИ ДАТ/ХАРЧУВАННЯ ========== */
 
-    /* Для модалки туристів */
-    .new_t-change-people-dropdown {
-        width: 90% !important;
-        max-width: 350px !important;
-        max-height: 70vh !important;
-        border-radius: 20px !important;
-    }
-}
-
-/* ========== ДЛЯ ПК - ОРИГІНАЛЬНІ РОЗМІРИ ========== */
-@media (min-width: 769px) {
-    .new_t-modal-wrap,
-    .new_t-change-people-dropdown {
-        width: auto !important;
-        max-width: none !important;
-        max-height: none !important;
-        border-radius: 0 !important;
-    }
-}
-
-/* Центрування для всіх пристроїв (але без зміни розмірів на ПК) */
-.new_t-modal-wrap,
-.new_t-change-people-dropdown {
+/* Центрування для всіх пристроїв */
+.new_t-modal-wrap {
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
@@ -3843,11 +3814,32 @@ setTimeout(function() {
     overflow: auto !important;
 }
 
-.new_t-modal-body-close,
-.new_f-dropdown-body-close {
+/* Для мобільних - зміна розмірів ТІЛЬКИ для дат/харчування */
+@media (max-width: 768px) {
+    .new_t-modal-wrap {
+        width: 90% !important;
+        max-width: 350px !important;
+        max-height: 85vh !important;
+        border-radius: 20px !important;
+    }
+}
+
+/* Для ПК - оригінальні розміри ТІЛЬКИ для дат/харчування */
+@media (min-width: 769px) {
+    .new_t-modal-wrap {
+        width: auto !important;
+        max-width: none !important;
+        max-height: none !important;
+        border-radius: 0 !important;
+    }
+}
+
+/* Хрестик закриття */
+.new_t-modal-body-close {
     cursor: pointer !important;
 }
 
+/* Кнопки в модалці дат/харчування */
 .new_f-dropdown-btn-cancel,
 .new_f-dropdown-btn-apply {
     cursor: pointer !important;
