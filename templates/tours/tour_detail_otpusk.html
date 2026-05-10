@@ -3761,5 +3761,39 @@ setTimeout(function() {
     const modal = document.querySelector('.new_t-modal-wrap');
     if (modal) modal.style.display = 'none';
 })();
+
 </script>
+<style>
+/* ========== ДЛЯ БЛОКУ "ТУРИСТИ" - ПРАЦЮЄ НАТИВНО, НІЧОГО НЕ ЧІПАЄМО ========== */
+/* Просто переконуємося, що модалка туристів видно і вона по центру */
+.new_t-change-people-dropdown {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90% !important;
+    max-width: 350px !important;
+    max-height: 70vh !important;
+    background: white !important;
+    border-radius: 20px !important;
+    z-index: 100000 !important;
+    overflow: auto !important;
+}
+
+/* Хрестик закриття */
+.new_f-dropdown-body-close {
+    cursor: pointer !important;
+}
+
+/* Кнопки */
+.new_f-dropdown-btn-cancel,
+.new_f-dropdown-btn-apply {
+    cursor: pointer !important;
+}
+
+/* Опції вибору туристів */
+.new_f-people-item {
+    cursor: pointer !important;
+}
+</style>
 {% endblock %}
