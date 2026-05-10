@@ -3729,19 +3729,20 @@ setTimeout(function() {
 }
 </style>
 <style>
-/* ========== ФІКС ДЛЯ МОДАЛЬНИХ ВІКОН НА МОБІЛЬНИХ ========== */
+/* ========== ФІКС ДЛЯ МОДАЛЬНИХ ВІКОН ========== */
 
-/* Ховаємо пусту модалку, яка заважає */
+/* Ховаємо пусту модалку, яка заважає перегляду */
 .new_t-modal-wrap {
     display: none !important;
 }
 
-/* Показуємо модалку тільки якщо вона має корисний контент */
-.new_t-modal-wrap:has(.new_t-date-modal-table) {
+/* Показуємо модалку тільки якщо вона має дані (дати/харчування) */
+.new_t-modal-wrap:has(.new_t-date-modal-table),
+.new_t-modal-wrap:has(.new_t-modal-table-container) {
     display: flex !important;
 }
 
-/* Для модалки туристів - показуємо нормально */
+/* Для модалки туристів - забезпечуємо правильне відображення */
 .new_t-change-people-dropdown {
     display: none !important;
 }
@@ -3759,10 +3760,12 @@ setTimeout(function() {
     border-radius: 20px !important;
     z-index: 100000 !important;
     overflow: auto !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
 }
 
 /* Робимо хрестик клікабельним */
-.new_f-dropdown-body-close {
+.new_f-dropdown-body-close,
+.new_t-modal-body-close {
     cursor: pointer !important;
 }
 
@@ -3770,162 +3773,6 @@ setTimeout(function() {
 .new_f-dropdown-btn-cancel,
 .new_f-dropdown-btn-apply {
     cursor: pointer !important;
-}
-</style>
-<script>
-// ========== ВІДКРИТТЯ МОДАЛКИ ТУРИСТІВ ==========
-(function() {
-    // Шукаємо кнопку і модалку
-    const peopleBtn = document.querySelector('.new_t-change-people');
-    const dropdown = document.querySelector('.new_t-change-people-dropdown');
-
-    if (peopleBtn && dropdown) {
-        // Видаляємо старі обробники
-        const newBtn = peopleBtn.cloneNode(true);
-        peopleBtn.parentNode.replaceChild(newBtn, peopleBtn);
-
-        // Додаємо новий обробник
-        newBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            // Відкриваємо модалку
-            dropdown.style.display = 'block';
-            dropdown.style.position = 'fixed';
-            dropdown.style.top = '50%';
-            dropdown.style.left = '50%';
-            dropdown.style.transform = 'translate(-50%, -50%)';
-            dropdown.style.width = '90%';
-            dropdown.style.maxWidth = '350px';
-            dropdown.style.maxHeight = '70vh';
-            dropdown.style.backgroundColor = 'white';
-            dropdown.style.zIndex = '1000000';
-            dropdown.style.borderRadius = '20px';
-            dropdown.style.overflow = 'auto';
-            dropdown.style.padding = '0';
-        });
-
-        // Закриття через хрестик
-        const closeBtn = dropdown.querySelector('.new_f-dropdown-body-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                dropdown.style.display = 'none';
-            });
-        }
-
-        // Закриття через кнопку "Відміна"
-        const cancelBtn = dropdown.querySelector('.new_f-dropdown-btn-cancel');
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', function() {
-                dropdown.style.display = 'none';
-            });
-        }
-
-        // Закриття через кнопку "Застосувати"
-        const applyBtn = dropdown.querySelector('.new_f-dropdown-btn-apply');
-        if (applyBtn) {
-            applyBtn.addEventListener('click', function() {
-                setTimeout(function() {
-                    dropdown.style.display = 'none';
-                }, 300);
-            });
-        }
-    }
-})();
-</script>
-
-<style>
-/* ========== СТИЛІ ДЛЯ МОДАЛКИ ТУРИСТІВ ========== */
-
-/* Ховаємо модалку за замовчуванням */
-.new_t-change-people-dropdown {
-    display: none !important;
-}
-
-/* Коли модалка відкрита - показуємо */
-.new_t-change-people-dropdown[style*="display: block"] {
-    display: block !important;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
-}
-
-/* Кнопки вибору туристів */
-.new_t-change-people-dropdown .new_f-people-list {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 10px !important;
-    margin-bottom: 20px !important;
-    padding: 15px !important;
-}
-
-.new_t-change-people-dropdown .new_f-people-item {
-    flex: 0 0 calc(25% - 10px) !important;
-    text-align: center !important;
-    padding: 12px !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 8px !important;
-    cursor: pointer !important;
-    background: white !important;
-}
-
-.new_t-change-people-dropdown .new_f-people-item.active {
-    background: var(--primary-color) !important;
-    color: white !important;
-    border-color: var(--primary-color) !important;
-}
-
-/* Заголовок */
-.new_t-change-people-dropdown .new_f-dropdown-body-top {
-    background: var(--primary-color) !important;
-    color: white !important;
-    padding: 15px !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    position: sticky !important;
-    top: 0 !important;
-}
-
-/* Хрестик */
-.new_f-dropdown-body-close {
-    cursor: pointer !important;
-    width: 30px !important;
-    height: 30px !important;
-    background: rgba(255,255,255,0.2) !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-/* Кнопки внизу */
-.new_t-change-people-dropdown .new_f-dropdown-body-bottom {
-    display: flex !important;
-    gap: 10px !important;
-    padding: 15px !important;
-    border-top: 1px solid #e2e8f0 !important;
-    background: white !important;
-    position: sticky !important;
-    bottom: 0 !important;
-}
-
-.new_f-dropdown-btn-cancel {
-    flex: 1 !important;
-    background: #f1f5f9 !important;
-    border: none !important;
-    padding: 12px !important;
-    border-radius: 8px !important;
-    cursor: pointer !important;
-}
-
-.new_f-dropdown-btn-apply {
-    flex: 1 !important;
-    background: var(--primary-color) !important;
-    border: none !important;
-    padding: 12px !important;
-    border-radius: 8px !important;
-    cursor: pointer !important;
-    color: white !important;
 }
 </style>
 {% endblock %}
