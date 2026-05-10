@@ -2882,30 +2882,33 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="container mt-5 mb-5" id="reviewsSection">
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-header bg-white py-3 px-4 border-0">
-            <h3 class="fw-bold mb-0" style="color: #000000;" id="reviewsTitle">Відгуки про готель</h3>
-        </div>
-        <div class="card-body p-4">
-            <!-- Середня оцінка -->
-            <div class="d-flex align-items-center gap-4 mb-4 flex-wrap" id="ratingSummary">
-                <div class="text-center">
-                    <div class="display-4 fw-bold" id="avgRating" style="color: var(--primary-color);">0</div>
-                    <div class="text-warning" id="avgRatingStars">
-                        <i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i>
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <h3 class="fw-bold mb-0" style="color: #000000;" id="reviewsTitle">Відгуки про готель</h3>
+                <div class="d-flex align-items-center gap-3" id="ratingSummary">
+                    <div class="text-center">
+                        <span class="display-6 fw-bold" id="avgRating" style="color: var(--primary-color);">0</span>
+                        <div class="text-warning" id="avgRatingStars">
+                            <i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i>
+                        </div>
+                        <span class="text-muted small" id="reviewsCount">0 відгуків</span>
                     </div>
-                    <span class="text-muted small" id="reviewsCount">0 відгуків</span>
                 </div>
             </div>
+        </div>
+        <div class="card-body p-4">
+            <!-- ПОВІДОМЛЕННЯ ПРО УСПІХ/ПОМИЛКУ -->
+            <div id="reviewMessage" style="display: none;" class="alert mb-4"></div>
 
-            <!-- Форма додавання відгуку -->
-            <div class="card shadow-sm mb-4" style="background: #f8fafc; border: none;" id="reviewFormCard">
+            <!-- ФОРМА ДЛЯ ВІДГУКУ -->
+            <div class="card shadow-sm mb-4" style="background: #f8fafc; border: none;">
                 <div class="card-body">
                     <h5 class="fw-bold mb-3">Залиште ваш відгук</h5>
-                    <div id="reviewFormMessage" style="display: none;" class="alert alert-success mb-3"></div>
+
                     <form id="reviewForm">
                         {% csrf_token %}
                         <input type="hidden" name="review_submit" value="1">
-                        <input type="hidden" name="tour_hid" value="{{ hid }}">
-                        <input type="hidden" name="tour_oid" value="{{ oid }}">
+                        <input type="hidden" name="hid" id="reviewHid" value="{{ hid }}">
+                        <input type="hidden" name="oid" id="reviewOid" value="{{ oid }}">
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Ваше ім'я</label>
@@ -2915,29 +2918,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Оцінка</label>
-                            <div class="rating-input">
-                                <i class="fa-regular fa-star fa-xl" data-rating="1" style="cursor: pointer; transition: all 0.2s; margin-right: 8px;"></i>
-                                <i class="fa-regular fa-star fa-xl" data-rating="2" style="cursor: pointer; transition: all 0.2s; margin-right: 8px;"></i>
-                                <i class="fa-regular fa-star fa-xl" data-rating="3" style="cursor: pointer; transition: all 0.2s; margin-right: 8px;"></i>
-                                <i class="fa-regular fa-star fa-xl" data-rating="4" style="cursor: pointer; transition: all 0.2s; margin-right: 8px;"></i>
-                                <i class="fa-regular fa-star fa-xl" data-rating="5" style="cursor: pointer; transition: all 0.2s;"></i>
-                                <input type="hidden" name="rating" id="reviewRating" required value="0">
-                            </div>
+                            <select name="rating" id="reviewRating" class="form-select" required>
+                                <option value="5">5 - Відмінно</option>
+                                <option value="4">4 - Добре</option>
+                                <option value="3">3 - Задовільно</option>
+                                <option value="2">2 - Погано</option>
+                                <option value="1">1 - Жахливо</option>
+                            </select>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Ваш відгук</label>
-                            <textarea name="comment" id="reviewComment" class="form-control" rows="4" placeholder="Поділіться враженнями про готель..." required></textarea>
+                            <textarea name="comment" id="reviewComment" class="form-control" rows="4" placeholder="Поділіться враженнями..." required></textarea>
                         </div>
 
                         <button type="submit" class="btn px-4 py-2" style="background: var(--primary-color); color: white; border: none; border-radius: 8px;">
                             <i class="fa-regular fa-paper-plane me-2"></i> Надіслати відгук
                         </button>
                     </form>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">Вже залишали відгук? Введіть те саме ім'я, щоб оновити свій відгук.</small>
+                    </div>
                 </div>
             </div>
 
-            <!-- Список відгуків -->
+            <!-- СПИСОК ВІДГУКІВ -->
             <div id="reviewsList" class="reviews-list">
                 <div class="text-center py-5">
                     <div class="spinner-border text-primary" role="status">
@@ -2953,7 +2959,7 @@ document.addEventListener('DOMContentLoaded', function() {
 /* ========== СТИЛІ ДЛЯ ВІДГУКІВ ========== */
 .reviews-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 20px;
     max-width: 100%;
 }
@@ -2992,7 +2998,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .reviewer-name i {
     color: var(--primary-color);
-    font-size: 14px;
+    font-size: 18px;
 }
 
 .review-date {
@@ -3035,19 +3041,6 @@ document.addEventListener('DOMContentLoaded', function() {
     text-decoration: underline;
 }
 
-.rating-input i {
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.rating-input i:hover {
-    transform: scale(1.1);
-}
-
-.rating-input i.fa-solid {
-    color: #f59e0b;
-}
-
 @media (max-width: 768px) {
     .reviews-list {
         grid-template-columns: 1fr;
@@ -3077,77 +3070,97 @@ document.addEventListener('DOMContentLoaded', function() {
         font-size: 13px;
     }
 }
-
-/* Анімація для повідомлень */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.success-message {
-    animation: fadeInUp 0.5s ease forwards;
-}
 </style>
 <script>
 // ========== ВІДГУКИ ПРО ГОТЕЛЬ ==========
 (function() {
-    let currentRating = 0;
+    const hid = new URLSearchParams(window.location.search).get('hid');
+    const oid = new URLSearchParams(window.location.search).get('oid');
     let allReviews = [];
-    let userReviewExists = false;
 
-    // Отримуємо дані з URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const hid = urlParams.get('hid');
-    const oid = urlParams.get('oid');
-    const hotelName = document.querySelector('.new_t-header-title')?.innerText?.trim() || 'Готель';
-
-    // Оновлення заголовка
-    const reviewsTitle = document.getElementById('reviewsTitle');
-    if (reviewsTitle) {
-        reviewsTitle.textContent = `Відгуки про готель ${hotelName}`;
+    // Оновлення заголовка з назвою готелю
+    function updateReviewsTitle() {
+        const hotelTitle = document.querySelector('.new_t-header-title');
+        const reviewsTitle = document.getElementById('reviewsTitle');
+        if (hotelTitle && reviewsTitle) {
+            let hotelName = hotelTitle.innerText.trim();
+            hotelName = hotelName.replace(/\s*\*+\s*$/g, '').trim();
+            reviewsTitle.textContent = `Відгуки про готель ${hotelName}`;
+        }
     }
 
-    // Ініціалізація рейтингу при кліку на зірки
-    document.querySelectorAll('.rating-input i').forEach(star => {
-        star.addEventListener('click', function() {
-            currentRating = parseInt(this.getAttribute('data-rating'));
-            document.getElementById('reviewRating').value = currentRating;
+    // Функція для відображення зірок
+    function renderStars(rating) {
+        let stars = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                stars += '<i class="fa-solid fa-star" style="color: #f59e0b;"></i>';
+            } else {
+                stars += '<i class="fa-regular fa-star" style="color: #f59e0b;"></i>';
+            }
+        }
+        return stars;
+    }
 
-            document.querySelectorAll('.rating-input i').forEach(s => {
-                const rating = parseInt(s.getAttribute('data-rating'));
-                if (rating <= currentRating) {
-                    s.className = 'fa-solid fa-star fa-xl';
-                    s.style.color = '#f59e0b';
-                } else {
-                    s.className = 'fa-regular fa-star fa-xl';
-                    s.style.color = '';
-                }
-            });
+    // Оновлення середньої оцінки
+    function updateRatingSummary(reviews) {
+        const avgRatingElem = document.getElementById('avgRating');
+        const avgStarsElem = document.getElementById('avgRatingStars');
+        const reviewsCountElem = document.getElementById('reviewsCount');
+
+        if (!avgRatingElem || !avgStarsElem || !reviewsCountElem) return;
+
+        if (reviews.length === 0) {
+            avgRatingElem.textContent = '0';
+            avgStarsElem.innerHTML = '<i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i>';
+            reviewsCountElem.textContent = '0 відгуків';
+            return;
+        }
+
+        let totalRating = 0;
+        reviews.forEach(review => {
+            totalRating += review.rating;
         });
-    });
+        const avgRating = (totalRating / reviews.length).toFixed(1);
 
-    // Функція для завантаження відгуків з API
+        avgRatingElem.textContent = avgRating;
+        avgStarsElem.innerHTML = renderStars(Math.round(avgRating));
+        reviewsCountElem.textContent = `${reviews.length} ${getDeclension(reviews.length, 'відгук', 'відгуки', 'відгуків')}`;
+    }
+
+    // Допоміжна функція для відмінювання
+    function getDeclension(number, one, two, five) {
+        let n = Math.abs(number);
+        n %= 100;
+        if (n >= 5 && n <= 20) return five;
+        n %= 10;
+        if (n === 1) return one;
+        if (n >= 2 && n <= 4) return two;
+        return five;
+    }
+
+    // Завантаження відгуків
     async function loadReviews() {
         const container = document.getElementById('reviewsList');
         if (!container) return;
 
+        if (!hid) {
+            container.innerHTML = '<div class="text-center py-5"><p class="text-muted">Не вдалося визначити готель</p></div>';
+            return;
+        }
+
         try {
-            // Використовуємо API Otpusk для отримання відгуків
-            const response = await fetch(`https://api.otpusk.com/api/2.4/reviews?hid=${hid}&oid=${oid}&lang=ua`);
+            let url = `/api/hotel-reviews/?hid=${hid}`;
+            if (oid) url += `&oid=${oid}`;
+
+            const response = await fetch(url);
             const data = await response.json();
 
-            if (data && data.reviews && data.reviews.length > 0) {
+            if (data.reviews && data.reviews.length > 0) {
                 allReviews = data.reviews;
                 renderReviews(allReviews);
                 updateRatingSummary(allReviews);
             } else {
-                // Якщо немає відгуків від API, показуємо повідомлення
                 container.innerHTML = `
                     <div class="text-center py-5">
                         <i class="fa-regular fa-message fa-4x text-muted mb-3"></i>
@@ -3168,31 +3181,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Функція для відображення відгуків
+    // Відображення відгуків
     function renderReviews(reviews) {
         const container = document.getElementById('reviewsList');
         if (!container) return;
 
         let html = '';
         reviews.slice(0, 6).forEach(review => {
-            const rating = review.rating || 5;
-            const date = new Date(review.date || review.created_at);
+            const date = new Date(review.created_at);
             const formattedDate = date.toLocaleDateString('uk-UA');
-            const comment = review.text || review.comment || '';
+            const comment = review.comment || '';
             const isLong = comment.length > 200;
             const shortComment = isLong ? comment.substring(0, 200) + '...' : comment;
 
             html += `
-                <div class="review-card" data-review-id="${review.id || Math.random()}">
+                <div class="review-card" data-review-id="${review.id}">
                     <div class="review-header">
                         <div class="reviewer-name">
                             <i class="fa-regular fa-user-circle"></i>
-                            ${escapeHtml(review.author || review.guest_name || 'Анонім')}
+                            ${escapeHtml(review.guest_name || review.author || 'Гість')}
                         </div>
                         <div class="review-date">${formattedDate}</div>
                     </div>
                     <div class="review-rating">
-                        ${renderStars(rating)}
+                        ${renderStars(review.rating)}
                     </div>
                     <div class="review-comment">
                         <div class="review-comment-short">${escapeHtml(shortComment).replace(/\n/g, '<br>')}</div>
@@ -3216,80 +3228,17 @@ document.addEventListener('DOMContentLoaded', function() {
         container.innerHTML = html;
     }
 
-    // Функція для відображення зірок
-    function renderStars(rating) {
-        let stars = '';
-        for (let i = 1; i <= 5; i++) {
-            if (i <= rating) {
-                stars += '<i class="fa-solid fa-star" style="color: #f59e0b;"></i>';
-            } else if (i - 0.5 <= rating) {
-                stars += '<i class="fa-solid fa-star-half-alt" style="color: #f59e0b;"></i>';
-            } else {
-                stars += '<i class="fa-regular fa-star" style="color: #f59e0b;"></i>';
-            }
-        }
-        return stars;
-    }
-
-    // Функція для оновлення середньої оцінки
-    function updateRatingSummary(reviews) {
-        const avgRatingElem = document.getElementById('avgRating');
-        const avgStarsElem = document.getElementById('avgRatingStars');
-        const reviewsCountElem = document.getElementById('reviewsCount');
-
-        if (!avgRatingElem || !avgStarsElem || !reviewsCountElem) return;
-
-        if (reviews.length === 0) {
-            avgRatingElem.textContent = '0';
-            avgStarsElem.innerHTML = '<i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i>';
-            reviewsCountElem.textContent = '0 відгуків';
-            return;
-        }
-
-        let totalRating = 0;
-        reviews.forEach(review => {
-            totalRating += review.rating || 5;
-        });
-        const avgRating = (totalRating / reviews.length).toFixed(1);
-
-        avgRatingElem.textContent = avgRating;
-        avgStarsElem.innerHTML = renderStars(parseFloat(avgRating));
-        reviewsCountElem.textContent = `${reviews.length} ${getDeclension(reviews.length, 'відгук', 'відгуки', 'відгуків')}`;
-    }
-
-    // Допоміжна функція для відмінювання
-    function getDeclension(number, one, two, five) {
-        let n = Math.abs(number);
-        n %= 100;
-        if (n >= 5 && n <= 20) {
-            return five;
-        }
-        n %= 10;
-        if (n === 1) {
-            return one;
-        }
-        if (n >= 2 && n <= 4) {
-            return two;
-        }
-        return five;
-    }
-
-    // Функція для відправки відгуку
+    // Відправка відгуку
     async function submitReview(event) {
         event.preventDefault();
 
         const guestName = document.getElementById('reviewGuestName')?.value.trim();
-        const rating = parseInt(document.getElementById('reviewRating')?.value);
+        const rating = document.getElementById('reviewRating')?.value;
         const comment = document.getElementById('reviewComment')?.value.trim();
-        const messageDiv = document.getElementById('reviewFormMessage');
+        const messageDiv = document.getElementById('reviewMessage');
 
         if (!guestName) {
             showReviewMessage('Будь ласка, введіть ваше ім\'я', 'danger');
-            return;
-        }
-
-        if (!rating || rating === 0) {
-            showReviewMessage('Будь ласка, оберіть оцінку', 'danger');
             return;
         }
 
@@ -3304,27 +3253,48 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.disabled = true;
 
         try {
-            // Тут має бути ваш API ендпоінт для збереження відгуків
-            // Поки що імітуємо успішну відправку
-            console.log('Відгук відправлено:', { guestName, rating, comment });
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+            let url = '/api/hotel-reviews/';
 
-            showReviewMessage('Дякуємо за ваш відгук!', 'success');
+            const pathParts = window.location.pathname.split('/');
+            for (let i = 0; i < pathParts.length; i++) {
+                if (pathParts[i] === 'a' && pathParts[i + 1]) {
+                    url = `/a/${pathParts[i + 1]}/api/hotel-reviews/`;
+                    break;
+                }
+            }
 
-            // Очищаємо форму
-            document.getElementById('reviewGuestName').value = '';
-            document.getElementById('reviewRating').value = '0';
-            document.getElementById('reviewComment').value = '';
-            currentRating = 0;
-            document.querySelectorAll('.rating-input i').forEach(s => {
-                s.className = 'fa-regular fa-star fa-xl';
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    hid: hid,
+                    oid: oid,
+                    guest_name: guestName,
+                    rating: parseInt(rating),
+                    comment: comment
+                })
             });
 
-            // Перезавантажуємо відгуки
-            setTimeout(loadReviews, 1000);
+            const data = await response.json();
 
+            if (data.success) {
+                showReviewMessage(data.message || 'Дякуємо за ваш відгук!', 'success');
+
+                document.getElementById('reviewGuestName').value = '';
+                document.getElementById('reviewComment').value = '';
+                document.getElementById('reviewRating').value = '5';
+
+                setTimeout(loadReviews, 1000);
+            } else {
+                showReviewMessage(data.error || 'Сталася помилка. Спробуйте пізніше.', 'danger');
+            }
         } catch (error) {
             console.error('Помилка відправки:', error);
-            showReviewMessage('Сталася помилка. Спробуйте пізніше.', 'danger');
+            showReviewMessage('Помилка з\'єднання. Спробуйте пізніше.', 'danger');
         } finally {
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
@@ -3332,10 +3302,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showReviewMessage(message, type) {
-        const messageDiv = document.getElementById('reviewFormMessage');
+        const messageDiv = document.getElementById('reviewMessage');
         if (messageDiv) {
             messageDiv.textContent = message;
-            messageDiv.className = `alert alert-${type} mb-3`;
+            messageDiv.className = `alert alert-${type} mb-4`;
             messageDiv.style.display = 'block';
             setTimeout(() => {
                 messageDiv.style.display = 'none';
@@ -3343,7 +3313,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Функція для розгортання коментаря
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     window.toggleReviewComment = function(btn) {
         const card = btn.closest('.review-card');
         const shortDiv = card.querySelector('.review-comment-short');
@@ -3366,23 +3342,22 @@ document.addEventListener('DOMContentLoaded', function() {
         renderReviews(allReviews);
     };
 
-    function escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
     // Ініціалізація
     const reviewForm = document.getElementById('reviewForm');
     if (reviewForm) {
         reviewForm.addEventListener('submit', submitReview);
     }
 
-    // Завантажуємо відгуки після завантаження сторінки
+    updateReviewsTitle();
+
+    const hotelTitleObserver = new MutationObserver(updateReviewsTitle);
+    const hotelTitle = document.querySelector('.new_t-header-title');
+    if (hotelTitle) {
+        hotelTitleObserver.observe(hotelTitle, { childList: true, subtree: true, characterData: true });
+    }
+
     setTimeout(loadReviews, 1000);
     setTimeout(loadReviews, 3000);
-    setTimeout(loadReviews, 5000);
 
     console.log('✅ Блок відгуків активовано');
 })();
