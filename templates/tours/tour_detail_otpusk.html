@@ -3802,22 +3802,69 @@ setTimeout(function() {
 })();
 </script>
 <style>
-/* ========== ТІЛЬКИ ДЛЯ МОБІЛЬНИХ (МІНІМАЛЬНИЙ ВАРІАНТ) ========== */
-@media (max-width: 768px) {
-    .new_t-modal-wrap {
-        width: 90% !important;
-        max-width: 350px !important;
-        border-radius: 20px !important;
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
+/* ========== ЗМІНА СТИЛЮ МЕНЮ (ТІЛЬКИ ДЛЯ ДЕСКТОПУ) ========== */
+@media (min-width: 769px) {
+    .new_t-menu-wrap,
+    .new_t-menu {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .new_t-menu {
+        display: flex !important;
+        gap: 8px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Пункти меню - ПРОЗОРИЙ ФОН за замовчуванням */
+    .new_t-menu-item {
+        background: transparent !important;
+        color: #64748b !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 10px 20px !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+
+    /* Активний пункт (обрана вкладка) */
+    .new_t-menu-item.selected {
+        background: transparent !important;
+        color: var(--primary-color) !important;
+        border-bottom: 3px solid var(--primary-color) !important;
+        border-radius: 0 !important;
+    }
+
+    /* При наведенні - легкий фон */
+    .new_t-menu-item:hover {
+        background: rgba(0, 0, 0, 0.05) !important;
+        color: var(--primary-color) !important;
+    }
+
+    /* При натисканні (active) */
+    .new_t-menu-item:active {
+        transform: scale(0.98);
+    }
+
+    /* Видаляємо всі зайві елементи */
+    .new_t-menu-item::before,
+    .new_t-menu-item::after,
+    .new_t-menu-item .arrow,
+    .new_t-menu-item .indicator,
+    .new_t-menu-item svg {
+        display: none !important;
     }
 }
 
-/* Хрестик закриття */
-.new_t-modal-body-close {
-    cursor: pointer !important;
+/* Для мобільних - залишаємо як є, без змін */
+@media (max-width: 768px) {
+    .new_t-menu-item {
+        background: transparent !important;
+        border-radius: 0 !important;
+    }
 }
 </style>
 
