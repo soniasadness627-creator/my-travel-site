@@ -3728,49 +3728,38 @@ setTimeout(function() {
     color: white !important;
 }
 </style>
-// ========== ПРИМУСОВЕ ВІДКРИТТЯ МОДАЛЬНИХ ВІКОН ПРИ НАТИСКАННІ "ЩЕ" ==========
+<script>
+// ========== ТІЛЬКИ ДЛЯ ДАТ ТА ХАРЧУВАННЯ ==========
 (function() {
-    // Функція для відкриття модального вікна
-    function showModal(modal) {
-        ...
+    function openModal() {
+        const modal = document.querySelector('.new_t-modal-wrap');
+        if (!modal) return;
+        modal.style.display = 'flex';
+        modal.style.position = 'fixed';
+        modal.style.top = '50%';
+        modal.style.left = '50%';
+        modal.style.transform = 'translate(-50%, -50%)';
+        modal.style.width = '90%';
+        modal.style.maxWidth = '350px';
+        modal.style.maxHeight = '85vh';
+        modal.style.backgroundColor = 'white';
+        modal.style.zIndex = '100000';
+        modal.style.borderRadius = '20px';
+        modal.style.overflow = 'auto';
+
+        const closeBtn = modal.querySelector('.new_t-modal-body-close');
+        if (closeBtn) closeBtn.onclick = () => modal.style.display = 'none';
     }
 
-    // Додаємо обробники на всі кнопки "Ще"
-    function addClickHandlers() {
-        // Кнопка для дат
-        const dateBtn = document.querySelector('.new_t-change-date');
-        ...
+    const dateBtn = document.querySelector('.new_t-change-date');
+    const foodBtn = document.querySelector('.new_t-change-food');
 
-        // Кнопка для туристів - ЦЕЙ БЛОК ПОТРІБНО ВИДАЛИТИ
-        const peopleBtn = document.querySelector('.new_t-change-people');
-        if (peopleBtn && !peopleBtn.hasAttribute('data-modal-handler')) {
-            peopleBtn.setAttribute('data-modal-handler', 'true');
-            peopleBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                // Для туристів інша модалка
-                const dropdown = document.querySelector('.new_t-change-people-dropdown');
-                if (dropdown) {
-                    dropdown.style.display = 'block';
-                    dropdown.style.position = 'fixed';
-                    dropdown.style.top = '50%';
-                    dropdown.style.left = '50%';
-                    dropdown.style.transform = 'translate(-50%, -50%)';
-                    dropdown.style.width = '90%';
-                    dropdown.style.maxWidth = '350px';
-                    dropdown.style.maxHeight = '70vh';
-                    dropdown.style.borderRadius = '20px';
-                    dropdown.style.backgroundColor = 'white';
-                    dropdown.style.zIndex = '100000';
-                    dropdown.style.overflow = 'auto';
-                }
-            });
-        }
+    if (dateBtn) dateBtn.onclick = (e) => { e.preventDefault(); openModal(); };
+    if (foodBtn) foodBtn.onclick = (e) => { e.preventDefault(); openModal(); };
 
-        // Кнопка для харчування
-        const foodBtn = document.querySelector('.new_t-change-food');
-        ...
-    }
-    ...
+    // Приховуємо пусту модалку
+    const modal = document.querySelector('.new_t-modal-wrap');
+    if (modal) modal.style.display = 'none';
 })();
+</script>
 {% endblock %}
