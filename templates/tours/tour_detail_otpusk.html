@@ -3205,7 +3205,7 @@ setTimeout(function() {
 </script>
 
 <script>
-// ========== ФІКС: ЗМІНА ЦІНИ ТА ХАРЧУВАННЯ ==========
+// ========== ФІКС: ЗМІНА ЦІНИ ТА ХАРЧУВАННЯ (тільки таблиця) ==========
 (function() {
     // Отримання оригінальних даних
     function getOriginalData() {
@@ -3239,7 +3239,6 @@ setTimeout(function() {
     }
 
     function getFoodType() {
-        // Отримуємо тип харчування з оригінального віджета
         const foodElement = document.querySelector('.new_t-tour-tab-col-2 .new_t-important');
         if (foodElement && foodElement.innerText) {
             let food = foodElement.innerText.trim();
@@ -3262,14 +3261,11 @@ setTimeout(function() {
         const selectedNights = getSelectedNights();
         if (!selectedNights) return;
 
-        // Отримуємо правильне харчування
         const foodType = getFoodType();
-
-        // Перерахунок ціни
         const pricePerNight = original.price / original.nights;
         const newPrice = Math.round(pricePerNight * selectedNights);
 
-        // Оновлюємо всі рядки таблиці
+        // ОНОВЛЮЄМО ТІЛЬКИ ТАБЛИЦЮ (НЕ КАЛЕНДАР!)
         const allRows = document.querySelectorAll('#hotelPricesTable .hotel-price-row');
         allRows.forEach(row => {
             const nightsCell = row.querySelector('td:nth-child(2)');
@@ -3288,25 +3284,9 @@ setTimeout(function() {
             }
         });
 
-        // Оновлюємо календар
-        const calendarCells = document.querySelectorAll('.calendar-table td.has-price, .calendar-table td.lowest-price');
-        calendarCells.forEach(cell => {
-            const priceDiv = cell.querySelector('.small.fw-bold');
-            if (priceDiv) {
-                priceDiv.innerHTML = `${newPrice.toLocaleString()} грн`;
-            }
-        });
-
-        // Оновлюємо заголовок календаря
-        const calendarHeader = document.querySelector('.calendar-table thead th:nth-child(2)');
-        if (calendarHeader) {
-            calendarHeader.innerHTML = `Тривалість: ${selectedNights} ночей`;
-        }
-
-        console.log(`✅ Оновлено: ${original.price}₴/${original.nights} ночей → ${newPrice}₴/${selectedNights} ночей, харчування: ${foodType}`);
+        console.log(`✅ Таблицю оновлено: ${original.price}₴/${original.nights} ночей → ${newPrice}₴/${selectedNights} ночей`);
     }
 
-    // Слідкуємо за змінами
     const nightsSelect = document.getElementById('searchNights');
     if (nightsSelect) {
         nightsSelect.addEventListener('change', () => setTimeout(updateAllPrices, 100));
@@ -3317,7 +3297,6 @@ setTimeout(function() {
         adultsSelect.addEventListener('change', () => setTimeout(updateAllPrices, 100));
     }
 
-    // Запуск
     setTimeout(updateAllPrices, 1500);
     setTimeout(updateAllPrices, 3000);
     setTimeout(updateAllPrices, 5000);
