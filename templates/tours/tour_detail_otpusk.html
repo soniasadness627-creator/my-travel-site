@@ -3800,4 +3800,57 @@ setTimeout(function() {
     setTimeout(addClickHandlers, 500);
 })();
 </script>
+<style>
+/* ========== ТІЛЬКИ ДЛЯ МОБІЛЬНИХ - ЗМІНА РОЗМІРІВ МОДАЛОК ========== */
+@media (max-width: 768px) {
+    /* Для модалки дат/харчування */
+    .new_t-modal-wrap {
+        width: 90% !important;
+        max-width: 350px !important;
+        max-height: 85vh !important;
+        border-radius: 20px !important;
+    }
+
+    /* Для модалки туристів */
+    .new_t-change-people-dropdown {
+        width: 90% !important;
+        max-width: 350px !important;
+        max-height: 70vh !important;
+        border-radius: 20px !important;
+    }
+}
+
+/* ========== ДЛЯ ПК - ОРИГІНАЛЬНІ РОЗМІРИ ========== */
+@media (min-width: 769px) {
+    .new_t-modal-wrap,
+    .new_t-change-people-dropdown {
+        width: auto !important;
+        max-width: none !important;
+        max-height: none !important;
+        border-radius: 0 !important;
+    }
+}
+
+/* Центрування для всіх пристроїв (але без зміни розмірів на ПК) */
+.new_t-modal-wrap,
+.new_t-change-people-dropdown {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    background: white !important;
+    z-index: 100000 !important;
+    overflow: auto !important;
+}
+
+.new_t-modal-body-close,
+.new_f-dropdown-body-close {
+    cursor: pointer !important;
+}
+
+.new_f-dropdown-btn-cancel,
+.new_f-dropdown-btn-apply {
+    cursor: pointer !important;
+}
+</style>
 {% endblock %}
