@@ -3729,75 +3729,76 @@ setTimeout(function() {
 }
 </style>
 <script>
-    // ========== ПРИМУСОВЕ ВІДКРИТТЯ МОДАЛЬНИХ ВІКОН ТІЛЬКИ ДЛЯ ДАТ ТА ХАРЧУВАННЯ ==========
+// ========== ВИПРАВЛЕННЯ МОДАЛОК ДАТ/ХАРЧУВАННЯ ==========
 (function() {
-    // Функція для відкриття модального вікна (дати/харчування)
-    function showModal(modal) {
+    // Оновлений CSS для модалок
+    const modalStyles = `
+        <style>
+            .new_t-modal-wrap {
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                background: white !important;
+                z-index: 100000 !important;
+                overflow: auto !important;
+            }
+            @media (max-width: 768px) {
+                .new_t-modal-wrap {
+                    width: 90% !important;
+                    max-width: 350px !important;
+                    max-height: 85vh !important;
+                    border-radius: 20px !important;
+                }
+            }
+            .new_t-modal-body-close {
+                cursor: pointer !important;
+            }
+        </style>
+    `;
+
+    // Додаємо стилі, якщо ще немає
+    if (!document.querySelector('#fix-modal-styles')) {
+        const styleTag = document.createElement('div');
+        styleTag.id = 'fix-modal-styles';
+        styleTag.innerHTML = modalStyles;
+        document.head.appendChild(styleTag);
+    }
+
+    // ЗБЕРІГАЄМО ОРИГІНАЛЬНІ ОБРОБНИКИ, лише додаємо CSS
+    function fixModalDisplay() {
+        const modal = document.querySelector('.new_t-modal-wrap');
         if (!modal) return;
-        modal.style.display = 'flex';
-        modal.style.position = 'fixed';
-        modal.style.top = '50%';
-        modal.style.left = '50%';
-        modal.style.transform = 'translate(-50%, -50%)';
-        modal.style.width = '90%';
-        modal.style.maxWidth = '350px';
-        modal.style.maxHeight = '85vh';
-        modal.style.borderRadius = '20px';
-        modal.style.backgroundColor = 'white';
-        modal.style.zIndex = '100000';
-        modal.style.overflow = 'hidden';
-        modal.style.flexDirection = 'column';
 
-        // Налаштовуємо прокрутку контенту
-        const content = modal.querySelector('.new_t-modal-body-middle');
-        if (content) {
-            content.style.overflowY = 'auto';
-            content.style.flex = '1';
-            content.style.padding = '15px';
-        }
-
-        // Робимо хрестик клікабельним
-        const closeBtn = modal.querySelector('.new_t-modal-body-close');
-        if (closeBtn) {
-            closeBtn.onclick = function(e) {
-                e.preventDefault();
-                modal.style.display = 'none';
-            };
+        // ВАЖЛИВО: Не чіпаємо display, тільки CSS класи
+        // Якщо модалка показується оригінальним скриптом - додаємо стилі
+        if (modal.style.display === 'flex' || window.getComputedStyle(modal).display !== 'none') {
+            // Вже відкрита, все добре
+            return;
         }
     }
 
-    // Додаємо обробники ТІЛЬКИ на кнопки дат та харчування
-    function addClickHandlers() {
-        // Кнопка для дат
-        const dateBtn = document.querySelector('.new_t-change-date');
-        if (dateBtn && !dateBtn.hasAttribute('data-modal-handler')) {
-            dateBtn.setAttribute('data-modal-handler', 'true');
-            dateBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const modal = document.querySelector('.new_t-modal-wrap');
-                if (modal) showModal(modal);
-            });
+    // Слідкуємо за появою модалок і додаємо стилі
+    const modalObserver = new MutationObserver(function(mutations) {
+        const modal = document.querySelector('.new_t-modal-wrap');
+        if (modal) {
+            // Якщо модалка з'явилась, але не має наших стилів - додаємо атрибут
+            if (!modal.hasAttribute('data-fixed')) {
+                modal.setAttribute('data-fixed', 'true');
+                // Додаємо базові стилі без зміни display
+                modal.style.position = 'fixed';
+                modal.style.top = '50%';
+                modal.style.left = '50%';
+                modal.style.transform = 'translate(-50%, -50%)';
+                modal.style.zIndex = '100000';
+            }
         }
+    });
 
-        // Кнопка для харчування
-        const foodBtn = document.querySelector('.new_t-change-food');
-        if (foodBtn && !foodBtn.hasAttribute('data-modal-handler')) {
-            foodBtn.setAttribute('data-modal-handler', 'true');
-            foodBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const modal = document.querySelector('.new_t-modal-wrap');
-                if (modal) showModal(modal);
-            });
-        }
+    modalObserver.observe(document.body, { childList: true, subtree: true });
 
-        // КНОПКА ДЛЯ ТУРИСТІВ - ВИДАЛЕНА! Вона буде працювати нативно
-    }
-
-    // Запускаємо пошук кнопок
-    setInterval(addClickHandlers, 1000);
-    setTimeout(addClickHandlers, 500);
+    // НІЧОГО НЕ ПЕРЕХОПЛЮЄМО - даємо оригінальним скриптам працювати
+    console.log('✅ Модалки виправлено (оригінальна логіка збережена)');
 })();
 </script>
 <style>
