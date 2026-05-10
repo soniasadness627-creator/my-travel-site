@@ -3717,4 +3717,169 @@ setTimeout(function() {
     console.log('✅ Новий календар активовано');
 })();
 </script>
+<script>
+// ========== ПРИМУСОВЕ ЗАВАНТАЖЕННЯ ДАНИХ ДЛЯ КАЛЕНДАРЯ ==========
+(function() {
+    console.log('🔄 Запуск завантаження даних для календаря...');
+    let dataLoaded = false;
+    let retryCount = 0;
+
+    function loadCalendarData() {
+        if (dataLoaded) return;
+
+        // Знаходимо кнопку для відкриття модалки з датами
+        const dateButton = document.querySelector('.new_t-change-date');
+        if (!dateButton) {
+            console.log('⏳ Кнопка дат не знайдена, повторюємо...');
+            if (retryCount < 20) {
+                retryCount++;
+                setTimeout(loadCalendarData, 500);
+            }
+            return;
+        }
+
+        console.log('📅 Відкриваємо модалку з датами для завантаження даних...');
+
+        // Створюємо обробник для очікування завантаження даних
+        const modalObserver = new MutationObserver(function(mutations, obs) {
+            const modalRows = document.querySelectorAll('.new_t-date-modal-table tbody tr');
+            if (modalRows.length > 0 && modalRows[0].querySelectorAll('td').length > 1) {
+                console.log(`✅ Дані завантажено! Знайдено ${modalRows.length} рядків з датами`);
+                dataLoaded = true;
+                obs.disconnect();
+
+                // Закриваємо модалку
+                const closeBtn = document.querySelector('.new_t-modal-body-close');
+                if (closeBtn) closeBtn.click();
+
+                // Оновлюємо календар після завантаження даних
+                setTimeout(() => {
+                    if (window.refreshCalendar) {
+                        window.refreshCalendar();
+                    } else if (window.renderCalendar) {
+                        window.renderCalendar();
+                    } else {
+                        // Запускаємо подію для оновлення
+                        const event = new CustomEvent('calendarDataLoaded');
+                        window.dispatchEvent(event);
+                    }
+                }, 300);
+            }
+        });
+
+        modalObserver.observe(document.body, { childList: true, subtree: true });
+
+        // Відкриваємо модалку
+        dateButton.click();
+
+        // Закриваємо модалку через 3 секунди, навіть якщо дані не завантажились
+        setTimeout(() => {
+            const closeBtn = document.querySelector('.new_t-modal-body-close');
+            if (closeBtn) closeBtn.click();
+            modalObserver.disconnect();
+            if (!dataLoaded) {
+                console.log('⚠️ Дані не завантажились, використовуємо головну дату');
+                createSimpleCalendar();
+            }
+        }, 3000);
+    }
+
+    function createSimpleCalendar() {
+        // Якщо немає даних, створюємо простий календар з головною датою
+        const container = document.getElementById('calendarTableContainer');
+        if (!container) return;
+
+        const mainDateEl = document.querySelector('.new_t-date-col .new_t-important');
+        const mainPriceEl = document.querySelector('.new_t-order-price .new_price');
+
+        if (!mainDateEl || !mainPriceEl) return;
+
+        const dateText = mainDateEl.innerText.trim();
+        let price = 0;
+        const priceMatch = mainPriceEl.innerText.match(/(\d[\d\s]*\d)/);
+        if (priceMatch) price = parseInt(priceMatch[0].replace(/\s/g, ''));
+
+        // Отримуємо день і місяць
+        const dayMatch = dateText.match(/(\d+)/);
+        const monthMatch = dateText.match(/(січня|лютого|березня|квітня|травня|червня|липня|серпня|вересня|жовтня|листопада|грудня)/i);
+
+        if (dayMatch && monthMatch && price > 0) {
+            const day = parseInt(dayMatch[0]);
+            const months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
+            const month = months.findIndex(m => m === monthMatch[0].toLowerCase());
+            const monthNames = ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'];
+
+            // Створюємо просту таблицю
+            let html = `
+                <div style="overflow-x: auto;">
+                    <table class="calendar-table" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th style="padding: 12px;">Дата вильоту</th>
+                                <th style="padding: 12px;">Тривалість: ${getSelectedNights()} ночей</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="has-price" style="padding: 12px; text-align: center; background: #fef9e6; cursor: pointer;" onclick="selectSimpleDate(${day}, ${month}, ${price})">
+                                    <div style="font-weight: 600;">${day} ${monthNames[month]}</div>
+                                    <div style="font-size: 12px; font-weight: bold; color: var(--primary-color);">${price.toLocaleString()} грн</div>
+                                 </td>
+                                <td class="has-price" style="padding: 12px; text-align: center; background: #fef9e6;">
+                                    <div>на ${getSelectedNights()} ночей</div>
+                                 </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            container.innerHTML = html;
+
+            const section = document.getElementById('priceCalendarSection');
+            if (section) section.style.display = 'block';
+        }
+    }
+
+    function getSelectedNights() {
+        const select = document.getElementById('searchNights');
+        if (!select) return 8;
+        const val = select.value;
+        if (val.includes('-')) return parseInt(val.split('-')[0]) + 1;
+        return parseInt(val);
+    }
+
+    window.selectSimpleDate = function(day, month, price) {
+        const currentYear = 2026;
+        const date = new Date(currentYear, month, day);
+        const dateISO = date.toISOString();
+        const nights = getSelectedNights();
+
+        console.log(`📅 Вибрано дату: ${day}.${month+1}.${currentYear}`);
+
+        // Оновлюємо URL
+        const url = new URL(window.location.href);
+        url.searchParams.set('od', dateISO.split('T')[0]);
+        url.searchParams.set('ol', nights);
+        window.history.pushState({}, '', url);
+
+        // Оновлюємо таблицю
+        if (window.reloadHotelPrices) {
+            setTimeout(window.reloadHotelPrices, 300);
+        }
+    };
+
+    // Чекаємо поки завантажиться сторінка
+    setTimeout(loadCalendarData, 2000);
+    setTimeout(loadCalendarData, 4000);
+    setTimeout(loadCalendarData, 6000);
+
+    // Слухаємо подію оновлення
+    window.addEventListener('calendarDataLoaded', function() {
+        console.log('🔄 Оновлюємо календар після завантаження даних');
+        if (window.collectAvailableDates) {
+            window.collectAvailableDates();
+        }
+    });
+})();
+</script>
 {% endblock %}
