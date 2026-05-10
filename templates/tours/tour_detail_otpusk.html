@@ -3418,140 +3418,303 @@ setTimeout(function() {
 }
 </style>
 <script>
-// ========== ЄДИНИЙ ФІКС КАЛЕНДАРЯ (БЕЗ КОНФЛІКТІВ) ==========
+// ========== НОВИЙ ФІКС КАЛЕНДАРЯ (СТВОРЮЄ КАЛЕНДАР З ДАНИХ OTPUSK) ==========
 (function() {
-    console.log('🚀 ЗАПУСК ЄДИНОГО ФІКСА КАЛЕНДАРЯ');
+    console.log('📅 ЗАПУСК НОВОГО КАЛЕНДАРЯ');
 
     let originalNights = 8;
     let originalPrice = 0;
-    let isUpdating = false;
+    let availableDates = [];
 
-    function getOriginalPrice() {
+    function getOriginalData() {
         const priceElement = document.querySelector('.new_t-order-price .new_price');
         if (priceElement) {
-            const priceText = priceElement.innerText;
-            const priceMatch = priceText.match(/(\d[\d\s]*\d)/);
+            const priceMatch = priceElement.innerText.match(/(\d[\d\s]*\d)/);
             if (priceMatch) {
                 originalPrice = parseInt(priceMatch[0].replace(/\s/g, ''));
-                console.log(`💰 Ціна: ${originalPrice} грн за ${originalNights} ночей`);
-                return true;
             }
         }
-        return false;
+        const urlParams = new URLSearchParams(window.location.search);
+        const olParam = urlParams.get('ol');
+        if (olParam) originalNights = parseInt(olParam);
+        console.log(`📊 Базові дані: ${originalNights} ночей = ${originalPrice} грн`);
+        return originalPrice > 0;
     }
 
     function getSelectedNights() {
         const select = document.getElementById('searchNights');
         if (!select) return originalNights;
         const val = select.value;
-        if (val.includes('-')) {
-            return parseInt(val.split('-')[0]) + 1;
-        }
+        if (val.includes('-')) return parseInt(val.split('-')[0]) + 1;
         return parseInt(val);
     }
 
-    function updateCalendar() {
-        if (isUpdating) return;
-        isUpdating = true;
+    // Збираємо доступні дати з модальної таблиці
+    function collectAvailableDates() {
+        const dates = [];
+        const modalRows = document.querySelectorAll('.new_t-date-modal-table tbody tr');
 
-        const cells = document.querySelectorAll('.calendar-table td.has-price, .calendar-table td.lowest-price');
-        if (cells.length === 0) {
-            console.log('⏳ Календар ще не готовий');
-            isUpdating = false;
-            return false;
-        }
+        modalRows.forEach(row => {
+            const dateSpan = row.querySelector('td:first-child span');
+            if (!dateSpan) return;
 
-        if (originalPrice === 0) getOriginalPrice();
-        if (originalPrice === 0) {
-            isUpdating = false;
-            return false;
-        }
+            let dateText = dateSpan.innerText.trim();
+            const priceCells = row.querySelectorAll('td');
+            let price = 0;
 
-        const selectedNights = getSelectedNights();
-        const coefficient = selectedNights / originalNights;
-        const newBasePrice = Math.round(originalPrice * coefficient);
-
-        console.log(`🔄 ${originalNights}→${selectedNights} ночей, ціна ${newBasePrice} грн (×${coefficient.toFixed(2)})`);
-
-        // Оновлюємо заголовок
-        const header = document.querySelector('.calendar-table thead th:nth-child(2)');
-        if (header) header.innerHTML = `Тривалість: ${selectedNights} ночей`;
-
-        // Оновлюємо кожну комірку
-        const prices = [];
-        cells.forEach(cell => {
-            const priceDiv = cell.querySelector('.small.fw-bold');
-            if (priceDiv) {
-                let orig = parseInt(cell.getAttribute('data-orig'));
-                if (!orig) {
-                    const match = priceDiv.innerText.match(/\d+/g);
-                    if (match) {
-                        orig = Math.round(parseInt(match.join('')) / coefficient);
-                        cell.setAttribute('data-orig', orig);
+            for (let i = 1; i < priceCells.length && i <= 10; i++) {
+                const cellText = priceCells[i].innerText.trim();
+                if (cellText !== '—' && cellText !== '-' && cellText.match(/\d/)) {
+                    const priceMatch = cellText.match(/(\d[\d\s]*\d)/);
+                    if (priceMatch) {
+                        price = parseInt(priceMatch[0].replace(/\s/g, ''));
+                        break;
                     }
                 }
-                if (orig) {
-                    const newPrice = Math.round(orig * coefficient);
-                    prices.push(newPrice);
-                    priceDiv.innerHTML = `${newPrice.toLocaleString()} грн`;
+            }
+
+            if (price > 0) {
+                // Отримуємо день з дати
+                const dayMatch = dateText.match(/(\d+)/);
+                const monthMatch = dateText.match(/(січня|лютого|березня|квітня|травня|червня|липня|серпня|вересня|жовтня|листопада|грудня)/i);
+
+                if (dayMatch && monthMatch) {
+                    const months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
+                    const monthIndex = months.findIndex(m => m.toLowerCase() === monthMatch[0].toLowerCase());
+                    dates.push({
+                        day: parseInt(dayMatch[0]),
+                        month: monthIndex,
+                        price: price,
+                        originalDate: dateText
+                    });
                 }
             }
         });
 
-        // Позначаємо найдешевшу
-        if (prices.length > 0) {
-            const minPrice = Math.min(...prices);
-            cells.forEach(cell => {
-                const priceDiv = cell.querySelector('.small.fw-bold');
-                if (priceDiv) {
-                    const match = priceDiv.innerText.match(/\d+/g);
-                    if (match) {
-                        const price = parseInt(match.join(''));
-                        if (price === minPrice) {
-                            cell.classList.add('lowest-price');
-                            cell.classList.remove('has-price');
-                        } else {
-                            cell.classList.add('has-price');
-                            cell.classList.remove('lowest-price');
-                        }
-                    }
+        // Якщо немає дат з модалки, використовуємо головну дату
+        if (dates.length === 0 && originalPrice > 0) {
+            const mainDateEl = document.querySelector('.new_t-date-col .new_t-important');
+            if (mainDateEl) {
+                const dateText = mainDateEl.innerText.trim();
+                const dayMatch = dateText.match(/(\d+)/);
+                const monthMatch = dateText.match(/(січня|лютого|березня|квітня|травня|червня|липня|серпня|вересня|жовтня|листопада|грудня)/i);
+                if (dayMatch && monthMatch) {
+                    const months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
+                    const monthIndex = months.findIndex(m => m.toLowerCase() === monthMatch[0].toLowerCase());
+                    dates.push({
+                        day: parseInt(dayMatch[0]),
+                        month: monthIndex,
+                        price: originalPrice,
+                        originalDate: dateText
+                    });
                 }
-            });
+            }
         }
 
-        console.log(`✅ Оновлено ${cells.length} комірок`);
-        isUpdating = false;
-        return true;
+        availableDates = dates;
+        console.log(`📅 Знайдено ${availableDates.length} доступних дат`);
+        return availableDates;
     }
 
-    // Слідкуємо за зміною тривалості
+    function renderCalendar() {
+        const container = document.getElementById('calendarTableContainer');
+        if (!container) return;
+
+        if (availableDates.length === 0) {
+            collectAvailableDates();
+        }
+
+        if (availableDates.length === 0) {
+            container.innerHTML = '<div class="text-center py-5"><p class="text-muted">Немає доступних дат</p></div>';
+            return;
+        }
+
+        const selectedNights = getSelectedNights();
+        const coefficient = selectedNights / originalNights;
+
+        // Визначаємо місяць для відображення (беремо з першої дати)
+        const firstDate = availableDates[0];
+        let currentMonth = firstDate.month;
+        let currentYear = 2026;
+        let monthName = '';
+
+        const monthNames = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+        const monthNamesShort = ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'];
+
+        // Дні в місяці
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+        let startOffset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+
+        // Створюємо мапу цін
+        const priceMap = new Map();
+        availableDates.forEach(date => {
+            const newPrice = Math.round(date.price * coefficient);
+            priceMap.set(date.day, newPrice);
+        });
+
+        // Знаходимо мінімальну ціну
+        const allPrices = Array.from(priceMap.values());
+        const minPrice = allPrices.length > 0 ? Math.min(...allPrices) : 0;
+
+        // Створюємо HTML
+        let html = `
+            <div style="overflow-x: auto;">
+                <table class="calendar-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 12px; background: #f8fafc; text-align: center;">Пн</th>
+                            <th style="padding: 12px; background: #f8fafc; text-align: center;">Вт</th>
+                            <th style="padding: 12px; background: #f8fafc; text-align: center;">Ср</th>
+                            <th style="padding: 12px; background: #f8fafc; text-align: center;">Чт</th>
+                            <th style="padding: 12px; background: #f8fafc; text-align: center;">Пт</th>
+                            <th style="padding: 12px; background: #f8fafc; text-align: center;">Сб</th>
+                            <th style="padding: 12px; background: #f8fafc; text-align: center;">Нд</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        let currentDay = 1;
+        let weekRow = '<tr>';
+
+        // Порожні клітинки на початку місяця
+        for (let i = 0; i < startOffset; i++) {
+            weekRow += '<td style="padding: 12px; border: 1px solid #e2e8f0; background: #f8fafc;">&nbsp;</td>';
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayOfWeek = (startOffset + day - 1) % 7;
+            const hasPrice = priceMap.has(day);
+            const price = priceMap.get(day) || 0;
+            const isLowest = hasPrice && price === minPrice;
+
+            if (dayOfWeek === 0 && day !== 1) {
+                weekRow += '</tr><tr>';
+            }
+
+            if (hasPrice && price > 0) {
+                const priceFormatted = price.toLocaleString('uk-UA');
+                const dateObj = new Date(currentYear, currentMonth, day);
+                const dateISO = dateObj.toISOString();
+
+                weekRow += `
+                    <td class="${isLowest ? 'lowest-price' : 'has-price'}"
+                        style="padding: 12px; text-align: center; border: 1px solid #e2e8f0; cursor: pointer; ${isLowest ? 'background: #dcfce7;' : 'background: #fef9e6;'}"
+                        data-date="${dateISO}"
+                        data-price="${price}"
+                        onclick="selectCalendarDateFromTable('${dateISO}', ${price}, ${selectedNights})">
+                        <div style="font-weight: 600;">${day}</div>
+                        <div style="font-size: 12px; font-weight: bold; color: ${isLowest ? '#166534' : 'var(--primary-color)'};">${priceFormatted} грн</div>
+                        ${isLowest ? '<div style="font-size: 10px; color: #22c55e;">✓</div>' : ''}
+                    </td>
+                `;
+            } else {
+                weekRow += `
+                    <td class="no-price" style="padding: 12px; text-align: center; border: 1px solid #e2e8f0; background: #f8fafc; color: #94a3b8;">
+                        <div style="font-weight: 600;">${day}</div>
+                        <div style="font-size: 11px;">немає</div>
+                    </td>
+                `;
+            }
+        }
+
+        // Заповнюємо кінець місяця
+        const lastDayOfWeek = (startOffset + daysInMonth - 1) % 7;
+        const remainingCells = 6 - lastDayOfWeek;
+        for (let i = 0; i < remainingCells; i++) {
+            weekRow += '<td style="padding: 12px; border: 1px solid #e2e8f0; background: #f8fafc;">&nbsp;</td>';
+        }
+
+        weekRow += '</tr>';
+        html += weekRow;
+
+        html += `
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center mt-3">
+                <small class="text-muted">* Вартість вказана за тур на 2-х дорослих.</small>
+            </div>
+        `;
+
+        container.innerHTML = html;
+        console.log(`✅ Календар відрендерено, ${priceMap.size} дат з цінами`);
+
+        // Показати секцію
+        const section = document.getElementById('priceCalendarSection');
+        if (section) section.style.display = 'block';
+    }
+
+    function refreshCalendar() {
+        collectAvailableDates();
+        renderCalendar();
+    }
+
+    // Глобальна функція для вибору дати
+    window.selectCalendarDateFromTable = function(dateISO, price, nights) {
+        const selectedDate = new Date(dateISO);
+        console.log(`📅 Вибрано дату: ${selectedDate.toLocaleDateString()}, ціна: ${price} грн, ночей: ${nights}`);
+
+        // Оновлюємо URL параметри
+        const url = new URL(window.location.href);
+        url.searchParams.set('od', selectedDate.toISOString().split('T')[0]);
+        url.searchParams.set('ol', nights);
+        window.history.pushState({}, '', url);
+
+        // Оновлюємо таблицю з пропозиціями
+        if (window.reloadHotelPrices) {
+            setTimeout(window.reloadHotelPrices, 300);
+        }
+
+        // Прокручуємо до таблиці
+        const tableSection = document.getElementById('hotelPricesSection');
+        if (tableSection) {
+            tableSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
+    // Слідкуємо за зміною кількості ночей
     const nightsSelect = document.getElementById('searchNights');
     if (nightsSelect) {
         nightsSelect.addEventListener('change', () => {
-            console.log('🔄 Змінено кількість ночей');
-            setTimeout(updateCalendar, 50);
-            setTimeout(updateCalendar, 200);
+            console.log('🔄 Змінено кількість ночей, оновлюємо календар');
+            setTimeout(refreshCalendar, 100);
         });
     }
 
-    // Слідкуємо за появою календаря
+    // Слідкуємо за зміною кількості туристів
+    const adultsSelect = document.getElementById('searchAdults');
+    if (adultsSelect) {
+        adultsSelect.addEventListener('change', () => {
+            console.log('👥 Змінено кількість туристів, оновлюємо календар');
+            setTimeout(refreshCalendar, 100);
+        });
+    }
+
+    // Спостерігаємо за появою модальної таблиці
     const observer = new MutationObserver(() => {
-        if (document.querySelector('.calendar-table td.has-price')) {
-            console.log('📅 Календар знайдено!');
-            getOriginalPrice();
-            updateCalendar();
+        const modalTable = document.querySelector('.new_t-date-modal-table tbody tr');
+        if (modalTable && modalTable.querySelectorAll('td').length > 1) {
+            console.log('📊 Модальна таблиця завантажена!');
+            getOriginalData();
+            collectAvailableDates();
+            renderCalendar();
             observer.disconnect();
         }
     });
     observer.observe(document.body, { childList: true, subtree: true });
 
     // Запуск
-    setTimeout(() => { getOriginalPrice(); updateCalendar(); }, 500);
-    setTimeout(updateCalendar, 1500);
-    setTimeout(updateCalendar, 3000);
-    setTimeout(updateCalendar, 5000);
+    setTimeout(() => {
+        getOriginalData();
+        collectAvailableDates();
+        renderCalendar();
+    }, 1000);
+    setTimeout(refreshCalendar, 3000);
+    setTimeout(refreshCalendar, 5000);
 
-    console.log('✅ Фікс активовано');
+    console.log('✅ Новий календар активовано');
 })();
 </script>
 {% endblock %}
