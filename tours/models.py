@@ -168,11 +168,11 @@ class PopularDestination(models.Model):
 class Consultation(models.Model):
     name = models.CharField(max_length=100, verbose_name="Ім'я")
     phone = models.CharField(max_length=20, verbose_name="Телефон")
-    email = models.EmailField(blank=True, null=True, verbose_name="Email")          # ДОДАНО
+    email = models.EmailField(blank=True, null=True, verbose_name="Email")
     comment = models.TextField(blank=True, verbose_name="Коментар")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата заявки")
     is_processed = models.BooleanField(default=False, verbose_name="Опрацьовано")
-    status = models.CharField(max_length=20, default='new', blank=True, verbose_name="Статус")   # ДОДАНО
+    status = models.CharField(max_length=20, default='new', blank=True, verbose_name="Статус")
     agent = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -199,14 +199,13 @@ class TourImage(models.Model):
         return f"Фото для {self.tour.title}"
 
 
-# ========== ВИПРАВЛЕНА МОДЕЛЬ BOOKING (ДОДАНО null=True, blank=True) ==========
 class Booking(models.Model):
     tour = models.ForeignKey(
         Tour,
         on_delete=models.CASCADE,
         related_name='bookings',
-        null=True,      # ← ДОДАНО
-        blank=True      # ← ДОДАНО
+        null=True,
+        blank=True
     )
     name = models.CharField(max_length=100, verbose_name="Ім'я")
     phone = models.CharField(max_length=20, verbose_name="Телефон")
@@ -469,3 +468,29 @@ class Amenity(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.category.name})"
+
+
+# ========== МОДЕЛЬ ДЛЯ ВІДГУКІВ ПРО ГОТЕЛІ (ДОДАНО) ==========
+class HotelReview(models.Model):
+    """
+    Відгуки про готелі (зберігаються тільки на вашому сайті, не передаються в Otpusk)
+    """
+    hid = models.CharField(max_length=50, verbose_name="ID готелю")
+    oid = models.CharField(max_length=100, blank=True, null=True, verbose_name="ID туру")
+    guest_name = models.CharField(max_length=100, verbose_name="Ім'я гостя")
+    rating = models.IntegerField(
+        verbose_name="Оцінка",
+        help_text="Оцінка від 1 до 5"
+    )
+    comment = models.TextField(verbose_name="Текст відгуку")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата створення")
+    is_approved = models.BooleanField(default=True, verbose_name="Опубліковано")
+
+    class Meta:
+        verbose_name = "Відгук про готель"
+        verbose_name_plural = "Відгуки про готелі"
+        unique_together = ['hid', 'guest_name']  # Один гість - один відгук на готель
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.guest_name} - {self.hid} - {self.rating}★"

@@ -14,7 +14,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from .models import Tour, News, Review, Consultation, Booking
+from .models import Tour, News, Review, Consultation, Booking, HotelReview  # ДОДАТО: HotelReview
 from .forms import ConsultationForm, ReviewForm
 
 User = get_user_model()
@@ -231,79 +231,178 @@ def search_otpusk_by_country(request, slug=None):
     }
     return render(request, 'tours/search_results_by_country.html', context)
 
-    # ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (З ОБРОБКОЮ ФОРМИ) ==========
 
+# ========== API ДЛЯ ВІДГУКІВ (НОВИЙ КОД) ==========
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def hotel_reviews_api(request, slug=None):
+    """
+    API для відгуків про готелі
+    GET - отримання відгуків
+    POST - збереження нового відгуку
+    """
+
+    if request.method == 'GET':
+        hid = request.GET.get('hid')
+        if not hid:
+            return JsonResponse({'error': 'hid required'}, status=400)
+
+        # Отримуємо відгуки з бази даних
+        reviews = HotelReview.objects.filter(hid=hid, is_approved=True).order_by('-created_at')
+
+        data = {
+            'reviews': [
+                {
+                    'id': r.id,
+                    'guest_name': r.guest_name,
+                    'rating': r.rating,
+                    'comment': r.comment,
+                    'created_at': r.created_at.isoformat()
+                }
+                for r in reviews
+            ]
+        }
+        return JsonResponse(data)
+
+    elif request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            hid = data.get('hid')
+            oid = data.get('oid')
+            guest_name = data.get('guest_name', '').strip()
+            rating = data.get('rating')
+            comment = data.get('comment', '').strip()
+
+            # Валідація
+            if not hid or not guest_name or not rating or not comment:
+                return JsonResponse({'error': 'Всі поля обов\'язкові', 'success': False}, status=400)
+
+            if rating < 1 or rating > 5:
+                return JsonResponse({'error': 'Оцінка має бути від 1 до 5', 'success': False}, status=400)
+
+            # Перевіряємо чи вже є відгук від цього гостя
+            existing_review = HotelReview.objects.filter(hid=hid, guest_name=guest_name).first()
+
+            if existing_review:
+                # Оновлюємо існуючий відгук
+                existing_review.rating = rating
+                existing_review.comment = comment
+                existing_review.created_at = datetime.now()
+                existing_review.save()
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Ваш відгук оновлено!'
+                })
+            else:
+                # Створюємо новий відгук
+                HotelReview.objects.create(
+                    hid=hid,
+                    oid=oid,
+                    guest_name=guest_name,
+                    rating=rating,
+                    comment=comment
+                )
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Дякуємо за ваш відгук!'
+                })
+
+        except Exception as e:
+            print(f"Помилка збереження відгуку: {e}")
+            return JsonResponse({'error': str(e), 'success': False}, status=500)
+
+
+# ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (З ОБРОБКОЮ ФОРМИ) ==========
 
 def tour_detail_otpusk(request, slug=None):
     """
     Сторінка детального перегляду туру (без форми пошуку)
-    З обробкою POST запитів для форми бронювання
+    З обробкою POST запитів для форми бронювання та відгуків
     """
     agent_site = getattr(request, 'current_agent_site', None)
+    hid = request.GET.get('hid', '')
+    oid = request.GET.get('oid', '')
 
     # ========== ОБРОБКА POST ЗАПИТУ (ФОРМА БРОНЮВАННЯ) ==========
-    if request.method == 'POST' and request.POST.get('consultation_submit'):
-        print("=" * 50)
-        print("📝 Отримано POST запит на бронювання!")
-        print(f"POST data: {request.POST}")
-        print("=" * 50)
+    if request.method == 'POST':
+        # ========== ОБРОБКА ВІДГУКУ ==========
+        if request.POST.get('review_submit'):
+            print("📝 Отримано POST запит на відгук!")
 
-        try:
-            # Отримуємо дані з форми
-            name = request.POST.get('name', '').strip()
-            phone = request.POST.get('phone', '').strip()
-            email = request.POST.get('email', '').strip()
+            guest_name = request.POST.get('guest_name', '').strip()
+            rating = request.POST.get('rating')
             comment = request.POST.get('comment', '').strip()
-            country_code = request.POST.get('country_code', '+380')
-            tour_name = request.POST.get('tour_name', '').strip()
-            tour_price = request.POST.get('tour_price', '').strip()
-            tour_dates = request.POST.get('tour_dates', '').strip()
-            tour_url = request.POST.get('tour_url', '').strip()
 
-            # Валідація
-            if not name:
-                error_msg = "Будь ласка, введіть ваше ім'я"
-                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                    return JsonResponse({'success': False, 'error': error_msg})
-                messages.error(request, error_msg)
-                return redirect(request.path + '?' + request.GET.urlencode())
+            if guest_name and rating and comment:
+                # Перевіряємо чи вже є відгук
+                existing_review = HotelReview.objects.filter(hid=hid, guest_name=guest_name).first()
 
-            if not phone:
-                error_msg = "Будь ласка, введіть номер телефону"
-                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                    return JsonResponse({'success': False, 'error': error_msg})
-                messages.error(request, error_msg)
-                return redirect(request.path + '?' + request.GET.urlencode())
+                if existing_review:
+                    existing_review.rating = rating
+                    existing_review.comment = comment
+                    existing_review.save()
+                    messages.success(request, 'Ваш відгук оновлено!')
+                else:
+                    HotelReview.objects.create(
+                        hid=hid,
+                        oid=oid,
+                        guest_name=guest_name,
+                        rating=rating,
+                        comment=comment
+                    )
+                    messages.success(request, 'Дякуємо за ваш відгук!')
+            else:
+                messages.error(request, 'Будь ласка, заповніть всі поля')
 
-            phone_clean = re.sub(r'[^0-9]', '', phone)
-            if len(phone_clean) < 9:
-                error_msg = "Будь ласка, введіть коректний номер телефону"
-                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                    return JsonResponse({'success': False, 'error': error_msg})
-                messages.error(request, error_msg)
-                return redirect(request.path + '?' + request.GET.urlencode())
+            # Перенаправлення на ту ж сторінку
+            return redirect(request.path + '?' + request.GET.urlencode())
 
-            full_phone = f"{country_code}{phone_clean}"
+        # ========== ОБРОБКА ФОРМИ БРОНЮВАННЯ ==========
+        elif request.POST.get('consultation_submit'):
+            print("=" * 50)
+            print("📝 Отримано POST запит на бронювання!")
+            print(f"POST data: {request.POST}")
+            print("=" * 50)
 
-            # Формуємо повідомлення
-            full_message = f"Тур: {tour_name}\n"
-            if tour_price:
-                full_message += f"Ціна: {tour_price}\n"
-            if tour_dates:
-                full_message += f"Дати: {tour_dates}\n"
-            if tour_url:
-                full_message += f"Посилання: {tour_url}\n"
-            if comment:
-                full_message += f"\nПобажання клієнта:\n{comment}"
-
-            print(f"📝 Створюємо заявку:")
-            print(f"   Ім'я: {name}")
-            print(f"   Телефон: {full_phone}")
-            print(f"   Email: {email}")
-            print(f"   Повідомлення: {full_message[:200]}...")
-
-            # Перевірка наявності поля email в моделі Consultation
             try:
+                # Отримуємо дані з форми
+                name = request.POST.get('name', '').strip()
+                phone = request.POST.get('phone', '').strip()
+                email = request.POST.get('email', '').strip()
+                comment = request.POST.get('comment', '').strip()
+                country_code = request.POST.get('country_code', '+380')
+                tour_name = request.POST.get('tour_name', '').strip()
+                tour_price = request.POST.get('tour_price', '').strip()
+                tour_dates = request.POST.get('tour_dates', '').strip()
+                tour_url = request.POST.get('tour_url', '').strip()
+
+                if not name:
+                    error_msg = "Будь ласка, введіть ваше ім'я"
+                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                        return JsonResponse({'success': False, 'error': error_msg})
+                    messages.error(request, error_msg)
+                    return redirect(request.path + '?' + request.GET.urlencode())
+
+                if not phone:
+                    error_msg = "Будь ласка, введіть номер телефону"
+                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                        return JsonResponse({'success': False, 'error': error_msg})
+                    messages.error(request, error_msg)
+                    return redirect(request.path + '?' + request.GET.urlencode())
+
+                phone_clean = re.sub(r'[^0-9]', '', phone)
+                full_phone = f"{country_code}{phone_clean}"
+
+                full_message = f"Тур: {tour_name}\n"
+                if tour_price:
+                    full_message += f"Ціна: {tour_price}\n"
+                if tour_dates:
+                    full_message += f"Дати: {tour_dates}\n"
+                if tour_url:
+                    full_message += f"Посилання: {tour_url}\n"
+                if comment:
+                    full_message += f"\nПобажання клієнта:\n{comment}"
+
                 consultation = Consultation.objects.create(
                     name=name,
                     phone=full_phone,
@@ -311,56 +410,40 @@ def tour_detail_otpusk(request, slug=None):
                     comment=full_message,
                     status='new'
                 )
-            except TypeError:
-                consultation = Consultation.objects.create(
-                    name=name,
-                    phone=full_phone,
-                    comment=full_message,
-                    status='new'
-                )
-                print("⚠️ Модель Consultation не має поля email, створено без email.")
 
-            # Прив'язуємо до агента
-            if hasattr(request, 'current_agent_site') and request.current_agent_site:
-                consultation.agent = request.current_agent_site.user
-                consultation.save()
-            elif slug:
-                try:
-                    from constructor.models.agent_site import AgentSite
-                    agent_site_obj = AgentSite.objects.filter(slug=slug).first()
-                    if agent_site_obj and agent_site_obj.user:
-                        consultation.agent = agent_site_obj.user
-                        consultation.save()
-                except Exception as e:
-                    print(f"⚠️ Не вдалося прив'язати агента: {e}")
+                if hasattr(request, 'current_agent_site') and request.current_agent_site:
+                    consultation.agent = request.current_agent_site.user
+                    consultation.save()
 
-            print(f"✅ Заявка успішно створена! ID: {consultation.id}")
-            success_msg = "Дякуємо! Вашу заявку успішно відправлено. Агент зв'яжеться з вами найближчим часом."
+                success_msg = "Дякуємо! Вашу заявку успішно відправлено. Агент зв'яжеться з вами найближчим часом."
 
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({'success': True, 'message': success_msg})
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'success': True, 'message': success_msg})
 
-            messages.success(request, success_msg)
-            return redirect(request.path + '?' + request.GET.urlencode())
+                messages.success(request, success_msg)
+                return redirect(request.path + '?' + request.GET.urlencode())
 
-        except Exception as e:
-            print(f"❌ ПОМИЛКА при збереженні заявки: {e}")
-            import traceback
-            traceback.print_exc()
-            error_msg = "Сталася помилка. Спробуйте пізніше."
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({'success': False, 'error': error_msg})
-            messages.error(request, error_msg)
-            return redirect(request.path + '?' + request.GET.urlencode())
+            except Exception as e:
+                print(f"❌ ПОМИЛКА при збереженні заявки: {e}")
+                error_msg = "Сталася помилка. Спробуйте пізніше."
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'success': False, 'error': error_msg})
+                messages.error(request, error_msg)
+                return redirect(request.path + '?' + request.GET.urlencode())
 
     # ========== GET-ЗАПИТ (ЗВИЧАЙНЕ ВІДОБРАЖЕННЯ СТОРІНКИ) ==========
+
+    # Отримуємо відгуки для відображення
+    reviews = HotelReview.objects.filter(hid=hid).order_by('-created_at')
+
     context = {
         'agent_site': agent_site,
         'random_agent': get_random_agent(),
-        'hid': request.GET.get('hid', ''),
-        'oid': request.GET.get('oid', ''),
+        'hid': hid,
+        'oid': oid,
         'od': request.GET.get('od', ''),
         'ol': request.GET.get('ol', ''),
+        'reviews': reviews,  # Додаємо відгуки в контекст
     }
     return render(request, 'tours/tour_detail_otpusk.html', context)
 
@@ -399,7 +482,6 @@ def booking_ajax(request, slug=None):
         if message:
             full_message += f"Коментар клієнта: {message}"
 
-        # СТВОРЮЄМО ЗАЯВКУ В БРОНЮВАННЯ
         booking = Booking.objects.create(
             tour=None,
             name=name,
@@ -409,9 +491,6 @@ def booking_ajax(request, slug=None):
         )
 
         print(f"✅ Booking створено! ID={booking.id}")
-        print(f"   Ім'я: {booking.name}")
-        print(f"   Телефон: {booking.phone}")
-        print(f"   Email: {booking.email}")
 
         return JsonResponse({
             'success': True,
@@ -420,8 +499,6 @@ def booking_ajax(request, slug=None):
 
     except Exception as e:
         print(f"❌ ПОМИЛКА: {e}")
-        import traceback
-        traceback.print_exc()
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 
@@ -438,45 +515,35 @@ def consultation_ajax(request, slug=None):
         comment = request.POST.get('comment', '').strip()
         country_code = request.POST.get('country_code', '+380')
 
-        # Валідація
         if not name:
             return JsonResponse({'success': False, 'error': "Введіть ваше ім'я"})
         if not phone:
             return JsonResponse({'success': False, 'error': "Введіть номер телефону"})
 
-        # Очищуємо телефон від нецифрових символів
         phone_clean = re.sub(r'[^0-9]', '', phone)
         if len(phone_clean) < 9:
             return JsonResponse({'success': False, 'error': "Введіть коректний номер телефону (мінімум 9 цифр)"})
 
-        # Формуємо повний номер
         full_phone = f"{country_code}{phone_clean}"
 
-        # Створюємо заявку
         consultation = Consultation.objects.create(
             name=name,
             phone=full_phone,
             comment=comment
         )
 
-        # Якщо є агентський сайт, прив'язуємо заявку до агента
         if hasattr(request, 'current_agent_site') and request.current_agent_site:
             consultation.agent = request.current_agent_site.user
             consultation.save()
-            print(f"✅ Заявка прив'язана до агента: {request.current_agent_site.user.username}")
         elif slug:
-            # Якщо slug передано, але current_agent_site не встановлено
             try:
                 from constructor.models.agent_site import AgentSite
                 agent_site = AgentSite.objects.filter(slug=slug).first()
                 if agent_site:
                     consultation.agent = agent_site.user
                     consultation.save()
-                    print(f"✅ Заявка прив'язана до агента (за slug): {agent_site.user.username}")
             except Exception as e:
                 print(f"⚠️ Не вдалося прив'язати агента за slug: {e}")
-
-        print(f"✅ Нова заявка на консультацію: {name} - {full_phone}")
 
         return JsonResponse({
             'success': True,

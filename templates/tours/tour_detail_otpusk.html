@@ -2878,88 +2878,94 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => observer.disconnect(), 15000);
 })();
 </script>
-<!-- ========== БЛОК ВІДГУКІВ ========== -->
-<div class="container mt-5 mb-5" id="reviewsSection">
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-        <div class="card-header bg-white py-3 px-4 border-0">
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <h3 class="fw-bold mb-0" style="color: #000000;" id="reviewsTitle">Відгуки про готель</h3>
-                <div class="d-flex align-items-center gap-3" id="ratingSummary">
-                    <div class="text-center">
-                        <span class="display-6 fw-bold" id="avgRating" style="color: var(--primary-color);">0</span>
-                        <div class="text-warning" id="avgRatingStars">
-                            <i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i>
+<!-- ========== ВІДГУКИ ========== -->
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <section id="reviews-section" class="mb-5 scroll-margin">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-white py-3 px-4 border-0">
+                        <h3 class="fw-bold mb-0" style="color: #000000;" id="reviewsTitle">Відгуки про готель</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- ФОРМА ДЛЯ ВІДГУКУ - як у старому коді -->
+                        <div class="card shadow-lg mb-4" style="max-width: 500px; background: #f8fafc; border: none;">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold mb-3">Залиште ваш відгук</h5>
+
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                            {{ message }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+
+                                <form method="post" id="reviewForm">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="review_submit" value="1">
+                                    <input type="hidden" name="hid" value="{{ hid }}">
+                                    <input type="hidden" name="oid" value="{{ oid }}">
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Ваше ім'я</label>
+                                        <input type="text" name="guest_name" id="reviewGuestName" class="form-control" placeholder="Введіть ваше ім'я" required>
+                                        <small class="text-muted form-text">Ви зможете залишити тільки один відгук з цим іменем</small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Оцінка</label>
+                                        <select name="rating" id="reviewRating" class="form-select" required>
+                                            <option value="5">5 - Відмінно</option>
+                                            <option value="4">4 - Добре</option>
+                                            <option value="3">3 - Задовільно</option>
+                                            <option value="2">2 - Погано</option>
+                                            <option value="1">1 - Жахливо</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Ваш відгук</label>
+                                        <textarea name="comment" id="reviewComment" class="form-control" rows="3" placeholder="Поділіться враженнями..." required></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn w-100" style="background: var(--primary-color); border-color: var(--primary-color); color: white;">
+                                        <i class="fa-regular fa-paper-plane me-2"></i> Надіслати відгук
+                                    </button>
+                                </form>
+
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">Вже залишали відгук? Введіть те саме ім'я, щоб оновити свій відгук.</small>
+                                </div>
+                            </div>
                         </div>
-                        <span class="text-muted small" id="reviewsCount">0 відгуків</span>
+
+                        <!-- СПИСОК ВІДГУКІВ -->
+                        <div id="reviewsList" class="reviews-list">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Завантаження...</span>
+                                </div>
+                                <p class="mt-3 text-muted">Завантаження відгуків...</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="card-body p-4">
-            <!-- ПОВІДОМЛЕННЯ ПРО УСПІХ/ПОМИЛКУ -->
-            <div id="reviewMessage" style="display: none;" class="alert mb-4"></div>
-
-            <!-- ФОРМА ДЛЯ ВІДГУКУ -->
-            <div class="card shadow-sm mb-4" style="background: #f8fafc; border: none;">
-                <div class="card-body">
-                    <h5 class="fw-bold mb-3">Залиште ваш відгук</h5>
-
-                    <form id="reviewForm">
-                        {% csrf_token %}
-                        <input type="hidden" name="review_submit" value="1">
-                        <input type="hidden" name="hid" id="reviewHid" value="{{ hid }}">
-                        <input type="hidden" name="oid" id="reviewOid" value="{{ oid }}">
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Ваше ім'я</label>
-                            <input type="text" name="guest_name" id="reviewGuestName" class="form-control" placeholder="Введіть ваше ім'я" required>
-                            <small class="text-muted form-text">Ви зможете залишити тільки один відгук з цим іменем</small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Оцінка</label>
-                            <select name="rating" id="reviewRating" class="form-select" required>
-                                <option value="5">5 - Відмінно</option>
-                                <option value="4">4 - Добре</option>
-                                <option value="3">3 - Задовільно</option>
-                                <option value="2">2 - Погано</option>
-                                <option value="1">1 - Жахливо</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Ваш відгук</label>
-                            <textarea name="comment" id="reviewComment" class="form-control" rows="4" placeholder="Поділіться враженнями..." required></textarea>
-                        </div>
-
-                        <button type="submit" class="btn px-4 py-2" style="background: var(--primary-color); color: white; border: none; border-radius: 8px;">
-                            <i class="fa-regular fa-paper-plane me-2"></i> Надіслати відгук
-                        </button>
-                    </form>
-
-                    <div class="text-center mt-3">
-                        <small class="text-muted">Вже залишали відгук? Введіть те саме ім'я, щоб оновити свій відгук.</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- СПИСОК ВІДГУКІВ -->
-            <div id="reviewsList" class="reviews-list">
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Завантаження...</span>
-                    </div>
-                    <p class="mt-3 text-muted">Завантаження відгуків...</p>
-                </div>
-            </div>
+            </section>
         </div>
     </div>
 </div>
+
 <style>
-/* ========== СТИЛІ ДЛЯ ВІДГУКІВ ========== */
+/* ========== СТИЛІ ДЛЯ ВІДГУКІВ (як у старому коді) ========== */
+.scroll-margin {
+    scroll-margin-top: 30px;
+}
+
 .reviews-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 20px;
     max-width: 100%;
 }
@@ -2968,7 +2974,7 @@ document.addEventListener('DOMContentLoaded', function() {
     background: white;
     border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     border: 1px solid #e2e8f0;
 }
@@ -3071,14 +3077,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 </style>
+
 <script>
-// ========== ВІДГУКИ ПРО ГОТЕЛЬ ==========
-(function() {
+// ========== ВІДГУКИ (як у старому коді) ==========
+document.addEventListener('DOMContentLoaded', function() {
     const hid = new URLSearchParams(window.location.search).get('hid');
     const oid = new URLSearchParams(window.location.search).get('oid');
     let allReviews = [];
 
-    // Оновлення заголовка з назвою готелю
+    // Оновлення назви готелю в заголовку
     function updateReviewsTitle() {
         const hotelTitle = document.querySelector('.new_t-header-title');
         const reviewsTitle = document.getElementById('reviewsTitle');
@@ -3102,44 +3109,26 @@ document.addEventListener('DOMContentLoaded', function() {
         return stars;
     }
 
-    // Оновлення середньої оцінки
-    function updateRatingSummary(reviews) {
-        const avgRatingElem = document.getElementById('avgRating');
-        const avgStarsElem = document.getElementById('avgRatingStars');
-        const reviewsCountElem = document.getElementById('reviewsCount');
+    // Розгортання відгуку
+    function toggleReviewComment(btn) {
+        const card = btn.closest('.review-card');
+        const shortDiv = card.querySelector('.review-comment-short');
+        const fullDiv = card.querySelector('.review-comment-full');
 
-        if (!avgRatingElem || !avgStarsElem || !reviewsCountElem) return;
-
-        if (reviews.length === 0) {
-            avgRatingElem.textContent = '0';
-            avgStarsElem.innerHTML = '<i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i>';
-            reviewsCountElem.textContent = '0 відгуків';
-            return;
+        if (fullDiv && shortDiv) {
+            if (fullDiv.style.display === 'none') {
+                shortDiv.style.display = 'none';
+                fullDiv.style.display = 'block';
+                btn.textContent = 'менше';
+            } else {
+                shortDiv.style.display = 'block';
+                fullDiv.style.display = 'none';
+                btn.textContent = '... більше';
+            }
         }
-
-        let totalRating = 0;
-        reviews.forEach(review => {
-            totalRating += review.rating;
-        });
-        const avgRating = (totalRating / reviews.length).toFixed(1);
-
-        avgRatingElem.textContent = avgRating;
-        avgStarsElem.innerHTML = renderStars(Math.round(avgRating));
-        reviewsCountElem.textContent = `${reviews.length} ${getDeclension(reviews.length, 'відгук', 'відгуки', 'відгуків')}`;
     }
 
-    // Допоміжна функція для відмінювання
-    function getDeclension(number, one, two, five) {
-        let n = Math.abs(number);
-        n %= 100;
-        if (n >= 5 && n <= 20) return five;
-        n %= 10;
-        if (n === 1) return one;
-        if (n >= 2 && n <= 4) return two;
-        return five;
-    }
-
-    // Завантаження відгуків
+    // Завантаження відгуків через Django API
     async function loadReviews() {
         const container = document.getElementById('reviewsList');
         if (!container) return;
@@ -3150,8 +3139,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            let url = `/api/hotel-reviews/?hid=${hid}`;
-            if (oid) url += `&oid=${oid}`;
+            // Визначаємо правильний URL для API (з урахуванням агента)
+            let url = '/api/hotel-reviews/?hid=' + hid;
+            if (oid) url += '&oid=' + oid;
+
+            // Якщо є префікс агента в URL
+            const pathParts = window.location.pathname.split('/');
+            for (let i = 0; i < pathParts.length; i++) {
+                if (pathParts[i] === 'a' && pathParts[i + 1]) {
+                    url = '/a/' + pathParts[i + 1] + '/api/hotel-reviews/?hid=' + hid;
+                    if (oid) url += '&oid=' + oid;
+                    break;
+                }
+            }
 
             const response = await fetch(url);
             const data = await response.json();
@@ -3159,7 +3159,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.reviews && data.reviews.length > 0) {
                 allReviews = data.reviews;
                 renderReviews(allReviews);
-                updateRatingSummary(allReviews);
             } else {
                 container.innerHTML = `
                     <div class="text-center py-5">
@@ -3199,7 +3198,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="review-header">
                         <div class="reviewer-name">
                             <i class="fa-regular fa-user-circle"></i>
-                            ${escapeHtml(review.guest_name || review.author || 'Гість')}
+                            ${escapeHtml(review.guest_name || 'Гість')}
                         </div>
                         <div class="review-date">${formattedDate}</div>
                     </div>
@@ -3228,22 +3227,21 @@ document.addEventListener('DOMContentLoaded', function() {
         container.innerHTML = html;
     }
 
-    // Відправка відгуку
+    // Відправка відгуку через Django
     async function submitReview(event) {
         event.preventDefault();
 
         const guestName = document.getElementById('reviewGuestName')?.value.trim();
         const rating = document.getElementById('reviewRating')?.value;
         const comment = document.getElementById('reviewComment')?.value.trim();
-        const messageDiv = document.getElementById('reviewMessage');
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
         if (!guestName) {
-            showReviewMessage('Будь ласка, введіть ваше ім\'я', 'danger');
+            alert('Будь ласка, введіть ваше ім\'я');
             return;
         }
-
         if (!comment) {
-            showReviewMessage('Будь ласка, введіть текст відгуку', 'danger');
+            alert('Будь ласка, введіть текст відгуку');
             return;
         }
 
@@ -3253,13 +3251,11 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.disabled = true;
 
         try {
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
             let url = '/api/hotel-reviews/';
-
             const pathParts = window.location.pathname.split('/');
             for (let i = 0; i < pathParts.length; i++) {
                 if (pathParts[i] === 'a' && pathParts[i + 1]) {
-                    url = `/a/${pathParts[i + 1]}/api/hotel-reviews/`;
+                    url = '/a/' + pathParts[i + 1] + '/api/hotel-reviews/';
                     break;
                 }
             }
@@ -3282,34 +3278,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (data.success) {
-                showReviewMessage(data.message || 'Дякуємо за ваш відгук!', 'success');
-
+                alert(data.message || 'Дякуємо за ваш відгук!');
                 document.getElementById('reviewGuestName').value = '';
                 document.getElementById('reviewComment').value = '';
                 document.getElementById('reviewRating').value = '5';
-
-                setTimeout(loadReviews, 1000);
+                loadReviews();
             } else {
-                showReviewMessage(data.error || 'Сталася помилка. Спробуйте пізніше.', 'danger');
+                alert(data.error || 'Сталася помилка. Спробуйте пізніше.');
             }
         } catch (error) {
             console.error('Помилка відправки:', error);
-            showReviewMessage('Помилка з\'єднання. Спробуйте пізніше.', 'danger');
+            alert('Помилка з\'єднання. Спробуйте пізніше.');
         } finally {
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
-        }
-    }
-
-    function showReviewMessage(message, type) {
-        const messageDiv = document.getElementById('reviewMessage');
-        if (messageDiv) {
-            messageDiv.textContent = message;
-            messageDiv.className = `alert alert-${type} mb-4`;
-            messageDiv.style.display = 'block';
-            setTimeout(() => {
-                messageDiv.style.display = 'none';
-            }, 5000);
         }
     }
 
@@ -3320,27 +3302,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return div.innerHTML;
     }
 
-    window.toggleReviewComment = function(btn) {
-        const card = btn.closest('.review-card');
-        const shortDiv = card.querySelector('.review-comment-short');
-        const fullDiv = card.querySelector('.review-comment-full');
-
-        if (fullDiv && shortDiv) {
-            if (fullDiv.style.display === 'none') {
-                shortDiv.style.display = 'none';
-                fullDiv.style.display = 'block';
-                btn.textContent = 'менше';
-            } else {
-                shortDiv.style.display = 'block';
-                fullDiv.style.display = 'none';
-                btn.textContent = '... більше';
-            }
-        }
-    };
-
-    window.loadAllReviews = function() {
-        renderReviews(allReviews);
-    };
+    window.toggleReviewComment = toggleReviewComment;
+    window.loadAllReviews = function() { renderReviews(allReviews); };
 
     // Ініціалізація
     const reviewForm = document.getElementById('reviewForm');
@@ -3356,11 +3319,15 @@ document.addEventListener('DOMContentLoaded', function() {
         hotelTitleObserver.observe(hotelTitle, { childList: true, subtree: true, characterData: true });
     }
 
-    setTimeout(loadReviews, 1000);
-    setTimeout(loadReviews, 3000);
+    loadReviews();
 
-    console.log('✅ Блок відгуків активовано');
-})();
+    // Розгортання відгуків (делегування подій)
+    document.addEventListener('click', function(e) {
+        if (e.target.classList && e.target.classList.contains('read-more-btn')) {
+            toggleReviewComment(e.target);
+        }
+    });
+});
 </script>
 <!-- ========== БЛОК "ГОТЕЛІ ЗІ СХОЖИМ РЕЙТИНГОМ" ========== -->
 <div class="container mt-5 mb-5" id="similarRatingSection" style="display: none;">
