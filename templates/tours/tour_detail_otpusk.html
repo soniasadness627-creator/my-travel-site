@@ -2428,22 +2428,38 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 (function() {
     function initHamburger() {
+        // Не створюємо кнопку, якщо вона вже є
         if (document.querySelector('.hamburger-trigger')) return;
+
         const menu = document.querySelector('.new_t-menu');
         if (!menu) {
             setTimeout(initHamburger, 300);
             return;
         }
+
+        // Тільки для мобільних
         if (window.innerWidth > 768) return;
+
+        // Створюємо кнопку
         const btn = document.createElement('div');
         btn.className = 'hamburger-trigger';
         btn.innerHTML = '☰ Меню';
+
+        // Вставляємо перед меню
         menu.parentNode.insertBefore(btn, menu);
+
+        // Закриваємо меню за замовчуванням
+        menu.classList.remove('show');
+
+        // Обробник для кнопки
         btn.addEventListener('click', function(e) {
+            e.preventDefault();
             e.stopPropagation();
             menu.classList.toggle('show');
             btn.innerHTML = menu.classList.contains('show') ? '✕ Закрити' : '☰ Меню';
         });
+
+        // Закриваємо меню при кліку на пункт меню
         const items = menu.querySelectorAll('.new_t-menu-item');
         items.forEach(item => {
             item.addEventListener('click', function() {
@@ -2451,73 +2467,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 btn.innerHTML = '☰ Меню';
             });
         });
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                if (btn) btn.style.display = 'none';
-                if (menu) {
-                    menu.classList.remove('show');
-                    menu.style.display = 'flex';
-                    menu.style.flexDirection = 'row';
-                    menu.style.flexWrap = 'wrap';
-                }
-            } else {
-                if (btn) btn.style.display = 'inline-flex';
+
+        // Закриваємо меню при кліку поза ним
+        document.addEventListener('click', function(e) {
+            if (!menu.contains(e.target) && !btn.contains(e.target) && menu.classList.contains('show')) {
+                menu.classList.remove('show');
+                btn.innerHTML = '☰ Меню';
+            }
+        });
+    }
+
+    // Запускаємо після завантаження
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHamburger);
+    } else {
+        initHamburger();
+    }
+
+    // При зміні розміру вікна
+    window.addEventListener('resize', function() {
+        const btn = document.querySelector('.hamburger-trigger');
+        const menu = document.querySelector('.new_t-menu');
+
+        if (window.innerWidth > 768) {
+            if (btn) btn.style.display = 'none';
+            if (menu) {
+                menu.classList.remove('show');
+                menu.style.display = 'flex';
+            }
+        } else {
+            if (btn) {
+                btn.style.display = 'inline-flex';
                 if (menu && !menu.classList.contains('show')) {
                     menu.style.display = 'none';
                 }
             }
-        });
-    }
-
-    function fixReviewsScroll() {
-        const reviewsTab = document.querySelector('.new_t-tab-content.reviews');
-        if (!reviewsTab) return;
-        const observer = new MutationObserver(function() {
-            if (reviewsTab.innerHTML.trim() !== '' && reviewsTab.offsetHeight > 50) {
-                const menuWrap = document.querySelector('.new_t-menu-wrap');
-                if (menuWrap && menuWrap.getBoundingClientRect().top < 50) {
-                    menuWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-                observer.disconnect();
-            }
-        });
-        observer.observe(reviewsTab, { childList: true, subtree: true });
-        setTimeout(() => observer.disconnect(), 3000);
-    }
-
-    function patchReviewsTab() {
-        const reviewsMenuItem = document.querySelector('.new_t-menu-item[data-name="reviews"]');
-        if (!reviewsMenuItem) {
-            setTimeout(patchReviewsTab, 500);
-            return;
         }
-        reviewsMenuItem.addEventListener('click', function() {
-            setTimeout(fixReviewsScroll, 200);
-            setTimeout(fixReviewsScroll, 600);
-        });
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-            initHamburger();
-            patchReviewsTab();
-        });
-    } else {
-        initHamburger();
-        patchReviewsTab();
-    }
-
-    const observer = new MutationObserver(function() {
-        const menu = document.querySelector('.new_t-menu');
-        const btn = document.querySelector('.hamburger-trigger');
-        if (menu && !btn && window.innerWidth <= 768) {
-            initHamburger();
-        }
-        if (!document.querySelector('.new_t-menu-item[data-name="reviews"]')) return;
-        patchReviewsTab();
     });
-    observer.observe(document.body, { childList: true, subtree: true });
-    setTimeout(() => observer.disconnect(), 15000);
 })();
 </script>
 
