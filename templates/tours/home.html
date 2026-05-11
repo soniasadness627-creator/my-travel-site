@@ -352,7 +352,7 @@
 </style>
 
 <script>
-// ========== КАЛЕНДАР НИЗЬКИХ ЦІН З ПЕРЕХОДОМ НА СТОРІНКУ ТУРУ ==========
+// ========== КАЛЕНДАР НИЗЬКИХ ЦІН З ПЕРЕХОДОМ НА ПОШУК ==========
 document.addEventListener('DOMContentLoaded', function() {
     const countryListByDepartureCity = {
         "Київ": ["Україна", "Єгипет", "Туреччина", "ОАЕ", "Шрі Ланка", "Іспанія", "Мальдіви", "Кіпр", "Грузія"],
@@ -441,51 +441,19 @@ document.addEventListener('DOMContentLoaded', function() {
         return 20 + (ratio * 80);
     }
 
-    // Функція для пошуку туру за датою та переходу на сторінку деталей
-    async function searchAndGoToTour(date, price) {
-        // Показуємо індикатор завантаження на клікнутому елементі
-        const clickedElement = event.currentTarget;
-        const originalHTML = clickedElement.innerHTML;
-        clickedElement.style.opacity = '0.5';
-        clickedElement.style.cursor = 'wait';
-
+    // ПРОСТА ФУНКЦІЯ ПЕРЕХОДУ НА СТОРІНКУ ПОШУКУ
+    function goToSearch(date) {
         const year = currentMonth.getFullYear();
         const month = currentMonth.getMonth();
         const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
 
-        try {
-            // Шукаємо тур через API Otpusk
-            const searchUrl = `https://export.otpusk.com/api/2.4/search?country=${encodeURIComponent(currentCountry)}&departure=${encodeURIComponent(currentDeparture)}&date_from=${formattedDate}&date_to=${formattedDate}&format=json&access_token=3f94b-e4ff8-a72a7-4755f-da9ca`;
-            const response = await fetch(searchUrl);
-            const data = await response.json();
+        // Формуємо URL для сторінки пошуку
+        let searchUrl = `/search-otpusk/?country=${encodeURIComponent(currentCountry)}&departure=${encodeURIComponent(currentDeparture)}&date=${formattedDate}`;
+        {% if agent_site %}
+        searchUrl = `/a/{{ agent_site.slug }}/search-otpusk/?country=${encodeURIComponent(currentCountry)}&departure=${encodeURIComponent(currentDeparture)}&date=${formattedDate}`;
+        {% endif %}
 
-            if (data.tours && data.tours.length > 0) {
-                const tour = data.tours[0];
-                const hid = tour.hotel_id;
-                const oid = tour.offer_id;
-                const nights = tour.nights || 7;
-
-                // Формуємо URL для сторінки деталей туру
-                let detailUrl = `/tour-detail/?hid=${hid}&oid=${oid}&od=${formattedDate}&ol=${nights}`;
-                {% if agent_site %}
-                detailUrl = `/a/{{ agent_site.slug }}/tour-detail/?hid=${hid}&oid=${oid}&od=${formattedDate}&ol=${nights}`;
-                {% endif %}
-
-                // Додаємо параметр для відкриття чату (опціонально)
-                detailUrl += '&chat_open=1';
-
-                window.location.href = detailUrl;
-            } else {
-                alert('На цю дату немає доступних турів. Спробуйте обрати іншу дату.');
-                clickedElement.style.opacity = '1';
-                clickedElement.style.cursor = 'pointer';
-            }
-        } catch (error) {
-            console.error('Помилка пошуку туру:', error);
-            alert('Помилка при пошуку туру. Спробуйте пізніше.');
-            clickedElement.style.opacity = '1';
-            clickedElement.style.cursor = 'pointer';
-        }
+        window.location.href = searchUrl;
     }
 
     function renderCalendar(prices) {
@@ -532,11 +500,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const barHeight = getHeightForPrice(price, globalMin, globalMax);
                 const priceFormatted = Math.round(price).toLocaleString('uk-UA');
 
-                // Робимо клікабельним
+                // Робимо клікабельним - перехід на сторінку пошуку
                 col.style.cursor = 'pointer';
-                col.onclick = (function(dayNum, priceVal) {
-                    return function() { searchAndGoToTour(dayNum, priceVal); };
-                })(day, price);
+                col.onclick = (function(dayNum) {
+                    return function() { goToSearch(dayNum); };
+                })(day);
 
                 col.innerHTML = `
                     <div class="day-week">${dayOfWeek}</div>
@@ -583,62 +551,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (prevBtn) prevBtn.addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() - 1); updateCalendar(); });
     if (nextBtn) nextBtn.addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() + 1); updateCalendar(); });
-});
-
-// ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('consultationForm');
-    if (!form) return;
-
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        let ajaxUrl = '/consultation-ajax/';
-        {% if agent_site %}
-        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
-        {% endif %}
-
-        const formData = new FormData(form);
-        const btn = form.querySelector('button[type="submit"]');
-        const originalText = btn.innerHTML;
-
-        btn.disabled = true;
-        btn.innerHTML = '⏳ Відправляємо...';
-
-        fetch(ajaxUrl, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                form.reset();
-            }
-        })
-        .catch(error => {
-            console.error('Помилка:', error);
-        })
-        .finally(() => {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        });
-    });
-});
-
-// Випадковий фон для блоку консультації
-document.addEventListener('DOMContentLoaded', function() {
-    const colors = ['#c4edd4', '#ccfbfb', '#FFC0CB'];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
-    const card = document.getElementById('consultationCard');
-    if (card) {
-        card.style.backgroundColor = randomColor;
-        card.style.color = '#434343';
-        const cardBody = card.querySelector('.card-body');
-        if (cardBody) cardBody.style.backgroundColor = 'transparent';
-    }
 });
 </script>
 
