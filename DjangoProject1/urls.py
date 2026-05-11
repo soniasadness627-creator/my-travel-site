@@ -68,6 +68,11 @@ urlpatterns = [
     path('api/chat/', tours_views.chat_api, name='chat_api'),
     path('api/popular-tours/', tours_views.popular_tours_api, name='popular_tours_api'),
 
+    # ========== 🔥 API ДЛЯ ВІДГУКІВ (ДОДАНО) ==========
+    path('api/hotel-reviews/', tours_views.hotel_reviews_api, name='hotel_reviews_api'),
+    path('a/<slug:slug>/api/hotel-reviews/', tours_views.hotel_reviews_api, name='agent_hotel_reviews_api'),
+    # ============================================================
+
     # ========== AJAX ОБРОБКА КОНСУЛЬТАЦІЇ ==========
     path('consultation-ajax/', tours_views.consultation_ajax, name='consultation_ajax'),
     # ДЛЯ АГЕНТСЬКИХ САЙТІВ
