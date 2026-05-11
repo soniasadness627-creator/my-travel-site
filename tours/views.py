@@ -14,7 +14,8 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from .models import Tour, News, Review, Consultation, Booking, HotelReview  # ДОДАТО: HotelReview
+from django.utils import timezone
+from .models import Tour, News, Review, Consultation, Booking, HotelReview
 from .forms import ConsultationForm, ReviewForm
 
 User = get_user_model()
@@ -232,14 +233,14 @@ def search_otpusk_by_country(request, slug=None):
     return render(request, 'tours/search_results_by_country.html', context)
 
 
-# ========== API ДЛЯ ВІДГУКІВ (НОВИЙ КОД) ==========
+# ========== API ДЛЯ ВІДГУКІВ (З ПРИВ'ЯЗКОЮ ДО АГЕНТА) ==========
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
 def hotel_reviews_api(request, slug=None):
     """
     API для відгуків про готелі
-    GET - отримання відгуків
-    POST - збереження нового відгуку
+    GET - отримання відгуків (тільки опубліковані)
+    POST - збереження нового відгуку з прив'язкою до агента
     """
 
     if request.method == 'GET':
@@ -247,7 +248,7 @@ def hotel_reviews_api(request, slug=None):
         if not hid:
             return JsonResponse({'error': 'hid required'}, status=400)
 
-        # Отримуємо відгуки з бази даних
+        # Отримуємо відгуки з бази даних (тільки опубліковані)
         reviews = HotelReview.objects.filter(hid=hid, is_approved=True).order_by('-created_at')
 
         data = {
@@ -280,6 +281,23 @@ def hotel_reviews_api(request, slug=None):
             if rating < 1 or rating > 5:
                 return JsonResponse({'error': 'Оцінка має бути від 1 до 5', 'success': False}, status=400)
 
+            # ========== ВИЗНАЧАЄМО АГЕНТА ЗА SLUG ==========
+            agent = None
+            if slug:
+                try:
+                    from constructor.models.agent_site import AgentSite
+                    agent_site = AgentSite.objects.filter(slug=slug).first()
+                    if agent_site:
+                        agent = agent_site.user
+                        print(f"✅ Агент знайдений за slug {slug}: {agent.username} (id: {agent.id})")
+                except Exception as e:
+                    print(f"Помилка визначення агента за slug: {e}")
+
+            # Якщо агент не знайдений за slug, пробуємо з request
+            if not agent and hasattr(request, 'current_agent_site') and request.current_agent_site:
+                agent = request.current_agent_site.user
+                print(f"✅ Агент знайдений через current_agent_site: {agent.username}")
+
             # Перевіряємо чи вже є відгук від цього гостя
             existing_review = HotelReview.objects.filter(hid=hid, guest_name=guest_name).first()
 
@@ -287,21 +305,26 @@ def hotel_reviews_api(request, slug=None):
                 # Оновлюємо існуючий відгук
                 existing_review.rating = rating
                 existing_review.comment = comment
-                existing_review.created_at = datetime.now()
+                existing_review.created_at = timezone.now()
+                if agent and not existing_review.agent:
+                    existing_review.agent = agent
                 existing_review.save()
+                print(f"✅ Оновлено відгук для {guest_name} (готель {hid}), агент: {agent.username if agent else 'None'}")
                 return JsonResponse({
                     'success': True,
                     'message': 'Ваш відгук оновлено!'
                 })
             else:
-                # Створюємо новий відгук
-                HotelReview.objects.create(
+                # Створюємо новий відгук З ПРИВ'ЯЗКОЮ ДО АГЕНТА
+                new_review = HotelReview.objects.create(
                     hid=hid,
                     oid=oid,
                     guest_name=guest_name,
                     rating=rating,
-                    comment=comment
+                    comment=comment,
+                    agent=agent
                 )
+                print(f"✅ Створено новий відгук для {guest_name} (готель {hid}), агент: {agent.username if agent else 'None'}")
                 return JsonResponse({
                     'success': True,
                     'message': 'Дякуємо за ваш відгук!'
@@ -317,8 +340,7 @@ def hotel_reviews_api(request, slug=None):
 def tour_detail_otpusk(request, slug=None):
     """
     Сторінка детального перегляду туру (без форми пошуку)
-    З обробкою POST запитів для форми бронювання та відгуків
-    """
+    З обробкою POST запитів для форми бронювання та відгуків    """
     agent_site = getattr(request, 'current_agent_site', None)
     hid = request.GET.get('hid', '')
     oid = request.GET.get('oid', '')
@@ -333,6 +355,21 @@ def tour_detail_otpusk(request, slug=None):
             rating = request.POST.get('rating')
             comment = request.POST.get('comment', '').strip()
 
+            # ========== ВИЗНАЧАЄМО АГЕНТА ЗА SLUG ==========
+            agent = None
+            if slug:
+                try:
+                    from constructor.models.agent_site import AgentSite
+                    agent_site = AgentSite.objects.filter(slug=slug).first()
+                    if agent_site:
+                        agent = agent_site.user
+                        print(f"✅ Агент знайдений за slug {slug}: {agent.username}")
+                except Exception as e:
+                    print(f"Помилка визначення агента: {e}")
+
+            if not agent and hasattr(request, 'current_agent_site') and request.current_agent_site:
+                agent = request.current_agent_site.user
+
             if guest_name and rating and comment:
                 # Перевіряємо чи вже є відгук
                 existing_review = HotelReview.objects.filter(hid=hid, guest_name=guest_name).first()
@@ -340,6 +377,8 @@ def tour_detail_otpusk(request, slug=None):
                 if existing_review:
                     existing_review.rating = rating
                     existing_review.comment = comment
+                    if agent and not existing_review.agent:
+                        existing_review.agent = agent
                     existing_review.save()
                     messages.success(request, 'Ваш відгук оновлено!')
                 else:
@@ -348,7 +387,8 @@ def tour_detail_otpusk(request, slug=None):
                         oid=oid,
                         guest_name=guest_name,
                         rating=rating,
-                        comment=comment
+                        comment=comment,
+                        agent=agent
                     )
                     messages.success(request, 'Дякуємо за ваш відгук!')
             else:
@@ -434,7 +474,7 @@ def tour_detail_otpusk(request, slug=None):
     # ========== GET-ЗАПИТ (ЗВИЧАЙНЕ ВІДОБРАЖЕННЯ СТОРІНКИ) ==========
 
     # Отримуємо відгуки для відображення
-    reviews = HotelReview.objects.filter(hid=hid).order_by('-created_at')
+    reviews = HotelReview.objects.filter(hid=hid, is_approved=True).order_by('-created_at')
 
     context = {
         'agent_site': agent_site,
@@ -443,7 +483,7 @@ def tour_detail_otpusk(request, slug=None):
         'oid': oid,
         'od': request.GET.get('od', ''),
         'ol': request.GET.get('ol', ''),
-        'reviews': reviews,  # Додаємо відгуки в контекст
+        'reviews': reviews,
     }
     return render(request, 'tours/tour_detail_otpusk.html', context)
 

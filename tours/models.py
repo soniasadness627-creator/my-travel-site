@@ -371,7 +371,8 @@ class TourPriceByTourists(models.Model):
     children_4_10 = models.PositiveSmallIntegerField(default=0, verbose_name="Діти 4-10 років")
     children_11_16 = models.PositiveSmallIntegerField(default=0, verbose_name="Діти 11-16 років")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Ціна")
-    is_default = models.BooleanField(default=False, verbose_name="Ціна за замовчуванням (якщо немає точної відповідності)")
+    is_default = models.BooleanField(default=False,
+                                     verbose_name="Ціна за замовчуванням (якщо немає точної відповідності)")
 
     class Meta:
         verbose_name = "Ціна за складом туристів"
@@ -431,7 +432,8 @@ class AmenityCategory(models.Model):
 
 
 class AmenityName(models.Model):
-    category = models.ForeignKey(AmenityCategory, on_delete=models.CASCADE, related_name='possible_names', verbose_name="Категорія")
+    category = models.ForeignKey(AmenityCategory, on_delete=models.CASCADE, related_name='possible_names',
+                                 verbose_name="Категорія")
     name = models.CharField(max_length=200, verbose_name="Назва послуги")
     order = models.PositiveSmallIntegerField(default=0, verbose_name="Порядок сортування")
     is_popular_default = models.BooleanField(default=False, verbose_name="Популярна за замовчуванням")
@@ -447,7 +449,8 @@ class AmenityName(models.Model):
 
 
 class Amenity(models.Model):
-    category = models.ForeignKey(AmenityCategory, on_delete=models.CASCADE, related_name='amenities', verbose_name="Категорія")
+    category = models.ForeignKey(AmenityCategory, on_delete=models.CASCADE, related_name='amenities',
+                                 verbose_name="Категорія")
     name = ChainedForeignKey(
         AmenityName,
         chained_field="category",
@@ -470,7 +473,7 @@ class Amenity(models.Model):
         return f"{self.name} ({self.category.name})"
 
 
-# ========== МОДЕЛЬ ДЛЯ ВІДГУКІВ ПРО ГОТЕЛІ (ДОДАНО) ==========
+# ========== МОДЕЛЬ ДЛЯ ВІДГУКІВ ПРО ГОТЕЛІ (З ПОЛЕМ agent) ==========
 class HotelReview(models.Model):
     """
     Відгуки про готелі (зберігаються тільки на вашому сайті, не передаються в Otpusk)
@@ -486,10 +489,20 @@ class HotelReview(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата створення")
     is_approved = models.BooleanField(default=True, verbose_name="Опубліковано")
 
+    # ДОДАНО: поле для прив'язки до агента
+    agent = models.ForeignKey(
+        'users.User',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='hotel_reviews',
+        verbose_name="Агент"
+    )
+
     class Meta:
         verbose_name = "Відгук про готель"
         verbose_name_plural = "Відгуки про готелі"
-        unique_together = ['hid', 'guest_name']  # Один гість - один відгук на готель
+        unique_together = ['hid', 'guest_name']
         ordering = ['-created_at']
 
     def __str__(self):
