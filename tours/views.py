@@ -238,7 +238,7 @@ def search_otpusk_by_country(request, slug=None):
 def hotel_reviews_api(request, slug=None):
     """
     API для відгуків про готелі
-    GET - отримання відгуків (тільки опубліковані, без прив'язки до агента)
+    GET - отримання відгуків (тільки опубліковані)
     POST - збереження нового відгуку з прив'язкою до агента
     """
 
@@ -280,7 +280,7 @@ def hotel_reviews_api(request, slug=None):
             if rating < 1 or rating > 5:
                 return JsonResponse({'error': 'Оцінка має бути від 1 до 5', 'success': False}, status=400)
 
-            # ВИЗНАЧАЄМО АГЕНТА (з slug або з request)
+            # ========== ВИЗНАЧАЄМО АГЕНТА ЗА SLUG ==========
             agent = None
             if slug:
                 try:
@@ -288,7 +288,7 @@ def hotel_reviews_api(request, slug=None):
                     agent_site = AgentSite.objects.filter(slug=slug).first()
                     if agent_site:
                         agent = agent_site.user
-                        print(f"✅ Агент знайдений за slug {slug}: {agent.username}")
+                        print(f"✅ Агент знайдений за slug {slug}: {agent.username} (id: {agent.id})")
                 except Exception as e:
                     print(f"Помилка визначення агента за slug: {e}")
 
@@ -305,9 +305,11 @@ def hotel_reviews_api(request, slug=None):
                 existing_review.rating = rating
                 existing_review.comment = comment
                 existing_review.created_at = datetime.now()
-                # Не змінюємо агента при оновленні
+                if agent and not existing_review.agent:
+                    existing_review.agent = agent
                 existing_review.save()
-                print(f"✅ Оновлено відгук для {guest_name} (готель {hid})")
+                print(
+                    f"✅ Оновлено відгук для {guest_name} (готель {hid}), агент: {agent.username if agent else 'None'}")
                 return JsonResponse({
                     'success': True,
                     'message': 'Ваш відгук оновлено!'
@@ -320,7 +322,7 @@ def hotel_reviews_api(request, slug=None):
                     guest_name=guest_name,
                     rating=rating,
                     comment=comment,
-                    agent=agent  # ДОДАНО: прив'язка до агента
+                    agent=agent  # ВАЖЛИВО: прив'язка до агента
                 )
                 print(
                     f"✅ Створено новий відгук для {guest_name} (готель {hid}), агент: {agent.username if agent else 'None'}")
@@ -355,14 +357,15 @@ def tour_detail_otpusk(request, slug=None):
             rating = request.POST.get('rating')
             comment = request.POST.get('comment', '').strip()
 
-            # ВИЗНАЧАЄМО АГЕНТА ДЛЯ ВІДГУКУ
+            # ========== ВИЗНАЧАЄМО АГЕНТА ЗА SLUG ==========
             agent = None
             if slug:
                 try:
                     from constructor.models.agent_site import AgentSite
-                    agent_site_obj = AgentSite.objects.filter(slug=slug).first()
-                    if agent_site_obj:
-                        agent = agent_site_obj.user
+                    agent_site = AgentSite.objects.filter(slug=slug).first()
+                    if agent_site:
+                        agent = agent_site.user
+                        print(f"✅ Агент знайдений за slug {slug}: {agent.username}")
                 except Exception as e:
                     print(f"Помилка визначення агента: {e}")
 
@@ -376,6 +379,8 @@ def tour_detail_otpusk(request, slug=None):
                 if existing_review:
                     existing_review.rating = rating
                     existing_review.comment = comment
+                    if agent and not existing_review.agent:
+                        existing_review.agent = agent
                     existing_review.save()
                     messages.success(request, 'Ваш відгук оновлено!')
                 else:
@@ -385,7 +390,7 @@ def tour_detail_otpusk(request, slug=None):
                         guest_name=guest_name,
                         rating=rating,
                         comment=comment,
-                        agent=agent  # ДОДАНО: прив'язка до агента
+                        agent=agent  # ВАЖЛИВО: прив'язка до агента
                     )
                     messages.success(request, 'Дякуємо за ваш відгук!')
             else:
