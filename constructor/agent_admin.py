@@ -9,7 +9,7 @@ from django.views.decorators.http import require_GET
 from tours.models import (
     Tour, Booking, PriceOption, Review, Consultation, News,
     TourPriceByTourists, CountryInfo, PriceCalendar, PopularDestination,
-    City, DepartureCity
+    City, DepartureCity, HotelReview  # ДОДАНО HotelReview
 )
 from django.contrib.auth import get_user_model
 
@@ -211,7 +211,53 @@ class AgentReviewAdmin(admin.ModelAdmin):
         return False
 
 
-# ========== НАЛАШТУВАННЯ ДЛЯ ЗАЯВОК НА КОНСУЛЬТАЦІЮ (BOOKINGS) ==========
+# ========== НОВИЙ КЛАС ДЛЯ ВІДГУКІВ ПРО ГОТЕЛІ ==========
+class AgentHotelReviewAdmin(admin.ModelAdmin):
+    """Адмінка для відгуків про готелі в кабінеті агента"""
+    list_display = ('id', 'get_hotel_info', 'guest_name', 'rating', 'get_rating_stars', 'created_at', 'is_approved')
+    list_filter = ('rating', 'created_at', 'is_approved')
+    search_fields = ('guest_name', 'comment', 'hid')
+    list_display_links = ('id', 'guest_name')
+    list_editable = ('is_approved',)
+    readonly_fields = ('hid', 'oid', 'guest_name', 'rating', 'comment', 'created_at', 'agent')
+
+    def get_hotel_info(self, obj):
+        """Показує інформацію про готель"""
+        return f"Готель ID: {obj.hid}"
+
+    get_hotel_info.short_description = 'Готель'
+
+    def get_rating_stars(self, obj):
+        """Показує зірки замість цифри"""
+        stars = ''
+        for i in range(5):
+            if i < obj.rating:
+                stars += '★'
+            else:
+                stars += '☆'
+        return stars
+
+    get_rating_stars.short_description = 'Оцінка'
+
+    def get_queryset(self, request):
+        """Фільтрує відгуки - показує тільки ті, що належать поточному агенту"""
+        qs = super().get_queryset(request)
+        # ВАЖЛИВО: фільтруємо за агентом, щоб кожен бачив тільки свої відгуки
+        return qs.filter(agent=request.user)
+
+    def has_add_permission(self, request):
+        """Забороняє додавати відгуки вручну"""
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """Дозволяє змінювати тільки статус публікації"""
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        """Дозволяє видаляти відгуки"""
+        return True
+
+
 class AgentConsultationAdmin(admin.ModelAdmin):
     list_display = ('name', 'phone', 'get_comment_preview', 'created_at', 'is_processed')
     list_filter = ('is_processed', 'created_at')
@@ -365,13 +411,14 @@ agent_admin_site.register(Tour, AgentTourAdmin)
 agent_admin_site.register(Booking, AgentBookingAdmin)
 agent_admin_site.register(PriceOption, AgentPriceOptionAdmin)
 agent_admin_site.register(Review, AgentReviewAdmin)
-agent_admin_site.register(Consultation, AgentConsultationAdmin)  # Заявки на консультацію
+agent_admin_site.register(Consultation, AgentConsultationAdmin)
 agent_admin_site.register(News, AgentNewsAdmin)
 agent_admin_site.register(CountryInfo, AgentCountryInfoAdmin)
 agent_admin_site.register(PriceCalendar, AgentPriceCalendarAdmin)
 agent_admin_site.register(PopularDestination, AgentPopularDestinationAdmin)
 agent_admin_site.register(TourPriceByTourists, AgentTourPriceByTouristsAdmin)
 agent_admin_site.register(City, AgentCityAdmin)
+agent_admin_site.register(HotelReview, AgentHotelReviewAdmin)  # РЕЄСТРАЦІЯ НОВОЇ МОДЕЛІ
 
 # ========== ДІАГНОСТИКА ==========
 print("=" * 50)
