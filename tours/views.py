@@ -678,6 +678,23 @@ def chat_api(request):
     return JsonResponse({'error': 'Метод не підтримується'}, status=405)
 
 
+def search_otpusk_by_country(request, slug=None):
+    """Сторінка результатів пошуку для популярних напрямків (З БЛОКОМ КОНСУЛЬТАЦІЇ)"""
+    agent_site = getattr(request, 'current_agent_site', None)
+    country = request.GET.get('country', '')
+
+    # Отримуємо випадкового агента для блоку консультації
+    from .models import User
+    agents = User.objects.filter(is_agent=True)
+    random_agent = agents.first()  # або random.choice(agents) якщо є
+
+    context = {
+        'agent_site': agent_site,
+        'selected_country': country,
+        'random_agent': random_agent,
+    }
+    return render(request, 'tours/search_results_by_country.html', context)
+
 def custom_logout(request):
     """Кастомний вихід з системи"""
     from django.contrib.auth import logout
