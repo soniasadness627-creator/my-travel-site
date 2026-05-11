@@ -23,11 +23,9 @@ def home_redirect(request):
     """
     host = request.META.get('HTTP_HOST', '')
 
-    # Перевіряємо, чи це локальний запит
     if host.startswith('127.0.0.1') or host.startswith('localhost'):
         return redirect('/landing/')
 
-    # На Render (продакшен)
     if request.user.is_authenticated and request.user.is_superuser:
         return redirect('/home/')
     return redirect('/landing/')
@@ -56,51 +54,39 @@ urlpatterns = [
 
     # ========== ОСНОВНІ МАРШРУТИ ==========
     path('home/', tours_views.home, name='home'),
-
-    # ========== НОВИНИ ==========
     path('news/', tours_views.NewsListView.as_view(), name='news'),
-
-    # ========== НОВИЙ МАРШРУТ ДЛЯ КАЛЕНДАРЯ (OTPUSK) ==========
     path('api/calendar-prices/', tours_views.calendar_prices_otpusk, name='calendar_prices'),
-
-    # ========== ІНШІ API МАРШРУТИ ==========
     path('get-cities/', tours_views.get_cities, name='get_cities'),
     path('api/chat/', tours_views.chat_api, name='chat_api'),
     path('api/popular-tours/', tours_views.popular_tours_api, name='popular_tours_api'),
-
-    # ========== 🔥 API ДЛЯ ВІДГУКІВ (ДОДАНО) ==========
     path('api/hotel-reviews/', tours_views.hotel_reviews_api, name='hotel_reviews_api'),
+
+    # ========== НОВІ МАРШРУТИ ДЛЯ ПОШУКУ ==========
+    path('search-otpusk/', tours_views.search_otpusk_form, name='search_otpusk'),
+    path('search-results-otpusk/', tours_views.search_otpusk_results, name='search_results_otpusk'),
+
+    # ========== ДЛЯ АГЕНТСЬКИХ САЙТІВ ==========
+    path('a/<slug:slug>/search-otpusk/', tours_views.search_otpusk_form, name='agent_search_otpusk'),
+    path('a/<slug:slug>/search-results-otpusk/', tours_views.search_otpusk_results, name='agent_search_results_otpusk'),
     path('a/<slug:slug>/api/hotel-reviews/', tours_views.hotel_reviews_api, name='agent_hotel_reviews_api'),
-    # ============================================================
 
-    # ========== AJAX ОБРОБКА КОНСУЛЬТАЦІЇ ==========
+    # ========== AJAX ОБРОБКА ==========
     path('consultation-ajax/', tours_views.consultation_ajax, name='consultation_ajax'),
-    # ДЛЯ АГЕНТСЬКИХ САЙТІВ
     path('a/<slug:slug>/consultation-ajax/', tours_views.consultation_ajax, name='agent_consultation_ajax'),
-
-    # ========== AJAX ОБРОБКА БРОНЮВАННЯ (BOOKING) ==========
     path('booking-ajax/', tours_views.booking_ajax, name='booking_ajax'),
-    # ДЛЯ АГЕНТСЬКИХ САЙТІВ
     path('a/<slug:slug>/booking-ajax/', tours_views.booking_ajax, name='agent_booking_ajax'),
 
-    # ========== СТОРІНКА РЕЗУЛЬТАТІВ ПОШУКУ OTPUSK ==========
-    # Сторінка для звичайного пошуку (без блоку консультації)
-    path('search-otpusk/', tours_views.search_otpusk, name='search_otpusk'),
-    path('a/<slug:slug>/search-otpusk/', tours_views.search_otpusk, name='agent_search_otpusk'),
-
-    # ========== НОВА СТОРІНКА ДЛЯ ПОПУЛЯРНИХ НАПРЯМКІВ (З БЛОКОМ КОНСУЛЬТАЦІЇ) ==========
+    # ========== СТОРІНКИ ПОШУКУ ==========
     path('search-otpusk-by-country/', tours_views.search_otpusk_by_country, name='search_otpusk_by_country'),
     path('a/<slug:slug>/search-otpusk-by-country/', tours_views.search_otpusk_by_country,
          name='agent_search_otpusk_by_country'),
-
-    # ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (БЕЗ ФОРМИ ПОШУКУ) ==========
     path('tour-detail/', tours_views.tour_detail_otpusk, name='tour_detail_otpusk'),
     path('a/<slug:slug>/tour-detail/', tours_views.tour_detail_otpusk, name='agent_tour_detail_otpusk'),
 
-    # ========== КОНСУЛЬТАЦІЯ (ЗВИЧАЙНА ФОРМА З ПЕРЕНАПРАВЛЕННЯМ) ==========
+    # ========== КОНСУЛЬТАЦІЯ ==========
     path('consultation/', TemplateView.as_view(template_name='tours/consultation_form.html'), name='consultation'),
 
-    # ========== ГЛОБАЛЬНИЙ ВХІД ТА ВИХІД ==========
+    # ========== ВХІД ТА ВИХІД ==========
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
 

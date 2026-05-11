@@ -14,7 +14,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from .models import Tour, News, Review, Consultation, Booking, HotelReview  # ДОДАТО: HotelReview
+from .models import Tour, News, Review, Consultation, Booking, HotelReview
 from .forms import ConsultationForm, ReviewForm
 
 User = get_user_model()
@@ -212,24 +212,30 @@ def tour_reviews(request, pk):
     })
 
 
-def search_otpusk(request, slug=None):
-    """Сторінка результатів пошуку Otpusk.com (БЕЗ блоку консультації)"""
+# ========== НОВІ ФУНКЦІЇ ДЛЯ СТОРІНОК ПОШУКУ ==========
+
+def search_otpusk_form(request, slug=None):
+    """
+    Сторінка з ФОРМОЮ пошуку (автоматичне заповнення з календаря)
+    """
     agent_site = getattr(request, 'current_agent_site', None)
-    context = {'agent_site': agent_site}
-    return render(request, 'tours/search_results_otpusk.html', context)
-
-
-def search_otpusk_by_country(request, slug=None):
-    """Сторінка результатів пошуку для популярних напрямків (З БЛОКОМ КОНСУЛЬТАЦІЇ)"""
-    agent_site = getattr(request, 'current_agent_site', None)
-    country = request.GET.get('country', '')
-
     context = {
         'agent_site': agent_site,
-        'selected_country': country,
         'random_agent': get_random_agent(),
     }
-    return render(request, 'tours/search_results_by_country.html', context)
+    return render(request, 'tours/search_otpusk.html', context)
+
+
+def search_otpusk_results(request, slug=None):
+    """
+    Сторінка з РЕЗУЛЬТАТАМИ пошуку
+    """
+    agent_site = getattr(request, 'current_agent_site', None)
+    context = {
+        'agent_site': agent_site,
+        'random_agent': get_random_agent(),
+    }
+    return render(request, 'tours/search_results_otpusk.html', context)
 
 
 # ========== API ДЛЯ ВІДГУКІВ (З ПРИВ'ЯЗКОЮ ДО АГЕНТА) ==========
@@ -308,8 +314,7 @@ def hotel_reviews_api(request, slug=None):
                 if agent and not existing_review.agent:
                     existing_review.agent = agent
                 existing_review.save()
-                print(
-                    f"✅ Оновлено відгук для {guest_name} (готель {hid}), агент: {agent.username if agent else 'None'}")
+                print(f"✅ Оновлено відгук для {guest_name} (готель {hid})")
                 return JsonResponse({
                     'success': True,
                     'message': 'Ваш відгук оновлено!'
@@ -322,10 +327,9 @@ def hotel_reviews_api(request, slug=None):
                     guest_name=guest_name,
                     rating=rating,
                     comment=comment,
-                    agent=agent  # ВАЖЛИВО: прив'язка до агента
+                    agent=agent
                 )
-                print(
-                    f"✅ Створено новий відгук для {guest_name} (готель {hid}), агент: {agent.username if agent else 'None'}")
+                print(f"✅ Створено новий відгук для {guest_name} (готель {hid})")
                 return JsonResponse({
                     'success': True,
                     'message': 'Дякуємо за ваш відгук!'
@@ -336,7 +340,7 @@ def hotel_reviews_api(request, slug=None):
             return JsonResponse({'error': str(e), 'success': False}, status=500)
 
 
-# ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (З ОБРОБКОЮ ФОРМИ) ==========
+# ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ ==========
 
 def tour_detail_otpusk(request, slug=None):
     """
@@ -347,7 +351,7 @@ def tour_detail_otpusk(request, slug=None):
     hid = request.GET.get('hid', '')
     oid = request.GET.get('oid', '')
 
-    # ========== ОБРОБКА POST ЗАПИТУ (ФОРМА БРОНЮВАННЯ) ==========
+    # ========== ОБРОБКА POST ЗАПИТУ ==========
     if request.method == 'POST':
         # ========== ОБРОБКА ВІДГУКУ ==========
         if request.POST.get('review_submit'):
@@ -357,15 +361,13 @@ def tour_detail_otpusk(request, slug=None):
             rating = request.POST.get('rating')
             comment = request.POST.get('comment', '').strip()
 
-            # ========== ВИЗНАЧАЄМО АГЕНТА ЗА SLUG ==========
             agent = None
             if slug:
                 try:
                     from constructor.models.agent_site import AgentSite
-                    agent_site = AgentSite.objects.filter(slug=slug).first()
-                    if agent_site:
-                        agent = agent_site.user
-                        print(f"✅ Агент знайдений за slug {slug}: {agent.username}")
+                    agent_site_obj = AgentSite.objects.filter(slug=slug).first()
+                    if agent_site_obj:
+                        agent = agent_site_obj.user
                 except Exception as e:
                     print(f"Помилка визначення агента: {e}")
 
@@ -373,7 +375,6 @@ def tour_detail_otpusk(request, slug=None):
                 agent = request.current_agent_site.user
 
             if guest_name and rating and comment:
-                # Перевіряємо чи вже є відгук
                 existing_review = HotelReview.objects.filter(hid=hid, guest_name=guest_name).first()
 
                 if existing_review:
@@ -390,24 +391,21 @@ def tour_detail_otpusk(request, slug=None):
                         guest_name=guest_name,
                         rating=rating,
                         comment=comment,
-                        agent=agent  # ВАЖЛИВО: прив'язка до агента
+                        agent=agent
                     )
                     messages.success(request, 'Дякуємо за ваш відгук!')
             else:
                 messages.error(request, 'Будь ласка, заповніть всі поля')
 
-            # Перенаправлення на ту ж сторінку
             return redirect(request.path + '?' + request.GET.urlencode())
 
         # ========== ОБРОБКА ФОРМИ БРОНЮВАННЯ ==========
         elif request.POST.get('consultation_submit'):
             print("=" * 50)
             print("📝 Отримано POST запит на бронювання!")
-            print(f"POST data: {request.POST}")
             print("=" * 50)
 
             try:
-                # Отримуємо дані з форми
                 name = request.POST.get('name', '').strip()
                 phone = request.POST.get('phone', '').strip()
                 email = request.POST.get('email', '').strip()
@@ -473,9 +471,7 @@ def tour_detail_otpusk(request, slug=None):
                 messages.error(request, error_msg)
                 return redirect(request.path + '?' + request.GET.urlencode())
 
-    # ========== GET-ЗАПИТ (ЗВИЧАЙНЕ ВІДОБРАЖЕННЯ СТОРІНКИ) ==========
-
-    # Отримуємо відгуки для відображення
+    # ========== GET-ЗАПИТ ==========
     reviews = HotelReview.objects.filter(hid=hid, is_approved=True).order_by('-created_at')
 
     context = {
@@ -485,19 +481,18 @@ def tour_detail_otpusk(request, slug=None):
         'oid': oid,
         'od': request.GET.get('od', ''),
         'ol': request.GET.get('ol', ''),
-        'reviews': reviews,  # Додаємо відгуки в контекст
+        'reviews': reviews,
     }
     return render(request, 'tours/tour_detail_otpusk.html', context)
 
 
-# ========== AJAX ОБРОБКА БРОНЮВАННЯ (Booking) ==========
+# ========== AJAX ОБРОБКА БРОНЮВАННЯ ==========
 @csrf_exempt
 @require_http_methods(["POST"])
 def booking_ajax(request, slug=None):
     print("=" * 50)
     print("🚀 booking_ajax ВИКЛИКАНО!")
     print(f"slug: {slug}")
-    print(f"POST data: {request.POST}")
     print("=" * 50)
 
     try:
@@ -548,9 +543,7 @@ def booking_ajax(request, slug=None):
 @csrf_exempt
 @require_http_methods(["POST"])
 def consultation_ajax(request, slug=None):
-    """
-    AJAX-обробка форми консультації (без перенаправлення)
-    """
+    """AJAX-обробка форми консультації"""
     try:
         name = request.POST.get('name', '').strip()
         phone = request.POST.get('phone', '').strip()
@@ -609,7 +602,7 @@ class NewsListView(ListView):
 
 
 def consultation_success(request):
-    """Сторінка успішного відправлення заявки (для звичайної форми)"""
+    """Сторінка успішного відправлення заявки"""
     return render(request, 'tours/consultation_success.html')
 
 
@@ -626,7 +619,7 @@ def get_cities(request):
 
 
 def popular_tours_api(request):
-    """API для отримання популярних турів (для каруселі)"""
+    """API для отримання популярних турів"""
     tours = Tour.objects.filter(is_popular=True)[:8]
     data = []
     for tour in tours:

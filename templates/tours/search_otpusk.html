@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Пошук турів{% endblock %}
+
+{% block content %}
+<div class="container my-5 py-4">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+            <h2 class="mb-4" style="color: #000000; text-align: center;">Пошук турів</h2>
+            
+            <div id="otpusk-search-module">
+                <script>
+                    var osGeo = '';
+                    var osDefaultDeparture = '';
+                    var osDefaultDuration = '';
+                    var osDateFrom = '';
+                    var osDateTo = '';
+                    var osHotelCategory = '';
+                    var osFood = '';
+                    var osTransport = '';
+                    var osTarget = '{% if agent_site %}/a/{{ agent_site.slug }}/search-results-otpusk/{% else %}/search-results-otpusk/{% endif %}';
+                    var osContainer = null;
+                    var osTourContainer = null;
+                    var osLang = 'ua';
+                    var osTourTargetBlank = false;
+                    var osOrderUrl = null;
+                    var osCurrency = 'converted';
+                    var osAutoStart = false;
+                </script>
+                <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+                <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+                <script src="https://export.otpusk.com/js/onsite/"></script>
+                <script src="https://export.otpusk.com/js/order"></script>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Автоматичне заповнення форми при переході з календаря
+document.addEventListener('DOMContentLoaded', function() {
+    const storedParams = sessionStorage.getItem('otpusk_search_params');
+    
+    if (storedParams) {
+        try {
+            const params = JSON.parse(storedParams);
+            
+            if (params.shouldAutoSearch === true) {
+                console.log('📝 Автоматичне заповнення форми для:', params);
+                sessionStorage.removeItem('otpusk_search_params');
+                
+                function fillForm() {
+                    // Заповнюємо поле "Куди" (країна)
+                    const destinationInput = document.querySelector('#new_os-to input');
+                    if (destinationInput && params.country) {
+                        destinationInput.value = params.country;
+                        destinationInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        console.log('✅ Заповнено країну:', params.country);
+                    }
+                    
+                    // Заповнюємо поле "Звідки" (місто вильоту)
+                    if (params.departure) {
+                        const departureItems = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                        let found = false;
+                        departureItems.forEach(item => {
+                            if (item.textContent.trim() === params.departure) {
+                                item.click();
+                                found = true;
+                                console.log('✅ Вибрано місто вильоту:', params.departure);
+                            }
+                        });
+                        if (!found) {
+                            const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn-text');
+                            if (departureBtn) departureBtn.textContent = params.departure;
+                        }
+                    }
+                    
+                    // Заповнюємо поле дати
+                    if (params.date) {
+                        const dateInput = document.querySelector('#new_f-dates-container .new_f-datepicker-wrap input');
+                        if (dateInput) {
+                            dateInput.value = params.date;
+                            dateInput.dispatchEvent(new Event('change', { bubbles: true }));
+                            console.log('✅ Заповнено дату:', params.date);
+                        }
+                    }
+                    
+                    // Автоматично натискаємо кнопку "Пошук"
+                    setTimeout(() => {
+                        const searchBtn = document.querySelector('.new_f-form-submit');
+                        if (searchBtn) {
+                            console.log('🔍 Автоматичний пошук...');
+                            searchBtn.click();
+                        }
+                    }, 1000);
+                }
+                
+                // Чекаємо завантаження віджета
+                if (document.querySelector('#new_os-to')) {
+                    fillForm();
+                } else {
+                    const observer = new MutationObserver(() => {
+                        if (document.querySelector('#new_os-to')) {
+                            observer.disconnect();
+                            fillForm();
+                        }
+                    });
+                    observer.observe(document.body, { childList: true, subtree: true });
+                    setTimeout(() => {
+                        observer.disconnect();
+                        fillForm();
+                    }, 5000);
+                }
+            }
+        } catch (e) {
+            console.error('❌ Помилка:', e);
+            sessionStorage.removeItem('otpusk_search_params');
+        }
+    }
+});
+</script>
+
+<style>
+    #otpusk-search-module {
+        background: white !important;
+        border-radius: 24px !important;
+        border: 2px solid var(--primary-color) !important;
+        padding: 20px 24px !important;
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+    }
+    
+    .new_f-form-submit {
+        background: var(--primary-color) !important;
+        color: white !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+    }
+    
+    @media (max-width: 768px) {
+        #otpusk-search-module {
+            padding: 15px !important;
+            margin: 0 10px !important;
+        }
+    }
+</style>
+
+{% endblock %}
