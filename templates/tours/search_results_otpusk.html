@@ -18,14 +18,25 @@
     const durationFromUrl = urlParams.get('duration');
     const autoSearch = urlParams.get('auto_search');
 
-    // Функція для форматування дати для Otpusk
+    // Функція для форматування дати для Otpusk (DD.MM.YYYY)
     function formatDateForOtpusk(dateStr) {
         if (!dateStr) return '';
-        const date = new Date(dateStr);
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-        return `${day}.${month}.${year}`;
+        // Якщо дата в форматі YYYY-MM-DD
+        if (dateStr.includes('-')) {
+            const parts = dateStr.split('-');
+            return `${parts[2]}.${parts[1]}.${parts[0]}`;
+        }
+        return dateStr;
+    }
+
+    // Функція для форматування дати для пошуку (YYYY-MM-DD)
+    function formatDateForUrl(dateStr) {
+        if (!dateStr) return '';
+        if (dateStr.includes('.')) {
+            const parts = dateStr.split('.');
+            return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+        return dateStr;
     }
 
     // Встановлюємо змінні для модуля Otpusk
@@ -44,8 +55,6 @@
     var osTourTargetBlank = false;
     var osOrderUrl = null;
     var osCurrency = 'converted';
-
-    // Автоматичний пошук, якщо є параметр auto_search
     var osAutoStart = (autoSearch === '1');
 
     console.log('Параметри пошуку:', {
@@ -63,6 +72,72 @@
                 <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
                 <script src="https://export.otpusk.com/js/onsite/"></script>
                 <script src="https://export.otpusk.com/js/order"></script>
+                    <!-- Примусове встановлення значень після завантаження -->
+    <script>
+        setTimeout(function() {
+            console.log('🔄 Запуск примусового встановлення параметрів...');
+
+            // 1. Встановлюємо дату
+            if (window.osDateFrom) {
+                const dateInput = document.querySelector('#date_from');
+                if (dateInput) {
+                    dateInput.value = window.osDateFrom;
+                    dateInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('✅ Встановлено дату:', window.osDateFrom);
+                } else {
+                    console.log('⚠️ Поле #date_from не знайдено');
+                }
+            }
+
+            // 2. Встановлюємо тривалість
+            if (window.osDefaultDuration) {
+                const durationSelect = document.querySelector('#duration');
+                if (durationSelect) {
+                    durationSelect.value = window.osDefaultDuration;
+                    durationSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('✅ Встановлено тривалість:', window.osDefaultDuration);
+                }
+            }
+
+            // 3. Встановлюємо місто вильоту
+            if (window.osDefaultDeparture) {
+                const departureSelect = document.querySelector('#departure');
+                if (departureSelect) {
+                    for (let i = 0; i < departureSelect.options.length; i++) {
+                        if (departureSelect.options[i].text === window.osDefaultDeparture) {
+                            departureSelect.selectedIndex = i;
+                            departureSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                            console.log('✅ Встановлено місто вильоту:', window.osDefaultDeparture);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // 4. Встановлюємо країну
+            if (window.osGeo) {
+                const countryInput = document.querySelector('#geo_token');
+                if (countryInput) {
+                    countryInput.value = window.osGeo;
+                    countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('✅ Встановлено країну:', window.osGeo);
+                }
+            }
+
+            // 5. Запускаємо пошук (натискаємо кнопку)
+            if (window.osAutoStart) {
+                setTimeout(function() {
+                    const searchBtn = document.querySelector('.new_f-form-submit');
+                    if (searchBtn) {
+                        searchBtn.click();
+                        console.log('🔍 Автоматичний пошук запущено!');
+                    } else {
+                        console.log('⚠️ Кнопку пошуку не знайдено');
+                    }
+                }, 500);
+            }
+        }, 1500);
+    </script>
             </div>
         </div>
     </div>
