@@ -19,7 +19,8 @@
                     var osHotelCategory = '';
                     var osFood = '';
                     var osTransport = '';
-                    var osTarget = '{% if agent_site %}/a/{{ agent_site.slug }}/search-results-otpusk/{% else %}/search-results-otpusk/{% endif %}';
+                    // ВАЖЛИВО: osTarget має вказувати на цю ж сторінку
+                    var osTarget = '';
                     var osContainer = null;
                     var osTourContainer = null;
                     var osLang = 'ua';
@@ -27,6 +28,19 @@
                     var osOrderUrl = null;
                     var osCurrency = 'converted';
                     var osAutoStart = false;
+
+                    // Додаємо параметри з URL, якщо вони є
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const country = urlParams.get('country');
+                    const departure = urlParams.get('departure');
+                    const date = urlParams.get('date');
+
+                    if (country) osGeo = country;
+                    if (departure) osDefaultDeparture = departure;
+                    if (date) {
+                        osDateFrom = date;
+                        osDateTo = date;
+                    }
                 </script>
                 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
                 <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
@@ -44,24 +58,25 @@
 // Автоматичне заповнення форми при переході з календаря
 document.addEventListener('DOMContentLoaded', function() {
     const storedParams = sessionStorage.getItem('otpusk_search_params');
-    
+
     if (storedParams) {
         try {
             const params = JSON.parse(storedParams);
-            
+
             if (params.shouldAutoSearch === true) {
                 console.log('📝 Автоматичне заповнення форми для:', params);
                 sessionStorage.removeItem('otpusk_search_params');
-                
+
                 function fillForm() {
                     // Заповнюємо поле "Куди" (країна)
                     const destinationInput = document.querySelector('#new_os-to input');
                     if (destinationInput && params.country) {
                         destinationInput.value = params.country;
                         destinationInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        destinationInput.dispatchEvent(new Event('change', { bubbles: true }));
                         console.log('✅ Заповнено країну:', params.country);
                     }
-                    
+
                     // Заповнюємо поле "Звідки" (місто вильоту)
                     if (params.departure) {
                         const departureItems = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
@@ -78,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (departureBtn) departureBtn.textContent = params.departure;
                         }
                     }
-                    
+
                     // Заповнюємо поле дати
                     if (params.date) {
                         const dateInput = document.querySelector('#new_f-dates-container .new_f-datepicker-wrap input');
@@ -88,13 +103,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.log('✅ Заповнено дату:', params.date);
                         }
                     }
-                    
+
                     // Автоматично натискаємо кнопку "Пошук"
                     setTimeout(() => {
                         const searchBtn = document.querySelector('.new_f-form-submit');
                         if (searchBtn) {
                             console.log('🔍 Автоматичний пошук...');
                             searchBtn.click();
+                        } else {
+                            console.warn('❌ Кнопка пошуку не знайдена');
                         }
                     }, 1000);
                 }
