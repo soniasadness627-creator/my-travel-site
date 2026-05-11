@@ -5,41 +5,518 @@
 
 {% block content %}
 <div class="container my-5">
-    <div id="otpusk-results-container"></div>
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+<h2 class="mb-4" style="color: #000000; text-align: left;">Результати пошуку турів</h2>
+            <div id="otpusk-search-module">
+                <script>
+                    var osGeo = '';
+                    var osDefaultDeparture = '';
+                    var osDefaultDuration = '';
+                    var osDateFrom = '';
+                    var osDateTo = '';
+                    var osHotelCategory = '';
+                    var osFood = '';
+                    var osTransport = '';
+                    var osTarget = '';
+                    var osContainer = null;
+                    var osTourContainer = null;
+                    var osLang = 'ua';
+                    var osTourTargetBlank = false;
+                    var osOrderUrl = null;
+                    var osCurrency = 'converted';
+                    var osAutoStart = false;
+                </script>
+                <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+                <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+                <script src="https://export.otpusk.com/js/onsite/"></script>
+                <script src="https://export.otpusk.com/js/order"></script>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Стилі для результатів пошуку -->
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
-<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
-<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+<style>
+/* ========== ОСНОВНІ СТИЛІ ========== */
+
+/* Контейнер модуля */
+#otpusk-search-module {
+    background: white !important;
+    border-radius: 24px !important;
+    border: 2px solid #ffffff !important;  /* ЗМІНЕНО: колір агенту на білий */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+    padding: 20px 24px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    position: relative !important;
+    z-index: 10 !important;
+    box-sizing: border-box !important;
+}
+
+/* Кнопка "Знайти" */
+.new_f-form-submit {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-radius: 10px !important;
+    border: none !important;
+    font-weight: 600 !important;
+    padding: 12px 28px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+}
+
+.new_f-form-submit:hover {
+    background: var(--primary-dark) !important;
+}
+
+/* ========== ЦІНА ========== */
+.new_price-value {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #dc2626 !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+}
+
+span.new_r-item-price,
+.new_r-item-price {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #1a202c !important;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+}
+
+.currency,
+.new_r-item-price .currency,
+span.currency {
+    background: transparent !important;
+    color: #1a202c !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    display: inline !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+}
+
+/* ========== КНОПКИ ПЕРЕМИКАННЯ ВАЛЮТИ ========== */
+.new_r-currency-switch {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0 !important;
+    background: var(--primary-color) !important;
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    width: fit-content !important;
+    flex-wrap: nowrap !important;
+}
+
+.new_r-currency-switch label {
+    margin: 0 !important;
+    display: inline-block !important;
+    flex-shrink: 0 !important;
+}
+
+.new_r-currency-switch input[type="radio"] {
+    display: none !important;
+}
+
+.new_r-currency-switch span {
+    background: transparent !important;
+    color: white !important;
+    padding: 6px 16px !important;
+    display: inline-block !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    cursor: pointer !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    white-space: nowrap !important;
+}
+
+.new_r-currency-switch input[type="radio"]:checked + span {
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: white !important;
+}
+
+/* ========== ЗІРКИ ========== */
+.new_r-item-star {
+    fill: #FFD700 !important;
+}
+
+/* ========== ФІЛЬТРИ ========== */
+.new_f-ext-container {
+    display: block !important;
+    background: #f8f9fa !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.new_f-ext-btn,
+.new_f-dropdown-body-top {
+    display: none !important;
+}
+
+.new_f-dropdown-item.selected {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* ========== КАРТКИ ТУРІВ ========== */
+
+/* Контейнер результатів */
+.new_r-container {
+    background: white !important;
+    margin-top: 30px !important;
+    width: 100% !important;
+}
+
+.new_r-wrapper {
+    display: block !important;
+    width: 100% !important;
+}
+
+/* ПРИМУСОВО ПЕРЕВИЗНАЧАЄМО СІТКУ */
+.new_r-wrapper:before,
+.new_r-wrapper:after {
+    display: none !important;
+}
+
+.new_r-item-wrap {
+    display: block !important;
+    width: 100% !important;
+    float: none !important;
+    clear: both !important;
+    margin-bottom: 24px !important;
+}
+
+/* КАРТКА ТУРУ */
+.new_r-item {
+    background: white !important;
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    margin-bottom: 24px !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+}
+
+/* ФОТО */
+.new_r-item-img {
+    width: 280px !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: auto !important;
+    object-fit: cover !important;
+    display: block !important;
+    flex-shrink: 0 !important;
+}
+
+.new_r-lazy-img {
+    position: relative !important;
+    display: block !important;
+    flex-shrink: 0 !important;
+    width: 280px !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: auto !important;
+    background-size: cover !important;
+    background-position: center !important;
+}
+
+/* ========== РЕЙТИНГ - ВСІ КВАДРАТНІ (p8, p7, p6, p5) ========== */
+.new_r-item-rating-container,
+.new_r-p8,
+.new_r-p7,
+.new_r-p6,
+.new_r-p5 {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    z-index: 10 !important;
+    width: 65px !important;
+    height: 65px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: white !important;
+    border-radius: 10px !important;
+    border-width: 2px !important;
+    border-style: solid !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.new_r-item-rating-value {
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    margin: 0 0 3px 0 !important;
+    line-height: 1 !important;
+}
+
+.new_r-item-rating-rev {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    font-size: 0.5rem !important;
+    color: #666 !important;
+    line-height: 1.1 !important;
+}
+
+.new_r-item-rating-rev span {
+    font-weight: 700 !important;
+    font-size: 0.7rem !important;
+    color: #555 !important;
+}
+
+/* ХОВАЄМО ВСІ КРУГЛІ ЕЛЕМЕНТИ */
+.new_r-item-rating-container::before,
+.new_r-item-rating-container .slice,
+.new_r-item-rating-container .bar,
+.new_r-item-rating-container .fill,
+.new_r-item-rating-container svg,
+.new_r-item-rating-container circle,
+.new_r-item-rating-container path {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* ТІЛО КАРТКИ */
+.new_r-item-body {
+    padding: 18px 22px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    min-height: auto !important;
+    height: auto !important;
+}
+
+/* НАЗВА ГОТЕЛЮ */
+.new_r-item-hotel {
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    color: #1a202c !important;
+    margin: 0 0 10px 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+}
+
+.new_r-item-stars {
+    display: inline-flex !important;
+    gap: 4px !important;
+}
+
+/* МІСЦЕЗНАХОДЖЕННЯ */
+.new_r-item-geo {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 0.9rem !important;
+    color: #666 !important;
+    margin: 0 0 12px 0 !important;
+}
+
+/* ХАРЧУВАННЯ */
+.new_r-item-food {
+    display: inline-block !important;
+    background: #e2e8f0 !important;
+    padding: 5px 14px !important;
+    border-radius: 20px !important;
+    font-size: 0.8rem !important;
+    color: #1a202c !important;
+    width: fit-content !important;
+    margin: 0 0 12px 0 !important;
+    font-weight: 500 !important;
+}
+
+/* ДЕТАЛІ ВИЛЬОТУ */
+.new_r-item-table {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important;
+    margin: 5px 0 10px 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.new_r-item-col {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 20px !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.new_r-item-from,
+.new_r-item-date {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 0.9rem !important;
+    color: #555 !important;
+    white-space: normal !important;
+}
+
+.new_r-item-icon {
+    width: 18px !important;
+    height: 18px !important;
+    fill: #888 !important;
+}
+
+/* ЦІНА */
+.new_r-item-price {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: baseline !important;
+    margin-top: 15px !important;
+    padding-top: 15px !important;
+    border-top: 1px solid #e2e8f0 !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.new_price-value {
+    font-size: 1.4rem !important;
+}
+
+.new_price-desc {
+    font-size: 0.85rem !important;
+    color: #666 !important;
+    font-weight: normal !important;
+}
+
+/* АДАПТИВ - ПРИ ЗМЕНШЕННІ ЕКРАНУ */
+@media (max-width: 1400px) {
+    .new_r-item-col {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+}
+
+/* ========== МОБІЛЬНА ВЕРСІЯ ========== */
+@media (max-width: 768px) {
+    #otpusk-search-module {
+        padding: 15px !important;
+        margin: 0 15px !important;
+    }
+
+    .new_r-item-wrap {
+        margin-bottom: 20px !important;
+    }
+
+    .new_r-item {
+        flex-direction: column !important;
+        min-height: auto !important;
+    }
+
+    .new_r-item-img {
+        width: 100% !important;
+        height: 220px !important;
+    }
+
+    .new_r-lazy-img {
+        width: 100% !important;
+        height: 220px !important;
+    }
+
+    .new_r-item-rating-container,
+    .new_r-p8,
+    .new_r-p7,
+    .new_r-p6,
+    .new_r-p5 {
+        width: 55px !important;
+        height: 55px !important;
+    }
+
+    .new_r-item-hotel {
+        font-size: 1.1rem !important;
+    }
+
+    .new_price-value {
+        font-size: 1.2rem !important;
+    }
+}
+</style>
 
 <script>
-// Підключаємо модуль результатів пошуку Otpusk
-(function() {
-    var script = document.createElement('script');
-    script.src = 'https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca';
-    script.onload = function() {
-        var osScript = document.createElement('script');
-        osScript.src = 'https://export.otpusk.com/js/onsite/';
-        osScript.onload = function() {
-            // Віджет автоматично покаже результати, якщо вони є
-            console.log('✅ Віджет результатів завантажено');
-        };
-        document.body.appendChild(osScript);
-    };
-    document.body.appendChild(script);
-})();
+// Заміна євро на долар
+document.addEventListener('DOMContentLoaded', function() {
+    function replaceEuroToDollar() {
+        const euroElements = document.querySelectorAll('[data-cur="€"], span[data-cur="€"]');
+        euroElements.forEach(function(el) {
+            el.setAttribute('data-cur', '$');
+            if (el.textContent === '€') {
+                el.textContent = '$';
+            }
+        });
+        const textElements = document.querySelectorAll('.new_r-currency-switch span');
+        textElements.forEach(function(el) {
+            if (el.textContent === '€') {
+                el.textContent = '$';
+            }
+        });
+    }
+    replaceEuroToDollar();
+    const observer = new MutationObserver(function() { replaceEuroToDollar(); });
+    observer.observe(document.body, { childList: true, subtree: true });
+});
+
+// КОЛІР РАМКИ РЕЙТИНГУ (ДЛЯ ВСІХ КЛАСІВ - p8, p7, p6, p5)
+document.addEventListener('DOMContentLoaded', function() {
+    function updateRatingBorderColor() {
+        const ratingContainers = document.querySelectorAll('.new_r-p8, .new_r-p7, .new_r-p6, .new_r-p5, .new_r-item-rating-container');
+        ratingContainers.forEach(function(container) {
+            const ratingValueElement = container.querySelector('.new_r-item-rating-value');
+            if (!ratingValueElement) return;
+            const ratingText = ratingValueElement.textContent || ratingValueElement.innerText;
+            const rating = parseFloat(ratingText);
+            if (isNaN(rating)) return;
+            let color;
+            if (rating < 5) color = '#ef4444';
+            else if (rating >= 5 && rating < 7.5) color = '#eab308';
+            else color = '#22c55e';
+            container.style.borderColor = color;
+            ratingValueElement.style.color = color;
+        });
+    }
+    updateRatingBorderColor();
+    const observer = new MutationObserver(function() { updateRatingBorderColor(); });
+    observer.observe(document.body, { childList: true, subtree: true });
+});
 </script>
-
-<!-- Скрипт для перехоплення кліків на тури -->
 <script>
+// ========== ПЕРЕХОПЛЕННЯ КЛІКІВ НА ТУРИ (ПОКРАЩЕНИЙ) ==========
 (function() {
+    console.log('Скрипт перехоплення активовано');
+
     function extractParamsFromUrl(url) {
+        // Шукаємо параметри в різних форматах
         let hid = url.match(/hid=(\d+)/)?.[1];
         let oid = url.match(/oid=([\d]+)/)?.[1];
         let od = url.match(/od=([\d-]+)/)?.[1];
         let ol = url.match(/ol=(\d+)/)?.[1];
 
+        // Якщо не знайшли в прямому вигляді, шукаємо в хеші
         if (!hid) {
             let hash = url.split('#')[1] || '';
             hid = hash.match(/hid=(\d+)/)?.[1];
@@ -47,14 +524,19 @@
             od = hash.match(/od=([\d-]+)/)?.[1];
             ol = hash.match(/ol=(\d+)/)?.[1];
         }
+
         return { hid, oid, od, ol };
     }
 
     function handleTourClick(event) {
+        // Шукаємо елемент, на який клікнули
         let target = event.target.closest('.new_r-item, .new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
         if (!target) return;
 
+        // Отримуємо URL
         let url = target.href || target.getAttribute('data-uri') || '';
+
+        // Якщо клікнули на картку, але не на посилання - шукаємо посилання всередині
         if (!url && target.classList.contains('new_r-item')) {
             let link = target.querySelector('a');
             if (link) url = link.href;
@@ -73,27 +555,804 @@
                 : '/tour-detail/';
 
             let newUrl = `${baseUrl}?hid=${params.hid}&oid=${params.oid}&od=${params.od || ''}&ol=${params.ol || ''}`;
+            console.log('Перенаправляємо на:', newUrl);
             window.location.href = newUrl;
+        } else {
+            console.log('Не знайдено параметри туру в URL:', url);
         }
     }
 
+    // Додаємо обробник кліків
     document.addEventListener('click', handleTourClick);
+})();
+</script>
+<script>
+// ========== ЗБЕРІГАЄМО URL ПОШУКУ ДЛЯ КНОПКИ "ПОВЕРНУТИСЯ" ==========
+(function() {
+    // Зберігаємо поточний URL при завантаженні сторінки
+    localStorage.setItem('lastSearchUrl', window.location.href);
+    console.log('Збережено URL пошуку:', window.location.href);
+
+    // Також зберігаємо при кліку на тур (на випадок, якщо URL зміниться)
+    document.addEventListener('click', function(e) {
+        const tourLink = e.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
+        if (tourLink) {
+            localStorage.setItem('lastSearchUrl', window.location.href);
+            console.log('Оновлено URL пошуку перед переходом:', window.location.href);
+        }
+    });
+})();
+</script>
+<script>
+// ========== МОБІЛЬНІ ФІЛЬТРИ З ВИСУВАННЯМ ==========
+(function() {
+    if (window.innerWidth > 768) return;
+
+    setTimeout(function() {
+        const filtersContainer = document.querySelector('.new_f-ext-container');
+        const filterBtn = document.querySelector('.new_f-ext-btn');
+
+        if (!filtersContainer || !filterBtn) return;
+
+        if (!filtersContainer.querySelector('.new_f-dropdown-body-top')) {
+            const header = document.createElement('div');
+            header.className = 'new_f-dropdown-body-top';
+            header.innerHTML = 'Фільтри <div class="new_f-dropdown-body-close">×</div>';
+            filtersContainer.insertBefore(header, filtersContainer.firstChild);
+        }
+
+        if (!document.querySelector('.filter-open-btn')) {
+            const openBtn = document.createElement('button');
+            openBtn.className = 'filter-open-btn';
+            openBtn.innerHTML = '<i class="fa-regular fa-filter"></i> Фільтри';
+            document.body.appendChild(openBtn);
+
+            openBtn.addEventListener('click', function() {
+                filtersContainer.classList.add('open');
+            });
+        }
+
+        const closeBtn = filtersContainer.querySelector('.new_f-dropdown-body-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                filtersContainer.classList.remove('open');
+            });
+        }
+
+        const cancelBtn = filtersContainer.querySelector('.new_f-dropdown-btn-cancel');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                filtersContainer.classList.remove('open');
+            });
+        }
+
+        const applyBtn = filtersContainer.querySelector('.new_f-dropdown-btn-apply');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', function() {
+                setTimeout(() => {
+                    filtersContainer.classList.remove('open');
+                }, 500);
+            });
+        }
+
+        console.log('✅ Мобільні фільтри налаштовано');
+    }, 1000);
 })();
 </script>
 
 <style>
-    #otpusk-results-container {
-        min-height: 400px;
+/* ========== ФІКС РЕЙТИНГУ – ТІЛЬКИ КВАДРАТ, БЕЗ КРУГІВ ========== */
+.new_r-item-rating-container .slice,
+.new_r-item-rating-container .bar,
+.new_r-item-rating-container .fill,
+.new_r-item-rating-container svg,
+.new_r-item-rating-container circle,
+.new_r-item-rating-container path,
+.new_r-item-rating-container .new_r-pies,
+.new_r-p8 .slice,
+.new_r-p8 .bar,
+.new_r-p8 .fill,
+.new_r-p7 .slice,
+.new_r-p7 .bar,
+.new_r-p7 .fill,
+.new_r-p6 .slice,
+.new_r-p6 .bar,
+.new_r-p6 .fill,
+.new_r-p5 .slice,
+.new_r-p5 .bar,
+.new_r-p5 .fill {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+.new_r-item-rating-container,
+.new_r-p8,
+.new_r-p7,
+.new_r-p6,
+.new_r-p5 {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    z-index: 10 !important;
+    width: 65px !important;
+    height: 65px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: white !important;
+    border-radius: 12px !important;
+    border-width: 2px !important;
+    border-style: solid !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    overflow: hidden !important;
+}
+
+@media (max-width: 768px) {
+    .new_r-item-rating-container,
+    .new_r-p8,
+    .new_r-p7,
+    .new_r-p6,
+    .new_r-p5 {
+        width: 55px !important;
+        height: 55px !important;
+        border-radius: 10px !important;
     }
-    .container.my-5 {
-        max-width: 1400px !important;
+    .new_r-item-rating-value {
+        font-size: 1rem !important;
     }
-    @media (max-width: 768px) {
-        .container.my-5 {
-            padding-left: 10px;
-            padding-right: 10px;
-        }
+    .new_r-item-rating-rev {
+        font-size: 0.45rem !important;
     }
+    .new_r-item-rating-rev span {
+        font-size: 0.65rem !important;
+    }
+}
+
+.new_r-item-rating-value {
+    font-weight: 800 !important;
+    font-size: 1.2rem !important;
+    margin: 0 0 2px 0 !important;
+    line-height: 1 !important;
+}
+
+.new_r-item-rating-rev {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    font-size: 0.55rem !important;
+    color: #666 !important;
+    line-height: 1.2 !important;
+}
+
+.new_r-item-rating-rev span {
+    font-weight: 700 !important;
+    font-size: 0.7rem !important;
+    color: #555 !important;
+}
+
+.new_r-item-rating-container * {
+    max-width: 100% !important;
+}
 </style>
 
+<style>
+/* ========== ЦЕНТРУВАННЯ БЛОКУ КОНСУЛЬТАЦІЇ НА МОБІЛЬНИХ ========== */
+
+/* Основний контейнер картки */
+#consultationCard {
+    margin: 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+}
+
+/* Внутрішній відступ */
+#consultationCard .card-body {
+    padding: 1rem !important;
+}
+
+/* Рядок з агентом та формою */
+.consult-row {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+}
+
+/* Блок агента */
+.agent-block {
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    flex-shrink: 0 !important;
+}
+
+/* Блок форми */
+.form-block {
+    width: 100% !important;
+    min-width: auto !important;
+    max-width: 100% !important;
+    flex: 1 !important;
+}
+
+/* Всі рядки форми */
+.form-block .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Поля вводу */
+.form-block .form-control,
+.form-block .form-select {
+    width: 100% !important;
+    font-size: 14px !important;
+    padding: 10px 12px !important;
+}
+
+/* Кнопка */
+.form-block .btn {
+    width: 100% !important;
+}
+
+/* Для десктопу */
+@media (min-width: 769px) {
+    .consult-row {
+        flex-direction: row !important;
+        justify-content: space-between !important;
+    }
+    .agent-block {
+        width: auto !important;
+        min-width: 200px !important;
+    }
+    .form-block {
+        width: auto !important;
+        max-width: 380px !important;
+    }
+}
+
+/* Глобальне вирівнювання контенту */
+.container.my-5 {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+}
+
+.card.shadow-sm,
+.new_r-container,
+.new_r-wrapper,
+.new_r-item-wrap,
+.new_r-item {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding_right: 0 !important;
+    width: 100% !important;
+}
+</style>
+<style>
+/* ========== ЦЕНТРУВАННЯ ГОЛОВНОГО БЛОКУ ПОШУКУ ========== */
+
+/* Основний контейнер */
+.container.my-5 {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    max-width: 1200px !important;
+}
+
+/* Картка, що містить модуль пошуку */
+.container.my-5 .card {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Модуль пошуку */
+#otpusk-search-module {
+    margin: 0 auto !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+/* Для десктопу - обмежуємо ширину */
+@media (min-width: 992px) {
+    .container.my-5 {
+        max-width: 1200px !important;
+    }
+
+    #otpusk-search-module {
+        max-width: 100% !important;
+    }
+}
+
+/* Для мобільних - забезпечуємо відступи */
+@media (max-width: 768px) {
+    .container.my-5 {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+    #otpusk-search-module {
+        padding: 12px !important;
+        margin: 0 !important;
+    }
+}
+</style>
+<style>
+@media (max-width: 768px) {
+    .new_f-ext-container {
+        display: none !important;
+    }
+}
+</style>
+<style>
+/* ========== КНОПКА "ЗАСТОСУВАТИ" ========== */
+.new_f-dropdown-body-bottom .new_f-dropdown-btn-apply {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-radius: 10px !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.new_f-dropdown-body-bottom .new_f-dropdown-btn-apply:hover {
+    background: var(--primary-dark) !important;
+    transform: scale(1.02) !important;
+}
+
+.new_f-dropdown-body-bottom .new_f-dropdown-btn-apply span {
+    color: white !important;
+}
+</style>
+<!-- ========== СТИЛІ ДЛЯ КАЛЕНДАРЯ (ЧЕРВОНИЙ ТА ЧОРНИЙ) ========== -->
+<style>
+/* Календар - зміна кольорів з зелених на червоні */
+.ui-datepicker-calendar .ui-state-default {
+    background: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #ddd !important;
+}
+
+/* Дні, коли є тури - червоний фон */
+.ui-datepicker-calendar .new_ceil-tours-exists .ui-state-default {
+    background: #ff6b6b !important;
+    color: white !important;
+    border-color: #ff6b6b !important;
+    font-weight: bold !important;
+}
+
+/* Дні, коли немає турів - блідо-червоний */
+.ui-datepicker-calendar .new_ceil-no-tours .ui-state-default {
+    background: transparent !important;
+    color: #cc0000 !important;
+    border-color: #ffcccc !important;
+}
+
+/* Поточний день (сьогодні) */
+.ui-datepicker-calendar .ui-datepicker-today .ui-state-default {
+    background: #ff4444 !important;
+    color: white !important;
+    border-color: #ff4444 !important;
+    font-weight: bold !important;
+}
+
+/* Вибрані дні */
+.ui-datepicker-calendar .ui-state-active {
+    background: #cc0000 !important;
+    color: white !important;
+    border-color: #cc0000 !important;
+}
+
+/* Ховер ефект */
+.ui-datepicker-calendar .ui-state-default:hover {
+    background: #ff8888 !important;
+    color: white !important;
+    transform: scale(1.05) !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Текст місяця та року - чорний */
+.ui-datepicker .ui-datepicker-title {
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+
+/* Навігація (стрілки) */
+.ui-datepicker .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-next {
+    color: #cc0000 !important;
+}
+
+/* Дні тижня (Пн, Вт, Ср...) - чорний */
+.ui-datepicker-calendar thead th span {
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+
+/* Заголовок календаря */
+.ui-datepicker-header {
+    background: #fff0f0 !important;
+    border-bottom: 1px solid #ffcccc !important;
+}
+
+/* Вихідні дні (субота, неділя) - червонуватий відтінок */
+.ui-datepicker-calendar .ui-datepicker-week-end .ui-state-default {
+    background: #fff0f0 !important;
+    color: #cc0000 !important;
+}
+
+/* Вихідні з турами */
+.ui-datepicker-calendar .ui-datepicker-week-end.new_ceil-tours-exists .ui-state-default {
+    background: #ff6b6b !important;
+    color: white !important;
+}
+
+/* Вихідні без турів */
+.ui-datepicker-calendar .ui-datepicker-week-end.new_ceil-no-tours .ui-state-default {
+    background: #ffe0e0 !important;
+    color: #cc0000 !important;
+}
+</style>
+<!-- ========== ЗМІНА ОРАНЖЕВИХ ЕЛЕМЕНТІВ НА ЧЕРВОНІ ========== -->
+<style>
+/* Кнопка скидання фільтрів */
+.new_r-filters-reset {
+    background: #ff4444 !important;
+    color: white !important;
+    border-color: #ff4444 !important;
+    border-radius: 20px !important;
+    padding: 5px 12px !important;
+    font-size: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+.new_r-filters-reset:hover {
+    background: #cc0000 !important;
+    transform: scale(1.02) !important;
+}
+
+/* Хрестик для видалення окремого фільтра - БІЛИЙ, БЕЗ ФОНУ */
+.new_r-filter-reset {
+    background: transparent !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin-left: 6px !important;
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+}
+
+.new_r-filter-reset:hover {
+    color: #ff9999 !important;
+    transform: scale(1.1) !important;
+    background: transparent !important;
+}
+
+/* Значення фільтра - ТІЛЬКИ ЧЕРВОНИЙ ТЕКСТ, БЕЗ ФОНУ */
+.new_r-filter-value {
+    background: transparent !important;
+    color: #cc0000 !important;
+}
+
+/* Контейнер фільтрів */
+.new_r-filters-values {
+    border-color: #ffcccc !important;
+}
+
+/* Бейдж фільтра - СІРИЙ ФОН */
+.new_r-filter {
+    background: #e0e0e0 !important;
+    border-color: #cccccc !important;
+    border-radius: 20px !important;
+    padding: 4px 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+}
+</style>
+<!-- ========== ЗМІНА ФОНУ ТА ТЕКСТУ ЗАГОЛОВКУ "ПОШУК ТУРУ" ========== -->
+<style>
+/* Змінюємо фон блоку з голубого на білий */
+.new_f-container {
+    background: #ffffff !important;
+    border-radius: 24px !important;
+}
+
+.new_f-wrapper {
+    background: #ffffff !important;
+}
+
+/* Змінюємо колір тексту "Пошук туру" на чорний */
+.new_f-title {
+    color: #000000 !important;
+    background: transparent !important;
+}
+
+/* Якщо потрібно змінити фон самої форми */
+.new_f-form {
+    background: #ffffff !important;
+}
+</style>
+
+<style>
+/* ========== ЗМІНА ВСІХ ГОЛУБИХ ЕЛЕМЕНТІВ НА ЧОРНІ ========== */
+
+/* Заголовки блоків фільтрів */
+.new_f-ext-bl-title,
+.new_f-ext-bl-title span,
+.new_f-label-name,
+.new_f-services-label .new_f-label-name {
+    color: #000000 !important;
+}
+
+/* Текст "Авіапереліт", "Автобус", "Без транспорту" */
+.new_f-ext-bl-body span,
+.new_f-ext-bl-body label span {
+    color: #000000 !important;
+}
+
+/* Слайдер (оцінки готелю, ціна) */
+.ui-slider-range,
+.ui-slider-handle,
+.ui-slider {
+    background: #000000 !important;
+}
+
+/* Числа на слайдері */
+.new_f-ext-scale-item {
+    color: #000000 !important;
+}
+
+/* Текст "Хіт продажу" тощо */
+.new_f-services-label-wrap label span {
+    color: #000000 !important;
+}
+
+/* Всі тексти в фільтрах */
+.new_f-ext-bl-body,
+.new_f-ext-bl-body label,
+.new_f-services-label label span {
+    color: #000000 !important;
+}
+</style>
+<style>
+/* ========== ЗМІНА КОЛЬОРУ ГАЛОЧОК НА ЧОРНИЙ ========== */
+
+/* Змінюємо колір чекбоксів через filter */
+.new_f-ext-container input[type="checkbox"],
+.new_f-services-label-wrap input[type="checkbox"],
+.new_f-ext-bl-body input[type="checkbox"] {
+    filter: brightness(0) !important;
+}
+
+/* Змінюємо колір радіо-кнопок */
+.new_f-ext-container input[type="radio"],
+.new_f-services-label-wrap input[type="radio"],
+.new_f-ext-bl-body input[type="radio"] {
+    filter: brightness(0) !important;
+}
+
+/* Для checked стану - чорний */
+.new_f-ext-container input[type="checkbox"]:checked,
+.new_f-services-label-wrap input[type="checkbox"]:checked,
+.new_f-ext-bl-body input[type="checkbox"]:checked {
+    filter: brightness(0) !important;
+    accent-color: #000000 !important;
+}
+
+/* Якщо filter не працює, використовуємо box-shadow */
+.new_f-ext-container input[type="checkbox"]:checked {
+    background-color: #000000 !important;
+    box-shadow: 0 0 0 2px #000000 inset !important;
+}
+</style>
+<script>
+// ========== ЗМІНА ТЕКСТУ КНОПКИ "ЗНАЙТИ" НА "ПОШУК" ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const searchBtn = document.querySelector('.new_f-form-submit');
+    if (searchBtn) {
+        searchBtn.textContent = 'Пошук';
+    }
+});
+</script>
+<style>
+/* ========== ПОВНІСТЮ ПРИБИРАЄМО ТІНЬ ========== */
+.new_f-container,
+.new_f-wrapper,
+#otpusk-search-module,
+.new_f-container,
+.new_f-wrapper-bg-imgs,
+.new_f-form {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: 0 0 0 rgba(0,0,0,0) !important;
+}
+</style>
+<style>
+/* ========== ПРИБИРАЄМО ТІНЬ З БЛОКУ ПОШУКУ ========== */
+#otpusk-search-module {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+
+/* Якщо тінь ще десь є */
+.new_f-container,
+.new_f-wrapper,
+.new_os {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+</style>
+<style>
+/* ========== ЗМІНА КОЛЬОРУ ВИБРАНИХ ЕЛЕМЕНТІВ ТУРИСТІВ НА КОЛІР АГЕНЦІЇ ========== */
+
+/* Активний елемент вибору кількості дорослих */
+.new_f-people-item.active {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Ховер ефект для неактивних елементів */
+.new_f-people-item:hover {
+    background: var(--primary-light) !important;
+    border-color: var(--primary-light) !important;
+    color: white !important;
+}
+
+/* Активний елемент вибору віку дитини */
+.new_f-children-age-item.active {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Ховер ефект для віку дитини */
+.new_f-children-age-item:hover {
+    background: var(--primary-light) !important;
+    border-color: var(--primary-light) !important;
+    color: white !important;
+}
+
+/* Кнопка "Додати дитину" */
+.new_f-children-accordion-btn {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+.new_f-children-accordion-btn:hover {
+    background: var(--primary-dark) !important;
+    color: white !important;
+}
+</style>
+<style>
+/* ========== ЗМІНА КОЛЬОРУ ВИБРАНОГО ВІКУ ДИТИНИ НА КОЛІР АГЕНЦІЇ ========== */
+
+/* Кнопка вибраного віку дитини */
+.new_f-children-list-item {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Ховер ефект для віку дитини */
+.new_f-children-list-item:hover {
+    background: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
+    color: white !important;
+}
+
+/* Кнопка видалення дитини (хрестик) */
+.new_f-children-list-item .delete,
+.new_f-children-list-item i.fa-close,
+.new_f-children-list-item i.fa-times {
+    color: white !important;
+}
+
+/* Можливі інші елементи вибору дітей */
+.new_f-children-age-item.active,
+.new_f-children-age-item.selected {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+</style>
+<!-- СКРИПТ ДЛЯ АВТОМАТИЧНОГО ЗАПОВНЕННЯ З КАЛЕНДАРЯ -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const storedParams = sessionStorage.getItem('otpusk_search_params');
+
+    if (storedParams) {
+        try {
+            const params = JSON.parse(storedParams);
+
+            if (params.shouldAutoSearch === true) {
+                console.log('📝 Автоматичний пошук для:', params);
+                sessionStorage.removeItem('otpusk_search_params');
+
+                function fillAndSearch() {
+                    // Заповнюємо поле "Куди" (країна)
+                    const destinationInput = document.querySelector('#new_os-to input');
+                    if (destinationInput && params.country) {
+                        destinationInput.value = params.country;
+                        destinationInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        console.log('✅ Заповнено країну:', params.country);
+                    }
+
+                    // Заповнюємо поле "Звідки" (місто вильоту)
+                    if (params.departure) {
+                        const departureItems = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                        departureItems.forEach(item => {
+                            if (item.textContent.trim() === params.departure) {
+                                item.click();
+                                console.log('✅ Вибрано місто вильоту:', params.departure);
+                            }
+                        });
+                    }
+
+                    // Заповнюємо поле дати
+                    if (params.date) {
+                        const dateInput = document.querySelector('.new_f-datepicker-wrap input');
+                        if (dateInput) {
+                            dateInput.value = params.date;
+                            dateInput.dispatchEvent(new Event('change', { bubbles: true }));
+                            console.log('✅ Заповнено дату:', params.date);
+                        }
+                    }
+
+                    // Автоматично натискаємо кнопку "Пошук"
+                    setTimeout(() => {
+                        const searchBtn = document.querySelector('.new_f-form-submit');
+                        if (searchBtn) {
+                            console.log('🔍 Автоматичний пошук...');
+                            searchBtn.click();
+                        } else {
+                            console.warn('❌ Кнопка пошуку не знайдена');
+                        }
+                    }, 1000);
+                }
+
+                // Чекаємо завантаження віджета
+                if (document.querySelector('#new_os-to')) {
+                    fillAndSearch();
+                } else {
+                    const observer = new MutationObserver(() => {
+                        if (document.querySelector('#new_os-to')) {
+                            observer.disconnect();
+                            fillAndSearch();
+                        }
+                    });
+                    observer.observe(document.body, { childList: true, subtree: true });
+                    setTimeout(() => observer.disconnect(), 5000);
+                }
+            }
+        } catch (e) {
+            console.error('❌ Помилка:', e);
+            sessionStorage.removeItem('otpusk_search_params');
+        }
+    }
+});
+</script>
 {% endblock %}
