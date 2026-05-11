@@ -172,29 +172,18 @@
         e.preventDefault();
         e.stopPropagation();
 
-        // Збираємо дані з форми
         const name = document.getElementById('consultationName')?.value || '';
         const phone = document.getElementById('consultationPhone')?.value || '';
         const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
-        // Валідація
-        if (!name.trim()) {
-            console.log('Введіть ім\'я');
-            return;
-        }
-        if (!phone.trim()) {
-            console.log('Введіть телефон');
-            return;
-        }
+        if (!name.trim() || !phone.trim()) return;
 
-        // Визначаємо URL
         let ajaxUrl = '/consultation-ajax/';
         {% if agent_site %}
         ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
         {% endif %}
 
-        // Відправляємо
         fetch(ajaxUrl, {
             method: 'POST',
             headers: {
@@ -211,15 +200,11 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Очищуємо форму
                 document.getElementById('consultationName').value = '';
                 document.getElementById('consultationPhone').value = '';
-                console.log('Заявка відправлена');
             }
         })
-        .catch(error => {
-            console.error('Помилка:', error);
-        });
+        .catch(error => console.error('Помилка:', error));
     });
 })();
 </script>
@@ -367,9 +352,8 @@
 </style>
 
 <script>
-// ========== КАЛЕНДАР НИЗЬКИХ ЦІН ==========
+// ========== КАЛЕНДАР НИЗЬКИХ ЦІН З ПЕРЕХОДОМ НА СТОРІНКУ ТУРУ ==========
 document.addEventListener('DOMContentLoaded', function() {
-    // Список країн для кожного міста вильоту
     const countryListByDepartureCity = {
         "Київ": ["Україна", "Єгипет", "Туреччина", "ОАЕ", "Шрі Ланка", "Іспанія", "Мальдіви", "Кіпр", "Грузія"],
         "Кишинів": ["Єгипет", "Туреччина", "ОАЕ", "Шрі Ланка", "Іспанія", "Танзанія", "Мальдіви", "Італія", "Кіпр", "Греція"],
@@ -457,6 +441,53 @@ document.addEventListener('DOMContentLoaded', function() {
         return 20 + (ratio * 80);
     }
 
+    // Функція для пошуку туру за датою та переходу на сторінку деталей
+    async function searchAndGoToTour(date, price) {
+        // Показуємо індикатор завантаження на клікнутому елементі
+        const clickedElement = event.currentTarget;
+        const originalHTML = clickedElement.innerHTML;
+        clickedElement.style.opacity = '0.5';
+        clickedElement.style.cursor = 'wait';
+
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth();
+        const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+
+        try {
+            // Шукаємо тур через API Otpusk
+            const searchUrl = `https://export.otpusk.com/api/2.4/search?country=${encodeURIComponent(currentCountry)}&departure=${encodeURIComponent(currentDeparture)}&date_from=${formattedDate}&date_to=${formattedDate}&format=json&access_token=3f94b-e4ff8-a72a7-4755f-da9ca`;
+            const response = await fetch(searchUrl);
+            const data = await response.json();
+
+            if (data.tours && data.tours.length > 0) {
+                const tour = data.tours[0];
+                const hid = tour.hotel_id;
+                const oid = tour.offer_id;
+                const nights = tour.nights || 7;
+
+                // Формуємо URL для сторінки деталей туру
+                let detailUrl = `/tour-detail/?hid=${hid}&oid=${oid}&od=${formattedDate}&ol=${nights}`;
+                {% if agent_site %}
+                detailUrl = `/a/{{ agent_site.slug }}/tour-detail/?hid=${hid}&oid=${oid}&od=${formattedDate}&ol=${nights}`;
+                {% endif %}
+
+                // Додаємо параметр для відкриття чату (опціонально)
+                detailUrl += '&chat_open=1';
+
+                window.location.href = detailUrl;
+            } else {
+                alert('На цю дату немає доступних турів. Спробуйте обрати іншу дату.');
+                clickedElement.style.opacity = '1';
+                clickedElement.style.cursor = 'pointer';
+            }
+        } catch (error) {
+            console.error('Помилка пошуку туру:', error);
+            alert('Помилка при пошуку туру. Спробуйте пізніше.');
+            clickedElement.style.opacity = '1';
+            clickedElement.style.cursor = 'pointer';
+        }
+    }
+
     function renderCalendar(prices) {
         if (!calendarDays) return;
 
@@ -499,6 +530,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (price !== null) {
                 const barClass = getColorForPrice(price, globalMin, globalMax);
                 const barHeight = getHeightForPrice(price, globalMin, globalMax);
+                const priceFormatted = Math.round(price).toLocaleString('uk-UA');
+
+                // Робимо клікабельним
+                col.style.cursor = 'pointer';
+                col.onclick = (function(dayNum, priceVal) {
+                    return function() { searchAndGoToTour(dayNum, priceVal); };
+                })(day, price);
+
                 col.innerHTML = `
                     <div class="day-week">${dayOfWeek}</div>
                     <div class="day-date">${day}</div>
@@ -506,7 +545,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="price-column ${barClass}" style="height: ${barHeight}%;"></div>
                     </div>
                     <div class="price-value-text" style="color: ${barClass === 'low' ? '#28a745' : (barClass === 'red' ? '#dc3545' : '#ffc107')}">
-                        ${Math.round(price).toLocaleString('uk-UA')} ₴
+                        ${priceFormatted} ₴
                     </div>
                 `;
             } else {
@@ -554,7 +593,6 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Визначаємо правильний URL для відправки
         let ajaxUrl = '/consultation-ajax/';
         {% if agent_site %}
         ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
