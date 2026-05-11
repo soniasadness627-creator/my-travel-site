@@ -443,18 +443,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ПРОСТА ФУНКЦІЯ ПЕРЕХОДУ НА СТОРІНКУ ПОШУКУ
     function goToSearch(date) {
-        const year = currentMonth.getFullYear();
-        const month = currentMonth.getMonth();
-        const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const dayFormatted = String(date).padStart(2, '0');
+    const monthFormatted = String(month + 1).padStart(2, '0');
+    const formattedDate = `${year}-${monthFormatted}-${dayFormatted}`;
 
-        // Формуємо URL для сторінки пошуку
-        let searchUrl = `/search-otpusk/?country=${encodeURIComponent(currentCountry)}&departure=${encodeURIComponent(currentDeparture)}&date=${formattedDate}`;
-        {% if agent_site %}
-        searchUrl = `/a/{{ agent_site.slug }}/search-otpusk/?country=${encodeURIComponent(currentCountry)}&departure=${encodeURIComponent(currentDeparture)}&date=${formattedDate}`;
-        {% endif %}
+    // Зберігаємо параметри в sessionStorage
+    const searchData = {
+        country: currentCountry,
+        departure: currentDeparture,
+        date: formattedDate,
+        shouldAutoSearch: true
+    };
+    sessionStorage.setItem('otpusk_search_params', JSON.stringify(searchData));
 
-        window.location.href = searchUrl;
-    }
+    // Переходимо на сторінку результатів пошуку
+    let searchUrl = `/search-otpusk/`;
+    {% if agent_site %}
+    searchUrl = `/a/{{ agent_site.slug }}/search-otpusk/`;
+    {% endif %}
+
+    window.location.href = searchUrl;
+}
 
     function renderCalendar(prices) {
         if (!calendarDays) return;

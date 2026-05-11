@@ -1280,4 +1280,70 @@ document.addEventListener('DOMContentLoaded', function() {
     color: white !important;
 }
 </style>
+<script>
+// Автоматичне заповнення форми та пошук при переході з календаря
+document.addEventListener('DOMContentLoaded', function() {
+    const storedParams = sessionStorage.getItem('otpusk_search_params');
+
+    if (storedParams) {
+        try {
+            const params = JSON.parse(storedParams);
+
+            if (params.shouldAutoSearch === true) {
+                console.log('Автоматичний пошук для:', params);
+                sessionStorage.removeItem('otpusk_search_params');
+
+                function fillAndSearch() {
+                    // Заповнюємо поле "Куди" (країна)
+                    const destinationInput = document.querySelector('#new_os-to input');
+                    if (destinationInput && params.country) {
+                        destinationInput.value = params.country;
+                        destinationInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+
+                    // Заповнюємо поле "Звідки" (місто вильоту)
+                    if (params.departure) {
+                        const departureItems = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                        departureItems.forEach(item => {
+                            if (item.textContent.trim() === params.departure) {
+                                item.click();
+                            }
+                        });
+                    }
+
+                    // Заповнюємо поле дати
+                    if (params.date) {
+                        const dateInput = document.querySelector('.new_f-datepicker-wrap input');
+                        if (dateInput) {
+                            dateInput.value = params.date;
+                            dateInput.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    }
+
+                    setTimeout(() => {
+                        const searchBtn = document.querySelector('.new_f-form-submit');
+                        if (searchBtn) searchBtn.click();
+                    }, 500);
+                }
+
+                if (document.querySelector('#new_os-to')) {
+                    fillAndSearch();
+                } else {
+                    const observer = new MutationObserver(() => {
+                        if (document.querySelector('#new_os-to')) {
+                            observer.disconnect();
+                            fillAndSearch();
+                        }
+                    });
+                    observer.observe(document.body, { childList: true, subtree: true });
+                    setTimeout(() => observer.disconnect(), 3000);
+                }
+            }
+        } catch (e) {
+            console.error('Помилка:', e);
+            sessionStorage.removeItem('otpusk_search_params');
+        }
+    }
+});
+</script>
 {% endblock %}
