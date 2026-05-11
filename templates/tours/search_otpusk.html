@@ -19,28 +19,14 @@
                     var osHotelCategory = '';
                     var osFood = '';
                     var osTransport = '';
-                    // ВАЖЛИВО: osTarget має вказувати на цю ж сторінку
                     var osTarget = '';
-                    var osContainer = null;
+                    var osContainer = 'otpusk-results-container';
                     var osTourContainer = null;
                     var osLang = 'ua';
                     var osTourTargetBlank = false;
                     var osOrderUrl = null;
                     var osCurrency = 'converted';
                     var osAutoStart = false;
-
-                    // Додаємо параметри з URL, якщо вони є
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const country = urlParams.get('country');
-                    const departure = urlParams.get('departure');
-                    const date = urlParams.get('date');
-
-                    if (country) osGeo = country;
-                    if (departure) osDefaultDeparture = departure;
-                    if (date) {
-                        osDateFrom = date;
-                        osDateTo = date;
-                    }
                 </script>
                 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
                 <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
@@ -68,55 +54,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 sessionStorage.removeItem('otpusk_search_params');
 
                 function fillForm() {
-                    // Заповнюємо поле "Куди" (країна)
                     const destinationInput = document.querySelector('#new_os-to input');
                     if (destinationInput && params.country) {
                         destinationInput.value = params.country;
                         destinationInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        destinationInput.dispatchEvent(new Event('change', { bubbles: true }));
-                        console.log('✅ Заповнено країну:', params.country);
                     }
 
-                    // Заповнюємо поле "Звідки" (місто вильоту)
                     if (params.departure) {
                         const departureItems = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                        let found = false;
                         departureItems.forEach(item => {
                             if (item.textContent.trim() === params.departure) {
                                 item.click();
-                                found = true;
-                                console.log('✅ Вибрано місто вильоту:', params.departure);
                             }
                         });
-                        if (!found) {
-                            const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn-text');
-                            if (departureBtn) departureBtn.textContent = params.departure;
-                        }
                     }
 
-                    // Заповнюємо поле дати
                     if (params.date) {
                         const dateInput = document.querySelector('#new_f-dates-container .new_f-datepicker-wrap input');
                         if (dateInput) {
                             dateInput.value = params.date;
                             dateInput.dispatchEvent(new Event('change', { bubbles: true }));
-                            console.log('✅ Заповнено дату:', params.date);
                         }
                     }
 
-                    // Автоматично натискаємо кнопку "Пошук"
                     setTimeout(() => {
                         const searchBtn = document.querySelector('.new_f-form-submit');
-                        if (searchBtn) {
-                            console.log('🔍 Автоматичний пошук...');
-                            searchBtn.click();
-                        } else {
-                            console.warn('❌ Кнопка пошуку не знайдена');
-                        }
+                        if (searchBtn) searchBtn.click();
                     }, 1000);
                 }
-                
-                // Чекаємо завантаження віджета
+
                 if (document.querySelector('#new_os-to')) {
                     fillForm();
                 } else {
@@ -127,10 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     });
                     observer.observe(document.body, { childList: true, subtree: true });
-                    setTimeout(() => {
-                        observer.disconnect();
-                        fillForm();
-                    }, 5000);
+                    setTimeout(() => observer.disconnect(), 5000);
                 }
             }
         } catch (e) {
