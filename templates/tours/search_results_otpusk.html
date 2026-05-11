@@ -1355,4 +1355,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+<style>
+    /* Показуємо контейнери результатів */
+    .new_r-container,
+    .new_r-wrapper,
+    .new_r-item-wrap,
+    .new_r-item {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* Прибираємо приховування */
+    .new_r-container[style*="display: none"] {
+        display: block !important;
+    }
+
+    /* Переконуємось, що результати видно */
+    .new_os .new_r-container {
+        display: block !important;
+    }
+</style>
 {% endblock %}
