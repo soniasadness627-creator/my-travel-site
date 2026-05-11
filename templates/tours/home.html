@@ -163,6 +163,50 @@
 </div>
 
 <script>
+// ========== ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА СТОРІНКУ РЕЗУЛЬТАТІВ ПРИ КЛІКУ НА ДАТУ ==========
+function getCurrentNights() {
+    // За замовчуванням 7 ночей (можна розширити з випадаючим списком)
+    return 7;
+}
+
+function selectCalendarDate(dateISO, price, nights) {
+    // Отримуємо параметри з поточного календаря
+    const selectedDate = new Date(dateISO);
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(selectedDate.getDate()).padStart(2, '0');
+    const odParam = `${year}-${month}-${day}`;
+    const olParam = nights || getCurrentNights();
+
+    // Отримуємо активну країну з вкладок
+    const currentCountryTab = document.querySelector('.country-tab.active');
+    const country = currentCountryTab ? currentCountryTab.getAttribute('data-country') : 'Єгипет';
+
+    // Отримуємо місто вильоту
+    const departureSelect = document.getElementById('departureCitySelect');
+    const departure = departureSelect ? departureSelect.value : 'Київ';
+
+    // Формуємо базовий URL
+    let baseUrl = '/search-otpusk/';
+    if (window.location.pathname.startsWith('/a/')) {
+        const slug = window.location.pathname.split('/')[2];
+        baseUrl = `/a/${slug}/search-otpusk/`;
+    }
+
+    // Додаємо всі параметри
+    const params = new URLSearchParams({
+        country: country,
+        departure: departure,
+        date_from: odParam,
+        duration: olParam,
+        adults: 2,
+        auto_search: '1'
+    });
+
+    // Переходимо на сторінку результатів
+    window.location.href = `${baseUrl}?${params.toString()}`;
+}
+
 // ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
 (function() {
     const submitBtn = document.getElementById('submitConsultationBtn');
@@ -172,13 +216,11 @@
         e.preventDefault();
         e.stopPropagation();
 
-        // Збираємо дані з форми
         const name = document.getElementById('consultationName')?.value || '';
         const phone = document.getElementById('consultationPhone')?.value || '';
         const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
-        // Валідація
         if (!name.trim()) {
             console.log('Введіть ім\'я');
             return;
@@ -188,13 +230,11 @@
             return;
         }
 
-        // Визначаємо URL
         let ajaxUrl = '/consultation-ajax/';
         {% if agent_site %}
         ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
         {% endif %}
 
-        // Відправляємо
         fetch(ajaxUrl, {
             method: 'POST',
             headers: {
@@ -211,7 +251,6 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Очищуємо форму
                 document.getElementById('consultationName').value = '';
                 document.getElementById('consultationPhone').value = '';
                 console.log('Заявка відправлена');
@@ -493,12 +532,23 @@ document.addEventListener('DOMContentLoaded', function() {
             const dayDate = new Date(year, month, day);
             const dayOfWeek = dayDate.toLocaleDateString('uk', { weekday: 'short' });
 
+            // Форматуємо дату для передачі в функцію selectCalendarDate
+            const yearNum = dayDate.getFullYear();
+            const monthNum = String(dayDate.getMonth() + 1).padStart(2, '0');
+            const dayNum = String(day).padStart(2, '0');
+            const dateISO = `${yearNum}-${monthNum}-${dayNum}`;
+
             const col = document.createElement('div');
             col.className = 'day-column';
 
             if (price !== null) {
                 const barClass = getColorForPrice(price, globalMin, globalMax);
                 const barHeight = getHeightForPrice(price, globalMin, globalMax);
+
+                // Додаємо обробник кліку тільки для днів з ціною
+                col.setAttribute('onclick', `selectCalendarDate('${dateISO}', ${price}, ${getCurrentNights()})`);
+                col.style.cursor = 'pointer';
+
                 col.innerHTML = `
                     <div class="day-week">${dayOfWeek}</div>
                     <div class="day-date">${day}</div>
@@ -546,7 +596,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (nextBtn) nextBtn.addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() + 1); updateCalendar(); });
 });
 
-// ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
+// ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ (ДОДАТКОВИЙ ОБРОБНИК) ==========
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('consultationForm');
     if (!form) return;
@@ -554,7 +604,6 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Визначаємо правильний URL для відправки
         let ajaxUrl = '/consultation-ajax/';
         {% if agent_site %}
         ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
