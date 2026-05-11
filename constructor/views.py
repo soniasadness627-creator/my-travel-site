@@ -22,14 +22,14 @@ from django.views.decorators.cache import never_cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.urls import reverse_lazy
-from django.contrib.auth import get_user_model  # ДОДАНО: імпорт для create_admin_direct
+from django.contrib.auth import get_user_model
 from .forms.main_forms import AgentRegistrationForm, VerificationForm, AgentSiteForm
 from .forms.blocks import AgentBlocksForm
 from users.models import User
 from .models.agent_site import AgentSite
 from .models.blocks import AgentBlockSettings
 from tours.views import tour_detail, search_results, city_detail, news_detail, \
-    NewsListView, get_agent_colors, tour_reviews
+    NewsListView, get_agent_colors, tour_reviews, hotel_reviews_api  # ← ДОДАНО hotel_reviews_api
 from tours.models import News
 
 from django.http import HttpResponse
