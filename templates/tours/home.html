@@ -187,7 +187,7 @@ function selectCalendarDate(dateISO, price, nights) {
     const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
     const day = String(selectedDate.getDate()).padStart(2, '0');
     const odParam = `${year}-${month}-${day}`;
-    const olParam = nights || getCurrentNights();
+    const olParam = nights || 7;
 
     // Отримуємо активну країну з вкладок
     const currentCountryTab = document.querySelector('.country-tab.active');

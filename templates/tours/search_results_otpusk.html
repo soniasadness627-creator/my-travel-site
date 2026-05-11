@@ -32,24 +32,40 @@
     // Функція для розрахунку дати закінчення (дата початку + тривалість)
     function calculateEndDate(startDateStr, durationDays) {
         if (!startDateStr || !durationDays) return '';
+
+        // Переконуємось, що durationDays - це число
+        const days = parseInt(durationDays);
+        if (isNaN(days)) return '';
+
         // Розбираємо дату YYYY-MM-DD
         const parts = startDateStr.split('-');
-        const startDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-        // Додаємо тривалість (наприклад 7 днів)
+        if (parts.length !== 3) return '';
+
+        const year = parseInt(parts[0]);
+        const month = parseInt(parts[1]) - 1; // місяці в JS від 0 до 11
+        const day = parseInt(parts[2]);
+
+        if (isNaN(year) || isNaN(month) || isNaN(day)) return '';
+
+        const startDate = new Date(year, month, day);
         const endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + parseInt(durationDays));
+        endDate.setDate(startDate.getDate() + days);
+
         // Форматуємо у формат DD.MM.YYYY для Otpusk
-        const day = String(endDate.getDate()).padStart(2, '0');
-        const month = String(endDate.getMonth() + 1).padStart(2, '0');
-        const year = endDate.getFullYear();
-        return `${day}.${month}.${year}`;
+        const endDay = String(endDate.getDate()).padStart(2, '0');
+        const endMonth = String(endDate.getMonth() + 1).padStart(2, '0');
+        const endYear = endDate.getFullYear();
+
+        return `${endDay}.${endMonth}.${endYear}`;
     }
 
     // Розраховуємо дату закінчення (початкова дата + тривалість)
     let dateToValue = '';
     if (dateFromUrl && durationFromUrl) {
         dateToValue = calculateEndDate(dateFromUrl, durationFromUrl);
-        console.log(`📅 Розрахунок: ${dateFromUrl} + ${durationFromUrl} днів = ${dateToValue}`);
+        console.log(`📅 Розрахунок: дата=${dateFromUrl}, тривалість=${durationFromUrl} днів → результат=${dateToValue}`);
+    } else {
+        console.log(`⚠️ Неповні дані: dateFromUrl=${dateFromUrl}, durationFromUrl=${durationFromUrl}`);
     }
 
     // Встановлюємо змінні для модуля Otpusk
