@@ -71,34 +71,33 @@ urlpatterns = [
     # ========== 🔥 API ДЛЯ ВІДГУКІВ (ДОДАНО) ==========
     path('api/hotel-reviews/', tours_views.hotel_reviews_api, name='hotel_reviews_api'),
     path('a/<slug:slug>/api/hotel-reviews/', tours_views.hotel_reviews_api, name='agent_hotel_reviews_api'),
+    # ============================================================
 
     # ========== AJAX ОБРОБКА КОНСУЛЬТАЦІЇ ==========
     path('consultation-ajax/', tours_views.consultation_ajax, name='consultation_ajax'),
+    # ДЛЯ АГЕНТСЬКИХ САЙТІВ
     path('a/<slug:slug>/consultation-ajax/', tours_views.consultation_ajax, name='agent_consultation_ajax'),
 
     # ========== AJAX ОБРОБКА БРОНЮВАННЯ (BOOKING) ==========
     path('booking-ajax/', tours_views.booking_ajax, name='booking_ajax'),
+    # ДЛЯ АГЕНТСЬКИХ САЙТІВ
     path('a/<slug:slug>/booking-ajax/', tours_views.booking_ajax, name='agent_booking_ajax'),
 
-    # ========== СТОРІНКИ ПОШУКУ OTPUSK ==========
-    # Форма пошуку (автозаповнення з календаря)
-    path('search-otpusk/', tours_views.search_otpusk_form, name='search_otpusk'),
-    path('a/<slug:slug>/search-otpusk/', tours_views.search_otpusk_form, name='agent_search_otpusk'),
+    # ========== СТОРІНКА РЕЗУЛЬТАТІВ ПОШУКУ OTPUSK ==========
+    # Сторінка для звичайного пошуку (без блоку консультації)
+    path('search-otpusk/', tours_views.search_otpusk, name='search_otpusk'),
+    path('a/<slug:slug>/search-otpusk/', tours_views.search_otpusk, name='agent_search_otpusk'),
 
-    # Результати пошуку
-    path('search-results-otpusk/', tours_views.search_otpusk_results, name='search_results_otpusk'),
-    path('a/<slug:slug>/search-results-otpusk/', tours_views.search_otpusk_results, name='agent_search_results_otpusk'),
-
-    # ========== НОВА СТОРІНКА ДЛЯ ПОПУЛЯРНИХ НАПРЯМКІВ ==========
+    # ========== НОВА СТОРІНКА ДЛЯ ПОПУЛЯРНИХ НАПРЯМКІВ (З БЛОКОМ КОНСУЛЬТАЦІЇ) ==========
     path('search-otpusk-by-country/', tours_views.search_otpusk_by_country, name='search_otpusk_by_country'),
     path('a/<slug:slug>/search-otpusk-by-country/', tours_views.search_otpusk_by_country,
          name='agent_search_otpusk_by_country'),
 
-    # ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ ==========
+    # ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (БЕЗ ФОРМИ ПОШУКУ) ==========
     path('tour-detail/', tours_views.tour_detail_otpusk, name='tour_detail_otpusk'),
     path('a/<slug:slug>/tour-detail/', tours_views.tour_detail_otpusk, name='agent_tour_detail_otpusk'),
 
-    # ========== КОНСУЛЬТАЦІЯ ==========
+    # ========== КОНСУЛЬТАЦІЯ (ЗВИЧАЙНА ФОРМА З ПЕРЕНАПРАВЛЕННЯМ) ==========
     path('consultation/', TemplateView.as_view(template_name='tours/consultation_form.html'), name='consultation'),
 
     # ========== ГЛОБАЛЬНИЙ ВХІД ТА ВИХІД ==========

@@ -172,18 +172,29 @@
         e.preventDefault();
         e.stopPropagation();
 
+        // Збираємо дані з форми
         const name = document.getElementById('consultationName')?.value || '';
         const phone = document.getElementById('consultationPhone')?.value || '';
         const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
-        if (!name.trim() || !phone.trim()) return;
+        // Валідація
+        if (!name.trim()) {
+            console.log('Введіть ім\'я');
+            return;
+        }
+        if (!phone.trim()) {
+            console.log('Введіть телефон');
+            return;
+        }
 
+        // Визначаємо URL
         let ajaxUrl = '/consultation-ajax/';
         {% if agent_site %}
         ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
         {% endif %}
 
+        // Відправляємо
         fetch(ajaxUrl, {
             method: 'POST',
             headers: {
@@ -200,11 +211,15 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                // Очищуємо форму
                 document.getElementById('consultationName').value = '';
                 document.getElementById('consultationPhone').value = '';
+                console.log('Заявка відправлена');
             }
         })
-        .catch(error => console.error('Помилка:', error));
+        .catch(error => {
+            console.error('Помилка:', error);
+        });
     });
 })();
 </script>
@@ -352,8 +367,9 @@
 </style>
 
 <script>
-// ========== КАЛЕНДАР НИЗЬКИХ ЦІН З ПЕРЕХОДОМ НА ПОШУК ==========
+// ========== КАЛЕНДАР НИЗЬКИХ ЦІН ==========
 document.addEventListener('DOMContentLoaded', function() {
+    // Список країн для кожного міста вильоту
     const countryListByDepartureCity = {
         "Київ": ["Україна", "Єгипет", "Туреччина", "ОАЕ", "Шрі Ланка", "Іспанія", "Мальдіви", "Кіпр", "Грузія"],
         "Кишинів": ["Єгипет", "Туреччина", "ОАЕ", "Шрі Ланка", "Іспанія", "Танзанія", "Мальдіви", "Італія", "Кіпр", "Греція"],
@@ -441,32 +457,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return 20 + (ratio * 80);
     }
 
-    // Функція переходу на сторінку пошуку
-    function goToSearch(date) {
-        const year = currentMonth.getFullYear();
-        const month = currentMonth.getMonth();
-        const dayFormatted = String(date).padStart(2, '0');
-        const monthFormatted = String(month + 1).padStart(2, '0');
-        const formattedDate = `${year}-${monthFormatted}-${dayFormatted}`;
-
-        // Зберігаємо параметри в sessionStorage
-        const searchData = {
-            country: currentCountry,
-            departure: currentDeparture,
-            date: formattedDate,
-            shouldAutoSearch: true
-        };
-        sessionStorage.setItem('otpusk_search_params', JSON.stringify(searchData));
-
-        // Переходимо на сторінку пошуку
-        let searchUrl = `/search-otpusk/`;
-        {% if agent_site %}
-        searchUrl = `/a/{{ agent_site.slug }}/search-otpusk/`;
-        {% endif %}
-
-        window.location.href = searchUrl;
-    }
-
     function renderCalendar(prices) {
         if (!calendarDays) return;
 
@@ -509,14 +499,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (price !== null) {
                 const barClass = getColorForPrice(price, globalMin, globalMax);
                 const barHeight = getHeightForPrice(price, globalMin, globalMax);
-                const priceFormatted = Math.round(price).toLocaleString('uk-UA');
-
-                // Робимо клікабельним - перехід на сторінку пошуку
-                col.style.cursor = 'pointer';
-                col.onclick = (function(dayNum) {
-                    return function() { goToSearch(dayNum); };
-                })(day);
-
                 col.innerHTML = `
                     <div class="day-week">${dayOfWeek}</div>
                     <div class="day-date">${day}</div>
@@ -524,7 +506,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="price-column ${barClass}" style="height: ${barHeight}%;"></div>
                     </div>
                     <div class="price-value-text" style="color: ${barClass === 'low' ? '#28a745' : (barClass === 'red' ? '#dc3545' : '#ffc107')}">
-                        ${priceFormatted} ₴
+                        ${Math.round(price).toLocaleString('uk-UA')} ₴
                     </div>
                 `;
             } else {
@@ -562,6 +544,63 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (prevBtn) prevBtn.addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() - 1); updateCalendar(); });
     if (nextBtn) nextBtn.addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() + 1); updateCalendar(); });
+});
+
+// ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('consultationForm');
+    if (!form) return;
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Визначаємо правильний URL для відправки
+        let ajaxUrl = '/consultation-ajax/';
+        {% if agent_site %}
+        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
+        {% endif %}
+
+        const formData = new FormData(form);
+        const btn = form.querySelector('button[type="submit"]');
+        const originalText = btn.innerHTML;
+
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Відправляємо...';
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                form.reset();
+            }
+        })
+        .catch(error => {
+            console.error('Помилка:', error);
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        });
+    });
+});
+
+// Випадковий фон для блоку консультації
+document.addEventListener('DOMContentLoaded', function() {
+    const colors = ['#c4edd4', '#ccfbfb', '#FFC0CB'];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const card = document.getElementById('consultationCard');
+    if (card) {
+        card.style.backgroundColor = randomColor;
+        card.style.color = '#434343';
+        const cardBody = card.querySelector('.card-body');
+        if (cardBody) cardBody.style.backgroundColor = 'transparent';
+    }
 });
 </script>
 
