@@ -71,9 +71,10 @@ class ReviewInline(admin.TabularInline):
 
 # ========== ФОРМА ДЛЯ ТУРУ ==========
 class TourAdminForm(forms.ModelForm):
+    # ТИМЧАСОВО: замінюємо запит до БД на статичний список
     country = forms.ChoiceField(
-        choices=[('', '---------')] + [(c, c) for c in
-                                       City.objects.values_list('country', flat=True).distinct().order_by('country')],
+        choices=[('', '---------')] + [('Україна', 'Україна'), ('Єгипет', 'Єгипет'), ('Туреччина', 'Туреччина'),
+                                       ('Іспанія', 'Іспанія'), ('Греція', 'Греція'), ('Італія', 'Італія')],
         label="Країна",
         required=True,
         help_text="Оберіть країну зі списку"
