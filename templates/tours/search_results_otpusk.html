@@ -7,94 +7,102 @@
 <div class="container my-5">
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-4">
-<h2 class="mb-4" style="color: #000000; text-align: left;">Результати пошуку турів</h2>
+            <h2 class="mb-4" style="color: #000000; text-align: left;">Результати пошуку турів</h2>
             <div id="otpusk-search-module">
                 <script>
-    // Отримуємо параметри з URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const countryFromUrl = urlParams.get('country');
-    const departureFromUrl = urlParams.get('departure');
-    const dateFromUrl = urlParams.get('date_from');
-    const durationFromUrl = urlParams.get('duration');
-    const autoSearch = urlParams.get('auto_search');
+                    // Отримуємо параметри з URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const countryFromUrl = urlParams.get('country');
+                    const departureFromUrl = urlParams.get('departure');
+                    const dateFromUrl = urlParams.get('date_from');
+                    let durationFromUrl = urlParams.get('duration');
+                    const autoSearch = urlParams.get('auto_search');
 
-    // Функція для форматування дати для Otpusk (DD.MM.YYYY)
-    function formatDateForOtpusk(dateStr) {
-        if (!dateStr) return '';
-        // Якщо дата в форматі YYYY-MM-DD
-        if (dateStr.includes('-')) {
-            const parts = dateStr.split('-');
-            return `${parts[2]}.${parts[1]}.${parts[0]}`;
-        }
-        return dateStr;
-    }
+                    // Якщо duration не передано - встановлюємо 7
+                    if (!durationFromUrl) {
+                        durationFromUrl = '7';
+                    }
 
-    // Функція для розрахунку дати закінчення (дата початку + тривалість)
-    function calculateEndDate(startDateStr, durationDays) {
-        if (!startDateStr || !durationDays) return '';
+                    console.log('🔍 Отримано з URL:', {
+                        country: countryFromUrl,
+                        departure: departureFromUrl,
+                        date_from: dateFromUrl,
+                        duration: durationFromUrl,
+                        auto_search: autoSearch
+                    });
 
-        // Переконуємось, що durationDays - це число
-        const days = parseInt(durationDays);
-        if (isNaN(days)) return '';
+                    // Функція для форматування дати для Otpusk (DD.MM.YYYY)
+                    function formatDateForOtpusk(dateStr) {
+                        if (!dateStr) return '';
+                        if (dateStr.includes('-')) {
+                            const parts = dateStr.split('-');
+                            if (parts.length === 3) {
+                                return `${parts[2]}.${parts[1]}.${parts[0]}`;
+                            }
+                        }
+                        return dateStr;
+                    }
 
-        // Розбираємо дату YYYY-MM-DD
-        const parts = startDateStr.split('-');
-        if (parts.length !== 3) return '';
+                    // Функція для розрахунку дати закінчення
+                    function calculateEndDate(startDateStr, durationDays) {
+                        if (!startDateStr || !durationDays) return '';
 
-        const year = parseInt(parts[0]);
-        const month = parseInt(parts[1]) - 1; // місяці в JS від 0 до 11
-        const day = parseInt(parts[2]);
+                        const days = parseInt(durationDays);
+                        if (isNaN(days)) return '';
 
-        if (isNaN(year) || isNaN(month) || isNaN(day)) return '';
+                        const parts = startDateStr.split('-');
+                        if (parts.length !== 3) return '';
 
-        const startDate = new Date(year, month, day);
-        const endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + days);
+                        const year = parseInt(parts[0]);
+                        const month = parseInt(parts[1]) - 1;
+                        const day = parseInt(parts[2]);
 
-        // Форматуємо у формат DD.MM.YYYY для Otpusk
-        const endDay = String(endDate.getDate()).padStart(2, '0');
-        const endMonth = String(endDate.getMonth() + 1).padStart(2, '0');
-        const endYear = endDate.getFullYear();
+                        if (isNaN(year) || isNaN(month) || isNaN(day)) return '';
 
-        return `${endDay}.${endMonth}.${endYear}`;
-    }
+                        const endDate = new Date(year, month, day);
+                        endDate.setDate(endDate.getDate() + days);
 
-    // Розраховуємо дату закінчення (початкова дата + тривалість)
-    let dateToValue = '';
-    if (dateFromUrl && durationFromUrl) {
-        dateToValue = calculateEndDate(dateFromUrl, durationFromUrl);
-        console.log(`📅 Розрахунок: дата=${dateFromUrl}, тривалість=${durationFromUrl} днів → результат=${dateToValue}`);
-    } else {
-        console.log(`⚠️ Неповні дані: dateFromUrl=${dateFromUrl}, durationFromUrl=${durationFromUrl}`);
-    }
+                        const endDay = String(endDate.getDate()).padStart(2, '0');
+                        const endMonth = String(endDate.getMonth() + 1).padStart(2, '0');
+                        const endYear = endDate.getFullYear();
 
-    // Встановлюємо змінні для модуля Otpusk
-    var osGeo = countryFromUrl ? decodeURIComponent(countryFromUrl) : '';
-    var osDefaultDeparture = departureFromUrl ? decodeURIComponent(departureFromUrl) : '';
-    var osDefaultDuration = durationFromUrl || '';
-    var osDateFrom = dateFromUrl ? formatDateForOtpusk(dateFromUrl) : '';
-    var osDateTo = dateToValue;
-    var osHotelCategory = '';
-    var osFood = '';
-    var osTransport = '';
-    var osTarget = '';
-    var osContainer = null;
-    var osTourContainer = null;
-    var osLang = 'ua';
-    var osTourTargetBlank = false;
-    var osOrderUrl = null;
-    var osCurrency = 'converted';
-    var osAutoStart = (autoSearch === '1');
+                        return `${endDay}.${endMonth}.${endYear}`;
+                    }
 
-    console.log('📊 Параметри пошуку:', {
-        country: osGeo,
-        departure: osDefaultDeparture,
-        date_from: osDateFrom,
-        date_to: osDateTo,
-        duration: osDefaultDuration,
-        auto_start: osAutoStart
-    });
-</script>
+                    // Розраховуємо дату закінчення
+                    let dateToValue = '';
+                    if (dateFromUrl && durationFromUrl) {
+                        dateToValue = calculateEndDate(dateFromUrl, durationFromUrl);
+                        console.log(`📅 ${dateFromUrl} + ${durationFromUrl} днів = ${dateToValue}`);
+                    }
+
+                    // Встановлюємо змінні для модуля Otpusk
+                    var osGeo = countryFromUrl ? decodeURIComponent(countryFromUrl) : '';
+                    var osDefaultDeparture = departureFromUrl ? decodeURIComponent(departureFromUrl) : '';
+                    var osDefaultDuration = durationFromUrl;
+                    var osDateFrom = dateFromUrl ? formatDateForOtpusk(dateFromUrl) : '';
+                    var osDateTo = dateToValue;
+                    var osHotelCategory = '';
+                    var osFood = '';
+                    var osTransport = '';
+                    var osTarget = '';
+                    var osContainer = null;
+                    var osTourContainer = null;
+                    var osLang = 'ua';
+                    var osTourTargetBlank = false;
+                    var osOrderUrl = null;
+                    var osCurrency = 'converted';
+                    var osAutoStart = (autoSearch === '1');
+
+                    console.log('📊 Параметри Otpusk:', {
+                        osGeo: osGeo,
+                        osDefaultDeparture: osDefaultDeparture,
+                        osDateFrom: osDateFrom,
+                        osDateTo: osDateTo,
+                        osDefaultDuration: osDefaultDuration,
+                        osAutoStart: osAutoStart
+                    });
+                </script>
                 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
                 <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
                 <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
@@ -102,87 +110,77 @@
                 <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
                 <script src="https://export.otpusk.com/js/onsite/"></script>
                 <script src="https://export.otpusk.com/js/order"></script>
-                    <!-- Примусове встановлення значень після завантаження -->
-<script>
-    setTimeout(function() {
-        console.log('🔄 Запуск примусового встановлення параметрів...');
 
-        // 1. Встановлюємо дату ПОЧАТКУ
-        if (window.osDateFrom) {
-            const dateInput = document.querySelector('#date_from');
-            if (dateInput) {
-                dateInput.value = window.osDateFrom;
-                dateInput.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log('✅ Встановлено дату ПОЧАТКУ:', window.osDateFrom);
-            } else {
-                console.log('⚠️ Поле #date_from не знайдено');
-            }
-        }
+                <!-- Примусове встановлення значень -->
+                <script>
+                    setTimeout(function() {
+                        console.log('🔄 Встановлення значень у формі...');
 
-        // 2. Встановлюємо дату ЗАКІНЧЕННЯ (ВАЖЛИВО!)
-        if (window.osDateTo) {
-            const dateToInput = document.querySelector('#date_to');
-            if (dateToInput) {
-                dateToInput.value = window.osDateTo;
-                dateToInput.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log('✅ Встановлено дату ЗАКІНЧЕННЯ:', window.osDateTo);
-            }
-        }
+                        if (window.osDateFrom) {
+                            const dateFromInput = document.querySelector('#date_from');
+                            if (dateFromInput) {
+                                dateFromInput.value = window.osDateFrom;
+                                dateFromInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                console.log('✅ Дата початку:', window.osDateFrom);
+                            }
+                        }
 
-        // 3. Встановлюємо тривалість
-        if (window.osDefaultDuration) {
-            const durationSelect = document.querySelector('#duration');
-            if (durationSelect) {
-                durationSelect.value = window.osDefaultDuration;
-                durationSelect.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log('✅ Встановлено тривалість:', window.osDefaultDuration);
-            }
-        }
+                        if (window.osDateTo) {
+                            const dateToInput = document.querySelector('#date_to');
+                            if (dateToInput) {
+                                dateToInput.value = window.osDateTo;
+                                dateToInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                console.log('✅ Дата закінчення:', window.osDateTo);
+                            }
+                        }
 
-        // 4. Встановлюємо місто вильоту
-        if (window.osDefaultDeparture) {
-            const departureSelect = document.querySelector('#departure');
-            if (departureSelect) {
-                for (let i = 0; i < departureSelect.options.length; i++) {
-                    if (departureSelect.options[i].text === window.osDefaultDeparture) {
-                        departureSelect.selectedIndex = i;
-                        departureSelect.dispatchEvent(new Event('change', { bubbles: true }));
-                        console.log('✅ Встановлено місто вильоту:', window.osDefaultDeparture);
-                        break;
-                    }
-                }
-            }
-        }
+                        if (window.osDefaultDuration) {
+                            const durationSelect = document.querySelector('#duration');
+                            if (durationSelect) {
+                                durationSelect.value = window.osDefaultDuration;
+                                durationSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                                console.log('✅ Тривалість:', window.osDefaultDuration);
+                            }
+                        }
 
-        // 5. Встановлюємо країну
-        if (window.osGeo) {
-            const countryInput = document.querySelector('#geo_token');
-            if (countryInput) {
-                countryInput.value = window.osGeo;
-                countryInput.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log('✅ Встановлено країну:', window.osGeo);
-            }
-        }
+                        if (window.osDefaultDeparture) {
+                            const departureSelect = document.querySelector('#departure');
+                            if (departureSelect) {
+                                for (let i = 0; i < departureSelect.options.length; i++) {
+                                    if (departureSelect.options[i].text === window.osDefaultDeparture) {
+                                        departureSelect.selectedIndex = i;
+                                        departureSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                                        console.log('✅ Місто вильоту:', window.osDefaultDeparture);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
 
-        // 6. Запускаємо пошук
-        if (window.osAutoStart) {
-            setTimeout(function() {
-                const searchBtn = document.querySelector('.new_f-form-submit');
-                if (searchBtn) {
-                    searchBtn.click();
-                    console.log('🔍 Автоматичний пошук запущено!');
-                } else {
-                    console.log('⚠️ Кнопку пошуку не знайдено');
-                }
-            }, 500);
-        }
-    }, 1500);
-</script>
+                        if (window.osGeo) {
+                            const countryInput = document.querySelector('#geo_token');
+                            if (countryInput) {
+                                countryInput.value = window.osGeo;
+                                countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                console.log('✅ Країна:', window.osGeo);
+                            }
+                        }
+
+                        if (window.osAutoStart) {
+                            setTimeout(function() {
+                                const searchBtn = document.querySelector('.new_f-form-submit');
+                                if (searchBtn) {
+                                    searchBtn.click();
+                                    console.log('🔍 Пошук запущено!');
+                                }
+                            }, 500);
+                        }
+                    }, 1500);
+                </script>
             </div>
         </div>
     </div>
 </div>
-
 <style>
 /* ========== ОСНОВНІ СТИЛІ ========== */
 
