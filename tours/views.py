@@ -181,6 +181,138 @@ def calendar_prices_from_otpusk(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
+# ========== НОВЕ API ДЛЯ РЕАЛЬНИХ ЦІН З OTPUSK (ГОЛОВНЕ) ==========
+def calendar_prices_real(request):
+    """
+    API для отримання реальних мінімальних цін на тури з Otpusk.com
+    Використовується для календаря низьких цін на головній сторінці
+    """
+    country = request.GET.get('country')
+    year = request.GET.get('year')
+    month = request.GET.get('month')
+    departure = request.GET.get('departure')
+    slug = request.GET.get('slug')
+
+    if not all([country, year, month]):
+        return JsonResponse({'error': 'Missing parameters'}, status=400)
+
+    try:
+        year = int(year)
+        month = int(month)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid year/month'}, status=400)
+
+    # Мапи для конвертації назв (Otpusk API працює з латиницею)
+    country_map = {
+        'Єгипет': 'Egypt',
+        'Туреччина': 'Turkey',
+        'ОАЕ': 'UAE',
+        'Шрі-Ланка': 'Sri Lanka',
+        'Іспанія': 'Spain',
+        'Мальдіви': 'Maldives',
+        'Кіпр': 'Cyprus',
+        'Чорногорія': 'Montenegro',
+        'Хорватія': 'Croatia',
+        'Греція': 'Greece',
+        'Туніс': 'Tunisia',
+        'Таїланд': 'Thailand',
+        'Грузія': 'Georgia',
+        'Італія': 'Italy',
+        'Португалія': 'Portugal',
+    }
+
+    departure_map = {
+        'Кишинів': 'Chisinau',
+        'Кишинев': 'Chisinau',
+        'Варшава': 'Warsaw',
+        'Краків': 'Krakow',
+        'Бухарест': 'Bucharest',
+        'Будапешт': 'Budapest',
+        'Берлін': 'Berlin',
+        'Прага': 'Prague',
+        'Тбілісі': 'Tbilisi',
+        'Стамбул': 'Istanbul',
+        'Київ': 'Kyiv',
+        'Одеса': 'Odessa',
+        'Львів': 'Lviv',
+        'Харків': 'Kharkiv',
+        'Дніпро': 'Dnipro',
+    }
+
+    api_country = country_map.get(country, country)
+    api_departure = departure_map.get(departure, departure or 'Chisinau')
+
+    # Визначаємо діапазон дат
+    if month == 12:
+        start_date = f"{year}-12-01"
+        end_date = f"{year + 1}-01-01"
+        from datetime import date as date_type
+        days_in_month = 31
+    else:
+        start_date = f"{year}-{month:02d}-01"
+        end_date = f"{year}-{month + 1:02d}-01"
+        from datetime import date as date_type
+        days_in_month = (date_type(year, month + 1, 1) - date_type(year, month, 1)).days
+
+    otpusk_url = "https://export.otpusk.com/api/2.4/search"
+    params = {
+        'country': api_country,
+        'departure': api_departure,
+        'date_from': start_date,
+        'date_to': end_date,
+        'format': 'json',
+        'access_token': '3f94b-e4ff8-a72a7-4755f-da9ca'
+    }
+
+    if slug:
+        params['slug'] = slug
+
+    try:
+        print(f"🔍 Запит до Otpusk: {params}")
+        response = requests.get(otpusk_url, params=params, timeout=60)
+
+        if response.status_code == 200:
+            data = response.json()
+            prices_by_day = {}
+
+            if 'tours' in data:
+                for tour in data['tours']:
+                    start_date_str = tour.get('start_date')
+                    price = tour.get('price')
+                    if start_date_str and price:
+                        try:
+                            day = int(start_date_str.split('-')[2])
+                            price_int = int(price)
+                            if day not in prices_by_day or price_int < prices_by_day[day]:
+                                prices_by_day[day] = price_int
+                        except:
+                            pass
+
+            # Заповнюємо масив цін
+            prices = []
+            for day in range(1, days_in_month + 1):
+                prices.append(prices_by_day.get(day, None))
+
+            found_days = len([p for p in prices if p is not None])
+            print(f"✅ Знайдено ціни для {found_days} днів у {country} ({year}-{month})")
+
+            # Якщо знайдено хоча б одну ціну - повертаємо їх
+            if found_days > 0:
+                max_price = max([p for p in prices if p is not None], default=50000)
+                return JsonResponse({'prices': prices, 'max_price': max_price})
+            else:
+                # Якщо цін немає - повертаємо заглушку
+                print(f"⚠️ Не знайдено цін для {country}, використовуємо заглушку")
+                return JsonResponse(get_fallback_prices(month, year))
+        else:
+            print(f"❌ Помилка Otpusk API: статус {response.status_code}")
+            return JsonResponse(get_fallback_prices(month, year))
+
+    except Exception as e:
+        print(f"❌ Помилка запиту до Otpusk API: {e}")
+        return JsonResponse(get_fallback_prices(month, year))
+
+
 def get_fallback_prices(month, year):
     """Заглушка для цін, якщо API не працює"""
     random.seed(year * 12 + month)
