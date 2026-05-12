@@ -189,9 +189,39 @@
             }
 
                         // Встановлюємо ДАТИ - ТІЛЬКИ ОДНА ДАТА (конкретний день)
-                        // Встановлюємо ДАТИ - ВИМИКАЄМО, БО ЗАВАЖАЄ
-            // Дані будуть встановлені іншим скриптом
-            console.log('📅 Оригінальне встановлення дат ВИМКНЕНО. Дати будуть виправлені окремим скриптом.');
+            if (dateFrom) {
+                // Ігноруємо dateTo, використовуємо тільки dateFrom
+                const singleDate = dateFrom;
+                const dayNum = singleDate.split('.')[0];
+
+                console.log('📅 Вибрана дата:', singleDate);
+
+                setTimeout(() => {
+                    // Відкриваємо календар
+                    const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
+                    if (dateButton) {
+                        dateButton.click();
+
+                        setTimeout(() => {
+                            // Знаходимо і клікаємо по потрібній даті
+                            const dateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                            for (let cell of dateCells) {
+                                if (cell.innerText === dayNum) {
+                                    cell.click();
+                                    console.log('✅ Клік по даті:', singleDate);
+                                    break;
+                                }
+                            }
+
+                            // Закриваємо календар (не вибираємо другу дату)
+                            setTimeout(() => {
+                                const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
+                                if (closeBtn) closeBtn.click();
+                            }, 100);
+                        }, 200);
+                    }
+                }, 900);
+            }
 
             // Запускаємо пошук після всіх дій
             setTimeout(() => {
@@ -1727,7 +1757,7 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 </script>
 <script>
-// ========== ПРИМУСОВА ЗМІНА ДАТИ ЗАКІНЧЕННЯ = ДАТА ПОЧАТКУ (ОПТИМІЗОВАНО) ==========
+// ========== ПРИМУСОВА ЗМІНА ДАТИ ЗАКІНЧЕННЯ = ДАТА ПОЧАТКУ ==========
 (function() {
     let fixed = false;
 
@@ -1744,7 +1774,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (startText === endText) {
             fixed = true;
-            console.log('✅ Дати вже однакові:', startText);
+            console.log('✅ Дати вже однакові');
             return;
         }
 
@@ -1772,7 +1802,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Запускаємо через 2 секунди (після того, як Otpusk завершить свою роботу)
     setTimeout(fixEndDate, 2000);
 })();
 </script>
