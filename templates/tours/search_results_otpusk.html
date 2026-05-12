@@ -13,7 +13,7 @@
                 <script>
                     var osGeo = '';
                     var osDefaultDeparture = '';
-                    var osDefaultDuration = '';
+                    var osDefaultDuration = '1';
                     var osDateFrom = '';
                     var osDateTo = '';
                     var osHotelCategory = '';
@@ -690,8 +690,37 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 </script>
 <script>
-// ========== МОБІЛЬНІ ФІЛЬТРИ З ВИСУВАННЯМ ==========
+// ========== МОБІЛЬНІ ФІЛЬТРИ З ВИСУВАННЯМ + ФІКС ТРИВАЛОСТІ 1 ДЕНЬ ==========
 (function() {
+    // ========== 1. ФІКС ТРИВАЛОСТІ ТУРУ НА 1 ДЕНЬ ==========
+    setTimeout(function() {
+        // Шукаємо всі можливі поля з тривалістю
+        const durationSelect = document.querySelector('#night, select[name="duration"], .new_f-duration-select');
+        if (durationSelect) {
+            durationSelect.value = '1';
+            durationSelect.dispatchEvent(new Event('change', { bubbles: true }));
+            console.log('✅ Тривалість змінена на 1 день');
+        }
+
+        // Шукаємо hidden input
+        const durationInput = document.querySelector('input[name="duration"]');
+        if (durationInput && durationInput.value !== '1') {
+            durationInput.value = '1';
+            durationInput.dispatchEvent(new Event('change', { bubbles: true }));
+            console.log('✅ Hidden duration змінено на 1');
+        }
+
+        // Змінюємо параметр в URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('duration') !== '1') {
+            const newUrl = new URL(window.location.href);
+            newUrl.searchParams.set('duration', '1');
+            window.history.replaceState({}, '', newUrl);
+            console.log('✅ URL duration змінено на 1');
+        }
+    }, 500);
+
+    // ========== 2. МОБІЛЬНІ ФІЛЬТРИ З ВИСУВАННЯМ ==========
     if (window.innerWidth > 768) return;
 
     setTimeout(function() {
