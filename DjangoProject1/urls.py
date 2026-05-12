@@ -60,8 +60,11 @@ urlpatterns = [
     # ========== НОВИНИ ==========
     path('news/', tours_views.NewsListView.as_view(), name='news'),
 
-    # ========== НОВИЙ МАРШРУТ ДЛЯ КАЛЕНДАРЯ (OTPUSK) ==========
+    # ========== МАРШРУТИ ДЛЯ КАЛЕНДАРЯ ЦІН ==========
     path('api/calendar-prices/', tours_views.calendar_prices_otpusk, name='calendar_prices'),
+
+    # НОВИЙ МАРШРУТ ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН (ПРЯМЕ ПІДКЛЮЧЕННЯ ДО OTPUSK)
+    path('api/calendar-prices-otpusk/', tours_views.calendar_prices_from_otpusk, name='calendar_prices_otpusk'),
 
     # ========== ІНШІ API МАРШРУТИ ==========
     path('get-cities/', tours_views.get_cities, name='get_cities'),
@@ -77,9 +80,6 @@ urlpatterns = [
     path('consultation-ajax/', tours_views.consultation_ajax, name='consultation_ajax'),
     # ДЛЯ АГЕНТСЬКИХ САЙТІВ
     path('a/<slug:slug>/consultation-ajax/', tours_views.consultation_ajax, name='agent_consultation_ajax'),
-
-    # ========== НОВИЙ МАРШРУТ ДЛЯ КАЛЕНДАРЯ З БАЗИ ДАНИХ ==========
-    # path('api/calendar-prices-db/', tours_views.calendar_prices_from_db, name='calendar_prices_db'),
 
     # ========== AJAX ОБРОБКА БРОНЮВАННЯ (BOOKING) ==========
     path('booking-ajax/', tours_views.booking_ajax, name='booking_ajax'),

@@ -475,11 +475,11 @@ document.addEventListener('DOMContentLoaded', function() {
         updateCalendar();
     }
 
-    // ========== НОВА ФУНКЦІЯ ДЛЯ ОТРИМАННЯ ЦІН З БАЗИ ДАНИХ ==========
+    // ========== ОНОВЛЕНА ФУНКЦІЯ ДЛЯ ОТРИМАННЯ ЦІН З OTPUSK API ==========
     async function fetchPriceData(country, month, departure) {
         const year = month.getFullYear();
         const monthIndex = month.getMonth() + 1;
-        let url = `/api/calendar-prices-db/?country=${encodeURIComponent(country)}&year=${year}&month=${monthIndex}&departure=${encodeURIComponent(departure)}`;
+        let url = `/api/calendar-prices-otpusk/?country=${encodeURIComponent(country)}&year=${year}&month=${monthIndex}&departure=${encodeURIComponent(departure)}`;
 
         {% if agent_site %}
         url += `&slug={{ agent_site.slug }}`;
@@ -489,33 +489,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
-
-            // Якщо API повернуло пусті дані або всі null – показуємо заглушку
-            if (data.prices && data.prices.some(p => p !== null)) {
-                return { prices: data.prices, maxPrice: data.max_price };
-            } else {
-                return getFallbackPrices(month, year);
-            }
+            return { prices: data.prices, maxPrice: data.max_price };
         } catch (error) {
-            console.error('Помилка API, використовуємо заглушку:', error);
-            return getFallbackPrices(month, year);
+            console.error('Помилка завантаження цін:', error);
+            const daysInMonth = new Date(year, monthIndex, 0).getDate();
+            return { prices: new Array(daysInMonth).fill(null), maxPrice: null };
         }
-    }
-
-    // Функція-заглушка (демо-дані)
-    function getFallbackPrices(month, year) {
-        const daysInMonth = new Date(year, month.getMonth() + 1, 0).getDate();
-        const prices = [];
-        for (let day = 1; day <= daysInMonth; day++) {
-            const seed = year * 12 + month.getMonth() + day;
-            const pseudoRandom = Math.sin(seed) * 10000;
-            const basePrice = 20000 + Math.abs(Math.floor(pseudoRandom % 60000));
-            const isWeekend = (day % 7 === 0 || day % 7 === 1);
-            const price = isWeekend ? Math.floor(basePrice * 1.3) : basePrice;
-            prices.push(price);
-        }
-        const maxPrice = Math.max(...prices);
-        return { prices: prices, maxPrice: maxPrice };
     }
 
     function getColorForPrice(price, minPrice, maxPrice) {
