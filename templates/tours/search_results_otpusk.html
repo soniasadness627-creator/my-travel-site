@@ -13,14 +13,25 @@
                     // Отримуємо параметри з URL
                     const urlParams = new URLSearchParams(window.location.search);
 
-                    const geo = urlParams.get('geo');
+                    // Отримуємо значення і ДЕКОДУЄМО ЇХ
+                    const geoRaw = urlParams.get('geo');
                     const departureId = urlParams.get('departure_id');
                     const dateFrom = urlParams.get('date_from');
                     const dateTo = urlParams.get('date_to');
                     const duration = urlParams.get('duration');
                     const autoSearch = urlParams.get('auto_search');
 
-                    console.log('Параметри з URL:', {
+                    // Декодуємо geo (країну) - вона може бути закодована в URL
+                    let geo = '';
+                    if (geoRaw) {
+                        try {
+                            geo = decodeURIComponent(geoRaw);
+                        } catch(e) {
+                            geo = geoRaw;
+                        }
+                    }
+
+                    console.log('Параметри з URL (після декодування):', {
                         geo: geo,
                         departure_id: departureId,
                         date_from: dateFrom,
@@ -30,7 +41,7 @@
                     });
 
                     // ВСТАНОВЛЮЄМО ОРИГІНАЛЬНІ ЗМІННІ OTPUSK
-                    var osGeo = geo ? decodeURIComponent(geo) : '';
+                    var osGeo = geo;
                     var osDefaultDeparture = departureId || '';
                     var osDefaultDuration = duration || '';
                     var osDateFrom = dateFrom || '';
@@ -47,7 +58,7 @@
                     var osCurrency = 'converted';
                     var osAutoStart = (autoSearch === '1');
 
-                    console.log('📊 Параметри Otpusk:', {
+                    console.log('📊 ПАРАМЕТРИ ДЛЯ OTPUSK:', {
                         osGeo: osGeo,
                         osDefaultDeparture: osDefaultDeparture,
                         osDateFrom: osDateFrom,
