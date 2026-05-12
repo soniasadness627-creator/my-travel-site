@@ -31,10 +31,10 @@ def get_random_agent():
     return None
 
 
-# ========== API ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН (ДЕМО-ДАНІ) ==========
+# ========== API ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН (ДЕМО-ДАНІ З РЕАЛІСТИЧНИМИ ЦІНАМИ) ==========
 def calendar_prices_otpusk(request):
     """
-    API для календаря низьких цін (демо-дані)
+    API для календаря низьких цін (демо-дані з реалістичними цінами)
     Працює ШВИДКО і завжди повертає дані
     """
     country = request.GET.get('country')
@@ -59,52 +59,122 @@ def calendar_prices_otpusk(request):
         next_month = datetime(year, month + 1, 1)
         days_in_month = (next_month - timedelta(days=1)).day
 
-    # Генеруємо демо-дані
-    random.seed(year * 12 + month)
-    prices = []
-    for day in range(1, days_in_month + 1):
-        base_price = random.randint(20000, 80000)
-        is_weekend = (day % 7 in [0, 1, 6])
-        if is_weekend:
-            base_price = int(base_price * 1.3)
-        prices.append(base_price)
+    # Генеруємо реалістичні ціни залежно від країни та міста вильоту
+    result = get_realistic_prices(month, year, country, departure)
 
-    max_price = max(prices)
-    return JsonResponse({'prices': prices, 'max_price': max_price})
+    return JsonResponse(result)
 
 
-def get_fallback_prices(month, year):
-    """Заглушка для цін, якщо API не працює"""
-    random.seed(year * 12 + month)
+def get_realistic_prices(month, year, country, departure):
+    """
+    Генерує реалістичні ціни на основі країни та міста вильоту
+    """
+    random.seed(year * 12 + month + hash(country or '') + hash(departure or ''))
+
+    # Визначаємо кількість днів у місяці
     if month == 12:
         days_in_month = 31
     else:
         next_month = datetime(year, month + 1, 1)
         days_in_month = (next_month - timedelta(days=1)).day
 
-    # Більш реалістичні ціни для різних місяців
-    base_prices = {
-        5: 35000,  # травень
-        6: 40000,  # червень
-        7: 50000,  # липень
-        8: 55000,  # серпень
-        9: 45000,  # вересень
+    # ========== БАЗОВІ ЦІНИ ДЛЯ КРАЇН ==========
+    country_prices = {
+        'Єгипет': (40000, 55500),
+        'Туреччина': (37000, 58000),
+        'ОАЕ': (37000, 55000),
+        'Шрі-Ланка': (81000, 161000),
+        'Іспанія': (41000, 70000),
+        'Мальдіви': (148000, 207000),
+        'Кіпр': (33000, 35000),
+        'Чорногорія': (73000, 98000),
+        'Хорватія': (81000, 98000),
+        'Греція': (22000, 38000),
+        'Туніс': (59000, 62000),
+        'Таїланд': (130000, 132000),
+        'Грузія': (28000, 29900),
+        'Чехія': (56000, 58000),
+        'Індонезія': (138000, 303419),
+        'Маврикій': (150000, 426000),
+        'Португалія': (197000, 197930),
+        'Італія': (45000, 85000),
     }
-    base = base_prices.get(month, 30000)
+
+    # ========== КОЕФІЦІЄНТИ ДЛЯ РІЗНИХ МІСТ ВИЛЬОТУ ==========
+    departure_factors = {
+        'Кишинів': 1.00,
+        'Кишинев': 1.00,
+        'Варшава': 1.15,
+        'Краків': 1.12,
+        'Бухарест': 1.05,
+        'Будапешт': 1.10,
+        'Берлін': 1.25,
+        'Прага': 1.18,
+        'Тбілісі': 1.08,
+        'Стамбул': 1.12,
+        'Київ': 0.95,
+        'Одеса': 0.98,
+        'Львів': 0.97,
+        'Харків': 0.96,
+    }
+
+    # Отримуємо діапазон цін для країни
+    if country and country in country_prices:
+        min_price, max_price = country_prices[country]
+    else:
+        min_price, max_price = 30000, 70000
+
+    # Отримуємо коефіцієнт для міста вильоту
+    factor = departure_factors.get(departure, 1.00)
+
+    # Застосовуємо коефіцієнт до діапазону
+    min_price = int(min_price * factor)
+    max_price = int(max_price * factor)
+
+    # Сезонні коефіцієнти
+    seasonal_factor = 1.0
+    if month in [6, 7, 8]:  # літо
+        seasonal_factor = 1.15
+    elif month in [1, 2, 12]:  # зима
+        seasonal_factor = 0.9
 
     prices = []
     for day in range(1, days_in_month + 1):
-        variation = random.randint(-10000, 15000)
-        price = base + variation
+        # Генеруємо ціну в заданому діапазоні
+        price_range = max_price - min_price
+        price = min_price + (price_range * random.random())
+
+        # Додаємо сезонний коефіцієнт
+        price = price * seasonal_factor
+
+        # Вихідні дорожчі на 10-20%
         is_weekend = (day % 7 in [0, 1, 6])
         if is_weekend:
-            price = int(price * 1.2)
-        prices.append(max(20000, min(80000, price)))
+            price = price * random.uniform(1.1, 1.2)
+
+        # Додаємо випадкову варіацію для різних днів (±5%)
+        day_variation = random.uniform(0.95, 1.05)
+        price = price * day_variation
+
+        # Округлюємо до 50 гривень
+        price = int(round(price / 50) * 50)
+
+        # Обмежуємо діапазон
+        price = max(20000, min(250000, price))
+
+        prices.append(price)
 
     max_price = max(prices)
+
+    # Додаткова варіація для вихідних днів (щоб було видно різницю)
+    for i, price in enumerate(prices):
+        if (i + 1) % 7 in [6, 0, 1]:  # пт, сб, нд
+            prices[i] = int(price * random.uniform(1.05, 1.15))
+
     return {'prices': prices, 'max_price': max_price}
 
-# ========== API ДЛЯ РЕАЛЬНИХ ЦІН З OTPUSK (ВИПРАВЛЕНО) ==========
+
+# ========== API ДЛЯ РЕАЛЬНИХ ЦІН З OTPUSK (ЗАЛИШЕНО ДЛЯ СУМІСНОСТІ) ==========
 def calendar_prices_from_otpusk(request):
     """
     API для отримання реальних цін безпосередньо з Otpusk.com
@@ -165,9 +235,6 @@ def calendar_prices_from_otpusk(request):
     api_country = country_map.get(country, country)
     api_departure = departure_map.get(departure, departure or 'Chisinau')
 
-    # Логування для перевірки
-    print(f"🔍 Запит до Otpusk: country={api_country}, departure={api_departure}, year={year}, month={month}")
-
     # Визначаємо діапазон дат
     if month == 12:
         start_date = f"{year}-12-01"
@@ -194,8 +261,6 @@ def calendar_prices_from_otpusk(request):
 
     try:
         response = requests.get(otpusk_url, params=params, timeout=30)
-        print(f"📡 Відповідь Otpusk: статус {response.status_code}")
-
         if response.status_code == 200:
             data = response.json()
             prices_by_day = {}
@@ -217,20 +282,17 @@ def calendar_prices_from_otpusk(request):
             for day in range(1, days_in_month + 1):
                 prices.append(prices_by_day.get(day, None))
 
-            # Якщо знайдено реальні ціни – повертаємо їх
             if any(prices):
                 max_price = max([p for p in prices if p], default=50000)
-                print(f"✅ Отримано реальні ціни для {country}: {len([p for p in prices if p])} днів")
                 return JsonResponse({'prices': prices, 'max_price': max_price})
             else:
-                print(f"⚠️ Реальних цін немає, використовуємо демо-дані")
-                return JsonResponse(get_fallback_prices(month, year))
+                return JsonResponse(get_realistic_prices(month, year, country, departure))
         else:
-            print(f"❌ Помилка Otpusk API: статус {response.status_code}")
-            return JsonResponse(get_fallback_prices(month, year))
+            return JsonResponse(get_realistic_prices(month, year, country, departure))
     except Exception as e:
-        print(f"❌ Помилка Otpusk API: {e}")
-        return JsonResponse(get_fallback_prices(month, year))
+        print(f"Помилка Otpusk API: {e}")
+        return JsonResponse(get_realistic_prices(month, year, country, departure))
+
 
 # ========== API ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН (З БАЗИ ДАНИХ) ==========
 def calendar_prices_from_db(request):
@@ -655,9 +717,6 @@ def custom_logout(request):
 
 
 # ========== API З КЕШУВАННЯМ ДЛЯ КАЛЕНДАРЯ ==========
-from django.core.cache import cache
-
-
 def calendar_prices_cached(request):
     """
     API для календаря низьких цін з кешуванням
@@ -681,22 +740,12 @@ def calendar_prices_cached(request):
         print(f"✅ Дані з кешу для {country} ({year}-{month})")
         return JsonResponse(cached_data)
 
-    # Якщо немає в кеші – отримуємо реальні ціни
-    print(f"🔄 Отримуємо реальні ціни для {country} ({year}-{month})")
+    # Якщо немає в кеші – отримуємо ціни
+    print(f"🔄 Отримуємо ціни для {country} ({year}-{month})")
+    result = get_realistic_prices(month, year, country, departure)
 
-    # Викликаємо функцію з реальними цінами
-    result = calendar_prices_from_otpusk(request)
+    # Зберігаємо в кеш
+    cache.set(cache_key, result, 86400)
+    print(f"💾 Збережено в кеш для {country} ({year}-{month})")
 
-    # Перевіряємо, чи вдалося отримати дані
-    if result.status_code == 200:
-        try:
-            data = json.loads(result.content)
-            # Зберігаємо в кеш на 24 години (86400 секунд)
-            cache.set(cache_key, data, 86400)
-            print(f"💾 Збережено в кеш для {country} ({year}-{month})")
-            return JsonResponse(data)
-        except:
-            return result
-    else:
-        # Якщо помилка – повертаємо демо-дані
-        return JsonResponse(get_fallback_prices(int(month), int(year)))
+    return JsonResponse(result)

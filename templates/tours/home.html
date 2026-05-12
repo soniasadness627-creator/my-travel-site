@@ -480,8 +480,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function fetchPriceData(country, month, departure) {
         const year = month.getFullYear();
         const monthIndex = month.getMonth() + 1;
-        let url = `/api/calendar-prices-cached/?country=${encodeURIComponent(country)}&year=${year}&month=${monthIndex}&departure=${encodeURIComponent(departure)}`;
-
+let url = `/api/calendar-prices-cached/?country=${encodeURIComponent(country)}&year=${year}&month=${monthIndex}&departure=${encodeURIComponent(departure)}`;
         {% if agent_site %}
         url += `&slug={{ agent_site.slug }}`;
         {% endif %}
