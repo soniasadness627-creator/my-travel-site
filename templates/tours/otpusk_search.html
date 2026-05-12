@@ -1,4 +1,4 @@
-<!-- МОДУЛЬ ПОШУКУ ТУРІВ (Otpusk.com) - окремий файл -->
+<!-- МОДУЛЬ ПОШУКУ ТУРІВ (Otpusk.com) -->
 <div id="otpusk-search-module">
     <script>
         var osGeo = '';
@@ -26,3 +26,133 @@
     <script src="https://export.otpusk.com/js/onsite/"></script>
     <script src="https://export.otpusk.com/js/order"></script>
 </div>
+
+<!-- ========== СКРИПТ ДЛЯ ПЕРЕДАЧІ ПАРАМЕТРІВ У ФОРМУ ========== -->
+<script>
+(function() {
+    // Отримуємо параметри з URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
+    const departureText = urlParams.get('departure_text') || '';
+    const dateFrom = urlParams.get('date_from') || '';
+    const duration = urlParams.get('duration') || '7';
+    const adults = urlParams.get('adults') || '2';
+
+    console.log('📥 Параметри для форми:', { geo, departureText, dateFrom, duration, adults });
+
+    if (geo || departureText || dateFrom) {
+        let attempts = 0;
+        const maxAttempts = 30;
+
+        function setFormValues() {
+            attempts++;
+            console.log(`🔄 Спроба ${attempts} встановлення параметрів...`);
+
+            // Встановлюємо КРАЇНУ
+            if (geo) {
+                const countryInput = document.querySelector('#location');
+                if (countryInput) {
+                    countryInput.value = '';
+                    countryInput.dispatchEvent(new Event('focus', { bubbles: true }));
+                    countryInput.value = geo;
+                    countryInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+                    setTimeout(() => {
+                        const items = document.querySelectorAll('#cntList .ui-menu-item');
+                        for (let item of items) {
+                            if (item.innerText.trim() === geo) {
+                                item.click();
+                                console.log('✅ Клік по країні:', geo);
+                                break;
+                            }
+                        }
+                    }, 300);
+                }
+            }
+
+            // Встановлюємо МІСТО ВИЛЬОТУ
+            if (departureText) {
+                setTimeout(() => {
+                    const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                    for (let item of items) {
+                        if (item.innerText.trim() === departureText) {
+                            item.click();
+                            console.log('✅ Клік по місту вильоту:', departureText);
+                            break;
+                        }
+                    }
+                }, 600);
+            }
+
+            // Встановлюємо ДАТУ
+            if (dateFrom) {
+                const dayNum = dateFrom.split('.')[0];
+                console.log('📅 Вибрана дата:', dateFrom, 'день:', dayNum);
+
+                setTimeout(() => {
+                    const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
+                    if (dateButton) {
+                        dateButton.click();
+
+                        setTimeout(() => {
+                            const dateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                            for (let cell of dateCells) {
+                                if (cell.innerText === dayNum) {
+                                    cell.click();
+                                    console.log('✅ Клік по даті:', dateFrom);
+                                    break;
+                                }
+                            }
+
+                            setTimeout(() => {
+                                const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
+                                if (closeBtn) closeBtn.click();
+                            }, 100);
+                        }, 200);
+                    }
+                }, 900);
+            }
+
+            // Встановлюємо ТРИВАЛІСТЬ
+            if (duration) {
+                setTimeout(() => {
+                    const durationSelect = document.querySelector('#night, select[name="duration"], .new_f-duration-select');
+                    if (durationSelect) {
+                        durationSelect.value = duration;
+                        durationSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                        console.log('✅ Тривалість змінена на', duration);
+                    }
+                }, 700);
+            }
+
+            // Встановлюємо КІЛЬКІСТЬ ДОРОСЛИХ
+            if (adults) {
+                setTimeout(() => {
+                    const adultsBtn = document.querySelector('.new_f-people-list');
+                    if (adultsBtn) {
+                        const adultItem = adultsBtn.querySelector(`.new_f-people-item[data-value="${adults}"]`);
+                        if (adultItem) {
+                            adultItem.click();
+                            console.log('✅ Кількість дорослих змінена на', adults);
+                        }
+                    }
+                }, 800);
+            }
+
+            // Запускаємо пошук
+            setTimeout(() => {
+                const searchBtn = document.querySelector('.new_f-form-submit');
+                if (searchBtn && (geo || departureText)) {
+                    searchBtn.click();
+                    console.log('🔍 Пошук запущено!');
+                }
+            }, 2000);
+        }
+
+        // Запускаємо встановлення параметрів з затримкою
+        setTimeout(setFormValues, 1500);
+        setTimeout(setFormValues, 3000);
+        setTimeout(setFormValues, 5000);
+    }
+})();
+</script>

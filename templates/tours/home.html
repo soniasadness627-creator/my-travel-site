@@ -18,7 +18,34 @@
 
 <!-- МОДУЛЬ ПОШУКУ ТУРІВ (Otpusk.com) -->
 {% include "tours/otpusk_search.html" %}
+<script>
+// Функція для читання параметрів з URL і заповнення форми
+(function() {
+    function getUrlParams() {
+        const params = new URLSearchParams(window.location.search);
+        return {
+            geo: params.get('geo') ? decodeURIComponent(params.get('geo')) : '',
+            departureText: params.get('departure_text') || '',
+            dateFrom: params.get('date_from') || '',
+            duration: params.get('duration') || '7'
+        };
+    }
 
+    function fillForm() {
+        const params = getUrlParams();
+        if (!params.geo && !params.departureText && !params.dateFrom) return;
+
+        console.log('Заповнення форми параметрами:', params);
+
+        // Тут код для заповнення полів...
+    }
+
+    // Запускаємо кілька разів з різними затримками
+    setTimeout(fillForm, 1000);
+    setTimeout(fillForm, 3000);
+    setTimeout(fillForm, 5000);
+})();
+</script>
 <!-- ========== КАЛЕНДАР НИЗЬКИХ ЦІН ========== -->
 <div class="container my-5 pt-4">
     <div class="price-calendar-wrapper">
