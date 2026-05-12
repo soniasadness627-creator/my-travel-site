@@ -9,13 +9,13 @@
         <div class="card-body p-4">
             <h2 class="mb-4" style="color: #000000; text-align: left;">Результати пошуку турів</h2>
 
-            <!-- МОДУЛЬ ПОШУКУ OTPUSK -->
+            <!-- МОДУЛЬ ПОШУКУ OTPUSK (ТІЛЬКИ ОДИН РАЗ!) -->
             {% include "tours/otpusk_search.html" %}
         </div>
     </div>
 </div>
 
-<!-- ========== СТИЛІ ДЛЯ РЕЗУЛЬТАТІВ ========== -->
+<!-- ========== СТИЛІ ДЛЯ СТОРІНКИ РЕЗУЛЬТАТІВ ========== -->
 <style>
 #otpusk-search-module {
     background: white !important;
@@ -24,7 +24,6 @@
     padding: 20px 24px !important;
     width: 100% !important;
     margin: 0 auto !important;
-    box-sizing: border-box !important;
 }
 
 .new_f-form-submit {
@@ -35,6 +34,11 @@
     font-weight: 600 !important;
     padding: 12px 28px !important;
     cursor: pointer !important;
+}
+
+/* СІРИЙ ФОН ДЛЯ ДНІВ БЕЗ ЦІН */
+.price-column.gray {
+    background: #e0e0e0 !important;
 }
 
 /* КАРТКИ ТУРІВ */
@@ -67,36 +71,14 @@
     color: #1a202c !important;
 }
 
-/* ЦІНА */
 .new_price-value {
     color: #dc2626 !important;
     font-weight: 700 !important;
     font-size: 1.25rem !important;
 }
 
-/* ПЕРЕМИКАННЯ ВАЛЮТИ */
-.new_r-currency-switch {
-    display: flex !important;
-    background: var(--primary-color) !important;
-    border-radius: 24px !important;
-    overflow: hidden !important;
-    width: fit-content !important;
-}
-
-.new_r-currency-switch span {
-    background: transparent !important;
-    color: white !important;
-    padding: 6px 16px !important;
-    cursor: pointer !important;
-}
-
-.new_r-currency-switch input[type="radio"]:checked + span {
-    background: rgba(255, 255, 255, 0.25) !important;
-}
-
 /* РЕЙТИНГ */
-.new_r-item-rating-container,
-.new_r-p8, .new_r-p7, .new_r-p6, .new_r-p5 {
+.new_r-item-rating-container {
     position: absolute !important;
     top: 12px !important;
     right: 12px !important;
@@ -116,11 +98,13 @@
     font-size: 1.1rem !important;
 }
 
+/* ВИДАЛЕННЯ ПОВІДОМЛЕННЯ */
+.new_os-date-check {
+    display: none !important;
+}
+
 /* АДАПТИВ */
 @media (max-width: 768px) {
-    #otpusk-search-module {
-        padding: 15px !important;
-    }
     .new_r-item {
         flex-direction: column !important;
     }
@@ -132,88 +116,32 @@
 </style>
 
 <script>
-// Заміна євро на долар
-document.addEventListener('DOMContentLoaded', function() {
-    function replaceEuroToDollar() {
-        const euroElements = document.querySelectorAll('[data-cur="€"], span[data-cur="€"]');
-        euroElements.forEach(function(el) {
-            el.setAttribute('data-cur', '$');
-            if (el.textContent === '€') {
-                el.textContent = '$';
-            }
-        });
-    }
-    replaceEuroToDollar();
-    const observer = new MutationObserver(function() { replaceEuroToDollar(); });
-    observer.observe(document.body, { childList: true, subtree: true });
-});
-
-// Колір рамки рейтингу
-document.addEventListener('DOMContentLoaded', function() {
-    function updateRatingBorderColor() {
-        const ratingContainers = document.querySelectorAll('.new_r-p8, .new_r-p7, .new_r-p6, .new_r-p5, .new_r-item-rating-container');
-        ratingContainers.forEach(function(container) {
-            const ratingValueElement = container.querySelector('.new_r-item-rating-value');
-            if (!ratingValueElement) return;
-            const rating = parseFloat(ratingValueElement.textContent);
-            if (isNaN(rating)) return;
-            let color;
-            if (rating < 5) color = '#ef4444';
-            else if (rating >= 5 && rating < 7.5) color = '#eab308';
-            else color = '#22c55e';
-            container.style.borderColor = color;
-            ratingValueElement.style.color = color;
-        });
-    }
-    updateRatingBorderColor();
-    const observer = new MutationObserver(function() { updateRatingBorderColor(); });
-    observer.observe(document.body, { childList: true, subtree: true });
-});
-
 // Перехоплення кліків на тури
-(function() {
-    function extractParamsFromUrl(url) {
-        let hid = url.match(/hid=(\d+)/)?.[1];
-        let oid = url.match(/oid=([\d]+)/)?.[1];
-        let od = url.match(/od=([\d-]+)/)?.[1];
-        let ol = url.match(/ol=(\d+)/)?.[1];
+document.addEventListener('click', function(e) {
+    let target = e.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
+    if (!target) return;
 
-        if (!hid) {
-            let hash = url.split('#')[1] || '';
-            hid = hash.match(/hid=(\d+)/)?.[1];
-            oid = hash.match(/oid=([\d]+)/)?.[1];
-            od = hash.match(/od=([\d-]+)/)?.[1];
-            ol = hash.match(/ol=(\d+)/)?.[1];
-        }
-        return { hid, oid, od, ol };
+    let url = target.href || '';
+    if (!url && target.closest('.new_r-item')) {
+        let link = target.closest('.new_r-item').querySelector('a');
+        if (link) url = link.href;
     }
 
-    function handleTourClick(event) {
-        let target = event.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
-        if (!target) return;
+    if (!url || !url.includes('hid=')) return;
 
-        let url = target.href || '';
-        if (!url && target.closest('.new_r-item')) {
-            let link = target.closest('.new_r-item').querySelector('a');
-            if (link) url = link.href;
-        }
+    e.preventDefault();
 
-        if (!url || !url.includes('hid=')) return;
+    let hid = url.match(/hid=(\d+)/)?.[1];
+    let oid = url.match(/oid=([\d]+)/)?.[1];
+    let od = url.match(/od=([\d-]+)/)?.[1];
+    let ol = url.match(/ol=(\d+)/)?.[1];
 
-        event.preventDefault();
-        event.stopPropagation();
-
-        let params = extractParamsFromUrl(url);
-        if (params.hid && params.oid) {
-            let baseUrl = window.location.pathname.startsWith('/a/')
-                ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
-                : '/tour-detail/';
-            let newUrl = `${baseUrl}?hid=${params.hid}&oid=${params.oid}&od=${params.od || ''}&ol=${params.ol || ''}`;
-            window.location.href = newUrl;
-        }
+    if (hid && oid) {
+        let baseUrl = window.location.pathname.startsWith('/a/')
+            ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
+            : '/tour-detail/';
+        window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}`;
     }
-
-    document.addEventListener('click', handleTourClick);
-})();
+});
 </script>
 {% endblock %}

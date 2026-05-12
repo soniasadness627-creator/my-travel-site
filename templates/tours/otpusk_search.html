@@ -39,11 +39,9 @@
     const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
     const departureText = urlParams.get('departure_text') || '';
     const dateFrom = urlParams.get('date_from') || '';
-    const dateTo = urlParams.get('date_to') || '';
     const duration = urlParams.get('duration') || '7';
-    const adults = urlParams.get('adults') || '2';
 
-    console.log('📥 Параметри для форми:', { geo, departureText, dateFrom, dateTo, duration, adults });
+    console.log('📥 Параметри для форми:', { geo, departureText, dateFrom, duration });
 
     if (geo || departureText || dateFrom) {
         let attempts = 0;
@@ -64,7 +62,7 @@
                 }
             }
 
-            // Встановлюємо МІСТО ВИЛЬОТУ через клік
+            // Встановлюємо МІСТО ВИЛЬОТУ
             if (departureText) {
                 setTimeout(() => {
                     const dropdownBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
@@ -84,7 +82,7 @@
                 }, 500);
             }
 
-            // Встановлюємо ДАТУ ПОЧАТКУ
+            // Встановлюємо ДАТУ (однакова дата початку і кінця)
             if (dateFrom) {
                 const dayNum = dateFrom.split('.')[0];
                 console.log('📅 Вибрана дата:', dateFrom);
@@ -99,11 +97,12 @@
                             for (let cell of dateCells) {
                                 if (cell.innerText === dayNum) {
                                     cell.click();
-                                    console.log('✅ Клік по даті:', dateFrom);
+                                    console.log('✅ Клік по даті ПОЧАТКУ:', dateFrom);
                                     break;
                                 }
                             }
 
+                            // Закриваємо календар
                             setTimeout(() => {
                                 const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
                                 if (closeBtn) closeBtn.click();
@@ -111,18 +110,6 @@
                         }, 200);
                     }
                 }, 800);
-            }
-
-            // Встановлюємо ТРИВАЛІСТЬ
-            if (duration) {
-                setTimeout(() => {
-                    const durationSelect = document.querySelector('#night, select[name="duration"], .new_f-duration-select');
-                    if (durationSelect && durationSelect.value !== duration) {
-                        durationSelect.value = duration;
-                        durationSelect.dispatchEvent(new Event('change', { bubbles: true }));
-                        console.log('✅ Тривалість змінена на', duration);
-                    }
-                }, 600);
             }
 
             // Запускаємо пошук (тільки один раз)

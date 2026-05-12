@@ -775,5 +775,60 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+// ========== ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА СТОРІНКУ РЕЗУЛЬТАТІВ ПРИ КЛІКУ НА ДАТУ ==========
+function getCurrentNights() {
+    return 7;
+}
 
+window.selectCalendarDate = function(dateISO, price, nights) {
+    const selectedDate = new Date(dateISO);
+    const currentCountryTab = document.querySelector('.country-tab.active');
+    const country = currentCountryTab ? currentCountryTab.getAttribute('data-country') : 'Єгипет';
+
+    const departureSelect = document.getElementById('departureCitySelect');
+    const departureName = departureSelect ? departureSelect.value : 'Кишинів';
+
+    const departureTextMap = {
+        "Кишинів": "Кишинева",
+        "Варшава": "Варшави",
+        "Краків": "Кракова",
+        "Бухарест": "Бухареста",
+        "Будапешт": "Будапешта",
+        "Берлін": "Берліна",
+        "Прага": "Праги",
+        "Тбілісі": "Тбілісі",
+        "Стамбул": "Стамбула",
+        "Київ": "Києва"
+    };
+
+    const departureText = departureTextMap[departureName] || departureName;
+
+    let baseUrl = '/search-otpusk/';
+    if (window.location.pathname.startsWith('/a/')) {
+        const slug = window.location.pathname.split('/')[2];
+        baseUrl = `/a/${slug}/search-otpusk/`;
+    }
+
+    const endDate = new Date(selectedDate);
+    endDate.setDate(selectedDate.getDate() + (nights || 7));
+
+    const formatDate = (d) => {
+        return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+    };
+
+    const dateFromFormatted = formatDate(selectedDate);
+    const dateToFormatted = formatDate(endDate);
+
+    const params = new URLSearchParams({
+        geo: country,
+        departure_text: departureText,
+        date_from: dateFromFormatted,
+        date_to: dateToFormatted,
+        duration: nights || 7,
+        auto_search: '1'
+    });
+
+    console.log('🚀 Перехід:', `${baseUrl}?${params.toString()}`);
+    window.location.href = `${baseUrl}?${params.toString()}`;
+};
 {% endblock %}
