@@ -13,124 +13,6 @@
     <!-- Bootstrap Select CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
 
-    <!-- ========== БЛОКУВАННЯ ПОВІДОМЛЕННЯ clubdator.com.ua (найраніше) ========== -->
-        <!-- ========== БЛОКУВАННЯ ПОВІДОМЛЕННЯ clubdator.com.ua (виправлений) ========== -->
-    <style>
-        /* Видаляємо ТІЛЬКИ повідомлення, НЕ чіпаючи інші елементи */
-        .new_os-date-check,
-        .new_os-date-check *,
-        .new_os-error,
-        .new_f-validate-message,
-        .new_f-dropdown-msg,
-        .ui-tooltip,
-        .tooltip,
-        .tooltip-inner,
-        .popover,
-        .popover-content {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            height: 0 !important;
-            min-height: 0 !important;
-            max-height: 0 !important;
-            overflow: hidden !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: 0 !important;
-            pointer-events: none !important;
-        }
-
-        /* Блокуємо ТІЛЬКИ елементи, які точно містять текст повідомлення */
-        div:has(> div:contains("clubdator")),
-        div:has(> span:contains("clubdator")) {
-            display: none !important;
-        }
-    </style>
-
-    <script>
-    // ========== НЕГАЙНЕ ВИДАЛЕННЯ ПОВІДОМЛЕННЯ (до завантаження DOM) ==========
-    (function() {
-        // Функція видалення
-        function killMessageNow() {
-            try {
-                // Шукаємо всі елементи на сторінці
-                var allElements = document.querySelectorAll('*');
-                for (var i = 0; i < allElements.length; i++) {
-                    var el = allElements[i];
-                    var text = (el.innerText || el.textContent || '').toLowerCase();
-                    var html = (el.innerHTML || '').toLowerCase();
-
-                    // Перевіряємо на clubdator
-                    if (text.includes('clubdator') ||
-                        text.includes('повідомлення з') ||
-                        html.includes('clubdator') ||
-                        (text.includes('виберіть') && text.includes('країну') && text.length < 200)) {
-
-                        // Видаляємо елемент
-                        if (el.remove) {
-                            el.remove();
-                        } else {
-                            el.style.display = 'none';
-                            el.style.visibility = 'hidden';
-                            el.style.height = '0';
-                            el.style.opacity = '0';
-                        }
-                        console.log('🗑️ Видалено повідомлення clubdator');
-                    }
-
-                    // Перевіряємо за класом
-                    var className = el.className || '';
-                    if (typeof className === 'string' && className.includes('date-check')) {
-                        if (el.remove) el.remove();
-                        else el.style.display = 'none';
-                    }
-                }
-            } catch(e) {}
-        }
-
-        // Запускаємо негайно
-        if (document.body) {
-            killMessageNow();
-        }
-
-        // Запускаємо з різними затримками
-        var delays = [0, 5, 10, 20, 50, 100, 200, 300, 500, 750, 1000, 1500, 2000, 3000, 5000];
-        for (var d = 0; d < delays.length; d++) {
-            (function(delay) {
-                setTimeout(killMessageNow, delay);
-            })(delays[d]);
-        }
-
-        // Спостерігаємо за змінами в DOM
-        if (window.MutationObserver) {
-            var observer = new MutationObserver(function() {
-                killMessageNow();
-            });
-            setTimeout(function() {
-                var target = document.body;
-                if (target) {
-                    observer.observe(target, {
-                        childList: true,
-                        subtree: true,
-                        attributes: true,
-                        characterData: true
-                    });
-                }
-            }, 100);
-        }
-
-        // Інтервал на всяк випадок (на 10 секунд)
-        var intervalCount = 0;
-        var interval = setInterval(function() {
-            killMessageNow();
-            intervalCount++;
-            if (intervalCount > 100) {
-                clearInterval(interval);
-            }
-        }, 100);
-    })();
-    </script>
-
     <!-- Глобальні CSS-змінні та всі стилі в одному місці -->
     <style>
         /* ========== ГЛОБАЛЬНІ ЗМІННІ ========== */
@@ -523,34 +405,37 @@
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{% if agent_site and agent_site.slug %}{% url 'agent_home' agent_site.slug %}{% else %}{% url 'landing:index' %}{% endif %}">
-                {% if agent_site and agent_site.top_logo %}
-                    <img src="{{ agent_site.top_logo.url }}" alt="Logo" style="height: 40px; width: auto; {% if agent_site.enlarge_logo %}transform: scale(1.25);{% endif %}">
-                {% else %}
-                    <img src="{% static 'images/HORIZONTAL.png' %}" alt="Logo" style="height: 40px; width: auto;">
-                {% endif %}
-                {% if agent_site and agent_site.agency_name %}
-                    <span class="ms-2 fw-bold text-dark">{{ agent_site.agency_name }}</span>
-                {% endif %}
-            </a>
+<a class="navbar-brand d-flex align-items-center" href="{% if agent_site and agent_site.slug %}{% url 'agent_home' agent_site.slug %}{% else %}{% url 'landing:index' %}{% endif %}">
+    {% if agent_site and agent_site.top_logo %}
+        <img src="{{ agent_site.top_logo.url }}" alt="Logo" style="height: 40px; width: auto; {% if agent_site.enlarge_logo %}transform: scale(1.25);{% endif %}">
+    {% else %}
+        <img src="{% static 'images/HORIZONTAL.png' %}" alt="Logo" style="height: 40px; width: auto;">
+    {% endif %}
+    {% if agent_site and agent_site.agency_name %}
+        <span class="ms-2 fw-bold text-dark">{{ agent_site.agency_name }}</span>
+    {% endif %}
+</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 {% if '/constructor/' not in request.path %}
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/{% else %}/{% endif %}">
-                            Головна
-                        </a>
-                    </li>
+
+                    <!-- ========== ГОЛОВНА ДЛЯ ВСІХ ========== -->
+<li class="nav-item">
+    <a class="nav-link" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/{% else %}/{% endif %}">
+        Головна
+    </a>
+</li>
 
                     {% if not agent_site or agent_site.show_news %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/news/{% else %}{% url 'news' %}{% endif %}">Новини</a>
+<a class="nav-link" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/news/{% else %}{% url 'news' %}{% endif %}">Новини</a>
                     </li>
                     {% endif %}
 
+                    <!-- ========== ПУНКТИ ДЛЯ АГЕНТА ТА СУПЕРАДМІНА ========== -->
                     {% if user.is_authenticated %}
                         {% if user.is_agent and user.agent_site.slug %}
                             <li class="nav-item">
@@ -567,6 +452,7 @@
                             </li>
                         {% endif %}
                     {% endif %}
+                    <!-- ========== КІНЕЦЬ ПУНКТІВ ========== -->
 
                     {% if user.is_authenticated %}
                         {% if user.is_superuser %}
@@ -606,6 +492,7 @@
     <!-- ========== ФУТЕР ========== -->
     <footer class="bg-dark text-white py-4 mt-auto">
         <div class="container">
+            <!-- ПОВНИЙ ФУТЕР (для лендінгу та агентських сайтів, але НЕ для конструктора) -->
             {% if not '/constructor/' in request.path %}
                 <div class="row justify-content-center">
                     <div class="col-md-10">
@@ -672,6 +559,8 @@
                         <a href="{% if agent_site %}/a/{{ agent_site.slug }}/terms-of-service/{% else %}{% url 'terms_of_service' %}{% endif %}" class="text-white-50 text-decoration-none">Правила надання послуг</a>
                     </div>
                 </div>
+
+            <!-- ПРОСТИЙ ФУТЕР (тільки для сторінок конструктора) -->
             {% else %}
                 <div class="text-center">
                     <p class="mb-0">© 2026 TourConstructor</p>
@@ -693,6 +582,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
 
+    <!-- ========== ПІДКЛЮЧЕННЯ STICKY-FILTERS.JS ========== -->
     <script src="{% static 'js/sticky-filters.js' %}"></script>
 
     {% block extra_js %}{% endblock %}
