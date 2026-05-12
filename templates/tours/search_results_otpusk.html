@@ -1483,4 +1483,58 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 })();
 </script>
+<script>
+// ========== ГАРАНТОВАНИЙ ЗАПУСК ПОШУКУ ==========
+(function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const geo = urlParams.get('geo');
+
+    if (!geo) return;
+
+    let searchTriggered = false;
+
+    // Спостерігаємо за появою кнопки пошуку
+    const observer = new MutationObserver(function() {
+        const searchBtn = document.querySelector('.new_f-form-submit');
+        const locationInput = document.querySelector('#location');
+
+        if (searchBtn && locationInput && !searchTriggered) {
+            // Якщо поле пусте – заповнюємо
+            if (locationInput.value === '') {
+                locationInput.value = decodeURIComponent(geo);
+                locationInput.dispatchEvent(new Event('input', { bubbles: true }));
+                locationInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+                setTimeout(() => {
+                    searchBtn.click();
+                    searchTriggered = true;
+                    console.log('✅ Пошук примусово запущено');
+                }, 1000);
+            }
+            // Якщо поле заповнене, але пошук не запускався
+            else if (!searchTriggered) {
+                setTimeout(() => {
+                    if (!searchTriggered) {
+                        searchBtn.click();
+                        searchTriggered = true;
+                        console.log('✅ Пошук запущено (поле вже заповнене)');
+                    }
+                }, 500);
+            }
+        }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Запасний варіант через 4 секунди
+    setTimeout(() => {
+        const searchBtn = document.querySelector('.new_f-form-submit');
+        if (searchBtn && !searchTriggered) {
+            searchBtn.click();
+            searchTriggered = true;
+            console.log('✅ Пошук запущено (таймаут)');
+        }
+    }, 4000);
+})();
+</script>
 {% endblock %}
