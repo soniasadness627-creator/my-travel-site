@@ -99,9 +99,10 @@
                 }, 600);
             }
 
-            // Встановлюємо ДАТИ - ОДНАКОВІ (конкретний день)
+            // Встановлюємо ДАТИ через клік
+            // Встановлюємо ДАТИ - ОДНАКОВІ (конкретний день, а не тиждень)
 if (dateFrom) {
-    // Використовуємо одну й ту саму дату для початку і кінця
+    // Беремо тільки дату початку
     const singleDate = dateFrom;
 
     setTimeout(() => {
@@ -109,7 +110,7 @@ if (dateFrom) {
         if (dateButton) {
             dateButton.click();
             setTimeout(() => {
-                // Вибираємо дату початку
+                // Вибираємо ДАТУ ПОЧАТКУ
                 const dateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
                 for (let cell of dateCells) {
                     if (cell.innerText === singleDate.split('.')[0]) {
@@ -118,11 +119,11 @@ if (dateFrom) {
                         break;
                     }
                 }
-                // Чекаємо і закриваємо календар (не вибираємо другу дату)
+                // НЕ вибираємо другу дату - закриваємо календар
                 setTimeout(() => {
-                    // Натискаємо ще раз на кнопку, щоб закрити календар
-                    const closeButton = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
-                    if (closeButton) closeButton.click();
+                    // Закриваємо календар (клік по кнопці закриття)
+                    const closeBtn = document.querySelector('.ui-datepicker-close');
+                    if (closeBtn) closeBtn.click();
                 }, 100);
             }, 200);
         }
