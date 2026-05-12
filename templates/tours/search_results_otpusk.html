@@ -37,124 +37,110 @@
                 <script src="https://export.otpusk.com/js/order"></script>
 
                 <!-- СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ПАРАМЕТРІВ -->
-                <script>
-                    // Отримуємо параметри з URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
-                    const departureText = urlParams.get('departure_text') || '';
-                    const dateFrom = urlParams.get('date_from') || '';
-                    const dateTo = urlParams.get('date_to') || '';
+                <!-- СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ПАРАМЕТРІВ -->
+<script>
+    // Отримуємо параметри з URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
+    const departureText = urlParams.get('departure_text') || '';
+    const dateFrom = urlParams.get('date_from') || '';
+    const dateTo = urlParams.get('date_to') || '';
 
-                    console.log('📥 Отримані параметри:', { geo, departureText, dateFrom, dateTo });
+    console.log('📥 Отримані параметри:', { geo, departureText, dateFrom, dateTo });
 
-                    if (geo || departureText || dateFrom) {
-                        // Чекаємо поки форма завантажиться
-                        let attempts = 0;
-                        const maxAttempts = 20;
+    if (geo || departureText || dateFrom) {
+        let attempts = 0;
+        const maxAttempts = 30;
 
-                        function setFormValues() {
-                            attempts++;
-                            console.log(`🔄 Спроба ${attempts} встановлення параметрів...`);
+        function setFormValues() {
+            attempts++;
+            console.log(`🔄 Спроба ${attempts} встановлення параметрів...`);
 
-                            let success = false;
+            let success = false;
 
-                            // Встановлюємо КРАЇНУ (поле "Куди")
-                            if (geo) {
-                                const countryInput = document.querySelector('#location');
-                                if (countryInput) {
-                                    // Очищаємо поле
-                                    countryInput.value = '';
-                                    // Встановлюємо нове значення
-                                    countryInput.value = geo;
-                                    // Тригеримо події
-                                    countryInput.dispatchEvent(new Event('input', { bubbles: true }));
-                                    countryInput.dispatchEvent(new Event('change', { bubbles: true }));
-                                    console.log('✅ Встановлено країну:', geo);
-                                    success = true;
-                                } else {
-                                    console.log('⚠️ Поле #location не знайдено');
-                                }
-                            }
+            // Встановлюємо КРАЇНУ
+            if (geo) {
+                const countryInput = document.querySelector('#location');
+                if (countryInput) {
+                    countryInput.value = geo;
+                    countryInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('✅ Встановлено країну:', geo);
+                    success = true;
 
-                            // Встановлюємо МІСТО ВИЛЬОТУ (поле "Звідки")
-                            if (departureText) {
-                                // Знаходимо елемент з текстом
-                                const fromButton = document.querySelector('#new_os-from .new_f-dropdown-btn');
-                                if (fromButton) {
-                                    // Шукаємо опцію з потрібним текстом
-                                    const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                                    let found = false;
-                                    for (let item of items) {
-                                        if (item.innerText.trim() === departureText) {
-                                            item.click();
-                                            found = true;
-                                            console.log('✅ Встановлено місто вильоту:', departureText);
-                                            success = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!found) {
-                                        console.log('⚠️ Місто не знайдено:', departureText);
-                                    }
-                                }
-                            }
+                    // ПРИМУСОВО ЗАКРИВАЄМО ПОВІДОМЛЕННЯ ПРО ПОМИЛКУ
+                    setTimeout(() => {
+                        const errorMessage = document.querySelector('.new_os-date-check .new_f-dropdown-body');
+                        if (errorMessage) {
+                            errorMessage.style.display = 'none';
+                        }
+                        // Розблокуємо поле дат
+                        const dateCheck = document.querySelector('#new_os-date-check');
+                        if (dateCheck) {
+                            dateCheck.style.display = 'none';
+                        }
+                    }, 100);
+                }
+            }
 
-                            // Встановлюємо ДАТИ
-                            if (dateFrom && dateTo) {
-                                // Відкриваємо календар
-                                const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
-                                if (dateButton) {
-                                    dateButton.click();
+            // Встановлюємо МІСТО ВИЛЬОТУ
+            if (departureText) {
+                const fromButton = document.querySelector('#new_os-from .new_f-dropdown-btn');
+                if (fromButton) {
+                    const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                    for (let item of items) {
+                        if (item.innerText.trim() === departureText) {
+                            item.click();
+                            console.log('✅ Встановлено місто вильоту:', departureText);
+                            success = true;
+                            break;
+                        }
+                    }
+                }
+            }
 
-                                    setTimeout(() => {
-                                        // Вибираємо дату початку
-                                        const fromDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                                        for (let cell of fromDateCells) {
-                                            const cellText = cell.innerText;
-                                            const targetDay = dateFrom.split('.')[0];
-                                            if (cellText === targetDay) {
-                                                cell.click();
-                                                console.log('✅ Встановлено дату початку:', dateFrom);
-                                                break;
-                                            }
-                                        }
-
-                                        setTimeout(() => {
-                                            // Вибираємо дату закінчення
-                                            const toDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                                            for (let cell of toDateCells) {
-                                                const cellText = cell.innerText;
-                                                const targetDay = dateTo.split('.')[0];
-                                                if (cellText === targetDay) {
-                                                    cell.click();
-                                                    console.log('✅ Встановлено дату закінчення:', dateTo);
-                                                    break;
-                                                }
-                                            }
-                                        }, 200);
-                                    }, 200);
-                                }
-                            }
-
-                            // Якщо не вдалося, повторюємо
-                            if (!success && attempts < maxAttempts) {
-                                setTimeout(setFormValues, 500);
-                            } else if (success) {
-                                // Запускаємо пошук
-                                setTimeout(() => {
-                                    const searchBtn = document.querySelector('.new_f-form-submit');
-                                    if (searchBtn) {
-                                        searchBtn.click();
-                                        console.log('🔍 Автоматичний пошук запущено!');
-                                    }
-                                }, 1000);
+            // Встановлюємо ДАТИ
+            if (dateFrom && dateTo && success) {
+                const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
+                if (dateButton) {
+                    dateButton.click();
+                    setTimeout(() => {
+                        const fromDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                        for (let cell of fromDateCells) {
+                            if (cell.innerText === dateFrom.split('.')[0]) {
+                                cell.click();
+                                break;
                             }
                         }
+                        setTimeout(() => {
+                            const toDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                            for (let cell of toDateCells) {
+                                if (cell.innerText === dateTo.split('.')[0]) {
+                                    cell.click();
+                                    break;
+                                }
+                            }
+                        }, 200);
+                    }, 200);
+                }
+            }
 
-                        // Запускаємо через 2 секунди
-                        setTimeout(setFormValues, 2000);
+            if (!success && attempts < maxAttempts) {
+                setTimeout(setFormValues, 500);
+            } else if (success) {
+                setTimeout(() => {
+                    const searchBtn = document.querySelector('.new_f-form-submit');
+                    if (searchBtn) {
+                        searchBtn.click();
+                        console.log('🔍 Автоматичний пошук запущено!');
                     }
-                </script>
+                }, 1500);
+            }
+        }
+
+        setTimeout(setFormValues, 2000);
+    }
+</script>
             </div>
         </div>
     </div>
