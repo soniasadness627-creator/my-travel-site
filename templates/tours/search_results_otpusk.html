@@ -1402,4 +1402,36 @@ document.addEventListener('DOMContentLoaded', function() {
     display: none !important;
 }
 </style>
+<script>
+    // Функція для видалення повідомлення про помилку
+    function removeErrorMessage() {
+        const errorBlock = document.querySelector('.new_os-date-check');
+        if (errorBlock) {
+            errorBlock.remove();
+            console.log('✅ Повідомлення про помилку видалено');
+        }
+    }
+
+    // Видаляємо багаторазово з різними затримками
+    setTimeout(removeErrorMessage, 100);
+    setTimeout(removeErrorMessage, 500);
+    setTimeout(removeErrorMessage, 1000);
+    setTimeout(removeErrorMessage, 2000);
+    setTimeout(removeErrorMessage, 3000);
+    setTimeout(removeErrorMessage, 5000);
+
+    // Спостерігаємо за появою нового елемента
+    const observer = new MutationObserver(function() {
+        const errorBlock = document.querySelector('.new_os-date-check');
+        if (errorBlock) {
+            errorBlock.remove();
+            console.log('✅ Повідомлення про помилку виявлено та видалено');
+        }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Зупиняємо спостерігач через 10 секунд
+    setTimeout(() => observer.disconnect(), 10000);
+</script>
 {% endblock %}
