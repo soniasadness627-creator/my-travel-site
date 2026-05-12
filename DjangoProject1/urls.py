@@ -61,9 +61,11 @@ urlpatterns = [
     path('news/', tours_views.NewsListView.as_view(), name='news'),
 
     # ========== МАРШРУТИ ДЛЯ КАЛЕНДАРЯ ЦІН ==========
+    # Існуючий маршрут (для зворотної сумісності)
     path('api/calendar-prices/', tours_views.calendar_prices_otpusk, name='calendar_prices'),
 
     # НОВИЙ МАРШРУТ ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН (ПРЯМЕ ПІДКЛЮЧЕННЯ ДО OTPUSK)
+    # РОЗКОМЕНТОВАНО - ТЕПЕР ПРАЦЮЄ!
     path('api/calendar-prices-otpusk/', tours_views.calendar_prices_from_otpusk, name='calendar_prices_otpusk'),
 
     # ========== ІНШІ API МАРШРУТИ ==========
