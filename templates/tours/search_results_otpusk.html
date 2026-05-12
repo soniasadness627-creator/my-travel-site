@@ -189,39 +189,9 @@
             }
 
                         // Встановлюємо ДАТИ - ТІЛЬКИ ОДНА ДАТА (конкретний день)
-            if (dateFrom) {
-                // Ігноруємо dateTo, використовуємо тільки dateFrom
-                const singleDate = dateFrom;
-                const dayNum = singleDate.split('.')[0];
-
-                console.log('📅 Вибрана дата:', singleDate);
-
-                setTimeout(() => {
-                    // Відкриваємо календар
-                    const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
-                    if (dateButton) {
-                        dateButton.click();
-
-                        setTimeout(() => {
-                            // Знаходимо і клікаємо по потрібній даті
-                            const dateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                            for (let cell of dateCells) {
-                                if (cell.innerText === dayNum) {
-                                    cell.click();
-                                    console.log('✅ Клік по даті:', singleDate);
-                                    break;
-                                }
-                            }
-
-                            // Закриваємо календар (не вибираємо другу дату)
-                            setTimeout(() => {
-                                const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
-                                if (closeBtn) closeBtn.click();
-                            }, 100);
-                        }, 200);
-                    }
-                }, 900);
-            }
+                        // Встановлюємо ДАТИ - ВИМИКАЄМО, БО ЗАВАЖАЄ
+            // Дані будуть встановлені іншим скриптом
+            console.log('📅 Оригінальне встановлення дат ВИМКНЕНО. Дати будуть виправлені окремим скриптом.');
 
             // Запускаємо пошук після всіх дій
             setTimeout(() => {
@@ -1757,44 +1727,53 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 </script>
 <script>
-// ========== ПРИМУСОВА ЗМІНА ДАТИ ЗАКІНЧЕННЯ = ДАТА ПОЧАТКУ ==========
+// ========== ПРИМУСОВА ЗМІНА ДАТИ ЗАКІНЧЕННЯ = ДАТА ПОЧАТКУ (ОПТИМІЗОВАНО) ==========
 (function() {
+    let fixed = false;
+
     function fixEndDate() {
-        // Знаходимо поле з датою закінчення
-        const endDateInput = document.querySelector('.new_f-datepicker-wrap-2 button span, .new_f-datepicker-wrap-2 input');
-        const startDateInput = document.querySelector('.new_f-datepicker-wrap-1 button span, .new_f-datepicker-wrap-1 input');
+        if (fixed) return;
 
-        if (startDateInput && endDateInput) {
-            const startText = startDateInput.innerText || startDateInput.value;
-            const endText = endDateInput.innerText || endDateInput.value;
+        const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
+        const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
 
-            // Якщо дата закінчення не дорівнює даті початку
-            if (startText && endText && startText !== endText) {
-                console.log('📅 Виправляємо дату:', endText, '→', startText);
+        if (!startBtn || !endBtn) return;
 
-                // Знаходимо кнопку з датою закінчення і клікаємо по ній
-                const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
-                if (endBtn) {
-                    endBtn.click();
-                    setTimeout(() => {
-                        const dateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                        for (let cell of dateCells) {
-                            if (cell.innerText === startText) {
-                                cell.click();
-                                console.log('✅ Дата закінчення змінена на', startText);
-                                break;
-                            }
-                        }
-                    }, 200);
+        const startText = startBtn.innerText || startBtn.textContent;
+        const endText = endBtn.innerText || endBtn.textContent;
+
+        if (startText === endText) {
+            fixed = true;
+            console.log('✅ Дати вже однакові:', startText);
+            return;
+        }
+
+        if (startText && endText && startText !== endText) {
+            console.log('📅 Виправляємо дату:', endText, '→', startText);
+            fixed = true;
+
+            const targetDay = startText.match(/\d+/)[0];
+            endBtn.click();
+
+            setTimeout(() => {
+                const dateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                for (let cell of dateCells) {
+                    if (cell.innerText === targetDay) {
+                        cell.click();
+                        console.log('✅ Дата закінчення змінена на', startText);
+                        break;
+                    }
                 }
-            }
+                setTimeout(() => {
+                    const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
+                    if (closeBtn) closeBtn.click();
+                }, 150);
+            }, 200);
         }
     }
 
-    // Запускаємо через різні інтервали
-    setTimeout(fixEndDate, 1500);
-    setTimeout(fixEndDate, 2500);
-    setTimeout(fixEndDate, 3500);
+    // Запускаємо через 2 секунди (після того, як Otpusk завершить свою роботу)
+    setTimeout(fixEndDate, 2000);
 })();
 </script>
 {% endblock %}
