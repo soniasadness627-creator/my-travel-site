@@ -10,71 +10,77 @@
             <h2 class="mb-4" style="color: #000000; text-align: left;">Результати пошуку турів</h2>
             <div id="otpusk-search-module">
                 <script>
-                    // Отримуємо параметри з URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const countryFromUrl = urlParams.get('country');
-                    const departureFromUrl = urlParams.get('departure');
-                    const dateFromUrl = urlParams.get('date_from');
-                    const dateToUrl = urlParams.get('date_to');
-                    const durationFromUrl = urlParams.get('duration');
-                    const autoSearch = urlParams.get('auto_search');
+    // Отримуємо параметри з URL
+    const urlParams = new URLSearchParams(window.location.search);
 
-                    function formatDateForOtpusk(dateStr) {
-                        if (!dateStr) return '';
-                        const parts = dateStr.split('-');
-                        if (parts.length === 3) {
-                            return `${parts[2]}.${parts[1]}.${parts[0]}`;
-                        }
-                        return dateStr;
-                    }
+    // Отримуємо значення з URL
+    const countryFromUrl = urlParams.get('country');
+    const departureFromUrl = urlParams.get('departure');
+    const dateFromUrl = urlParams.get('date_from');
+    const dateToUrl = urlParams.get('date_to');
+    const durationFromUrl = urlParams.get('duration');
+    const autoSearch = urlParams.get('auto_search');
 
-                    // Встановлюємо змінні для модуля Otpusk
-                    var osGeo = countryFromUrl ? decodeURIComponent(countryFromUrl) : '';
-                    var osDefaultDeparture = departureFromUrl ? decodeURIComponent(departureFromUrl) : '';
-                    var osDefaultDuration = durationFromUrl || '';
-                    var osDateFrom = dateFromUrl ? formatDateForOtpusk(dateFromUrl) : '';
-                    var osDateTo = dateToUrl ? formatDateForOtpusk(dateToUrl) : '';
-                    var osHotelCategory = '';
-                    var osFood = '';
-                    var osTransport = '';
-                    var osTarget = '';
-                    var osContainer = null;
-                    var osTourContainer = null;
-                    var osLang = 'ua';
-                    var osTourTargetBlank = false;
-                    var osOrderUrl = null;
-                    var osCurrency = 'converted';
-                    var osAutoStart = (autoSearch === '1');
+    // Функція для форматування дати (YYYY-MM-DD -> DD.MM.YYYY або залишаємо як є)
+    function formatDateForOtpusk(dateStr) {
+        if (!dateStr) return '';
+        // Якщо дата в форматі YYYY-MM-DD
+        if (dateStr.includes('-')) {
+            const parts = dateStr.split('-');
+            return `${parts[2]}.${parts[1]}.${parts[0]}`;
+        }
+        return dateStr;
+    }
 
-                    console.log('Параметри пошуку:', {
-                        country: osGeo,
-                        departure: osDefaultDeparture,
-                        date_from: osDateFrom,
-                        date_to: osDateTo,
-                        duration: osDefaultDuration,
-                        auto_start: osAutoStart
-                    });
-                </script>
-                <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
-                <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
-                <script src="https://export.otpusk.com/js/onsite/"></script>
-                <script src="https://export.otpusk.com/js/order"></script>
+    // ВСТАНОВЛЮЄМО ОРИГІНАЛЬНІ ЗМІННІ OTPUSK
+    var osGeo = countryFromUrl ? decodeURIComponent(countryFromUrl) : '';
+    var osDefaultDeparture = departureFromUrl ? decodeURIComponent(departureFromUrl) : '';
+    var osDefaultDuration = durationFromUrl || '';
+    var osDateFrom = dateFromUrl ? formatDateForOtpusk(dateFromUrl) : '';
+    var osDateTo = dateToUrl ? formatDateForOtpusk(dateToUrl) : '';
+    var osHotelCategory = '';
+    var osFood = '';
+    var osTransport = '';
+    var osTarget = '';
+    var osContainer = null;
+    var osTourContainer = null;
+    var osLang = 'ua';
+    var osTourTargetBlank = false;
+    var osOrderUrl = null;
+    var osCurrency = 'converted';
+    var osAutoStart = (autoSearch === '1') ? true : false;
 
-                <!-- Запускаємо пошук після завантаження -->
-                <script>
-                    setTimeout(function() {
-                        if (window.osAutoStart) {
-                            const searchBtn = document.querySelector('.new_f-form-submit');
-                            if (searchBtn) {
-                                searchBtn.click();
-                                console.log('🔍 Автоматичний пошук запущено!');
-                            }
-                        }
-                    }, 2000);
-                </script>
+    console.log('📊 Параметри Otpusk:', {
+        osGeo: osGeo,
+        osDefaultDeparture: osDefaultDeparture,
+        osDateFrom: osDateFrom,
+        osDateTo: osDateTo,
+        osDefaultDuration: osDefaultDuration,
+        osAutoStart: osAutoStart
+    });
+</script>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+<script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+<script src="https://export.otpusk.com/js/onsite/"></script>
+<script src="https://export.otpusk.com/js/order"></script>
+
+<!-- Додатковий скрипт для примусового запуску пошуку, якщо параметри передані -->
+<script>
+    if (osAutoStart) {
+        setTimeout(function() {
+            const searchBtn = document.querySelector('.new_f-form-submit');
+            if (searchBtn) {
+                searchBtn.click();
+                console.log('🔍 Автоматичний пошук запущено!');
+            } else {
+                console.log('⚠️ Кнопку пошуку не знайдено');
+            }
+        }, 2000);
+    }
+</script>
             </div>
         </div>
     </div>

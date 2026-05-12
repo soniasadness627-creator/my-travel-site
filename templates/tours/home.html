@@ -200,22 +200,18 @@ function selectCalendarDate(dateISO, price, nights) {
         baseUrl = `/a/${slug}/search-otpusk/`;
     }
 
-    // Розраховуємо дату закінчення для URL
+    // Розраховуємо дату закінчення
     const endDate = new Date(selectedDate);
     endDate.setDate(selectedDate.getDate() + olParam);
-    const endYear = endDate.getFullYear();
-    const endMonth = String(endDate.getMonth() + 1).padStart(2, '0');
-    const endDay = String(endDate.getDate()).padStart(2, '0');
-    const dateToParam = `${endYear}-${endMonth}-${endDay}`;
+    const dateToParam = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
 
-    // Додаємо всі параметри (включно з date_to)
+    // Використовуємо ТІ САМІ назви параметрів, що очікує Otpusk
     const params = new URLSearchParams({
         country: country,
         departure: departure,
         date_from: odParam,
         date_to: dateToParam,
         duration: olParam,
-        adults: 2,
         auto_search: '1'
     });
 
