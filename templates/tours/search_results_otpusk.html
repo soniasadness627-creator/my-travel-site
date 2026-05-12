@@ -1537,4 +1537,100 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 4000);
 })();
 </script>
+<!-- ========== ПРОСТЕ ЖОВТЕ ПОВІДОМЛЕННЯ ========== -->
+<style>
+.simple-notify {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #fef3c7;
+    border-left: 5px solid #f59e0b;
+    border-radius: 12px;
+    padding: 14px 20px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideInRight 0.3s ease;
+    cursor: pointer;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.simple-notify i {
+    font-size: 20px;
+    color: #f59e0b;
+}
+
+.simple-notify span {
+    font-size: 14px;
+    color: #92400e;
+}
+
+.simple-notify .country {
+    font-weight: 700;
+    background: #fffbeb;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-left: 5px;
+}
+</style>
+
+<script>
+(function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
+
+    if (!geo) return;
+
+    // Перевіряємо, чи країна вже підтверджена
+    const confirmed = localStorage.getItem('confirmed_' + encodeURIComponent(geo));
+    if (confirmed === 'true') return;
+
+    function showNotify() {
+        const notify = document.createElement('div');
+        notify.className = 'simple-notify';
+        notify.innerHTML = `
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Підтвердіть країну <strong class="country">${geo}</strong> → натисніть на поле "Країна"</span>
+        `;
+
+        document.body.appendChild(notify);
+
+        // Зникає через 5 секунд
+        setTimeout(() => {
+            notify.style.opacity = '0';
+            notify.style.transform = 'translateX(100px)';
+            notify.style.transition = 'all 0.3s ease';
+            setTimeout(() => notify.remove(), 300);
+        }, 5000);
+
+        // При кліку на повідомлення – підсвічуємо поле
+        notify.addEventListener('click', function() {
+            const countryInput = document.querySelector('#location');
+            if (countryInput) {
+                countryInput.style.transition = 'box-shadow 0.2s';
+                countryInput.style.boxShadow = '0 0 0 3px #f59e0b';
+                countryInput.focus();
+                setTimeout(() => {
+                    countryInput.style.boxShadow = '';
+                }, 2000);
+            }
+            notify.remove();
+        });
+    }
+
+    setTimeout(showNotify, 1500);
+})();
+</script>
 {% endblock %}
