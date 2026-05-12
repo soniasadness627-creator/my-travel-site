@@ -14,48 +14,86 @@
     const urlParams = new URLSearchParams(window.location.search);
     const countryFromUrl = urlParams.get('country');
     const departureFromUrl = urlParams.get('departure');
-    const dateFromUrl = urlParams.get('date_from');
-    const durationFromUrl = urlParams.get('duration');
+    let dateFromUrl = urlParams.get('date_from');
+    let durationFromUrl = urlParams.get('duration');
     const autoSearch = urlParams.get('auto_search');
+
+    // ДІАГНОСТИКА: виводимо ВСІ параметри для перевірки
+    console.log('=== ДІАГНОСТИКА: ВСІ ПАРАМЕТРИ URL ===');
+    for (const [key, value] of urlParams.entries()) {
+        console.log(`  ${key} = ${value}`);
+    }
+    console.log('======================================');
+
+    // ЗАХИСТ: якщо duration не передано - встановлюємо 7
+    if (!durationFromUrl || durationFromUrl === 'undefined' || durationFromUrl === 'null') {
+        durationFromUrl = '7';
+        console.log('⚠️ duration не передано, встановлюємо за замовчуванням: 7');
+    } else {
+        console.log(`✅ duration отримано: ${durationFromUrl}`);
+    }
+
+    // ЗАХИСТ: якщо date_from не передано - встановлюємо сьогодні
+    if (!dateFromUrl || dateFromUrl === 'undefined' || dateFromUrl === 'null') {
+        const today = new Date();
+        dateFromUrl = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        console.log(`⚠️ date_from не передано, встановлюємо сьогодні: ${dateFromUrl}`);
+    } else {
+        console.log(`✅ date_from отримано: ${dateFromUrl}`);
+    }
 
     // Функція для форматування дати для Otpusk (DD.MM.YYYY)
     function formatDateForOtpusk(dateStr) {
         if (!dateStr) return '';
-        // Якщо дата в форматі YYYY-MM-DD
         if (dateStr.includes('-')) {
             const parts = dateStr.split('-');
-            return `${parts[2]}.${parts[1]}.${parts[0]}`;
+            if (parts.length === 3) {
+                return `${parts[2]}.${parts[1]}.${parts[0]}`;
+            }
         }
         return dateStr;
     }
 
-    // Функція для розрахунку дати закінчення (дата початку + тривалість)
+    // Функція для розрахунку дати закінчення
     function calculateEndDate(startDateStr, durationDays) {
+        console.log(`🔢 calculateEndDate: start=${startDateStr}, days=${durationDays}`);
+
         if (!startDateStr || !durationDays) return '';
-        // Розбираємо дату YYYY-MM-DD
+
+        const days = parseInt(durationDays);
+        if (isNaN(days)) {
+            console.log(`❌ durationDays не число: ${durationDays}`);
+            return '';
+        }
+
         const parts = startDateStr.split('-');
-        const startDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-        // Додаємо тривалість (наприклад 7 днів)
-        const endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + parseInt(durationDays));
-        // Форматуємо у формат DD.MM.YYYY для Otpusk
-        const day = String(endDate.getDate()).padStart(2, '0');
-        const month = String(endDate.getMonth() + 1).padStart(2, '0');
-        const year = endDate.getFullYear();
-        return `${day}.${month}.${year}`;
+        if (parts.length !== 3) return '';
+
+        const year = parseInt(parts[0]);
+        const month = parseInt(parts[1]) - 1;
+        const day = parseInt(parts[2]);
+
+        if (isNaN(year) || isNaN(month) || isNaN(day)) return '';
+
+        const endDate = new Date(year, month, day);
+        endDate.setDate(endDate.getDate() + days);
+
+        const result = `${String(endDate.getDate()).padStart(2, '0')}.${String(endDate.getMonth() + 1).padStart(2, '0')}.${endDate.getFullYear()}`;
+        console.log(`✅ Результат: ${result}`);
+        return result;
     }
 
-    // Розраховуємо дату закінчення (початкова дата + тривалість)
+    // Розраховуємо дату закінчення
     let dateToValue = '';
     if (dateFromUrl && durationFromUrl) {
         dateToValue = calculateEndDate(dateFromUrl, durationFromUrl);
-        console.log(`📅 Розрахунок: ${dateFromUrl} + ${durationFromUrl} днів = ${dateToValue}`);
+        console.log(`📅 ${dateFromUrl} + ${durationFromUrl} днів = ${dateToValue}`);
     }
 
     // Встановлюємо змінні для модуля Otpusk
     var osGeo = countryFromUrl ? decodeURIComponent(countryFromUrl) : '';
     var osDefaultDeparture = departureFromUrl ? decodeURIComponent(departureFromUrl) : '';
-    var osDefaultDuration = durationFromUrl || '';
+    var osDefaultDuration = durationFromUrl;
     var osDateFrom = dateFromUrl ? formatDateForOtpusk(dateFromUrl) : '';
     var osDateTo = dateToValue;
     var osHotelCategory = '';
@@ -70,13 +108,13 @@
     var osCurrency = 'converted';
     var osAutoStart = (autoSearch === '1');
 
-    console.log('📊 Параметри пошуку:', {
-        country: osGeo,
-        departure: osDefaultDeparture,
-        date_from: osDateFrom,
-        date_to: osDateTo,
-        duration: osDefaultDuration,
-        auto_start: osAutoStart
+    console.log('📊 ПІДСУМКОВІ ПАРАМЕТРИ:', {
+        osGeo: osGeo,
+        osDefaultDeparture: osDefaultDeparture,
+        osDateFrom: osDateFrom,
+        osDateTo: osDateTo,
+        osDefaultDuration: osDefaultDuration,
+        osAutoStart: osAutoStart
     });
 </script>
                 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
