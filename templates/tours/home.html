@@ -191,30 +191,19 @@ function selectCalendarDate(dateISO, price, nights) {
     const country = currentCountryTab ? currentCountryTab.getAttribute('data-country') : 'Єгипет';
 
     const departureSelect = document.getElementById('departureCitySelect');
-    const departureName = departureSelect ? departureSelect.value : 'Київ';
+    const departureName = departureSelect ? departureSelect.value : 'Кишинів';
 
-    // МАПІНГ НАЗВ МІСТ НА ТЕКСТОВІ ЗНАЧЕННЯ ДЛЯ OTPUSK (як вони відображаються в полі "Звідки")
+    // ТІЛЬКИ ТІ МІСТА, ЯКІ Є В OTPUSK
     const departureTextMap = {
-        "Київ": "Києва",
         "Кишинів": "Кишинева",
-        "Одеса": "Одеси",
-        "Дніпро": "Дніпра",
-        "Львів": "Львова",
-        "Харків": "Харкова",
-        "Житомир": "Житомира",
-        "Запоріжжя": "Запоріжжя",
-        "Кривий Ріг": "Кривого Рогу",
         "Варшава": "Варшави",
         "Краків": "Кракова",
-        "Вроцлав": "Вроцлава",
-        "Жешув": "Жешува",
-        "Катовіце": "Катовіце",
         "Бухарест": "Бухареста",
-        "Сучава": "Сучави",
-        "Ясси": "Яссів",
         "Будапешт": "Будапешта",
         "Берлін": "Берліна",
-        "Прага": "Праги"
+        "Прага": "Праги",
+        "Тбілісі": "Тбілісі",
+        "Стамбул": "Стамбула"
     };
 
     const departureText = departureTextMap[departureName] || departureName;
@@ -225,11 +214,9 @@ function selectCalendarDate(dateISO, price, nights) {
         baseUrl = `/a/${slug}/search-otpusk/`;
     }
 
-    // Розраховуємо дату закінчення
     const endDate = new Date(selectedDate);
     endDate.setDate(selectedDate.getDate() + olParam);
 
-    // Форматуємо дати для Otpusk (DD.MM.YYYY)
     const formatDateForOtpusk = (d) => {
         return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
     };
@@ -237,17 +224,16 @@ function selectCalendarDate(dateISO, price, nights) {
     const dateFromFormatted = formatDateForOtpusk(selectedDate);
     const dateToFormatted = formatDateForOtpusk(endDate);
 
-    // Формуємо параметри для Otpusk
     const params = new URLSearchParams({
         geo: country,
-        departure_text: departureText,  // ← змінили на departure_text
+        departure_text: departureText,
         date_from: dateFromFormatted,
         date_to: dateToFormatted,
         duration: olParam,
         auto_search: '1'
     });
 
-    console.log('🚀 Перехід за URL:', `${baseUrl}?${params.toString()}`);
+    console.log('🚀 Перехід:', `${baseUrl}?${params.toString()}`);
     window.location.href = `${baseUrl}?${params.toString()}`;
 }
 
