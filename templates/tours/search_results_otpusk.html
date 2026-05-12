@@ -99,35 +99,35 @@
                 }, 600);
             }
 
-            // Встановлюємо ДАТИ через клік
-            if (dateFrom && dateTo) {
-                setTimeout(() => {
-                    const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
-                    if (dateButton) {
-                        dateButton.click();
-                        setTimeout(() => {
-                            const fromDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                            for (let cell of fromDateCells) {
-                                if (cell.innerText === dateFrom.split('.')[0]) {
-                                    cell.click();
-                                    console.log('✅ Клік по даті початку:', dateFrom);
-                                    break;
-                                }
-                            }
-                            setTimeout(() => {
-                                const toDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                                for (let cell of toDateCells) {
-                                    if (cell.innerText === dateTo.split('.')[0]) {
-                                        cell.click();
-                                        console.log('✅ Клік по даті закінчення:', dateTo);
-                                        break;
-                                    }
-                                }
-                            }, 200);
-                        }, 200);
+            // Встановлюємо ДАТИ - ОДНАКОВІ (конкретний день)
+if (dateFrom) {
+    // Використовуємо одну й ту саму дату для початку і кінця
+    const singleDate = dateFrom;
+
+    setTimeout(() => {
+        const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
+        if (dateButton) {
+            dateButton.click();
+            setTimeout(() => {
+                // Вибираємо дату початку
+                const dateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                for (let cell of dateCells) {
+                    if (cell.innerText === singleDate.split('.')[0]) {
+                        cell.click();
+                        console.log('✅ Клік по даті:', singleDate);
+                        break;
                     }
-                }, 900);
-            }
+                }
+                // Чекаємо і закриваємо календар (не вибираємо другу дату)
+                setTimeout(() => {
+                    // Натискаємо ще раз на кнопку, щоб закрити календар
+                    const closeButton = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
+                    if (closeButton) closeButton.click();
+                }, 100);
+            }, 200);
+        }
+    }, 900);
+}
 
             // Запускаємо пошук після всіх дій
             setTimeout(() => {
