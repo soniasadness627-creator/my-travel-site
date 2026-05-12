@@ -1406,210 +1406,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 </style>
-<!-- СПЛИВАЮЧЕ ПОВІДОМЛЕННЯ ДЛЯ ПІДТВЕРДЖЕННЯ КРАЇНИ -->
+<!-- ПРИБИРАЄМО ОРИГІНАЛЬНЕ ПОВІДОМЛЕННЯ -->
 <style>
-    .country-confirm-toast {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        z-index: 100000;
-        width: 320px;
-        max-width: 90%;
-        padding: 20px;
-        text-align: center;
-        animation: toastFadeIn 0.3s ease;
-        font-family: 'Open Sans', sans-serif;
-    }
-
-    @keyframes toastFadeIn {
-        from {
-            opacity: 0;
-            transform: translate(-50%, -50%) scale(0.9);
-        }
-        to {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
-    }
-
-    .country-confirm-toast .icon {
-        font-size: 48px;
-        margin-bottom: 12px;
-    }
-
-    .country-confirm-toast h4 {
-        margin: 0 0 8px 0;
-        font-size: 18px;
-        font-weight: 600;
-        color: #333;
-    }
-
-    .country-confirm-toast p {
-        margin: 0 0 20px 0;
-        font-size: 14px;
-        color: #666;
-    }
-
-    .country-confirm-toast .country-name {
-        font-weight: 700;
-        color: var(--primary-color);
-    }
-
-    .country-confirm-toast .buttons {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-    }
-
-    .country-confirm-toast .btn-confirm {
-        background: var(--primary-color);
-        color: white;
-        border: none;
-        padding: 8px 24px;
-        border-radius: 30px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .country-confirm-toast .btn-confirm:hover {
-        background: var(--primary-dark);
-        transform: scale(1.02);
-    }
-
-    .country-confirm-toast .btn-change {
-        background: #f1f5f9;
-        color: #333;
-        border: none;
-        padding: 8px 24px;
-        border-radius: 30px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .country-confirm-toast .btn-change:hover {
-        background: #e2e8f0;
+    .new_os-date-check {
+        display: none !important;
     }
 </style>
 
 <script>
-    // Отримуємо параметри з URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const geoCountry = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
-    const departureText = urlParams.get('departure_text') || '';
-    const dateFrom = urlParams.get('date_from') || '';
-    const dateTo = urlParams.get('date_to') || '';
+    // Показуємо просте сповіщення про початок пошуку
+    setTimeout(function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
 
-    // Якщо є країна - показуємо спливаюче повідомлення
-    if (geoCountry) {
-        setTimeout(function() {
-            // Перевіряємо, чи поле країни вже заповнене
-            const countryInput = document.querySelector('#location');
-            const currentValue = countryInput ? countryInput.value : '';
-
-            // Показуємо повідомлення тільки якщо поле не заповнене або заповнене не тією країною
-            if (currentValue !== geoCountry) {
-                const toast = document.createElement('div');
-                toast.className = 'country-confirm-toast';
-                toast.innerHTML = `
-                    <div class="icon">🌍</div>
-                    <h4>Вибрана країна</h4>
-                    <p>Ви шукаєте тури в <strong class="country-name">${geoCountry}</strong>?</p>
-                    <div class="buttons">
-                        <button class="btn-confirm" id="confirmCountryBtn">✅ Так, шукати</button>
-                        <button class="btn-change" id="changeCountryBtn">✖️ Змінити</button>
-                    </div>
-                `;
-                document.body.appendChild(toast);
-
-                // Обробник для кнопки "Так, шукати"
-                document.getElementById('confirmCountryBtn').addEventListener('click', function() {
-                    // Встановлюємо країну
-                    if (countryInput) {
-                        countryInput.value = geoCountry;
-                        countryInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        countryInput.dispatchEvent(new Event('change', { bubbles: true }));
-
-                        // Встановлюємо місто вильоту
-                        if (departureText) {
-                            setTimeout(() => {
-                                const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                                for (let item of items) {
-                                    if (item.innerText.trim() === departureText) {
-                                        item.click();
-                                        break;
-                                    }
-                                }
-                            }, 300);
-                        }
-
-                        // Встановлюємо дати
-                        if (dateFrom && dateTo) {
-                            setTimeout(() => {
-                                const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
-                                if (dateButton) {
-                                    dateButton.click();
-                                    setTimeout(() => {
-                                        const fromDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                                        for (let cell of fromDateCells) {
-                                            if (cell.innerText === dateFrom.split('.')[0]) {
-                                                cell.click();
-                                                break;
-                                            }
-                                        }
-                                        setTimeout(() => {
-                                            const toDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                                            for (let cell of toDateCells) {
-                                                if (cell.innerText === dateTo.split('.')[0]) {
-                                                    cell.click();
-                                                    break;
-                                                }
-                                            }
-                                        }, 200);
-                                    }, 200);
-                                }
-                            }, 600);
-                        }
-
-                        // Запускаємо пошук
-                        setTimeout(() => {
-                            const searchBtn = document.querySelector('.new_f-form-submit');
-                            if (searchBtn) {
-                                searchBtn.click();
-                            }
-                        }, 1500);
-                    }
-                    toast.remove();
-                });
-
-                // Обробник для кнопки "Змінити"
-                document.getElementById('changeCountryBtn').addEventListener('click', function() {
-                    toast.remove();
-                    // Прокручуємо до поля вводу і фокусуємо
-                    const countryInput = document.querySelector('#location');
-                    if (countryInput) {
-                        countryInput.focus();
-                        countryInput.click();
-                    }
-                });
-            } else {
-                // Якщо країна вже встановлена - одразу запускаємо пошук
-                setTimeout(() => {
-                    const searchBtn = document.querySelector('.new_f-form-submit');
-                    if (searchBtn) {
-                        searchBtn.click();
-                    }
-                }, 1000);
-            }
-        }, 1500);
-    }
+        if (geo) {
+            // Просте сповіщення
+            const msg = document.createElement('div');
+            msg.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#086745;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;z-index:99999;box-shadow:0 4px 12px rgba(0,0,0,0.2);font-family:sans-serif;';
+            msg.innerHTML = `🔍 Пошук турів до ${geo}...`;
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 4000);
+        }
+    }, 2000);
 </script>
+<style>
+    /* ПОВНЕ БЛОКУВАННЯ ВСІХ ПОМИЛОК OTPUSK */
+.new_os-date-check, .new_os-date-check * {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+}
+</style>
 
 {% endblock %}
