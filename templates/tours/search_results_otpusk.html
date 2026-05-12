@@ -12,72 +12,46 @@
                 <script>
                     // Отримуємо параметри з URL
                     const urlParams = new URLSearchParams(window.location.search);
+                    const geo = urlParams.get('geo') || '';
+                    const departureId = urlParams.get('departure_id') || '';
+                    const dateFrom = urlParams.get('date_from') || '';
+                    const dateTo = urlParams.get('date_to') || '';
+                    const duration = urlParams.get('duration') || '';
+                    const autoSearch = urlParams.get('auto_search') === '1';
 
-                    // Отримуємо значення і ДЕКОДУЄМО ЇХ
-                    const geoRaw = urlParams.get('geo');
-                    const departureId = urlParams.get('departure_id');
-                    const dateFrom = urlParams.get('date_from');
-                    const dateTo = urlParams.get('date_to');
-                    const duration = urlParams.get('duration');
-                    const autoSearch = urlParams.get('auto_search');
+                    // Формуємо URL для редиректу на Otpusk з параметрами
+                    const baseUrl = 'https://export.otpusk.com/onsite/';
 
-                    // Декодуємо geo (країну) - вона може бути закодована в URL
-                    let geo = '';
-                    if (geoRaw) {
-                        try {
-                            geo = decodeURIComponent(geoRaw);
-                        } catch(e) {
-                            geo = geoRaw;
-                        }
-                    }
-
-                    console.log('Параметри з URL (після декодування):', {
+                    // Параметри пошуку
+                    const searchParams = new URLSearchParams({
                         geo: geo,
-                        departure_id: departureId,
+                        departure: departureId,
                         date_from: dateFrom,
                         date_to: dateTo,
                         duration: duration,
-                        auto_search: autoSearch
+                        lang: 'ua',
+                        currency: 'converted'
                     });
 
-                    // ВСТАНОВЛЮЄМО ОРИГІНАЛЬНІ ЗМІННІ OTPUSK
-                    var osGeo = geo;
-                    var osDefaultDeparture = departureId || '';
-                    var osDefaultDuration = duration || '';
-                    var osDateFrom = dateFrom || '';
-                    var osDateTo = dateTo || '';
-                    var osHotelCategory = '';
-                    var osFood = '';
-                    var osTransport = '';
-                    var osTarget = '';
-                    var osContainer = null;
-                    var osTourContainer = null;
-                    var osLang = 'ua';
-                    var osTourTargetBlank = false;
-                    var osOrderUrl = null;
-                    var osCurrency = 'converted';
-                    var osAutoStart = (autoSearch === '1');
+                    const otpuskUrl = `${baseUrl}?${searchParams.toString()}`;
 
-                    console.log('📊 ПАРАМЕТРИ ДЛЯ OTPUSK:', {
-                        osGeo: osGeo,
-                        osDefaultDeparture: osDefaultDeparture,
-                        osDateFrom: osDateFrom,
-                        osDateTo: osDateTo,
-                        osDefaultDuration: osDefaultDuration,
-                        osAutoStart: osAutoStart
-                    });
+                    console.log('Перенаправлення на Otpusk:', otpuskUrl);
+
+                    // Якщо є параметри, перенаправляємо
+                    if (geo && departureId && dateFrom && dateTo) {
+                        window.location.href = otpuskUrl;
+                    } else {
+                        // Якщо параметрів немає, показуємо звичайну форму
+                        document.write('Loading search form...');
+                    }
                 </script>
-                <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
-                <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
-                <script src="https://export.otpusk.com/js/onsite/"></script>
-                <script src="https://export.otpusk.com/js/order"></script>
+                <!-- Запасний варіант через iframe -->
+                <iframe src="https://export.otpusk.com/onsite/?lang=ua" width="100%" height="800px" frameborder="0" style="border-radius: 16px;"></iframe>
             </div>
         </div>
     </div>
 </div>
+
 <style>
 /* ========== ОСНОВНІ СТИЛІ ========== */
 /* Контейнер модуля */
