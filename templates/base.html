@@ -827,5 +827,40 @@
 
 })();
 </script>
+<script>
+// Фікс для автоматичного пошуку після завантаження сторінки
+(function() {
+    // Функція для перевірки та запуску пошуку
+    function ensureSearchWorks() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const geo = urlParams.get('geo');
+
+        if (!geo) return;
+
+        // Перевіряємо, чи є результати пошуку
+        const resultsContainer = document.querySelector('.new_r-container');
+        const searchBtn = document.querySelector('.new_f-form-submit');
+        const locationInput = document.querySelector('#location');
+
+        // Якщо результату немає або поле не заповнене – пробуємо ще раз
+        if ((!resultsContainer || resultsContainer.children.length === 0) && locationInput && locationInput.value === '') {
+            console.log('🔄 Країна не підтягнута, повторюємо пошук...');
+
+            // Встановлюємо країну
+            locationInput.value = decodeURIComponent(geo);
+            locationInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+            // Запускаємо пошук
+            setTimeout(() => {
+                if (searchBtn) searchBtn.click();
+            }, 500);
+        }
+    }
+
+    // Перевіряємо через 3 секунди після завантаження
+    setTimeout(ensureSearchWorks, 3000);
+    setTimeout(ensureSearchWorks, 5000);
+})();
+</script>
 </body>
 </html>
