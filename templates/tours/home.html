@@ -181,40 +181,45 @@ function getCurrentNights() {
 }
 
 function selectCalendarDate(dateISO, price, nights) {
-    // Отримуємо параметри з поточного календаря
     const selectedDate = new Date(dateISO);
     const year = selectedDate.getFullYear();
     const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
     const day = String(selectedDate.getDate()).padStart(2, '0');
     const odParam = `${year}-${month}-${day}`;
-    const olParam = nights || getCurrentNights();
+    const olParam = nights || 7;
 
-    // Отримуємо активну країну з вкладок
     const currentCountryTab = document.querySelector('.country-tab.active');
     const country = currentCountryTab ? currentCountryTab.getAttribute('data-country') : 'Єгипет';
 
-    // Отримуємо місто вильоту
     const departureSelect = document.getElementById('departureCitySelect');
     const departure = departureSelect ? departureSelect.value : 'Київ';
 
-    // Формуємо базовий URL
     let baseUrl = '/search-otpusk/';
     if (window.location.pathname.startsWith('/a/')) {
         const slug = window.location.pathname.split('/')[2];
         baseUrl = `/a/${slug}/search-otpusk/`;
     }
 
-    // Додаємо всі параметри
+    // Розраховуємо дату закінчення для URL
+    const endDate = new Date(selectedDate);
+    endDate.setDate(selectedDate.getDate() + olParam);
+    const endYear = endDate.getFullYear();
+    const endMonth = String(endDate.getMonth() + 1).padStart(2, '0');
+    const endDay = String(endDate.getDate()).padStart(2, '0');
+    const dateToParam = `${endYear}-${endMonth}-${endDay}`;
+
+    // Додаємо всі параметри (включно з date_to)
     const params = new URLSearchParams({
         country: country,
         departure: departure,
         date_from: odParam,
+        date_to: dateToParam,
         duration: olParam,
         adults: 2,
         auto_search: '1'
     });
 
-    // Переходимо на сторінку результатів
+    console.log('🚀 Перехід за URL:', `${baseUrl}?${params.toString()}`);
     window.location.href = `${baseUrl}?${params.toString()}`;
 }
 
