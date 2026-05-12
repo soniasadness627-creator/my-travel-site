@@ -1757,52 +1757,27 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 </script>
 <script>
-// ========== ПРИМУСОВА ЗМІНА ДАТИ ЗАКІНЧЕННЯ = ДАТА ПОЧАТКУ ==========
+// ========== ПРИМУСОВЕ ВСТАНОВЛЕННЯ ДАТИ З URL (ДУБЛЮВАННЯ ДЛЯ НАДІЙНОСТІ) ==========
 (function() {
-    let fixed = false;
+    setTimeout(function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const dateFrom = urlParams.get('date_from');
 
-    function fixEndDate() {
-        if (fixed) return;
+        if (!dateFrom) return;
 
-        const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
-        const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
+        const dayNum = dateFrom.split('.')[0];
 
-        if (!startBtn || !endBtn) return;
+        // Знаходимо всі клітинки з датами в календарі
+        const allDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
 
-        const startText = startBtn.innerText || startBtn.textContent;
-        const endText = endBtn.innerText || endBtn.textContent;
-
-        if (startText === endText) {
-            fixed = true;
-            console.log('✅ Дати вже однакові');
-            return;
+        for (let cell of allDateCells) {
+            if (cell.innerText === dayNum) {
+                cell.click();
+                console.log('🔧 ПРИМУСОВО вибрано дату:', dateFrom);
+                break;
+            }
         }
-
-        if (startText && endText && startText !== endText) {
-            console.log('📅 Виправляємо дату:', endText, '→', startText);
-            fixed = true;
-
-            const targetDay = startText.match(/\d+/)[0];
-            endBtn.click();
-
-            setTimeout(() => {
-                const dateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                for (let cell of dateCells) {
-                    if (cell.innerText === targetDay) {
-                        cell.click();
-                        console.log('✅ Дата закінчення змінена на', startText);
-                        break;
-                    }
-                }
-                setTimeout(() => {
-                    const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
-                    if (closeBtn) closeBtn.click();
-                }, 150);
-            }, 200);
-        }
-    }
-
-    setTimeout(fixEndDate, 2000);
+    }, 3000);
 })();
 </script>
 {% endblock %}
