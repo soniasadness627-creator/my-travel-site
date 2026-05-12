@@ -519,6 +519,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderCalendar(prices) {
         if (!calendarDays) return;
 
+        console.log('📅 renderCalendar отримав ціни:', prices);
+
         const year = currentMonth.getFullYear();
         const month = currentMonth.getMonth();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -574,13 +576,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    async function updateCalendar() {
-        if (!currentCountry || !currentDeparture) return;
-        monthYearDisplay.textContent = currentMonth.toLocaleString('uk', { month: 'long', year: 'numeric' });
-        if (calendarDays) calendarDays.innerHTML = '<div class="text-center w-100 py-5">Завантаження...</div>';
-        const { prices } = await fetchPriceData(currentCountry, currentMonth, currentDeparture);
-        renderCalendar(prices);
-    }
+async function updateCalendar() {
+    if (!currentCountry || !currentDeparture) return;
+    monthYearDisplay.textContent = currentMonth.toLocaleString('uk', { month: 'long', year: 'numeric' });
+    if (calendarDays) calendarDays.innerHTML = '<div class="text-center w-100 py-5">Завантаження...</div>';
+    const { prices } = await fetchPriceData(currentCountry, currentMonth, currentDeparture);
+    console.log('📊 Отримані ціни для рендеру:', prices); // ДОДАЙТЕ ЦЕЙ РЯДОК
+    renderCalendar(prices);
+}
 
     function onDepartureChange() {
         currentDeparture = departureSelect.value;
