@@ -176,40 +176,26 @@
 <script>
 // ========== ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА СТОРІНКУ РЕЗУЛЬТАТІВ ПРИ КЛІКУ НА ДАТУ ==========
 function getCurrentNights() {
-    // За замовчуванням 7 ночей
+    // За замовчуванням 7 ночей (можна розширити з випадаючим списком)
     return 7;
 }
 
 function selectCalendarDate(dateISO, price, nights) {
-    console.log('=== ВИКЛИК selectCalendarDate ===');
-    console.log('dateISO:', dateISO);
-    console.log('price:', price);
-    console.log('nights (параметр):', nights);
-
     // Отримуємо параметри з поточного календаря
     const selectedDate = new Date(dateISO);
     const year = selectedDate.getFullYear();
     const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
     const day = String(selectedDate.getDate()).padStart(2, '0');
     const odParam = `${year}-${month}-${day}`;
-
-    // ВАЖЛИВО: використовуємо параметр nights, або getCurrentNights()
-    let olParam = nights;
-    if (!olParam || olParam === 'undefined' || isNaN(olParam)) {
-        olParam = getCurrentNights();
-        console.log('⚠️ nights не передано, використовуємо за замовчуванням:', olParam);
-    }
-    console.log(`📅 Вибрано: дата=${odParam}, тривалість=${olParam}`);
+    const olParam = nights || getCurrentNights();
 
     // Отримуємо активну країну з вкладок
     const currentCountryTab = document.querySelector('.country-tab.active');
     const country = currentCountryTab ? currentCountryTab.getAttribute('data-country') : 'Єгипет';
-    console.log('🇺🇦 Країна:', country);
 
     // Отримуємо місто вильоту
     const departureSelect = document.getElementById('departureCitySelect');
     const departure = departureSelect ? departureSelect.value : 'Київ';
-    console.log('✈️ Місто вильоту:', departure);
 
     // Формуємо базовий URL
     let baseUrl = '/search-otpusk/';
@@ -217,7 +203,6 @@ function selectCalendarDate(dateISO, price, nights) {
         const slug = window.location.pathname.split('/')[2];
         baseUrl = `/a/${slug}/search-otpusk/`;
     }
-    console.log('🔗 Базовий URL:', baseUrl);
 
     // Додаємо всі параметри
     const params = new URLSearchParams({
@@ -229,11 +214,8 @@ function selectCalendarDate(dateISO, price, nights) {
         auto_search: '1'
     });
 
-    const fullUrl = `${baseUrl}?${params.toString()}`;
-    console.log('🚀 ПЕРЕХІД ЗА URL:', fullUrl);
-
     // Переходимо на сторінку результатів
-    window.location.href = fullUrl;
+    window.location.href = `${baseUrl}?${params.toString()}`;
 }
 
 // ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
