@@ -477,25 +477,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ========== ВИКОРИСТОВУЄМО НОВЕ API ДЛЯ РЕАЛЬНИХ ЦІН ==========
     async function fetchPriceData(country, month, departure) {
-        const year = month.getFullYear();
-        const monthIndex = month.getMonth() + 1;
-        let url = `/api/calendar-prices-real/?country=${encodeURIComponent(country)}&year=${year}&month=${monthIndex}&departure=${encodeURIComponent(departure)}`;
+    const year = month.getFullYear();
+    const monthIndex = month.getMonth() + 1;
+    let url = `/api/calendar-prices-real/?country=${encodeURIComponent(country)}&year=${year}&month=${monthIndex}&departure=${encodeURIComponent(departure)}`;
 
-        {% if agent_site %}
-        url += `&slug={{ agent_site.slug }}`;
-        {% endif %}
+    // Додаємо slug фіксований для тесту
+    url += `&slug=soniasadness627`;
 
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
-            return { prices: data.prices, maxPrice: data.max_price };
-        } catch (error) {
-            console.error('Помилка завантаження цін:', error);
-            const daysInMonth = new Date(year, monthIndex, 0).getDate();
-            return { prices: new Array(daysInMonth).fill(null), maxPrice: null };
-        }
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log('✅ Отримано ціни:', data);
+        return { prices: data.prices, maxPrice: data.max_price };
+    } catch (error) {
+        console.error('Помилка:', error);
+        const daysInMonth = new Date(year, monthIndex, 0).getDate();
+        return { prices: new Array(daysInMonth).fill(null), maxPrice: null };
     }
+}
 
     function getColorForPrice(price, minPrice, maxPrice) {
         if (price === null) return 'gray';
