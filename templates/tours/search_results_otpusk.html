@@ -1401,37 +1401,42 @@ document.addEventListener('DOMContentLoaded', function() {
 .new_os-date-check .new_f-dropdown-btn {
     display: none !important;
 }
+
+
+    /* Додайте в самий кінець вашого файлу, після всього */
+body .new_os-date-check,
+body .new_os-date-check[style*="display"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    position: fixed !important;
+    top: -9999px !important;
+    left: -9999px !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+}
+
+body .new_os-date-check * {
+    display: none !important;
+}
 </style>
 <script>
-    // Функція для видалення повідомлення про помилку
-    function removeErrorMessage() {
+    // Безперервне видалення повідомлення про помилку
+    const errorCheckInterval = setInterval(function() {
         const errorBlock = document.querySelector('.new_os-date-check');
         if (errorBlock) {
             errorBlock.remove();
             console.log('✅ Повідомлення про помилку видалено');
         }
-    }
+    }, 200);
 
-    // Видаляємо багаторазово з різними затримками
-    setTimeout(removeErrorMessage, 100);
-    setTimeout(removeErrorMessage, 500);
-    setTimeout(removeErrorMessage, 1000);
-    setTimeout(removeErrorMessage, 2000);
-    setTimeout(removeErrorMessage, 3000);
-    setTimeout(removeErrorMessage, 5000);
-
-    // Спостерігаємо за появою нового елемента
-    const observer = new MutationObserver(function() {
-        const errorBlock = document.querySelector('.new_os-date-check');
-        if (errorBlock) {
-            errorBlock.remove();
-            console.log('✅ Повідомлення про помилку виявлено та видалено');
-        }
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // Зупиняємо спостерігач через 10 секунд
-    setTimeout(() => observer.disconnect(), 10000);
+    // Зупиняємо інтервал через 15 секунд
+    setTimeout(function() {
+        clearInterval(errorCheckInterval);
+        console.log('⏹️ Стеження за помилками зупинено');
+    }, 15000);
 </script>
 {% endblock %}
