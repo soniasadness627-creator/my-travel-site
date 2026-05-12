@@ -30,7 +30,7 @@
 <!-- ========== СКРИПТ ДЛЯ ПЕРЕДАЧІ ПАРАМЕТРІВ У ФОРМУ ========== -->
 <script>
 (function() {
-    // ЗАХИСТ ВІД ПОВТОРНОГО ВИКОНАННЯ
+    // Захист від повторного виконання
     if (window.otpuskParamsSet) return;
     window.otpuskParamsSet = true;
 
@@ -39,14 +39,14 @@
     const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
     const departureText = urlParams.get('departure_text') || '';
     const dateFrom = urlParams.get('date_from') || '';
+    const dateTo = urlParams.get('date_to') || '';
     const duration = urlParams.get('duration') || '7';
     const adults = urlParams.get('adults') || '2';
 
-    console.log('📥 Параметри для форми:', { geo, departureText, dateFrom, duration, adults });
+    console.log('📥 Параметри для форми:', { geo, departureText, dateFrom, dateTo, duration, adults });
 
     if (geo || departureText || dateFrom) {
         let attempts = 0;
-        const maxAttempts = 30;
         let searchTriggered = false;
 
         function setFormValues() {
@@ -56,43 +56,38 @@
             // Встановлюємо КРАЇНУ
             if (geo) {
                 const countryInput = document.querySelector('#location');
-                if (countryInput) {
-                    countryInput.value = '';
-                    countryInput.dispatchEvent(new Event('focus', { bubbles: true }));
+                if (countryInput && countryInput.value !== geo) {
                     countryInput.value = geo;
                     countryInput.dispatchEvent(new Event('input', { bubbles: true }));
-
-                    setTimeout(() => {
-                        const items = document.querySelectorAll('#cntList .ui-menu-item');
-                        for (let item of items) {
-                            if (item.innerText.trim() === geo) {
-                                item.click();
-                                console.log('✅ Клік по країні:', geo);
-                                break;
-                            }
-                        }
-                    }, 300);
+                    countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('✅ Встановлено країну:', geo);
                 }
             }
 
-            // Встановлюємо МІСТО ВИЛЬОТУ
+            // Встановлюємо МІСТО ВИЛЬОТУ через клік
             if (departureText) {
                 setTimeout(() => {
-                    const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                    for (let item of items) {
-                        if (item.innerText.trim() === departureText) {
-                            item.click();
-                            console.log('✅ Клік по місту вильоту:', departureText);
-                            break;
-                        }
+                    const dropdownBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
+                    if (dropdownBtn && !dropdownBtn.innerText.includes(departureText)) {
+                        dropdownBtn.click();
+                        setTimeout(() => {
+                            const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                            for (let item of items) {
+                                if (item.innerText.trim() === departureText) {
+                                    item.click();
+                                    console.log('✅ Клік по місту вильоту:', departureText);
+                                    break;
+                                }
+                            }
+                        }, 200);
                     }
-                }, 600);
+                }, 500);
             }
 
-            // Встановлюємо ДАТУ
+            // Встановлюємо ДАТУ ПОЧАТКУ
             if (dateFrom) {
                 const dayNum = dateFrom.split('.')[0];
-                console.log('📅 Вибрана дата:', dateFrom, 'день:', dayNum);
+                console.log('📅 Вибрана дата:', dateFrom);
 
                 setTimeout(() => {
                     const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
@@ -115,52 +110,39 @@
                             }, 100);
                         }, 200);
                     }
-                }, 900);
+                }, 800);
             }
 
             // Встановлюємо ТРИВАЛІСТЬ
             if (duration) {
                 setTimeout(() => {
                     const durationSelect = document.querySelector('#night, select[name="duration"], .new_f-duration-select');
-                    if (durationSelect) {
+                    if (durationSelect && durationSelect.value !== duration) {
                         durationSelect.value = duration;
                         durationSelect.dispatchEvent(new Event('change', { bubbles: true }));
                         console.log('✅ Тривалість змінена на', duration);
                     }
-                }, 700);
+                }, 600);
             }
 
-            // Встановлюємо КІЛЬКІСТЬ ДОРОСЛИХ
-            if (adults) {
-                setTimeout(() => {
-                    const adultsBtn = document.querySelector('.new_f-people-list');
-                    if (adultsBtn) {
-                        const adultItem = adultsBtn.querySelector(`.new_f-people-item[data-value="${adults}"]`);
-                        if (adultItem) {
-                            adultItem.click();
-                            console.log('✅ Кількість дорослих змінена на', adults);
-                        }
-                    }
-                }, 800);
-            }
-
-            // Запускаємо пошук ТІЛЬКИ ОДИН РАЗ
-            if (!searchTriggered) {
+            // Запускаємо пошук (тільки один раз)
+            if (!searchTriggered && (geo || departureText)) {
                 setTimeout(() => {
                     const searchBtn = document.querySelector('.new_f-form-submit');
-                    if (searchBtn && (geo || departureText)) {
+                    if (searchBtn) {
                         searchBtn.click();
                         searchTriggered = true;
                         console.log('🔍 Пошук запущено!');
                     }
-                }, 2000);
+                }, 1500);
             }
         }
 
-        // Запускаємо встановлення параметрів з затримкою
-        setTimeout(setFormValues, 1500);
+        // Запускаємо кілька разів з затримками
+        setTimeout(setFormValues, 1000);
+        setTimeout(setFormValues, 2000);
         setTimeout(setFormValues, 3000);
-        setTimeout(setFormValues, 5000);
+        setTimeout(setFormValues, 4000);
     }
 })();
 </script>

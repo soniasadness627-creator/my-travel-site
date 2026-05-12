@@ -305,6 +305,63 @@
 </style>
 
 <script>
+// ========== ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА СТОРІНКУ РЕЗУЛЬТАТІВ ПРИ КЛІКУ НА ДАТУ ==========
+function getCurrentNights() {
+    return 7;
+}
+
+window.selectCalendarDate = function(dateISO, price, nights) {
+    const selectedDate = new Date(dateISO);
+    const currentCountryTab = document.querySelector('.country-tab.active');
+    const country = currentCountryTab ? currentCountryTab.getAttribute('data-country') : 'Єгипет';
+
+    const departureSelect = document.getElementById('departureCitySelect');
+    const departureName = departureSelect ? departureSelect.value : 'Кишинів';
+
+    const departureTextMap = {
+        "Кишинів": "Кишинева",
+        "Варшава": "Варшави",
+        "Краків": "Кракова",
+        "Бухарест": "Бухареста",
+        "Будапешт": "Будапешта",
+        "Берлін": "Берліна",
+        "Прага": "Праги",
+        "Тбілісі": "Тбілісі",
+        "Стамбул": "Стамбула",
+        "Київ": "Києва"
+    };
+
+    const departureText = departureTextMap[departureName] || departureName;
+
+    let baseUrl = '/search-otpusk/';
+    if (window.location.pathname.startsWith('/a/')) {
+        const slug = window.location.pathname.split('/')[2];
+        baseUrl = `/a/${slug}/search-otpusk/`;
+    }
+
+    const endDate = new Date(selectedDate);
+    endDate.setDate(selectedDate.getDate() + (nights || 7));
+
+    const formatDate = (d) => {
+        return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+    };
+
+    const dateFromFormatted = formatDate(selectedDate);
+    const dateToFormatted = formatDate(endDate);
+
+    const params = new URLSearchParams({
+        geo: country,
+        departure_text: departureText,
+        date_from: dateFromFormatted,
+        date_to: dateToFormatted,
+        duration: nights || 7,
+        auto_search: '1'
+    });
+
+    console.log('🚀 Перехід:', `${baseUrl}?${params.toString()}`);
+    window.location.href = `${baseUrl}?${params.toString()}`;
+};
+
 // ========== КАЛЕНДАР НИЗЬКИХ ЦІН ==========
 document.addEventListener('DOMContentLoaded', function() {
     const countryListByDepartureCity = {
@@ -430,12 +487,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const dayDate = new Date(year, month, day);
             const dayOfWeek = dayDate.toLocaleDateString('uk', { weekday: 'short' });
 
+            const yearNum = dayDate.getFullYear();
+            const monthNum = String(dayDate.getMonth() + 1).padStart(2, '0');
+            const dayNum = String(day).padStart(2, '0');
+            const dateISO = `${yearNum}-${monthNum}-${dayNum}`;
+
             const col = document.createElement('div');
             col.className = 'day-column';
 
             if (price !== null) {
                 const barClass = getColorForPrice(price, globalMin, globalMax);
                 const barHeight = getHeightForPrice(price, globalMin, globalMax);
+
+                col.setAttribute('onclick', `selectCalendarDate('${dateISO}', ${price}, getCurrentNights())`);
+                col.style.cursor = 'pointer';
+
                 col.innerHTML = `
                     <div class="day-week">${dayOfWeek}</div>
                     <div class="day-date">${day}</div>

@@ -4,96 +4,6 @@
 {% block title %}Результати пошуку турів{% endblock %}
 
 {% block content %}
-<!-- ========== ФІКС ДАТ: ПРИМУСОВО 1 ДЕНЬ ========== -->
-<script>
-(function() {
-    // Перехоплюємо параметри з URL і змінюємо duration на 1
-    const originalPushState = history.pushState;
-    history.pushState = function() {
-        const result = originalPushState.apply(this, arguments);
-        fixDatesAndSearch();
-        return result;
-    };
-
-    function fixDatesAndSearch() {
-        // Змінюємо duration в URL на 1
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('duration') !== '1') {
-            urlParams.set('duration', '1');
-            const newUrl = window.location.pathname + '?' + urlParams.toString();
-            history.replaceState({}, '', newUrl);
-            console.log('✅ duration змінено на 1 в URL');
-        }
-
-        // Шукаємо поле тривалості і змінюємо
-        setTimeout(() => {
-            const durationSelect = document.querySelector('#night, select[name="duration"], .new_f-duration-select');
-            if (durationSelect) {
-                durationSelect.value = '1';
-                durationSelect.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log('✅ Тривалість змінена на 1 день');
-            }
-        }, 500);
-    }
-
-    fixDatesAndSearch();
-})();
-</script>
-
-<!-- ========== ПРИМУСОВИЙ ВИБІР ОДНАКОВИХ ДАТ ========== -->
-<script>
-(function() {
-    function selectSameDates() {
-        // Знаходимо кнопки з датами
-        const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
-        const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
-
-        if (!startBtn || !endBtn) return;
-
-        const startText = startBtn.innerText || startBtn.textContent;
-        const endText = endBtn.innerText || endBtn.textContent;
-
-        console.log('📅 Початкова дата:', startText);
-        console.log('📅 Кінцева дата:', endText);
-
-        // Якщо дати різні
-        if (startText !== endText) {
-            console.log('🔄 Дати різні, виправляємо...');
-
-            // Відкриваємо календар закінчення
-            endBtn.click();
-
-            setTimeout(() => {
-                // Шукаємо елемент з датою початку в календарі
-                const dateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                const dayNum = startText.match(/\d+/)?.[0] || startText;
-
-                for (let cell of dateCells) {
-                    if (cell.innerText === dayNum) {
-                        cell.click();
-                        console.log('✅ Дата закінчення змінена на', startText);
-                        break;
-                    }
-                }
-
-                // Закриваємо календар
-                setTimeout(() => {
-                    const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
-                    if (closeBtn) closeBtn.click();
-                }, 100);
-            }, 200);
-        }
-    }
-
-    // Запускаємо з різними затримками
-    setTimeout(selectSameDates, 1000);
-    setTimeout(selectSameDates, 2000);
-    setTimeout(selectSameDates, 3000);
-    setTimeout(selectSameDates, 4000);
-    setTimeout(selectSameDates, 5000);
-})();
-</script>
-
 <div class="container my-5">
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-4">
@@ -101,127 +11,19 @@
 
             <!-- МОДУЛЬ ПОШУКУ OTPUSK -->
             {% include "tours/otpusk_search.html" %}
-
-            <!-- СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ПАРАМЕТРІВ -->
-            <script>
-            // Отримуємо параметри з URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
-            const departureText = urlParams.get('departure_text') || '';
-            const dateFrom = urlParams.get('date_from') || '';
-            const dateTo = urlParams.get('date_to') || '';
-
-            console.log('📥 Отримані параметри:', { geo, departureText, dateFrom, dateTo });
-
-            if (geo || departureText || dateFrom) {
-                let attempts = 0;
-                const maxAttempts = 30;
-
-                function setFormValues() {
-                    attempts++;
-                    console.log(`🔄 Спроба ${attempts} встановлення параметрів...`);
-
-                    let success = false;
-
-                    // Встановлюємо КРАЇНУ - через реальний клік по опції
-                    if (geo) {
-                        const countryInput = document.querySelector('#location');
-                        if (countryInput) {
-                            countryInput.value = '';
-                            countryInput.dispatchEvent(new Event('focus', { bubbles: true }));
-                            countryInput.value = geo;
-                            countryInput.dispatchEvent(new Event('input', { bubbles: true }));
-
-                            setTimeout(() => {
-                                const items = document.querySelectorAll('#cntList .ui-menu-item');
-                                for (let item of items) {
-                                    if (item.innerText.trim() === geo) {
-                                        item.click();
-                                        console.log('✅ Клік по країні:', geo);
-                                        success = true;
-                                        break;
-                                    }
-                                }
-                            }, 300);
-                        }
-                    }
-
-                    // Встановлюємо МІСТО ВИЛЬОТУ через клік
-                    if (departureText) {
-                        setTimeout(() => {
-                            const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                            for (let item of items) {
-                                if (item.innerText.trim() === departureText) {
-                                    item.click();
-                                    console.log('✅ Клік по місту вильоту:', departureText);
-                                    success = true;
-                                    break;
-                                }
-                            }
-                        }, 600);
-                    }
-
-                    // Встановлюємо ДАТИ - ТІЛЬКИ ОДНА ДАТА
-                    if (dateFrom) {
-                        const singleDate = dateFrom;
-                        const dayNum = singleDate.split('.')[0];
-
-                        console.log('📅 Вибрана дата:', singleDate);
-
-                        setTimeout(() => {
-                            const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
-                            if (dateButton) {
-                                dateButton.click();
-
-                                setTimeout(() => {
-                                    const dateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                                    for (let cell of dateCells) {
-                                        if (cell.innerText === dayNum) {
-                                            cell.click();
-                                            console.log('✅ Клік по даті:', singleDate);
-                                            break;
-                                        }
-                                    }
-
-                                    setTimeout(() => {
-                                        const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
-                                        if (closeBtn) closeBtn.click();
-                                    }, 100);
-                                }, 200);
-                            }
-                        }, 900);
-                    }
-
-                    // Запускаємо пошук після всіх дій
-                    setTimeout(() => {
-                        const searchBtn = document.querySelector('.new_f-form-submit');
-                        if (searchBtn && geo) {
-                            searchBtn.click();
-                            console.log('🔍 Автоматичний пошук запущено!');
-                        }
-                    }, 2000);
-                }
-
-                setTimeout(setFormValues, 2000);
-            }
-            </script>
         </div>
     </div>
 </div>
 
-<!-- ========== ВСІ СТИЛІ ТА СКРИПТИ ========== -->
+<!-- ========== СТИЛІ ДЛЯ РЕЗУЛЬТАТІВ ========== -->
 <style>
-/* ========== ОСНОВНІ СТИЛІ ========== */
 #otpusk-search-module {
     background: white !important;
     border-radius: 24px !important;
-    border: 2px solid #ffffff !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+    border: 2px solid var(--primary-color) !important;
     padding: 20px 24px !important;
     width: 100% !important;
     margin: 0 auto !important;
-    position: relative !important;
-    z-index: 10 !important;
     box-sizing: border-box !important;
 }
 
@@ -232,64 +34,7 @@
     border: none !important;
     font-weight: 600 !important;
     padding: 12px 28px !important;
-    transition: all 0.3s ease !important;
     cursor: pointer !important;
-}
-
-.new_f-form-submit:hover {
-    background: var(--primary-dark) !important;
-}
-
-.new_price-value {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    color: #dc2626 !important;
-    font-weight: 700 !important;
-    font-size: 1.25rem !important;
-}
-
-.new_r-currency-switch {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 0 !important;
-    background: var(--primary-color) !important;
-    border-radius: 24px !important;
-    overflow: hidden !important;
-    width: fit-content !important;
-    flex-wrap: nowrap !important;
-}
-
-.new_r-currency-switch label {
-    margin: 0 !important;
-    display: inline-block !important;
-    flex-shrink: 0 !important;
-}
-
-.new_r-currency-switch input[type="radio"] {
-    display: none !important;
-}
-
-.new_r-currency-switch span {
-    background: transparent !important;
-    color: white !important;
-    padding: 6px 16px !important;
-    display: inline-block !important;
-    font-weight: 600 !important;
-    font-size: 0.9rem !important;
-    cursor: pointer !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    white-space: nowrap !important;
-}
-
-.new_r-currency-switch input[type="radio"]:checked + span {
-    background: rgba(255, 255, 255, 0.25) !important;
-    color: white !important;
-}
-
-.new_r-item-star {
-    fill: #FFD700 !important;
 }
 
 /* КАРТКИ ТУРІВ */
@@ -301,9 +46,6 @@
     overflow: hidden !important;
     display: flex !important;
     flex-direction: row !important;
-    align-items: stretch !important;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
     width: 100% !important;
 }
 
@@ -311,15 +53,11 @@
     width: 280px !important;
     height: auto !important;
     object-fit: cover !important;
-    display: block !important;
     flex-shrink: 0 !important;
 }
 
 .new_r-item-body {
     padding: 18px 22px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
     flex: 1 !important;
 }
 
@@ -327,167 +65,68 @@
     font-size: 1.3rem !important;
     font-weight: 700 !important;
     color: #1a202c !important;
-    margin: 0 0 10px 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    flex-wrap: wrap !important;
-    gap: 10px !important;
 }
 
-.new_r-item-stars {
-    display: inline-flex !important;
-    gap: 4px !important;
-}
-
-.new_r-item-geo {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    font-size: 0.9rem !important;
-    color: #666 !important;
-    margin: 0 0 12px 0 !important;
-}
-
-.new_r-item-food {
-    display: inline-block !important;
-    background: #e2e8f0 !important;
-    padding: 5px 14px !important;
-    border-radius: 20px !important;
-    font-size: 0.8rem !important;
-    color: #1a202c !important;
-    width: fit-content !important;
-    margin: 0 0 12px 0 !important;
-    font-weight: 500 !important;
-}
-
-.new_r-item-table {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 20px !important;
-    margin: 5px 0 10px 0 !important;
-    width: 100% !important;
-}
-
-.new_r-item-col {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 20px !important;
-    flex-wrap: wrap !important;
-    width: 100% !important;
-}
-
-.new_r-item-from,
-.new_r-item-date {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    font-size: 0.9rem !important;
-    color: #555 !important;
-    white-space: normal !important;
-}
-
-.new_r-item-icon {
-    width: 18px !important;
-    height: 18px !important;
-    fill: #888 !important;
-}
-
-.new_r-item-price {
-    display: flex !important;
-    justify-content: flex-end !important;
-    align-items: baseline !important;
-    margin-top: 15px !important;
-    padding-top: 15px !important;
-    border-top: 1px solid #e2e8f0 !important;
-    gap: 8px !important;
-    flex-wrap: wrap !important;
-    width: 100% !important;
-}
-
+/* ЦІНА */
 .new_price-value {
-    font-size: 1.4rem !important;
+    color: #dc2626 !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
 }
 
-.new_price-desc {
-    font-size: 0.85rem !important;
-    color: #666 !important;
-    font-weight: normal !important;
+/* ПЕРЕМИКАННЯ ВАЛЮТИ */
+.new_r-currency-switch {
+    display: flex !important;
+    background: var(--primary-color) !important;
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    width: fit-content !important;
+}
+
+.new_r-currency-switch span {
+    background: transparent !important;
+    color: white !important;
+    padding: 6px 16px !important;
+    cursor: pointer !important;
+}
+
+.new_r-currency-switch input[type="radio"]:checked + span {
+    background: rgba(255, 255, 255, 0.25) !important;
 }
 
 /* РЕЙТИНГ */
 .new_r-item-rating-container,
-.new_r-p8,
-.new_r-p7,
-.new_r-p6,
-.new_r-p5 {
+.new_r-p8, .new_r-p7, .new_r-p6, .new_r-p5 {
     position: absolute !important;
     top: 12px !important;
     right: 12px !important;
-    z-index: 10 !important;
     width: 65px !important;
     height: 65px !important;
     display: flex !important;
-    flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     background: white !important;
     border-radius: 10px !important;
     border-width: 2px !important;
     border-style: solid !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
 .new_r-item-rating-value {
     font-weight: 800 !important;
     font-size: 1.1rem !important;
-    margin: 0 0 3px 0 !important;
-    line-height: 1 !important;
-}
-
-.new_r-item-rating-rev {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    font-size: 0.5rem !important;
-    color: #666 !important;
-    line-height: 1.1 !important;
-}
-
-.new_r-item-rating-rev span {
-    font-weight: 700 !important;
-    font-size: 0.7rem !important;
-    color: #555 !important;
-}
-
-.new_r-item-rating-container .slice,
-.new_r-item-rating-container .bar,
-.new_r-item-rating-container .fill,
-.new_r-item-rating-container svg {
-    display: none !important;
 }
 
 /* АДАПТИВ */
 @media (max-width: 768px) {
     #otpusk-search-module {
         padding: 15px !important;
-        margin: 0 15px !important;
     }
-
     .new_r-item {
         flex-direction: column !important;
     }
-
     .new_r-item-img {
         width: 100% !important;
         height: 220px !important;
-    }
-
-    .new_r-item-hotel {
-        font-size: 1.1rem !important;
-    }
-
-    .new_price-value {
-        font-size: 1.2rem !important;
     }
 }
 </style>
@@ -503,27 +142,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 el.textContent = '$';
             }
         });
-        const textElements = document.querySelectorAll('.new_r-currency-switch span');
-        textElements.forEach(function(el) {
-            if (el.textContent === '€') {
-                el.textContent = '$';
-            }
-        });
     }
     replaceEuroToDollar();
     const observer = new MutationObserver(function() { replaceEuroToDollar(); });
     observer.observe(document.body, { childList: true, subtree: true });
 });
 
-// КОЛІР РАМКИ РЕЙТИНГУ
+// Колір рамки рейтингу
 document.addEventListener('DOMContentLoaded', function() {
     function updateRatingBorderColor() {
         const ratingContainers = document.querySelectorAll('.new_r-p8, .new_r-p7, .new_r-p6, .new_r-p5, .new_r-item-rating-container');
         ratingContainers.forEach(function(container) {
             const ratingValueElement = container.querySelector('.new_r-item-rating-value');
             if (!ratingValueElement) return;
-            const ratingText = ratingValueElement.textContent || ratingValueElement.innerText;
-            const rating = parseFloat(ratingText);
+            const rating = parseFloat(ratingValueElement.textContent);
             if (isNaN(rating)) return;
             let color;
             if (rating < 5) color = '#ef4444';
@@ -538,10 +170,8 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(document.body, { childList: true, subtree: true });
 });
 
-// ========== ПЕРЕХОПЛЕННЯ КЛІКІВ НА ТУРИ ==========
+// Перехоплення кліків на тури
 (function() {
-    console.log('Скрипт перехоплення активовано');
-
     function extractParamsFromUrl(url) {
         let hid = url.match(/hid=(\d+)/)?.[1];
         let oid = url.match(/oid=([\d]+)/)?.[1];
@@ -555,118 +185,35 @@ document.addEventListener('DOMContentLoaded', function() {
             od = hash.match(/od=([\d-]+)/)?.[1];
             ol = hash.match(/ol=(\d+)/)?.[1];
         }
-
         return { hid, oid, od, ol };
     }
 
     function handleTourClick(event) {
-        let target = event.target.closest('.new_r-item, .new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
+        let target = event.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
         if (!target) return;
 
-        let url = target.href || target.getAttribute('data-uri') || '';
-
-        if (!url && target.classList.contains('new_r-item')) {
-            let link = target.querySelector('a');
+        let url = target.href || '';
+        if (!url && target.closest('.new_r-item')) {
+            let link = target.closest('.new_r-item').querySelector('a');
             if (link) url = link.href;
         }
 
-        if (!url || (!url.includes('hid=') && !url.includes('#!'))) return;
+        if (!url || !url.includes('hid=')) return;
 
         event.preventDefault();
         event.stopPropagation();
 
         let params = extractParamsFromUrl(url);
-
         if (params.hid && params.oid) {
             let baseUrl = window.location.pathname.startsWith('/a/')
                 ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
                 : '/tour-detail/';
-
             let newUrl = `${baseUrl}?hid=${params.hid}&oid=${params.oid}&od=${params.od || ''}&ol=${params.ol || ''}`;
-            console.log('Перенаправляємо на:', newUrl);
             window.location.href = newUrl;
-        } else {
-            console.log('Не знайдено параметри туру в URL:', url);
         }
     }
 
     document.addEventListener('click', handleTourClick);
-})();
-
-// ========== ЗБЕРІГАЄМО URL ПОШУКУ ==========
-(function() {
-    localStorage.setItem('lastSearchUrl', window.location.href);
-    console.log('Збережено URL пошуку:', window.location.href);
-
-    document.addEventListener('click', function(e) {
-        const tourLink = e.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
-        if (tourLink) {
-            localStorage.setItem('lastSearchUrl', window.location.href);
-            console.log('Оновлено URL пошуку перед переходом:', window.location.href);
-        }
-    });
-})();
-</script>
-
-<style>
-/* ДОДАТКОВІ СТИЛІ */
-.new_os-date-check {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    position: absolute !important;
-    pointer-events: none !important;
-}
-
-.new_os-date-check .new_f-dropdown-body,
-.new_os-date-check .new_f-dropdown-btn {
-    display: none !important;
-}
-</style>
-
-<!-- ========== ВИДАЛЕННЯ ПОВІДОМЛЕННЯ OTPUSK ========== -->
-<script>
-(function() {
-    function removeOtpuskMessage() {
-        const selectors = ['.new_os-date-check', '.new_os-date-check-wrapper', '.new_f-validate-message', '.new_f-dropdown-msg'];
-        for (const selector of selectors) {
-            const elements = document.querySelectorAll(selector);
-            elements.forEach(el => { if (el && el.remove) el.remove(); });
-        }
-    }
-    removeOtpuskMessage();
-    const delays = [100, 300, 500, 800, 1000, 1500, 2000, 3000, 5000];
-    delays.forEach(delay => { setTimeout(removeOtpuskMessage, delay); });
-})();
-</script>
-
-<!-- ========== ГАРАНТОВАНИЙ ЗАПУСК ПОШУКУ ========== -->
-<script>
-(function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const geo = urlParams.get('geo');
-    if (!geo) return;
-
-    let searchTriggered = false;
-    const observer = new MutationObserver(function() {
-        const searchBtn = document.querySelector('.new_f-form-submit');
-        const locationInput = document.querySelector('#location');
-        if (searchBtn && locationInput && !searchTriggered) {
-            if (locationInput.value === '') {
-                locationInput.value = decodeURIComponent(geo);
-                locationInput.dispatchEvent(new Event('input', { bubbles: true }));
-                setTimeout(() => { searchBtn.click(); searchTriggered = true; console.log('✅ Пошук примусово запущено'); }, 1000);
-            } else if (!searchTriggered) {
-                setTimeout(() => { if (!searchTriggered) { searchBtn.click(); searchTriggered = true; console.log('✅ Пошук запущено'); } }, 500);
-            }
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-    setTimeout(() => { const searchBtn = document.querySelector('.new_f-form-submit'); if (searchBtn && !searchTriggered) { searchBtn.click(); searchTriggered = true; } }, 4000);
 })();
 </script>
 {% endblock %}
