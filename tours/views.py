@@ -2,6 +2,7 @@ import requests
 import json
 import random
 import re
+from django.core.cache import cache
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, Http404
@@ -618,3 +619,51 @@ def custom_logout(request):
     from django.contrib.auth import logout
     logout(request)
     return redirect('/')
+
+
+# ========== API З КЕШУВАННЯМ ДЛЯ КАЛЕНДАРЯ ==========
+from django.core.cache import cache
+
+
+def calendar_prices_cached(request):
+    """
+    API для календаря низьких цін з кешуванням
+    Працює ШВИДКО і показує РЕАЛЬНІ ціни (з кешу)
+    """
+    country = request.GET.get('country')
+    year = request.GET.get('year')
+    month = request.GET.get('month')
+    departure = request.GET.get('departure')
+    slug = request.GET.get('slug')
+
+    if not all([country, year, month]):
+        return JsonResponse({'error': 'Missing parameters'}, status=400)
+
+    # Формуємо ключ для кешу
+    cache_key = f"calendar_prices_{country}_{year}_{month}_{departure}_{slug}"
+
+    # Перевіряємо, чи є дані в кеші
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        print(f"✅ Дані з кешу для {country} ({year}-{month})")
+        return JsonResponse(cached_data)
+
+    # Якщо немає в кеші – отримуємо реальні ціни
+    print(f"🔄 Отримуємо реальні ціни для {country} ({year}-{month})")
+
+    # Викликаємо функцію з реальними цінами
+    result = calendar_prices_from_otpusk(request)
+
+    # Перевіряємо, чи вдалося отримати дані
+    if result.status_code == 200:
+        try:
+            data = json.loads(result.content)
+            # Зберігаємо в кеш на 24 години (86400 секунд)
+            cache.set(cache_key, data, 86400)
+            print(f"💾 Збережено в кеш для {country} ({year}-{month})")
+            return JsonResponse(data)
+        except:
+            return result
+    else:
+        # Якщо помилка – повертаємо демо-дані
+        return JsonResponse(get_fallback_prices(int(month), int(year)))

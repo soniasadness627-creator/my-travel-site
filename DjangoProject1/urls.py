@@ -67,6 +67,9 @@ urlpatterns = [
     # НОВИЙ МАРШРУТ ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН (ПРЯМЕ ПІДКЛЮЧЕННЯ ДО OTPUSK)
     path('api/calendar-prices-otpusk/', tours_views.calendar_prices_from_otpusk, name='calendar_prices_otpusk'),
 
+    # НОВИЙ МАРШРУТ ДЛЯ КАЛЕНДАРЯ З КЕШУВАННЯМ (РЕКОМЕНДОВАНИЙ)
+    path('api/calendar-prices-cached/', tours_views.calendar_prices_cached, name='calendar_prices_cached'),
+
     # ========== ІНШІ API МАРШРУТИ ==========
     path('get-cities/', tours_views.get_cities, name='get_cities'),
     path('api/chat/', tours_views.chat_api, name='chat_api'),
