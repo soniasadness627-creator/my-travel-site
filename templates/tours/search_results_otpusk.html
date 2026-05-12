@@ -100,31 +100,38 @@
             }
 
             // Встановлюємо ДАТИ через клік
-            // Встановлюємо ДАТИ - ОДНАКОВІ (конкретний день, а не тиждень)
+            // Встановлюємо ДАТИ - початок і наступний день (мінімальний проміжок)
 if (dateFrom) {
-    // Беремо тільки дату початку
-    const singleDate = dateFrom;
+    const startDate = dateFrom;
+    // Отримуємо наступний день
+    const parts = startDate.split('.');
+    const nextDay = new Date(parts[2], parts[1]-1, parseInt(parts[0]) + 1);
+    const endDate = `${nextDay.getDate()}.${nextDay.getMonth()+1}.${nextDay.getFullYear()}`;
 
     setTimeout(() => {
         const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
         if (dateButton) {
             dateButton.click();
             setTimeout(() => {
-                // Вибираємо ДАТУ ПОЧАТКУ
+                // Вибираємо дату початку
                 const dateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
                 for (let cell of dateCells) {
-                    if (cell.innerText === singleDate.split('.')[0]) {
+                    if (cell.innerText === startDate.split('.')[0]) {
                         cell.click();
-                        console.log('✅ Клік по даті:', singleDate);
+                        console.log('✅ Клік по даті початку:', startDate);
                         break;
                     }
                 }
-                // НЕ вибираємо другу дату - закриваємо календар
                 setTimeout(() => {
-                    // Закриваємо календар (клік по кнопці закриття)
-                    const closeBtn = document.querySelector('.ui-datepicker-close');
-                    if (closeBtn) closeBtn.click();
-                }, 100);
+                    // Вибираємо наступний день
+                    for (let cell of dateCells) {
+                        if (cell.innerText === endDate.split('.')[0]) {
+                            cell.click();
+                            console.log('✅ Клік по даті закінчення:', endDate);
+                            break;
+                        }
+                    }
+                }, 200);
             }, 200);
         }
     }, 900);
