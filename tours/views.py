@@ -93,7 +93,7 @@ def get_fallback_prices(month, year):
     return {'prices': prices, 'max_price': max_price}
 
 
-# ========== API ДЛЯ РЕАЛЬНИХ ЦІН З OTPUSK (ПОВІЛЬНЕ, АЛЕ РЕАЛЬНЕ) ==========
+# ========== API ДЛЯ РЕАЛЬНИХ ЦІН З OTPUSK (ВИПРАВЛЕНО) ==========
 def calendar_prices_from_otpusk(request):
     """
     API для отримання реальних цін безпосередньо з Otpusk.com
@@ -113,7 +113,7 @@ def calendar_prices_from_otpusk(request):
     except ValueError:
         return JsonResponse({'error': 'Invalid year/month'}, status=400)
 
-    # Мапи для конвертації назв
+    # ПОВНА МАПА КРАЇН ДЛЯ OTPUSK API
     country_map = {
         'Єгипет': 'Egypt',
         'Туреччина': 'Turkey',
@@ -122,11 +122,17 @@ def calendar_prices_from_otpusk(request):
         'Іспанія': 'Spain',
         'Мальдіви': 'Maldives',
         'Кіпр': 'Cyprus',
+        'Чорногорія': 'Montenegro',
+        'Хорватія': 'Croatia',
         'Греція': 'Greece',
         'Туніс': 'Tunisia',
         'Таїланд': 'Thailand',
+        'Грузія': 'Georgia',
+        'Італія': 'Italy',
+        'Португалія': 'Portugal',
     }
 
+    # ПОВНА МАПА МІСТ ВИЛЬОТУ
     departure_map = {
         'Кишинів': 'Chisinau',
         'Кишинев': 'Chisinau',
@@ -138,12 +144,20 @@ def calendar_prices_from_otpusk(request):
         'Прага': 'Prague',
         'Тбілісі': 'Tbilisi',
         'Стамбул': 'Istanbul',
+        'Київ': 'Kyiv',
+        'Одеса': 'Odessa',
+        'Львів': 'Lviv',
+        'Харків': 'Kharkiv',
     }
 
+    # Конвертуємо назви
     api_country = country_map.get(country, country)
     api_departure = departure_map.get(departure, departure or 'Chisinau')
 
-    # Визначаємо кількість днів у місяці
+    # Логування для перевірки
+    print(f"🔍 Запит до Otpusk: country={api_country}, departure={api_departure}, year={year}, month={month}")
+
+    # Визначаємо діапазон дат
     if month == 12:
         start_date = f"{year}-12-01"
         end_date = f"{year + 1}-01-01"
@@ -169,6 +183,8 @@ def calendar_prices_from_otpusk(request):
 
     try:
         response = requests.get(otpusk_url, params=params, timeout=30)
+        print(f"📡 Відповідь Otpusk: статус {response.status_code}")
+
         if response.status_code == 200:
             data = response.json()
             prices_by_day = {}
@@ -190,14 +206,20 @@ def calendar_prices_from_otpusk(request):
             for day in range(1, days_in_month + 1):
                 prices.append(prices_by_day.get(day, None))
 
-            max_price = max([p for p in prices if p], default=50000)
-            return JsonResponse({'prices': prices, 'max_price': max_price})
+            # Якщо знайдено реальні ціни – повертаємо їх
+            if any(prices):
+                max_price = max([p for p in prices if p], default=50000)
+                print(f"✅ Отримано реальні ціни для {country}: {len([p for p in prices if p])} днів")
+                return JsonResponse({'prices': prices, 'max_price': max_price})
+            else:
+                print(f"⚠️ Реальних цін немає, використовуємо демо-дані")
+                return JsonResponse(get_fallback_prices(month, year))
         else:
+            print(f"❌ Помилка Otpusk API: статус {response.status_code}")
             return JsonResponse(get_fallback_prices(month, year))
     except Exception as e:
-        print(f"Помилка Otpusk API: {e}")
+        print(f"❌ Помилка Otpusk API: {e}")
         return JsonResponse(get_fallback_prices(month, year))
-
 
 # ========== API ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН (З БАЗИ ДАНИХ) ==========
 def calendar_prices_from_db(request):
