@@ -1406,5 +1406,81 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 </style>
+<!-- ========== ФІНАЛЬНЕ ВИДАЛЕННЯ ПОВІДОМЛЕННЯ OTPUSK ========== -->
+<script>
+(function() {
+    'use strict';
 
+    // Функція, яка повністю видаляє елемент, а не просто ховає
+    function removeOtpuskMessage() {
+        // Шукаємо всі можливі варіанти повідомлення
+        const selectors = [
+            '.new_os-date-check',
+            '.new_os-date-check-wrapper',
+            '.new_f-validate-message',
+            '.new_f-dropdown-msg',
+            '#new_os-date-check'
+        ];
+
+        for (const selector of selectors) {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => {
+                if (el && el.remove) {
+                    el.remove();
+                    console.log('🗑️ Видалено елемент:', selector);
+                }
+            });
+        }
+
+        // Шукаємо будь-який елемент, що містить текст повідомлення
+        const allDivs = document.querySelectorAll('div, span, p, .new_f-dropdown-body');
+        allDivs.forEach(el => {
+            const text = (el.innerText || '').toLowerCase();
+            if ((text.includes('виберіть країну') ||
+                 text.includes('виберіть курорт') ||
+                 text.includes('виберіть готель') ||
+                 text.includes('clubdator')) &&
+                text.length < 200) {
+                if (el.remove) el.remove();
+                else el.style.display = 'none';
+                console.log('🗑️ Видалено повідомлення за текстом');
+            }
+        });
+    }
+
+    // Запускаємо негайно
+    removeOtpuskMessage();
+
+    // Запускаємо з різними затримками (бо Otpusk створює елемент пізніше)
+    const delays = [100, 300, 500, 800, 1000, 1500, 2000, 3000, 5000];
+    delays.forEach(delay => {
+        setTimeout(removeOtpuskMessage, delay);
+    });
+
+    // Спостерігаємо за змінами в DOM
+    if (window.MutationObserver) {
+        const observer = new MutationObserver(function(mutations) {
+            // Перевіряємо, чи з'явилося повідомлення
+            let shouldRemove = false;
+            for (const mutation of mutations) {
+                if (mutation.addedNodes.length) {
+                    shouldRemove = true;
+                    break;
+                }
+            }
+            if (shouldRemove) {
+                removeOtpuskMessage();
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+        // Зупиняємо спостерігач через 10 секунд, щоб не навантажувати
+        setTimeout(() => observer.disconnect(), 10000);
+    }
+})();
+</script>
 {% endblock %}
