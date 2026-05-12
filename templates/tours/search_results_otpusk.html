@@ -1383,8 +1383,22 @@ document.addEventListener('DOMContentLoaded', function() {
     border-color: var(--primary-color) !important;
     color: white !important;
 }
-    /* Приховуємо всі блоки з класом new_os-date-check */
+    /* ПРИХОВУЄМО БЛОК З ПОВІДОМЛЕННЯМ "Виберіть країну" */
 .new_os-date-check {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    pointer-events: none !important;
+}
+
+/* Також приховуємо будь-які інші блоки з помилками */
+.new_os-date-check .new_f-dropdown-body,
+.new_os-date-check .new_f-dropdown-btn {
     display: none !important;
 }
 </style>
