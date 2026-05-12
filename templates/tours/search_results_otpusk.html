@@ -1,139 +1,139 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}Результати пошуку турів{% endblock %}
-
 {% block content %}
+<!-- ⚡ НАДЗВИЧАЙНО АГРЕСИВНЕ ПРИХОВУВАННЯ ПОВІДОМЛЕННЯ -->
+<style>
+    /* Блокуємо ВСІ можливі варіанти появи повідомлення */
+    .new_os-date-check,
+    .new_os-date-check *,
+    .new_os-date-check-wrapper,
+    .new_os-date-check-wrapper *,
+    [class*="date-check"],
+    [class*="DateCheck"],
+    [class*="error-popup"],
+    [class*="warning-popup"],
+    .new_os-error,
+    .new_os-error *,
+    .new_f-validate-message,
+    .new_f-validate-message *,
+    .new_f-dropdown-msg,
+    .new_os-message,
+    .ui-tooltip,
+    .tooltip,
+    .tooltip-inner,
+    .popover,
+    .popover-content,
+    .alert,
+    .alert-warning,
+    .alert-danger,
+    .notification,
+    .message-popup,
+    .error-message,
+    .warning-message {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        pointer-events: none !important;
+        position: absolute !important;
+        top: -9999px !important;
+        left: -9999px !important;
+        z-index: -9999 !important;
+    }
+</style>
+
+<!-- ⚡ СКРИПТ, ЩО ВИДАЛЯЄ ПОВІДОМЛЕННЯ ДО ТОГО, ЯК ВОНО З'ЯВИТЬСЯ -->
+<script>
+    (function() {
+        // Функція для негайного видалення
+        function killMessagesNow() {
+            // Шукаємо всі елементи, які можуть містити повідомлення
+            var allElements = document.querySelectorAll('*');
+            for (var i = 0; i < allElements.length; i++) {
+                var el = allElements[i];
+                var text = (el.innerText || el.textContent || '').toLowerCase();
+                var html = (el.innerHTML || '').toLowerCase();
+
+                // Якщо знайшли текст повідомлення
+                if ((text.includes('виберіть') && (text.includes('країн') || text.includes('курорт') || text.includes('готель'))) ||
+                    html.includes('clubdator') ||
+                    (el.className && (el.className.includes('date-check') || el.className.includes('error')))) {
+
+                    // Видаляємо елемент
+                    if (el.remove) {
+                        el.remove();
+                    } else {
+                        el.style.display = 'none';
+                        el.style.visibility = 'hidden';
+                        el.style.height = '0';
+                        el.style.opacity = '0';
+                    }
+                }
+            }
+        }
+
+        // Виконуємо ЯКНАЙШВИДШЕ
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', killMessagesNow);
+        } else {
+            killMessagesNow();
+        }
+
+        // Виконуємо ЗНОВУ і ЗНОВУ з різними затримками
+        var delays = [0, 1, 5, 10, 20, 50, 100, 200, 300, 500, 750, 1000, 1500, 2000, 3000, 5000];
+        for (var d = 0; d < delays.length; d++) {
+            (function(delay) {
+                setTimeout(killMessagesNow, delay);
+            })(delays[d]);
+        }
+
+        // Спостерігаємо за будь-якими змінами в DOM
+        if (window.MutationObserver) {
+            var observer = new MutationObserver(function(mutations) {
+                killMessagesNow();
+            });
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                characterData: true
+            });
+        }
+
+        // Перехоплюємо додавання нових елементів через override
+        var originalAppendChild = Node.prototype.appendChild;
+        Node.prototype.appendChild = function() {
+            var result = originalAppendChild.apply(this, arguments);
+            killMessagesNow();
+            return result;
+        };
+
+        var originalInsertBefore = Node.prototype.insertBefore;
+        Node.prototype.insertBefore = function() {
+            var result = originalInsertBefore.apply(this, arguments);
+            killMessagesNow();
+            return result;
+        };
+
+        var originalInnerHTMLSetter = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML').set;
+        Object.defineProperty(Element.prototype, 'innerHTML', {
+            set: function(value) {
+                originalInnerHTMLSetter.call(this, value);
+                killMessagesNow();
+            }
+        });
+    })();
+</script>
+
 <div class="container my-5">
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-4">
             <h2 class="mb-4" style="color: #000000; text-align: left;">Результати пошуку турів</h2>
             <div id="otpusk-search-module">
-                <!-- ⚡ НЕГАЙНЕ ПРИХОВУВАННЯ ПОВІДОМЛЕНЬ (перші мілісекунди) -->
-                <style>
-                    /* Блокуємо ВСІ попередження та повідомлення Otpusk */
-                    .new_os-date-check,
-                    .new_os-date-check *,
-                    .new_os-error,
-                    .new_os-error *,
-                    .new_os-message,
-                    .new_os-message *,
-                    .new_f-dropdown-msg,
-                    .new_f-dropdown-msg *,
-                    [class*="date-check"],
-                    [class*="error-msg"],
-                    [class*="warning-msg"],
-                    #new_os-error,
-                    .new_os-date-check-wrapper,
-                    .new_f-validate-message,
-                    .new_f-validate-message * {
-                        display: none !important;
-                        visibility: hidden !important;
-                        opacity: 0 !important;
-                        height: 0 !important;
-                        min-height: 0 !important;
-                        max-height: 0 !important;
-                        overflow: hidden !important;
-                        margin: 0 !important;
-                        padding: 0 !important;
-                        border: 0 !important;
-                        pointer-events: none !important;
-                        position: absolute !important;
-                        top: -9999px !important;
-                        left: -9999px !important;
-                    }
-
-                    /* Додаткове блокування для будь-яких спливаючих підказок */
-                    .ui-tooltip,
-                    .ui-tooltip-content,
-                    .tooltip,
-                    [role="tooltip"] {
-                        display: none !important;
-                        visibility: hidden !important;
-                    }
-
-                    /* Видаляємо будь-які білі квадрати/плями */
-                    #otpusk-search-module div:empty {
-                        display: none !important;
-                    }
-                </style>
-
-                <!-- СКРИПТ, ЩО НЕГАЙНО ВИДАЛЯЄ ПОВІДОМЛЕННЯ ПРИ ЗАВАНТАЖЕННІ -->
-                <script>
-                    (function() {
-                        // Функція для негайного видалення всіх повідомлень
-                        function removeAllMessages() {
-                            var selectors = [
-                                '.new_os-date-check',
-                                '.new_os-date-check *',
-                                '.new_os-error',
-                                '.new_os-message',
-                                '.new_f-dropdown-msg',
-                                '[class*="date-check"]',
-                                '[class*="error"]',
-                                '#new_os-error'
-                            ];
-
-                            selectors.forEach(function(selector) {
-                                var elements = document.querySelectorAll(selector);
-                                elements.forEach(function(el) {
-                                    if (el && el.remove) {
-                                        el.remove();
-                                    } else if (el) {
-                                        el.style.display = 'none';
-                                        el.style.visibility = 'hidden';
-                                        el.style.opacity = '0';
-                                        el.style.height = '0';
-                                        el.style.overflow = 'hidden';
-                                    }
-                                });
-                            });
-
-                            // Шукаємо будь-який текст, схожий на повідомлення
-                            var allDivs = document.querySelectorAll('#otpusk-search-module div, #otpusk-search-module span');
-                            allDivs.forEach(function(el) {
-                                var text = (el.innerText || el.textContent || '').toLowerCase();
-                                if (text.includes('виберіть') && (text.includes('країн') || text.includes('курорт') || text.includes('готель'))) {
-                                    el.style.display = 'none';
-                                    el.style.visibility = 'hidden';
-                                    el.style.height = '0';
-                                    el.style.overflow = 'hidden';
-                                    if (el.parentNode) {
-                                        el.parentNode.style.minHeight = '0';
-                                    }
-                                }
-                            });
-                        }
-
-                        // Запускаємо негайно
-                        if (document.body) {
-                            removeAllMessages();
-                        }
-
-                        // Запускаємо знову при завантаженні DOM
-                        if (document.readyState === 'loading') {
-                            document.addEventListener('DOMContentLoaded', removeAllMessages);
-                        } else {
-                            removeAllMessages();
-                        }
-
-                        // Запускаємо через MutationObserver для нових елементів
-                        setTimeout(function() {
-                            var observer = new MutationObserver(function() {
-                                removeAllMessages();
-                            });
-                            var targetNode = document.getElementById('otpusk-search-module') || document.body;
-                            if (targetNode) {
-                                observer.observe(targetNode, { childList: true, subtree: true, attributes: true });
-                            }
-                            // Через 100 мс ще раз
-                            setTimeout(removeAllMessages, 100);
-                            setTimeout(removeAllMessages, 500);
-                            setTimeout(removeAllMessages, 1000);
-                        }, 0);
-                    })();
-                </script>
-
                 <!-- ОРИГІНАЛЬНИЙ КОД OTPUSK -->
                 <script>
                     var osGeo = '';
@@ -162,108 +162,111 @@
                 <script src="https://export.otpusk.com/js/order"></script>
 
                 <!-- СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ПАРАМЕТРІВ -->
-                <script>
-                    // Отримуємо параметри з URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
-                    const departureText = urlParams.get('departure_text') || '';
-                    const dateFrom = urlParams.get('date_from') || '';
-                    const dateTo = urlParams.get('date_to') || '';
+                <!-- СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ПАРАМЕТРІВ -->
+<script>
+    // Отримуємо параметри з URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
+    const departureText = urlParams.get('departure_text') || '';
+    const dateFrom = urlParams.get('date_from') || '';
+    const dateTo = urlParams.get('date_to') || '';
 
-                    console.log('📥 Отримані параметри:', { geo, departureText, dateFrom, dateTo });
+    console.log('📥 Отримані параметри:', { geo, departureText, dateFrom, dateTo });
 
-                    if (geo || departureText || dateFrom) {
-                        let attempts = 0;
-                        const maxAttempts = 30;
+    if (geo || departureText || dateFrom) {
+        let attempts = 0;
+        const maxAttempts = 30;
 
-                        function setFormValues() {
-                            attempts++;
-                            console.log(`🔄 Спроба ${attempts} встановлення параметрів...`);
+        function setFormValues() {
+            attempts++;
+            console.log(`🔄 Спроба ${attempts} встановлення параметрів...`);
 
-                            let success = false;
+            let success = false;
 
-                            // Встановлюємо КРАЇНУ - через реальний клік по опції
-                            if (geo) {
-                                // Шукаємо поле вводу
-                                const countryInput = document.querySelector('#location');
-                                if (countryInput) {
-                                    countryInput.value = '';
-                                    countryInput.dispatchEvent(new Event('focus', { bubbles: true }));
-                                    countryInput.value = geo;
-                                    countryInput.dispatchEvent(new Event('input', { bubbles: true }));
+            // Встановлюємо КРАЇНУ - через реальний клік по опції
+            if (geo) {
+                // Шукаємо поле вводу
+                const countryInput = document.querySelector('#location');
+                if (countryInput) {
+                    // Очищаємо і вводимо текст
+                    countryInput.value = '';
+                    countryInput.dispatchEvent(new Event('focus', { bubbles: true }));
+                    countryInput.value = geo;
+                    countryInput.dispatchEvent(new Event('input', { bubbles: true }));
 
-                                    setTimeout(() => {
-                                        const items = document.querySelectorAll('#cntList .ui-menu-item');
-                                        for (let item of items) {
-                                            if (item.innerText.trim() === geo) {
-                                                item.click();
-                                                console.log('✅ Клік по країні:', geo);
-                                                success = true;
-                                                break;
-                                            }
-                                        }
-                                    }, 300);
-                                }
+                    // Чекаємо появи списку і клікаємо по потрібній опції
+                    setTimeout(() => {
+                        const items = document.querySelectorAll('#cntList .ui-menu-item');
+                        for (let item of items) {
+                            if (item.innerText.trim() === geo) {
+                                item.click();
+                                console.log('✅ Клік по країні:', geo);
+                                success = true;
+                                break;
                             }
-
-                            // Встановлюємо МІСТО ВИЛЬОТУ через клік
-                            if (departureText) {
-                                setTimeout(() => {
-                                    const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                                    for (let item of items) {
-                                        if (item.innerText.trim() === departureText) {
-                                            item.click();
-                                            console.log('✅ Клік по місту вильоту:', departureText);
-                                            success = true;
-                                            break;
-                                        }
-                                    }
-                                }, 600);
-                            }
-
-                            // Встановлюємо ДАТИ через клік
-                            if (dateFrom && dateTo) {
-                                setTimeout(() => {
-                                    const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
-                                    if (dateButton) {
-                                        dateButton.click();
-                                        setTimeout(() => {
-                                            const fromDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                                            for (let cell of fromDateCells) {
-                                                if (cell.innerText === dateFrom.split('.')[0]) {
-                                                    cell.click();
-                                                    console.log('✅ Клік по даті початку:', dateFrom);
-                                                    break;
-                                                }
-                                            }
-                                            setTimeout(() => {
-                                                const toDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                                                for (let cell of toDateCells) {
-                                                    if (cell.innerText === dateTo.split('.')[0]) {
-                                                        cell.click();
-                                                        console.log('✅ Клік по даті закінчення:', dateTo);
-                                                        break;
-                                                    }
-                                                }
-                                            }, 200);
-                                        }, 200);
-                                    }
-                                }, 900);
-                            }
-
-                            // Запускаємо пошук після всіх дій
-                            setTimeout(() => {
-                                const searchBtn = document.querySelector('.new_f-form-submit');
-                                if (searchBtn && geo) {
-                                    searchBtn.click();
-                                    console.log('🔍 Автоматичний пошук запущено!');
-                                }
-                            }, 2000);
                         }
+                    }, 300);
+                }
+            }
 
-                        setTimeout(setFormValues, 2000);
+            // Встановлюємо МІСТО ВИЛЬОТУ через клік
+            if (departureText) {
+                setTimeout(() => {
+                    const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                    for (let item of items) {
+                        if (item.innerText.trim() === departureText) {
+                            item.click();
+                            console.log('✅ Клік по місту вильоту:', departureText);
+                            success = true;
+                            break;
+                        }
                     }
-                </script>
+                }, 600);
+            }
+
+            // Встановлюємо ДАТИ через клік
+            if (dateFrom && dateTo) {
+                setTimeout(() => {
+                    const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
+                    if (dateButton) {
+                        dateButton.click();
+                        setTimeout(() => {
+                            const fromDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                            for (let cell of fromDateCells) {
+                                if (cell.innerText === dateFrom.split('.')[0]) {
+                                    cell.click();
+                                    console.log('✅ Клік по даті початку:', dateFrom);
+                                    break;
+                                }
+                            }
+                            setTimeout(() => {
+                                const toDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                                for (let cell of toDateCells) {
+                                    if (cell.innerText === dateTo.split('.')[0]) {
+                                        cell.click();
+                                        console.log('✅ Клік по даті закінчення:', dateTo);
+                                        break;
+                                    }
+                                }
+                            }, 200);
+                        }, 200);
+                    }
+                }, 900);
+            }
+
+            // Запускаємо пошук після всіх дій
+            setTimeout(() => {
+                const searchBtn = document.querySelector('.new_f-form-submit');
+                if (searchBtn && geo) {
+                    searchBtn.click();
+                    console.log('🔍 Автоматичний пошук запущено!');
+                }
+            }, 2000);
+        }
+
+        setTimeout(setFormValues, 2000);
+    }
+</script>
             </div>
         </div>
     </div>
@@ -1528,73 +1531,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 </style>
-<!-- ПРИБИРАЄМО ОРИГІНАЛЬНЕ ПОВІДОМЛЕННЯ -->
-<style>
-    .new_os-date-check {
-        display: none !important;
-    }
-</style>
-
-<script>
-(function() {
-    // Функція для повного очищення від повідомлень
-    function killAllMessages() {
-        // Знаходимо всі елементи, які можуть містити повідомлення
-        var possibleMessageContainers = document.querySelectorAll('#otpusk-search-module div, #otpusk-search-module span, .new_os-date-check, .new_os-error, .new_f-dropdown-msg');
-
-        possibleMessageContainers.forEach(function(el) {
-            var text = (el.innerText || el.textContent || '').toLowerCase();
-            // Якщо текст містить будь-яке з цих слів
-            if (text.includes('виберіть') && (text.includes('країн') || text.includes('курорт') || text.includes('готель') || text.includes('clubdator'))) {
-                // Повністю видаляємо елемент
-                if (el.remove) {
-                    el.remove();
-                } else {
-                    el.style.display = 'none';
-                    el.style.visibility = 'hidden';
-                    el.style.height = '0';
-                    el.style.opacity = '0';
-                }
-            }
-
-            // Також шукаємо за класом
-            if (el.className && (el.className.includes('date-check') || el.className.includes('error-msg'))) {
-                if (el.remove) {
-                    el.remove();
-                } else {
-                    el.style.display = 'none';
-                }
-            }
-        });
-
-        // Видаляємо будь-які спливаючі вікна
-        var popups = document.querySelectorAll('.ui-datepicker-trigger, .tooltip, .ui-tooltip');
-        popups.forEach(function(p) {
-            if (p.remove) p.remove();
-            else p.style.display = 'none';
-        });
-    }
-
-    // Запускаємо негайно
-    killAllMessages();
-
-    // Запускаємо через різні інтервали
-    var intervals = [0, 50, 100, 200, 500, 1000, 2000, 3000, 5000];
-    intervals.forEach(function(ms) {
-        setTimeout(killAllMessages, ms);
-    });
-
-    // Спостерігаємо за змінами
-    setTimeout(function() {
-        var observer = new MutationObserver(function() {
-            killAllMessages();
-        });
-        var target = document.getElementById('otpusk-search-module') || document.body;
-        if (target) {
-            observer.observe(target, { childList: true, subtree: true, attributes: true, characterData: true });
-        }
-    }, 100);
-})();
-</script>
 
 {% endblock %}
