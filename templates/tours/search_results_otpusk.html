@@ -9,33 +9,13 @@
         <div class="card-body p-4">
             <h2 class="mb-4" style="color: #000000; text-align: left;">Результати пошуку турів</h2>
             <div id="otpusk-search-module">
+                <!-- ОРИГІНАЛЬНИЙ КОД OTPUSK -->
                 <script>
-                    // Отримуємо параметри з URL
-                    const urlParams = new URLSearchParams(window.location.search);
-
-                    const geoRaw = urlParams.get('geo');
-                    const departureText = urlParams.get('departure_text');
-                    const dateFrom = urlParams.get('date_from');
-                    const dateTo = urlParams.get('date_to');
-                    const duration = urlParams.get('duration');
-
-                    let geo = '';
-                    if (geoRaw) {
-                        try {
-                            geo = decodeURIComponent(geoRaw);
-                        } catch(e) {
-                            geo = geoRaw;
-                        }
-                    }
-
-                    console.log('Параметри:', { geo, departureText, dateFrom, dateTo, duration });
-
-                    // Встановлюємо змінні для оригінального модуля Otpusk
-                    var osGeo = geo;
-                    var osDefaultDeparture = departureText || '';
-                    var osDefaultDuration = duration || '';
-                    var osDateFrom = dateFrom || '';
-                    var osDateTo = dateTo || '';
+                    var osGeo = '';
+                    var osDefaultDeparture = '';
+                    var osDefaultDuration = '';
+                    var osDateFrom = '';
+                    var osDateTo = '';
                     var osHotelCategory = '';
                     var osFood = '';
                     var osTransport = '';
@@ -46,7 +26,7 @@
                     var osTourTargetBlank = false;
                     var osOrderUrl = null;
                     var osCurrency = 'converted';
-                    var osAutoStart = true;
+                    var osAutoStart = false;
                 </script>
                 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
                 <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
@@ -55,6 +35,126 @@
                 <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
                 <script src="https://export.otpusk.com/js/onsite/"></script>
                 <script src="https://export.otpusk.com/js/order"></script>
+
+                <!-- СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ПАРАМЕТРІВ -->
+                <script>
+                    // Отримуємо параметри з URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
+                    const departureText = urlParams.get('departure_text') || '';
+                    const dateFrom = urlParams.get('date_from') || '';
+                    const dateTo = urlParams.get('date_to') || '';
+
+                    console.log('📥 Отримані параметри:', { geo, departureText, dateFrom, dateTo });
+
+                    if (geo || departureText || dateFrom) {
+                        // Чекаємо поки форма завантажиться
+                        let attempts = 0;
+                        const maxAttempts = 20;
+
+                        function setFormValues() {
+                            attempts++;
+                            console.log(`🔄 Спроба ${attempts} встановлення параметрів...`);
+
+                            let success = false;
+
+                            // Встановлюємо КРАЇНУ (поле "Куди")
+                            if (geo) {
+                                const countryInput = document.querySelector('#location');
+                                if (countryInput) {
+                                    // Очищаємо поле
+                                    countryInput.value = '';
+                                    // Встановлюємо нове значення
+                                    countryInput.value = geo;
+                                    // Тригеримо події
+                                    countryInput.dispatchEvent(new Event('input', { bubbles: true }));
+                                    countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                    console.log('✅ Встановлено країну:', geo);
+                                    success = true;
+                                } else {
+                                    console.log('⚠️ Поле #location не знайдено');
+                                }
+                            }
+
+                            // Встановлюємо МІСТО ВИЛЬОТУ (поле "Звідки")
+                            if (departureText) {
+                                // Знаходимо елемент з текстом
+                                const fromButton = document.querySelector('#new_os-from .new_f-dropdown-btn');
+                                if (fromButton) {
+                                    // Шукаємо опцію з потрібним текстом
+                                    const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                                    let found = false;
+                                    for (let item of items) {
+                                        if (item.innerText.trim() === departureText) {
+                                            item.click();
+                                            found = true;
+                                            console.log('✅ Встановлено місто вильоту:', departureText);
+                                            success = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!found) {
+                                        console.log('⚠️ Місто не знайдено:', departureText);
+                                    }
+                                }
+                            }
+
+                            // Встановлюємо ДАТИ
+                            if (dateFrom && dateTo) {
+                                // Відкриваємо календар
+                                const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
+                                if (dateButton) {
+                                    dateButton.click();
+
+                                    setTimeout(() => {
+                                        // Вибираємо дату початку
+                                        const fromDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                                        for (let cell of fromDateCells) {
+                                            const cellText = cell.innerText;
+                                            const targetDay = dateFrom.split('.')[0];
+                                            if (cellText === targetDay) {
+                                                cell.click();
+                                                console.log('✅ Встановлено дату початку:', dateFrom);
+                                                break;
+                                            }
+                                        }
+
+                                        setTimeout(() => {
+                                            // Вибираємо дату закінчення
+                                            const toDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                                            for (let cell of toDateCells) {
+                                                const cellText = cell.innerText;
+                                                const targetDay = dateTo.split('.')[0];
+                                                if (cellText === targetDay) {
+                                                    cell.click();
+                                                    console.log('✅ Встановлено дату закінчення:', dateTo);
+                                                    break;
+                                                }
+                                            }
+                                        }, 200);
+                                    }, 200);
+                                }
+                            }
+
+                            // Якщо не вдалося, повторюємо
+                            if (!success && attempts < maxAttempts) {
+                                setTimeout(setFormValues, 500);
+                            } else if (success) {
+                                // Запускаємо пошук
+                                setTimeout(() => {
+                                    const searchBtn = document.querySelector('.new_f-form-submit');
+                                    if (searchBtn) {
+                                        searchBtn.click();
+                                        console.log('🔍 Автоматичний пошук запущено!');
+                                    }
+                                }, 1000);
+                            }
+                        }
+
+                        // Запускаємо через 2 секунди
+                        setTimeout(setFormValues, 2000);
+                    }
+                </script>
             </div>
         </div>
     </div>
