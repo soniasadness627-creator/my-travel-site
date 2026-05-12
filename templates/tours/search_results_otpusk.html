@@ -1403,25 +1403,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 
-    /* Додайте в самий кінець вашого файлу, після всього */
-body .new_os-date-check,
-body .new_os-date-check[style*="display"] {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0 !important;
-    width: 0 !important;
-    overflow: hidden !important;
-    position: fixed !important;
-    top: -9999px !important;
-    left: -9999px !important;
-    pointer-events: none !important;
-    z-index: -1 !important;
-}
 
-body .new_os-date-check * {
-    display: none !important;
-}
 </style>
 <script>
     // Безперервне видалення повідомлення про помилку
@@ -1439,4 +1421,38 @@ body .new_os-date-check * {
         console.log('⏹️ Стеження за помилками зупинено');
     }, 15000);
 </script>
+<style>
+    /* МАКСИМАЛЬНЕ БЛОКУВАННЯ ПОВІДОМЛЕННЯ */
+    .new_os-date-check,
+    .new_os-date-check.new_os-date-check,
+    div.new_os-date-check,
+    body .new_os-date-check,
+    .new_os-date-check[style],
+    .new_os-date-check[style*="display"],
+    .new_os-date-check[style*="block"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        width: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+        overflow: hidden !important;
+        position: fixed !important;
+        top: -9999px !important;
+        left: -9999px !important;
+        pointer-events: none !important;
+        z-index: -9999 !important;
+    }
+
+    .new_os-date-check *,
+    .new_os-date-check .new_f-dropdown-body,
+    .new_os-date-check .new_f-dropdown-btn {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        width: 0 !important;
+    }
+</style>
 {% endblock %}
