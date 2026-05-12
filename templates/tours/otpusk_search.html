@@ -30,6 +30,10 @@
 <!-- ========== СКРИПТ ДЛЯ ПЕРЕДАЧІ ПАРАМЕТРІВ У ФОРМУ ========== -->
 <script>
 (function() {
+    // ЗАХИСТ ВІД ПОВТОРНОГО ВИКОНАННЯ
+    if (window.otpuskParamsSet) return;
+    window.otpuskParamsSet = true;
+
     // Отримуємо параметри з URL
     const urlParams = new URLSearchParams(window.location.search);
     const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
@@ -43,6 +47,7 @@
     if (geo || departureText || dateFrom) {
         let attempts = 0;
         const maxAttempts = 30;
+        let searchTriggered = false;
 
         function setFormValues() {
             attempts++;
@@ -139,14 +144,17 @@
                 }, 800);
             }
 
-            // Запускаємо пошук
-            setTimeout(() => {
-                const searchBtn = document.querySelector('.new_f-form-submit');
-                if (searchBtn && (geo || departureText)) {
-                    searchBtn.click();
-                    console.log('🔍 Пошук запущено!');
-                }
-            }, 2000);
+            // Запускаємо пошук ТІЛЬКИ ОДИН РАЗ
+            if (!searchTriggered) {
+                setTimeout(() => {
+                    const searchBtn = document.querySelector('.new_f-form-submit');
+                    if (searchBtn && (geo || departureText)) {
+                        searchBtn.click();
+                        searchTriggered = true;
+                        console.log('🔍 Пошук запущено!');
+                    }
+                }, 2000);
+            }
         }
 
         // Запускаємо встановлення параметрів з затримкою
