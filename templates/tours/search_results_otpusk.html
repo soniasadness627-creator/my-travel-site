@@ -126,9 +126,15 @@
                 <script src="https://export.otpusk.com/js/order"></script>
                     <!-- Примусове встановлення значень після завантаження -->
     <!-- Примусове встановлення значень після завантаження -->
+<!-- Примусове встановлення значень після завантаження -->
 <script>
-    setTimeout(function() {
-        console.log('🔄 Запуск примусового встановлення параметрів...');
+    let retryCount = 0;
+    const maxRetries = 10;
+
+    function setFormValues() {
+        console.log(`🔄 Спроба ${retryCount + 1} встановлення параметрів...`);
+
+        let success = false;
 
         // 1. Встановлюємо дату ПОЧАТКУ
         if (window.osDateFrom) {
@@ -137,18 +143,20 @@
                 dateInput.value = window.osDateFrom;
                 dateInput.dispatchEvent(new Event('change', { bubbles: true }));
                 console.log('✅ Встановлено дату ПОЧАТКУ:', window.osDateFrom);
+                success = true;
             } else {
-                console.log('⚠️ Поле #date_from не знайдено');
+                console.log('⚠️ Поле #date_from ще не завантажилось');
             }
         }
 
-        // 2. Встановлюємо дату ЗАКІНЧЕННЯ (ВАЖЛИВО!)
+        // 2. Встановлюємо дату ЗАКІНЧЕННЯ
         if (window.osDateTo) {
             const dateToInput = document.querySelector('#date_to');
             if (dateToInput) {
                 dateToInput.value = window.osDateTo;
                 dateToInput.dispatchEvent(new Event('change', { bubbles: true }));
                 console.log('✅ Встановлено дату ЗАКІНЧЕННЯ:', window.osDateTo);
+                success = true;
             }
         }
 
@@ -159,6 +167,7 @@
                 durationSelect.value = window.osDefaultDuration;
                 durationSelect.dispatchEvent(new Event('change', { bubbles: true }));
                 console.log('✅ Встановлено тривалість:', window.osDefaultDuration);
+                success = true;
             }
         }
 
@@ -171,6 +180,7 @@
                         departureSelect.selectedIndex = i;
                         departureSelect.dispatchEvent(new Event('change', { bubbles: true }));
                         console.log('✅ Встановлено місто вильоту:', window.osDefaultDeparture);
+                        success = true;
                         break;
                     }
                 }
@@ -184,11 +194,12 @@
                 countryInput.value = window.osGeo;
                 countryInput.dispatchEvent(new Event('change', { bubbles: true }));
                 console.log('✅ Встановлено країну:', window.osGeo);
+                success = true;
             }
         }
 
-        // 6. Запускаємо пошук
-        if (window.osAutoStart) {
+        // Якщо поля знайдені, запускаємо пошук
+        if (success && window.osAutoStart) {
             setTimeout(function() {
                 const searchBtn = document.querySelector('.new_f-form-submit');
                 if (searchBtn) {
@@ -198,8 +209,18 @@
                     console.log('⚠️ Кнопку пошуку не знайдено');
                 }
             }, 500);
+        } else if (retryCount < maxRetries) {
+            // Якщо поля не знайдені, повторюємо через 1 секунду
+            retryCount++;
+            console.log(`⏳ Повторна спроба через 1 секунду (${retryCount}/${maxRetries})...`);
+            setTimeout(setFormValues, 1000);
+        } else {
+            console.log('❌ Не вдалося знайти поля форми після', maxRetries, 'спроб');
         }
-    }, 1500);
+    }
+
+    // Запускаємо через 1 секунду
+    setTimeout(setFormValues, 1000);
 </script>
             </div>
         </div>
