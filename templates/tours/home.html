@@ -176,7 +176,6 @@
 <script>
 // ========== ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА СТОРІНКУ РЕЗУЛЬТАТІВ ПРИ КЛІКУ НА ДАТУ ==========
 function getCurrentNights() {
-    // За замовчуванням 7 ночей (можна розширити з випадаючим списком)
     return 7;
 }
 
@@ -192,7 +191,33 @@ function selectCalendarDate(dateISO, price, nights) {
     const country = currentCountryTab ? currentCountryTab.getAttribute('data-country') : 'Єгипет';
 
     const departureSelect = document.getElementById('departureCitySelect');
-    const departure = departureSelect ? departureSelect.value : 'Київ';
+    const departureName = departureSelect ? departureSelect.value : 'Київ';
+
+    // ПРАВИЛЬНІ ID МІСТ ДЛЯ OTPUSK (з вашого сайту)
+    const departureCityIds = {
+        "Київ": "1544",
+        "Кишинів": "1831",
+        "Одеса": "1358",
+        "Дніпро": "1874",
+        "Львів": "1397",
+        "Харків": "1880",
+        "Житомир": "2056",
+        "Запоріжжя": "1875",
+        "Кривий Ріг": "1883",
+        "Варшава": "1124",
+        "Краків": "1126",
+        "Вроцлав": "1517",
+        "Жешув": "3158",
+        "Катовіце": "3032",
+        "Бухарест": "1373",
+        "Сучава": "1727",
+        "Ясси": "4091",
+        "Будапешт": "992",
+        "Берлін": "870",
+        "Прага": "845"
+    };
+
+    const departureId = departureCityIds[departureName] || "1544";
 
     let baseUrl = '/search-otpusk/';
     if (window.location.pathname.startsWith('/a/')) {
@@ -203,14 +228,21 @@ function selectCalendarDate(dateISO, price, nights) {
     // Розраховуємо дату закінчення
     const endDate = new Date(selectedDate);
     endDate.setDate(selectedDate.getDate() + olParam);
-    const dateToParam = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
 
-    // Використовуємо ТІ САМІ назви параметрів, що очікує Otpusk
+    // Форматуємо дати для Otpusk (DD.MM.YYYY)
+    const formatDateForOtpusk = (d) => {
+        return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+    };
+
+    const dateFromFormatted = formatDateForOtpusk(selectedDate);
+    const dateToFormatted = formatDateForOtpusk(endDate);
+
+    // Формуємо параметри для Otpusk
     const params = new URLSearchParams({
-        country: country,
-        departure: departure,
-        date_from: odParam,
-        date_to: dateToParam,
+        geo: country,
+        departure_id: departureId,
+        date_from: dateFromFormatted,
+        date_to: dateToFormatted,
         duration: olParam,
         auto_search: '1'
     });
@@ -680,4 +712,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
 {% endblock %}
