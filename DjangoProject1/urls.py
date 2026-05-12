@@ -78,6 +78,9 @@ urlpatterns = [
     # ДЛЯ АГЕНТСЬКИХ САЙТІВ
     path('a/<slug:slug>/consultation-ajax/', tours_views.consultation_ajax, name='agent_consultation_ajax'),
 
+    # ========== НОВИЙ МАРШРУТ ДЛЯ КАЛЕНДАРЯ З БАЗИ ДАНИХ ==========
+    # path('api/calendar-prices-db/', tours_views.calendar_prices_from_db, name='calendar_prices_db'),
+
     # ========== AJAX ОБРОБКА БРОНЮВАННЯ (BOOKING) ==========
     path('booking-ajax/', tours_views.booking_ajax, name='booking_ajax'),
     # ДЛЯ АГЕНТСЬКИХ САЙТІВ
