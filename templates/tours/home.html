@@ -53,27 +53,16 @@
         <div class="departure-city mb-3 text-center">
             <label class="fw-bold me-2">Місто виїзду:</label>
             <select id="departureCitySelect" class="form-select d-inline-block w-auto">
-                <option value="Київ" selected>Київ</option>
-                <option value="Одеса">Одеса</option>
-                <option value="Дніпро">Дніпро</option>
-                <option value="Львів">Львів</option>
-                <option value="Харків">Харків</option>
-                <option value="Житомир">Житомир</option>
-                <option value="Запоріжжя">Запоріжжя</option>
-                <option value="Кривий Ріг">Кривий Ріг</option>
-                <option value="Кишинів">Кишинів</option>
-                <option value="Варшава">Варшава</option>
-                <option value="Краків">Краків</option>
-                <option value="Вроцлав">Вроцлав</option>
-                <option value="Жешув">Жешув</option>
-                <option value="Катовіце">Катовіце</option>
-                <option value="Бухарест">Бухарест</option>
-                <option value="Сучава">Сучава</option>
-                <option value="Ясси">Ясси</option>
-                <option value="Будапешт">Будапешт</option>
-                <option value="Берлін">Берлін</option>
-                <option value="Прага">Прага</option>
-            </select>
+    <option value="Кишинів" selected>Кишинів</option>
+    <option value="Варшава">Варшава</option>
+    <option value="Краків">Краків</option>
+    <option value="Бухарест">Бухарест</option>
+    <option value="Будапешт">Будапешт</option>
+    <option value="Берлін">Берлін</option>
+    <option value="Прага">Прага</option>
+    <option value="Тбілісі">Тбілісі</option>
+    <option value="Стамбул">Стамбул</option>
+</select>
         </div>
 
         <div class="country-tabs mb-4"></div>
@@ -195,16 +184,16 @@ function selectCalendarDate(dateISO, price, nights) {
 
     // ТІЛЬКИ ТІ МІСТА, ЯКІ Є В OTPUSK
     const departureTextMap = {
-        "Кишинів": "Кишинева",
-        "Варшава": "Варшави",
-        "Краків": "Кракова",
-        "Бухарест": "Бухареста",
-        "Будапешт": "Будапешта",
-        "Берлін": "Берліна",
-        "Прага": "Праги",
-        "Тбілісі": "Тбілісі",
-        "Стамбул": "Стамбула"
-    };
+    "Кишинів": "Кишинева",
+    "Варшава": "Варшави",
+    "Краків": "Кракова",
+    "Бухарест": "Бухареста",
+    "Будапешт": "Будапешта",
+    "Берлін": "Берліна",
+    "Прага": "Праги",
+    "Тбілісі": "Тбілісі",
+    "Стамбул": "Стамбула"
+};
 
     const departureText = departureTextMap[departureName] || departureName;
 
