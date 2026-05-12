@@ -10,51 +10,41 @@
             <h2 class="mb-4" style="color: #000000; text-align: left;">Результати пошуку турів</h2>
             <div id="otpusk-search-module">
                 <script>
-    // Отримуємо параметри з URL
-    const urlParams = new URLSearchParams(window.location.search);
+                    // Отримуємо параметри з URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const geo = urlParams.get('geo') || '';
+                    const departureText = urlParams.get('departure_text') || '';
+                    const dateFrom = urlParams.get('date_from') || '';
+                    const dateTo = urlParams.get('date_to') || '';
+                    const duration = urlParams.get('duration') || '';
 
-    const geoRaw = urlParams.get('geo');
-    const departureText = urlParams.get('departure_text');
-    const dateFrom = urlParams.get('date_from');
-    const dateTo = urlParams.get('date_to');
-    const duration = urlParams.get('duration');
+                    // Якщо є параметри - перенаправляємо на Otpusk з ними
+                    if (geo && departureText && dateFrom && dateTo) {
+                        // Мапінг назв міст на ID (з вашого сайту)
+                        const cityIds = {
+                            "Кишинева": "1831",
+                            "Варшави": "1124",
+                            "Кракова": "1126",
+                            "Бухареста": "1373",
+                            "Будапешта": "992",
+                            "Берліна": "870",
+                            "Праги": "845",
+                            "Тбілісі": "1776",
+                            "Стамбула": "961"
+                        };
 
-    let geo = '';
-    if (geoRaw) {
-        try {
-            geo = decodeURIComponent(geoRaw);
-        } catch(e) {
-            geo = geoRaw;
-        }
-    }
+                        const departureId = cityIds[departureText] || "";
 
-    console.log('Параметри:', { geo, departureText, dateFrom, dateTo, duration });
+                        // Формуємо URL для редиректу
+                        const searchUrl = `https://export.otpusk.com/onsite/?geo=${encodeURIComponent(geo)}&departure=${departureId}&date_from=${dateFrom}&date_to=${dateTo}&duration=${duration}&lang=ua&currency=converted`;
 
-    // Встановлюємо змінні для оригінального модуля Otpusk
-    var osGeo = geo;
-    var osDefaultDeparture = departureText || '';  // ← тепер текстова назва!
-    var osDefaultDuration = duration || '';
-    var osDateFrom = dateFrom || '';
-    var osDateTo = dateTo || '';
-    var osHotelCategory = '';
-    var osFood = '';
-    var osTransport = '';
-    var osTarget = '';
-    var osContainer = null;
-    var osTourContainer = null;
-    var osLang = 'ua';
-    var osTourTargetBlank = false;
-    var osOrderUrl = null;
-    var osCurrency = 'converted';
-    var osAutoStart = true;
-</script>
-                <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
-                <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
-                <script src="https://export.otpusk.com/js/onsite/"></script>
-                <script src="https://export.otpusk.com/js/order"></script>
+                        console.log('Перенаправлення на Otpusk:', searchUrl);
+                        window.location.href = searchUrl;
+                    } else {
+                        // Якщо параметрів немає - показуємо звичайну форму
+                        document.write('Loading search form...');
+                    }
+                </script>
             </div>
         </div>
     </div>
