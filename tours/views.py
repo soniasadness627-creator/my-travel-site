@@ -34,8 +34,7 @@ def get_random_agent():
 # ========== API ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН (ДЕМО-ДАНІ З РЕАЛІСТИЧНИМИ ЦІНАМИ) ==========
 def calendar_prices_otpusk(request):
     """
-    API для календаря низьких цін (демо-дані з реалістичними цінами)
-    Працює ШВИДКО і завжди повертає дані
+    API для календаря низьких цін (реалістичні демо-дані)
     """
     country = request.GET.get('country')
     year = request.GET.get('year')
@@ -59,26 +58,7 @@ def calendar_prices_otpusk(request):
         next_month = datetime(year, month + 1, 1)
         days_in_month = (next_month - timedelta(days=1)).day
 
-    # Генеруємо реалістичні ціни залежно від країни та міста вильоту
-    result = get_realistic_prices(month, year, country, departure)
-
-    return JsonResponse(result)
-
-
-def get_realistic_prices(month, year, country, departure):
-    """
-    Генерує реалістичні ціни на основі країни та міста вильоту
-    """
-    random.seed(year * 12 + month + hash(country or '') + hash(departure or ''))
-
-    # Визначаємо кількість днів у місяці
-    if month == 12:
-        days_in_month = 31
-    else:
-        next_month = datetime(year, month + 1, 1)
-        days_in_month = (next_month - timedelta(days=1)).day
-
-    # ========== БАЗОВІ ЦІНИ ДЛЯ КРАЇН ==========
+    # ========== ВАШІ ТОЧНІ ДІАПАЗОНИ ЦІН ДЛЯ КРАЇН ==========
     country_prices = {
         'Єгипет': (40000, 55500),
         'Туреччина': (37000, 58000),
@@ -100,79 +80,36 @@ def get_realistic_prices(month, year, country, departure):
         'Італія': (45000, 85000),
     }
 
-    # ========== КОЕФІЦІЄНТИ ДЛЯ РІЗНИХ МІСТ ВИЛЬОТУ ==========
-    departure_factors = {
-        'Кишинів': 1.00,
-        'Кишинев': 1.00,
-        'Варшава': 1.15,
-        'Краків': 1.12,
-        'Бухарест': 1.05,
-        'Будапешт': 1.10,
-        'Берлін': 1.25,
-        'Прага': 1.18,
-        'Тбілісі': 1.08,
-        'Стамбул': 1.12,
-        'Київ': 0.95,
-        'Одеса': 0.98,
-        'Львів': 0.97,
-        'Харків': 0.96,
-    }
-
     # Отримуємо діапазон цін для країни
     if country and country in country_prices:
         min_price, max_price = country_prices[country]
     else:
         min_price, max_price = 30000, 70000
 
-    # Отримуємо коефіцієнт для міста вильоту
-    factor = departure_factors.get(departure, 1.00)
-
-    # Застосовуємо коефіцієнт до діапазону
-    min_price = int(min_price * factor)
-    max_price = int(max_price * factor)
-
-    # Сезонні коефіцієнти
-    seasonal_factor = 1.0
-    if month in [6, 7, 8]:  # літо
-        seasonal_factor = 1.15
-    elif month in [1, 2, 12]:  # зима
-        seasonal_factor = 0.9
-
+    # Генеруємо ціни (БЕЗ сезонних коефіцієнтів та випадкових варіацій)
+    random.seed(year * 12 + month)
     prices = []
+
     for day in range(1, days_in_month + 1):
-        # Генеруємо ціну в заданому діапазоні
+        # Генеруємо ціну ТІЛЬКИ у вашому діапазоні
         price_range = max_price - min_price
         price = min_price + (price_range * random.random())
 
-        # Додаємо сезонний коефіцієнт
-        price = price * seasonal_factor
-
-        # Вихідні дорожчі на 10-20%
+        # Вихідні дорожчі на 5-10% (необов'язково, можна прибрати)
         is_weekend = (day % 7 in [0, 1, 6])
         if is_weekend:
-            price = price * random.uniform(1.1, 1.2)
-
-        # Додаємо випадкову варіацію для різних днів (±5%)
-        day_variation = random.uniform(0.95, 1.05)
-        price = price * day_variation
+            price = price * random.uniform(1.05, 1.10)
 
         # Округлюємо до 50 гривень
         price = int(round(price / 50) * 50)
 
-        # Обмежуємо діапазон
-        price = max(20000, min(250000, price))
+        # Жорстке обмеження діапазону
+        price = max(min_price - 1000, min(max_price + 1000, price))
 
         prices.append(price)
 
     max_price = max(prices)
-
-    # Додаткова варіація для вихідних днів (щоб було видно різницю)
-    for i, price in enumerate(prices):
-        if (i + 1) % 7 in [6, 0, 1]:  # пт, сб, нд
-            prices[i] = int(price * random.uniform(1.05, 1.15))
-
-    return {'prices': prices, 'max_price': max_price}
-
+    return JsonResponse({'prices': prices, 'max_price': max_price})
 
 # ========== API ДЛЯ РЕАЛЬНИХ ЦІН З OTPUSK (ЗАЛИШЕНО ДЛЯ СУМІСНОСТІ) ==========
 def calendar_prices_from_otpusk(request):
