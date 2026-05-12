@@ -291,6 +291,169 @@
     .price-column.gray { background: #ced4da; }
     .price-value-text { font-weight: 500; font-size: 0.7rem; white-space: nowrap; margin-top: 0.25rem; }
 
+    /* ========== ДОДАТКОВІ СТИЛІ ДЛЯ КАЛЕНДАРЯ OTPUSK (ЧЕРВОНИЙ/ЧОРНИЙ) ========== */
+    .ui-datepicker-calendar .ui-state-default {
+        background: #ffffff !important;
+        color: #333333 !important;
+        border: 1px solid #ddd !important;
+    }
+    .ui-datepicker-calendar .new_ceil-tours-exists .ui-state-default {
+        background: #ff6b6b !important;
+        color: white !important;
+        border-color: #ff6b6b !important;
+        font-weight: bold !important;
+    }
+    .ui-datepicker-calendar .new_ceil-no-tours .ui-state-default {
+        background: transparent !important;
+        color: #cc0000 !important;
+        border-color: #ffcccc !important;
+    }
+    .ui-datepicker-calendar .ui-datepicker-today .ui-state-default {
+        background: #ff4444 !important;
+        color: white !important;
+        border-color: #ff4444 !important;
+        font-weight: bold !important;
+    }
+    .ui-datepicker-calendar .ui-state-active {
+        background: #cc0000 !important;
+        color: white !important;
+        border-color: #cc0000 !important;
+    }
+    .ui-datepicker-calendar .ui-state-default:hover {
+        background: #ff8888 !important;
+        color: white !important;
+        transform: scale(1.05) !important;
+        transition: all 0.2s ease !important;
+    }
+    .ui-datepicker .ui-datepicker-title {
+        color: #000000 !important;
+        font-weight: bold !important;
+    }
+    .ui-datepicker .ui-datepicker-prev,
+    .ui-datepicker .ui-datepicker-next {
+        color: #cc0000 !important;
+    }
+    .ui-datepicker-calendar thead th span {
+        color: #000000 !important;
+        font-weight: bold !important;
+    }
+    .ui-datepicker-header {
+        background: #fff0f0 !important;
+        border-bottom: 1px solid #ffcccc !important;
+    }
+    .ui-datepicker-calendar .ui-datepicker-week-end .ui-state-default {
+        background: #fff0f0 !important;
+        color: #cc0000 !important;
+    }
+    .ui-datepicker-calendar .ui-datepicker-week-end.new_ceil-tours-exists .ui-state-default {
+        background: #ff6b6b !important;
+        color: white !important;
+    }
+    .ui-datepicker-calendar .ui-datepicker-week-end.new_ceil-no-tours .ui-state-default {
+        background: #ffe0e0 !important;
+        color: #cc0000 !important;
+    }
+
+    /* ЗМІНА ОРАНЖЕВИХ ЕЛЕМЕНТІВ НА ЧЕРВОНІ */
+    .new_r-filters-reset {
+        background: #ff4444 !important;
+        color: white !important;
+        border-color: #ff4444 !important;
+        border-radius: 20px !important;
+        padding: 5px 12px !important;
+        font-size: 12px !important;
+        cursor: pointer !important;
+    }
+    .new_r-filters-reset:hover {
+        background: #cc0000 !important;
+    }
+    .new_r-filter-reset {
+        background: transparent !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        font-size: 16px !important;
+        font-weight: bold !important;
+    }
+    .new_r-filter-value {
+        background: transparent !important;
+        color: #cc0000 !important;
+    }
+    .new_r-filter {
+        background: #e0e0e0 !important;
+        border-color: #cccccc !important;
+        border-radius: 20px !important;
+        padding: 4px 10px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+    }
+
+    /* ФОН ЗАГОЛОВКУ "ПОШУК ТУРУ" */
+    .new_f-container {
+        background: #ffffff !important;
+        border-radius: 24px !important;
+    }
+    .new_f-wrapper {
+        background: #ffffff !important;
+    }
+    .new_f-title {
+        color: #000000 !important;
+        background: transparent !important;
+    }
+
+    /* ЗМІНА ВСІХ ГОЛУБИХ ЕЛЕМЕНТІВ НА ЧОРНІ */
+    .new_f-ext-bl-title,
+    .new_f-ext-bl-title span,
+    .new_f-label-name,
+    .new_f-services-label .new_f-label-name {
+        color: #000000 !important;
+    }
+    .ui-slider-range,
+    .ui-slider-handle,
+    .ui-slider {
+        background: #000000 !important;
+    }
+    .new_f-ext-scale-item {
+        color: #000000 !important;
+    }
+
+    /* ГАЛОЧКИ ЧОРНІ */
+    .new_f-ext-container input[type="checkbox"],
+    .new_f-services-label-wrap input[type="checkbox"] {
+        filter: brightness(0) !important;
+    }
+
+    /* КНОПКА "ЗНАЙТИ" -> "ПОШУК" */
+    .new_f-form-submit {
+        background: var(--primary-color) !important;
+        color: white !important;
+        border-radius: 10px !important;
+        border: none !important;
+        font-weight: 600 !important;
+        padding: 12px 28px !important;
+        cursor: pointer !important;
+    }
+
+    /* ВИБРАНІ ЕЛЕМЕНТИ ТУРИСТІВ */
+    .new_f-people-item.active,
+    .new_f-children-age-item.active {
+        background: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        color: white !important;
+    }
+    .new_f-children-list-item {
+        background: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        color: white !important;
+    }
+
+    /* ПОВНІСТЮ ПРИБИРАЄМО ТІНЬ */
+    .new_f-container,
+    .new_f-wrapper,
+    #otpusk-search-module {
+        box-shadow: none !important;
+    }
+
     @media (max-width: 768px) {
         .consult-row { flex-direction: column !important; gap: 1.5rem !important; }
         .form-block { order: 1; width: 100%; }
@@ -305,7 +468,7 @@
 </style>
 
 <script>
-// ========== ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА СТОРІНКУ РЕЗУЛЬТАТІВ ПРИ КЛІКУ НА ДАТУ ==========
+// ========== ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА СТОРІНКУ РЕЗУЛЬТАТІВ ==========
 function getCurrentNights() {
     return 7;
 }
@@ -361,6 +524,16 @@ window.selectCalendarDate = function(dateISO, price, nights) {
     console.log('🚀 Перехід:', `${baseUrl}?${params.toString()}`);
     window.location.href = `${baseUrl}?${params.toString()}`;
 };
+
+// ========== ЗМІНА ТЕКСТУ КНОПКИ "ЗНАЙТИ" НА "ПОШУК" ==========
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        const searchBtn = document.querySelector('.new_f-form-submit');
+        if (searchBtn && searchBtn.textContent === 'Знайти') {
+            searchBtn.textContent = 'Пошук';
+        }
+    }, 1000);
+});
 
 // ========== КАЛЕНДАР НИЗЬКИХ ЦІН ==========
 document.addEventListener('DOMContentLoaded', function() {
@@ -486,11 +659,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const price = prices[day - 1];
             const dayDate = new Date(year, month, day);
             const dayOfWeek = dayDate.toLocaleDateString('uk', { weekday: 'short' });
-
-            const yearNum = dayDate.getFullYear();
-            const monthNum = String(dayDate.getMonth() + 1).padStart(2, '0');
-            const dayNum = String(day).padStart(2, '0');
-            const dateISO = `${yearNum}-${monthNum}-${dayNum}`;
+            const dateISO = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
             const col = document.createElement('div');
             col.className = 'day-column';
@@ -549,7 +718,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (nextBtn) nextBtn.addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() + 1); updateCalendar(); });
 });
 
-// ========== КОНСУЛЬТАЦІЙНА ФОРМА (ОДИН СКРИПТ) ==========
+// ========== КОНСУЛЬТАЦІЙНА ФОРМА ==========
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('consultationForm');
     if (!form) return;
