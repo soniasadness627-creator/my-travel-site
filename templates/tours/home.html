@@ -479,15 +479,12 @@ document.addEventListener('DOMContentLoaded', function() {
     async function fetchPriceData(country, month, departure) {
     const year = month.getFullYear();
     const monthIndex = month.getMonth() + 1;
-    let url = `/api/calendar-prices-real/?country=${encodeURIComponent(country)}&year=${year}&month=${monthIndex}&departure=${encodeURIComponent(departure)}`;
-
-    // Додаємо slug фіксований для тесту
-    url += `&slug=soniasadness627`;
+    let url = `/api/calendar-prices-real/?country=Єгипет&year=${year}&month=${monthIndex}&departure=Кишинів&slug=soniasadness627`;
 
     try {
         const response = await fetch(url);
         const data = await response.json();
-        console.log('✅ Отримано ціни:', data);
+        console.log('Ціни:', data);
         return { prices: data.prices, maxPrice: data.max_price };
     } catch (error) {
         console.error('Помилка:', error);
