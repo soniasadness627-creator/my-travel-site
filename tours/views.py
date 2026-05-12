@@ -82,16 +82,27 @@ def get_fallback_prices(month, year):
         next_month = datetime(year, month + 1, 1)
         days_in_month = (next_month - timedelta(days=1)).day
 
+    # Більш реалістичні ціни для різних місяців
+    base_prices = {
+        5: 35000,  # травень
+        6: 40000,  # червень
+        7: 50000,  # липень
+        8: 55000,  # серпень
+        9: 45000,  # вересень
+    }
+    base = base_prices.get(month, 30000)
+
     prices = []
     for day in range(1, days_in_month + 1):
-        base_price = random.randint(20000, 80000)
+        variation = random.randint(-10000, 15000)
+        price = base + variation
         is_weekend = (day % 7 in [0, 1, 6])
         if is_weekend:
-            base_price = int(base_price * 1.3)
-        prices.append(base_price)
+            price = int(price * 1.2)
+        prices.append(max(20000, min(80000, price)))
+
     max_price = max(prices)
     return {'prices': prices, 'max_price': max_price}
-
 
 # ========== API ДЛЯ РЕАЛЬНИХ ЦІН З OTPUSK (ВИПРАВЛЕНО) ==========
 def calendar_prices_from_otpusk(request):
