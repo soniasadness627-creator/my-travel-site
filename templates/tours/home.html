@@ -193,31 +193,31 @@ function selectCalendarDate(dateISO, price, nights) {
     const departureSelect = document.getElementById('departureCitySelect');
     const departureName = departureSelect ? departureSelect.value : 'Київ';
 
-    // ПРАВИЛЬНІ ID МІСТ ДЛЯ OTPUSK (з вашого сайту)
-    const departureCityIds = {
-        "Київ": "1544",
-        "Кишинів": "1831",
-        "Одеса": "1358",
-        "Дніпро": "1874",
-        "Львів": "1397",
-        "Харків": "1880",
-        "Житомир": "2056",
-        "Запоріжжя": "1875",
-        "Кривий Ріг": "1883",
-        "Варшава": "1124",
-        "Краків": "1126",
-        "Вроцлав": "1517",
-        "Жешув": "3158",
-        "Катовіце": "3032",
-        "Бухарест": "1373",
-        "Сучава": "1727",
-        "Ясси": "4091",
-        "Будапешт": "992",
-        "Берлін": "870",
-        "Прага": "845"
+    // МАПІНГ НАЗВ МІСТ НА ТЕКСТОВІ ЗНАЧЕННЯ ДЛЯ OTPUSK (як вони відображаються в полі "Звідки")
+    const departureTextMap = {
+        "Київ": "Києва",
+        "Кишинів": "Кишинева",
+        "Одеса": "Одеси",
+        "Дніпро": "Дніпра",
+        "Львів": "Львова",
+        "Харків": "Харкова",
+        "Житомир": "Житомира",
+        "Запоріжжя": "Запоріжжя",
+        "Кривий Ріг": "Кривого Рогу",
+        "Варшава": "Варшави",
+        "Краків": "Кракова",
+        "Вроцлав": "Вроцлава",
+        "Жешув": "Жешува",
+        "Катовіце": "Катовіце",
+        "Бухарест": "Бухареста",
+        "Сучава": "Сучави",
+        "Ясси": "Яссів",
+        "Будапешт": "Будапешта",
+        "Берлін": "Берліна",
+        "Прага": "Праги"
     };
 
-    const departureId = departureCityIds[departureName] || "1544";
+    const departureText = departureTextMap[departureName] || departureName;
 
     let baseUrl = '/search-otpusk/';
     if (window.location.pathname.startsWith('/a/')) {
@@ -240,7 +240,7 @@ function selectCalendarDate(dateISO, price, nights) {
     // Формуємо параметри для Otpusk
     const params = new URLSearchParams({
         geo: country,
-        departure_id: departureId,
+        departure_text: departureText,  // ← змінили на departure_text
         date_from: dateFromFormatted,
         date_to: dateToFormatted,
         duration: olParam,
