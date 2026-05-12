@@ -100,42 +100,34 @@
             }
 
             // Встановлюємо ДАТИ через клік
-            // Встановлюємо ДАТИ - початок і наступний день (мінімальний проміжок)
-if (dateFrom) {
-    const startDate = dateFrom;
-    // Отримуємо наступний день
-    const parts = startDate.split('.');
-    const nextDay = new Date(parts[2], parts[1]-1, parseInt(parts[0]) + 1);
-    const endDate = `${nextDay.getDate()}.${nextDay.getMonth()+1}.${nextDay.getFullYear()}`;
-
-    setTimeout(() => {
-        const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
-        if (dateButton) {
-            dateButton.click();
-            setTimeout(() => {
-                // Вибираємо дату початку
-                const dateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                for (let cell of dateCells) {
-                    if (cell.innerText === startDate.split('.')[0]) {
-                        cell.click();
-                        console.log('✅ Клік по даті початку:', startDate);
-                        break;
-                    }
-                }
+            if (dateFrom && dateTo) {
                 setTimeout(() => {
-                    // Вибираємо наступний день
-                    for (let cell of dateCells) {
-                        if (cell.innerText === endDate.split('.')[0]) {
-                            cell.click();
-                            console.log('✅ Клік по даті закінчення:', endDate);
-                            break;
-                        }
+                    const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
+                    if (dateButton) {
+                        dateButton.click();
+                        setTimeout(() => {
+                            const fromDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                            for (let cell of fromDateCells) {
+                                if (cell.innerText === dateFrom.split('.')[0]) {
+                                    cell.click();
+                                    console.log('✅ Клік по даті початку:', dateFrom);
+                                    break;
+                                }
+                            }
+                            setTimeout(() => {
+                                const toDateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                                for (let cell of toDateCells) {
+                                    if (cell.innerText === dateTo.split('.')[0]) {
+                                        cell.click();
+                                        console.log('✅ Клік по даті закінчення:', dateTo);
+                                        break;
+                                    }
+                                }
+                            }, 200);
+                        }, 200);
                     }
-                }, 200);
-            }, 200);
-        }
-    }, 900);
-}
+                }, 900);
+            }
 
             // Запускаємо пошук після всіх дій
             setTimeout(() => {
