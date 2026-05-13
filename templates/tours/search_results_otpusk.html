@@ -9,8 +9,92 @@
         <div class="card-body p-4">
             <h2 class="mb-4" style="color: #000000; text-align: left;">Результати пошуку турів</h2>
 
-            <!-- МОДУЛЬ ПОШУКУ OTPUSK (ТІЛЬКИ ОДИН РАЗ!) -->
+            <!-- МОДУЛЬ ПОШУКУ OTPUSK -->
             {% include "tours/otpusk_search.html" %}
+
+            <!-- ========== ДОДАТКОВИЙ СКРИПТ ДЛЯ АВТОМАТИЧНОГО ВИБОРУ ОБОХ ДАТ ========== -->
+            <script>
+            (function() {
+                // Захист від повторного виконання
+                if (window.searchResultsDateSet) return;
+                window.searchResultsDateSet = true;
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
+                const departureText = urlParams.get('departure_text') || '';
+                const dateFrom = urlParams.get('date_from') || '';
+                const dateTo = urlParams.get('date_to') || '';
+
+                console.log('📥 search_results_otpusk отримав:', { geo, departureText, dateFrom, dateTo });
+
+                if (!dateFrom) return;
+
+                let dateFromSet = false;
+                let dateToSet = false;
+
+                function setBothDates() {
+                    const dayNum = dateFrom.split('.')[0];
+                    console.log('📅 Встановлюємо дату:', dateFrom, 'день:', dayNum);
+
+                    // ===== 1. ВИБИРАЄМО ДАТУ ПОЧАТКУ =====
+                    if (!dateFromSet) {
+                        const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
+                        if (startBtn) {
+                            startBtn.click();
+                            console.log('📅 Календар ПОЧАТКУ відкрито');
+
+                            setTimeout(() => {
+                                const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                                for (let cell of cells) {
+                                    if (cell.innerText === dayNum) {
+                                        cell.click();
+                                        dateFromSet = true;
+                                        console.log('✅ Дата ПОЧАТКУ вибрана:', dateFrom);
+                                        break;
+                                    }
+                                }
+
+                                // ===== 2. ПІСЛЯ ВИБОРУ ПОЧАТКУ - ВИБИРАЄМО ТУ САМУ ДАТУ ДЛЯ КІНЦЯ =====
+                                setTimeout(() => {
+                                    if (!dateToSet) {
+                                        const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
+                                        if (endBtn) {
+                                            endBtn.click();
+                                            console.log('📅 Календар КІНЦЯ відкрито');
+
+                                            setTimeout(() => {
+                                                const endCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                                                for (let cell of endCells) {
+                                                    if (cell.innerText === dayNum) {
+                                                        cell.click();
+                                                        dateToSet = true;
+                                                        console.log('✅ Дата КІНЦЯ вибрана (ТАКА САМА):', dateFrom);
+                                                        break;
+                                                    }
+                                                }
+
+                                                // Закриваємо календар
+                                                setTimeout(() => {
+                                                    const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
+                                                    if (closeBtn) closeBtn.click();
+                                                    console.log('✅ Календар закрито');
+                                                }, 100);
+                                            }, 200);
+                                        }
+                                    }
+                                }, 300);
+                            }, 200);
+                        }
+                    }
+                }
+
+                // Запускаємо кілька разів з затримками (бо форма може ще не завантажитись)
+                setTimeout(setBothDates, 1500);
+                setTimeout(setBothDates, 2500);
+                setTimeout(setBothDates, 3500);
+                setTimeout(setBothDates, 4500);
+            })();
+            </script>
         </div>
     </div>
 </div>
@@ -144,7 +228,8 @@ document.addEventListener('click', function(e) {
     }
 });
 </script>
-<!-- ========== ОРАНЖЕВЕ ПОПЕРЕДЖЕННЯ ДЛЯ ПІДТВЕРДЖЕННЯ КРАЇНИ (ТІЛЬКИ НА СТОРІНЦІ РЕЗУЛЬТАТІВ) ========== -->
+
+<!-- ========== ОРАНЖЕВЕ ПОПЕРЕДЖЕННЯ ДЛЯ ПІДТВЕРДЖЕННЯ КРАЇНИ ========== -->
 <style>
 .orange-warning {
     position: fixed;
