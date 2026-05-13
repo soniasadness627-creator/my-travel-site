@@ -165,7 +165,7 @@
 <script>
 // ========== ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА СТОРІНКУ РЕЗУЛЬТАТІВ ПРИ КЛІКУ НА ДАТУ ==========
 function getCurrentNights() {
-    return 0;  // ЗМІНЕНО: 0 замість 7, щоб дата була однакова
+    return 1;  // ЗМІНЕНО: 1 день
 }
 
 function selectCalendarDate(dateISO, price, nights) {
@@ -197,7 +197,7 @@ function selectCalendarDate(dateISO, price, nights) {
         baseUrl = `/a/${slug}/search-otpusk/`;
     }
 
-    // ВАЖЛИВО: ОДНАКОВА ДАТА ДЛЯ ПОЧАТКУ І КІНЦЯ (13 → 13, 25 → 25)
+    // ВАЖЛИВО: ОДНАКОВА ДАТА ДЛЯ ПОЧАТКУ І КІНЦЯ
     const formatDate = (d) => {
         return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
     };
@@ -205,13 +205,12 @@ function selectCalendarDate(dateISO, price, nights) {
     const dateFromFormatted = formatDate(selectedDate);
     const dateToFormatted = dateFromFormatted; // ОДНАКОВА ДАТА!
 
-    // duration = 1 (один день)
     const params = new URLSearchParams({
         geo: country,
         departure_text: departureText,
         date_from: dateFromFormatted,
         date_to: dateToFormatted,
-        duration: 1,  // ЗМІНЕНО: завжди 1 день
+        duration: 1,
         auto_search: '1'
     });
 
