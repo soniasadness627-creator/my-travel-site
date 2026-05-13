@@ -1202,5 +1202,23 @@ observer.observe(document.body, { childList: true, subtree: true });
         justify-content: flex-start !important;
     }
 }
+    /* Додаткове виправлення для довгих назв */
+.new_r-item-hotel {
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    hyphens: auto !important;
+    max-width: 100% !important;
+}
+
+/* Обмежуємо ширину тексту */
+.new_r-item-body {
+    max-width: calc(100% - 260px) !important;
+}
+
+@media (max-width: 768px) {
+    .new_r-item-body {
+        max-width: 100% !important;
+    }
+}
 </style>
 {% endblock %}
