@@ -672,4 +672,83 @@ document.addEventListener('click', function(e) {
     setTimeout(showWarning, 1500);
 })();
 </script>
+<!-- ========== РОЗШИРЕННЯ СЛАЙДЕРА ОЦІНКИ ГОТЕЛЮ ========== -->
+<style>
+/* Розширюємо контейнер слайдера */
+.new_f-ext-bl-body {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.slider-container {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Розширюємо сам слайдер */
+.ui-slider {
+    width: 100% !important;
+    margin: 15px 0 !important;
+    background: #e2e8f0 !important;
+    border: none !important;
+    border-radius: 10px !important;
+    height: 6px !important;
+}
+
+/* Стилі для повзунка */
+.ui-slider-handle {
+    background: var(--primary-color) !important;
+    border: 2px solid white !important;
+    border-radius: 50% !important;
+    width: 18px !important;
+    height: 18px !important;
+    top: -6px !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
+}
+
+.ui-slider-handle:hover {
+    transform: scale(1.1) !important;
+    background: var(--primary-dark) !important;
+}
+
+/* Заповнена частина слайдера */
+.ui-slider-range {
+    background: var(--primary-color) !important;
+    border-radius: 10px 0 0 10px !important;
+}
+
+/* Шкала значень під слайдером */
+.new_f-ext-scale {
+    display: flex !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+}
+
+.new_f-ext-scale-item {
+    font-size: 0.75rem !important;
+    color: #666 !important;
+    text-align: center !important;
+    flex: 1 !important;
+}
+
+/* Для мобільних пристроїв */
+@media (max-width: 768px) {
+    .ui-slider {
+        height: 4px !important;
+    }
+
+    .ui-slider-handle {
+        width: 22px !important;
+        height: 22px !important;
+        top: -8px !important;
+    }
+
+    .new_f-ext-scale-item {
+        font-size: 0.7rem !important;
+    }
+}
+</style>
 {% endblock %}
