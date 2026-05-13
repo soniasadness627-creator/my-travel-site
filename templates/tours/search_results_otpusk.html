@@ -942,34 +942,98 @@ observer.observe(document.body, { childList: true, subtree: true });
     text-overflow: clip !important;
 }
 </style>
-<!-- ========== РОЗТЯГУЄМО НА ВСЮ ШИРИНУ ========== -->
+<!-- ========== ВИПРАВЛЕННЯ КАРТОК ТУРІВ - ПО ОДНОМУ В РЯД НА ВСЮ ШИРИНУ ========== -->
 <style>
-/* Контейнер пошуку на всю ширину */
-#otpusk-search-module {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
-/* Результати на всю ширину */
+/* Прибираємо всі сітки та вирівнювання */
 .new_r-container,
-.new_r-wrapper {
+.new_r-wrapper,
+.new_r-wrapper > div {
+    display: block !important;
     width: 100% !important;
     max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    float: none !important;
+    clear: both !important;
 }
 
-/* Картка туру - горизонтальна, розтягнута */
+/* Кожен тур - з нового рядка, на всю ширину */
+.new_r-item-wrap {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 24px 0 !important;
+    padding: 0 !important;
+    float: none !important;
+    clear: both !important;
+}
+
+/* Картка туру - горизонтальна, на всю ширину батьківського контейнера */
 .new_r-item {
     display: flex !important;
     flex-direction: row !important;
     width: 100% !important;
+    min-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
 }
 
-/* Фікс для мобільних */
+/* Фото - фіксована ширина 260px */
+.new_r-item-img {
+    width: 260px !important;
+    min-width: 260px !important;
+    height: auto !important;
+    object-fit: cover !important;
+}
+
+/* Тіло картки - займає всю ширину, що залишилася */
+.new_r-item-body {
+    flex: 1 !important;
+    padding: 16px 20px !important;
+}
+
+/* Контейнер з інформацією про тур */
+.new_r-item-info {
+    display: block !important;
+}
+
+/* Таблиця з деталями (виліт, дата) */
+.new_r-item-table {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 16px !important;
+    margin: 10px 0 !important;
+}
+
+.new_r-item-col {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important;
+    width: 100% !important;
+}
+
+/* АДАПТИВ ДЛЯ МОБІЛЬНИХ */
 @media (max-width: 768px) {
     .new_r-item {
         flex-direction: column !important;
+    }
+
+    .new_r-item-img {
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 220px !important;
+    }
+
+    .new_r-item-body {
+        padding: 15px !important;
+    }
+
+    .new_r-item-col {
+        flex-direction: column !important;
+        gap: 8px !important;
     }
 }
 </style>
