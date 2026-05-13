@@ -812,5 +812,36 @@ document.addEventListener('click', function(e) {
     margin-top: 5px !important;
 }
 </style>
+<!-- ========== ТОЧНЕ НАЛАШТУВАННЯ ========== -->
+<style>
+/* Ціна - відступ зверху */
+.new_f-ext-bl-price {
+    margin-top: 20px !important;
+    padding-top: 10px !important;
+    border-top: 1px solid #e2e8f0 !important;
+}
 
+/* Транспорт - горизонтальне розміщення */
+.new_f-ext-bl-transp .new_f-ext-bl-body {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 30px !important;
+}
+
+.new_f-ext-bl-transp .new_f-ext-bl-body label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+}
+
+/* Вирівнювання висоти всіх блоків */
+.new_f-ext-bl {
+    min-height: auto !important;
+}
+
+.new_f-ext-bl-body {
+    min-height: 40px !important;
+}
+</style>
 {% endblock %}
