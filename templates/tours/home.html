@@ -191,10 +191,11 @@ function selectCalendarDate(dateISO, price, nights) {
 
     const departureText = departureTextMap[departureName] || departureName;
 
-let baseUrl = '/search-results-calendar/';
+    // ========== ОСЬ ТУТ ЗМІНИТИ URL ==========
+    let baseUrl = '/search-results-calendar/';  // ← ЗМІНЕНО!
     if (window.location.pathname.startsWith('/a/')) {
         const slug = window.location.pathname.split('/')[2];
-        baseUrl = `/a/${slug}/search-otpusk/`;
+        baseUrl = `/a/${slug}/search-results-calendar/`;  // ← ЗМІНЕНО!
     }
 
     const formatDate = (d) => {
@@ -208,8 +209,8 @@ let baseUrl = '/search-results-calendar/';
         geo: country,
         departure_text: departureText,
         date_from: dateFromFormatted,
-        date_to: dateToFormatted,  // ТАКА САМА ЯК date_from!
-        duration: 0,  // 0 ночей
+        date_to: dateToFormatted,
+        duration: 0,
         auto_search: '1'
     });
 
