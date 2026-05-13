@@ -861,4 +861,37 @@ document.addEventListener('click', function(e) {
     margin-top: 10px !important;
 }
 </style>
+<!-- ========== ПЛЯЖ - РОБИМО В СТОВПЧИК ========== -->
+<style>
+/* Контейнер "Пляж" - вертикальне розміщення */
+.new_f-services-label {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+}
+
+/* Заголовок "Пляж" */
+.new_f-label-name {
+    margin-bottom: 5px !important;
+    font-weight: 600 !important;
+}
+
+/* Кожен чекбокс з нового рядка */
+.new_f-services-label label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 0 !important;
+    width: 100% !important;
+}
+
+/* Для мобільних - залишаємо стовпчик */
+@media (max-width: 768px) {
+    .new_f-services-label {
+        gap: 10px !important;
+    }
+}
+</style>
 {% endblock %}
