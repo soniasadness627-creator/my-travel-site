@@ -821,5 +821,30 @@ document.addEventListener('click', function(e) {
     transform: translateY(15px) !important;
 }
 </style>
+<!-- ========== ВИРІВНЮВАННЯ ТРАНСПОРТУ В РЯДОК ========== -->
+<style>
+/* Транспорт - горизонтальне розміщення з однаковою висотою */
+.new_f-ext-bl-transp .new_f-ext-bl-body {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important;
+    align-items: center !important;
+}
 
+/* Фікс для "Без транспорту" - вирівнюємо по центру */
+.new_f-ext-bl-transp label {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    margin: 0 !important;
+    line-height: normal !important;
+    vertical-align: middle !important;
+}
+
+/* Прибираємо зайві відступи */
+.new_f-ext-bl-transp .new_f-ext-bl-body label:last-child {
+    margin-bottom: 0 !important;
+}
+</style>
 {% endblock %}
