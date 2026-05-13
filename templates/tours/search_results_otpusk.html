@@ -812,57 +812,54 @@ document.addEventListener('click', function(e) {
     margin-top: 5px !important;
 }
 </style>
-<!-- ========== ВИПРАВЛЕННЯ ПОЗИЦІЇ ЦІНИ ТА ТРАНСПОРТУ ========== -->
+<!-- ========== ПОВНЕ ВИПРАВЛЕННЯ СЛАЙДЕРА ========== -->
 <style>
-/* 1. ВИПРАВЛЕННЯ ДЛЯ БЛОКУ ЦІНИ - опускаємо нижче */
-.new_f-ext-bl-price {
-    margin-top: 15px !important;
+/* Контейнер слайдера - додаємо більше простору знизу */
+.slider-container {
+    position: relative !important;
+    padding-bottom: 30px !important;
+    margin-bottom: 15px !important;
+}
+
+/* Цифри (4 і 10) - опускаємо нижче */
+.slider-container input[readonly] {
+    position: absolute !important;
+    bottom: -25px !important;
+    top: auto !important;
+    background: transparent !important;
+    border: none !important;
+    width: 40px !important;
+    text-align: center !important;
+}
+
+/* Ліва цифра (4) */
+.slider-container input[readonly]:first-of-type {
+    left: 0 !important;
+    right: auto !important;
+}
+
+/* Права цифра (10) */
+.slider-container input[readonly]:last-of-type {
+    right: 0 !important;
+    left: auto !important;
+    text-align: right !important;
+}
+
+/* Слайдер залишається на місці */
+.ui-slider {
+    margin: 10px 0 !important;
+}
+
+/* Шкала значень */
+.new_f-ext-scale {
+    margin-top: 20px !important;
     clear: both !important;
 }
 
+/* Прибираємо зайві absolute позиціонування */
 .new_f-ext-bl-price .new_f-ext-bl-body {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 15px !important;
-}
-
-.new_f-ext-bl-price .slider-container {
-    margin-top: 5px !important;
-}
-
-/* 2. ВИПРАВЛЕННЯ ДЛЯ ТРАНСПОРТУ - рівномірне розміщення */
-.new_f-ext-bl-transp .new_f-ext-bl-body {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    gap: 20px !important;
-    align-items: center !important;
-}
-
-.new_f-ext-bl-transp .new_f-ext-bl-body label {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    margin: 0 !important;
-    white-space: nowrap !important;
-}
-
-/* 3. Загальне вирівнювання всіх блоків фільтрів */
-.new_f-ext-bl {
-    margin-bottom: 20px !important;
-}
-
-/* 4. Для мобільних пристроїв */
-@media (max-width: 768px) {
-    .new_f-ext-bl-transp .new_f-ext-bl-body {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 10px !important;
-    }
-
-    .new_f-ext-bl-price {
-        margin-top: 10px !important;
-    }
+    position: relative !important;
+    min-height: 80px !important;
 }
 </style>
 {% endblock %}
