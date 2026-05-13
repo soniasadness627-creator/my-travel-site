@@ -942,117 +942,35 @@ observer.observe(document.body, { childList: true, subtree: true });
     text-overflow: clip !important;
 }
 </style>
-<!-- ========== ДОДАТКОВІ СТИЛІ ДЛЯ КАРТОК ТУРІВ ========== -->
+<!-- ========== РОЗТЯГУЄМО НА ВСЮ ШИРИНУ ========== -->
 <style>
-/* Плавне відкриття карток */
+/* Контейнер пошуку на всю ширину */
+#otpusk-search-module {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Результати на всю ширину */
+.new_r-container,
+.new_r-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Картка туру - горизонтальна, розтягнута */
 .new_r-item {
-    animation: fadeInUp 0.4s ease-out !important;
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
+/* Фікс для мобільних */
+@media (max-width: 768px) {
+    .new_r-item {
+        flex-direction: column !important;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Черга для карток (затримка) */
-.new_r-item-wrap:nth-child(1) .new_r-item { animation-delay: 0.05s !important; }
-.new_r-item-wrap:nth-child(2) .new_r-item { animation-delay: 0.1s !important; }
-.new_r-item-wrap:nth-child(3) .new_r-item { animation-delay: 0.15s !important; }
-.new_r-item-wrap:nth-child(4) .new_r-item { animation-delay: 0.2s !important; }
-.new_r-item-wrap:nth-child(5) .new_r-item { animation-delay: 0.25s !important; }
-.new_r-item-wrap:nth-child(6) .new_r-item { animation-delay: 0.3s !important; }
-
-/* Покращення для назви готелю */
-.new_r-item-hotel {
-    transition: color 0.2s ease !important;
-}
-
-.new_r-item:hover .new_r-item-hotel {
-    color: var(--primary-color) !important;
-}
-
-/* Покращення для кнопки детальніше (якщо є) */
-.new_t-order-btn {
-    background: var(--primary-color) !important;
-    border-radius: 8px !important;
-    padding: 8px 16px !important;
-    transition: all 0.3s ease !important;
-}
-
-.new_t-order-btn:hover {
-    background: var(--primary-dark) !important;
-    transform: translateY(-2px) !important;
-}
-
-/* Стилі для ціни при наведенні */
-.new_r-item-price {
-    transition: all 0.2s ease !important;
-}
-
-.new_r-item:hover .new_r-item-price {
-    border-top-color: var(--primary-light) !important;
-}
-
-.new_price-value {
-    transition: color 0.2s ease !important;
-}
-
-.new_r-item:hover .new_price-value {
-    color: var(--primary-color) !important;
-}
-
-/* Покращення для зірок */
-.new_r-item-stars {
-    transition: transform 0.2s ease !important;
-}
-
-.new_r-item:hover .new_r-item-stars {
-    transform: scale(1.05) !important;
-}
-
-/* Стилі для фото при наведенні */
-.new_r-item-img {
-    transition: transform 0.3s ease !important;
-}
-
-.new_r-item:hover .new_r-item-img {
-    transform: scale(1.02) !important;
-}
-
-/* Стилі для рейтингу при наведенні */
-.new_r-item-rating-container {
-    transition: all 0.2s ease !important;
-}
-
-.new_r-item:hover .new_r-item-rating-container {
-    transform: scale(1.05) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 </style>
-
-<script>
-// Додаткова анімація при завантаженні турів
-document.addEventListener('DOMContentLoaded', function() {
-    // Спостерігаємо за появою нових турів
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.addedNodes.length) {
-                const tourCards = document.querySelectorAll('.new_r-item:not(.animated)');
-                tourCards.forEach(function(card, index) {
-                    card.classList.add('animated');
-                    card.style.animationDelay = (index * 0.05) + 's';
-                });
-            }
-        });
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-});
-</script>
 {% endblock %}
