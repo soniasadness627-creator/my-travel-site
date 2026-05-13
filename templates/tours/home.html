@@ -170,12 +170,6 @@ function getCurrentNights() {
 
 function selectCalendarDate(dateISO, price, nights) {
     const selectedDate = new Date(dateISO);
-    const year = selectedDate.getFullYear();
-    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-    const day = String(selectedDate.getDate()).padStart(2, '0');
-    const odParam = `${year}-${month}-${day}`;
-    const olParam = nights || 7;
-
     const currentCountryTab = document.querySelector('.country-tab.active');
     const country = currentCountryTab ? currentCountryTab.getAttribute('data-country') : 'Єгипет';
 
@@ -202,7 +196,7 @@ function selectCalendarDate(dateISO, price, nights) {
         baseUrl = `/a/${slug}/search-otpusk/`;
     }
 
-    // ВАЖЛИВО: ОДНАКОВА ДАТА ДЛЯ ПОЧАТКУ І КІНЦЯ!
+    // ВАЖЛИВО: ОДНАКОВА ДАТА ДЛЯ ПОЧАТКУ І КІНЦЯ (23 → 23)
     const formatDateForOtpusk = (d) => {
         return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
     };
@@ -215,44 +209,12 @@ function selectCalendarDate(dateISO, price, nights) {
         departure_text: departureText,
         date_from: dateFromFormatted,
         date_to: dateToFormatted,
-        duration: olParam,
+        duration: nights || 7,
         auto_search: '1'
     });
 
     console.log('🚀 Перехід:', `${baseUrl}?${params.toString()}`);
     window.location.href = `${baseUrl}?${params.toString()}`;
-}
-
-// ========== ОРАНЖЕВЕ ПОПЕРЕДЖЕННЯ ДЛЯ ПІДТВЕРДЖЕННЯ КРАЇНИ ==========
-function showCountryWarning(countryName) {
-    const confirmed = localStorage.getItem('country_confirmed_' + encodeURIComponent(countryName));
-    if (confirmed === 'true') return;
-
-    const existingWarning = document.querySelector('.orange-warning');
-    if (existingWarning) existingWarning.remove();
-
-    const warning = document.createElement('div');
-    warning.className = 'orange-warning';
-    warning.innerHTML = `
-        <i class="fa-solid fa-triangle-exclamation"></i>
-        <span>Підтвердіть країну <strong class="country-name">${countryName}</strong> → натисніть на поле "Країна" або "Пошук"</span>
-    `;
-    document.body.appendChild(warning);
-
-    warning.addEventListener('click', function() {
-        const countryInput = document.querySelector('#location');
-        if (countryInput) {
-            countryInput.style.transition = 'box-shadow 0.2s';
-            countryInput.style.boxShadow = '0 0 0 3px #f59e0b';
-            countryInput.focus();
-            setTimeout(() => { countryInput.style.boxShadow = ''; }, 2000);
-        }
-        warning.remove();
-    });
-
-    setTimeout(() => {
-        if (warning.parentNode) warning.remove();
-    }, 7000);
 }
 
 // ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
@@ -447,31 +409,6 @@ function showCountryWarning(countryName) {
     .price-value-text { font-weight: 500; font-size: 0.7rem; white-space: nowrap; margin-top: 0.25rem; }
     .price-value-text.past { color: #999 !important; }
 
-    /* ОРАНЖЕВЕ ПОПЕРЕДЖЕННЯ */
-    .orange-warning {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: #fff3e0;
-        border-left: 5px solid #f59e0b;
-        border-radius: 12px;
-        padding: 14px 20px;
-        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-        z-index: 100000;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        animation: slideInRight 0.3s ease;
-        cursor: pointer;
-    }
-    @keyframes slideInRight {
-        from { opacity: 0; transform: translateX(100px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
-    .orange-warning i { font-size: 20px; color: #f59e0b; }
-    .orange-warning span { font-size: 14px; color: #92400e; }
-    .orange-warning .country-name { font-weight: 700; background: #fffbeb; padding: 3px 8px; border-radius: 20px; margin-left: 5px; }
-
     @media (max-width: 768px) {
         .consult-row { flex-direction: column !important; gap: 1.5rem !important; }
         .form-block { order: 1; width: 100%; }
@@ -532,13 +469,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.classList.add('active');
                 currentCountry = this.getAttribute('data-country');
                 updateCalendar();
-                showCountryWarning(currentCountry);
             });
             countryTabsContainer.appendChild(btn);
         });
         currentCountry = countries[0];
         updateCalendar();
-        setTimeout(function() { showCountryWarning(currentCountry); }, 1000);
     }
 
     // ========== ВИКОРИСТОВУЄМО ПРОСТИЙ API З РЕАЛІСТИЧНИМИ ЦІНАМИ ==========
