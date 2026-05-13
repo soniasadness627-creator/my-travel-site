@@ -31,50 +31,23 @@ def get_random_agent():
     return None
 
 
-# ========== API ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН (ДЕМО-ДАНІ З РЕАЛІСТИЧНИМИ ЦІНАМИ) ==========
-def calendar_prices_otpusk(request):
-    """
-    API для календаря низьких цін (демо-дані з реалістичними цінами)
-    Працює ШВИДКО і завжди повертає дані
-    """
-    country = request.GET.get('country')
-    year = request.GET.get('year')
-    month = request.GET.get('month')
-    departure = request.GET.get('departure')
-    slug = request.GET.get('slug')
-
-    if not all([country, year, month]):
-        return JsonResponse({'error': 'Missing parameters'}, status=400)
-
-    try:
-        year = int(year)
-        month = int(month)
-    except ValueError:
-        return JsonResponse({'error': 'Invalid year/month'}, status=400)
-
-    # Визначаємо кількість днів у місяці
+# ========== ВИПРАВЛЕНА ФУНКЦІЯ ДЛЯ РОЗРАХУНКУ ДНІВ У МІСЯЦІ ==========
+def get_days_in_month(year, month):
+    """Безпечно повертає кількість днів у місяці"""
     if month == 12:
-        days_in_month = 31
+        next_month = datetime(year + 1, 1, 1)
     else:
         next_month = datetime(year, month + 1, 1)
-        days_in_month = (next_month - timedelta(days=1)).day
-
-    # Генеруємо реалістичні ціни залежно від країни та міста вильоту
-    result = get_realistic_prices(month, year, country, departure)
-
-    return JsonResponse(result)
+    last_day = next_month - timedelta(days=1)
+    return last_day.day
 
 
 def get_realistic_prices(month, year, country, departure):
     """
     Генерує реалістичні ціни на основі країни та міста вильоту
     """
-    # Визначаємо кількість днів у місяці
-    if month == 12:
-        days_in_month = 31
-    else:
-        next_month = datetime(year, month + 1, 1)
-        days_in_month = (next_month - timedelta(days=1)).day
+    # БЕЗПЕЧНЕ ВИЗНАЧЕННЯ КІЛЬКОСТІ ДНІВ У МІСЯЦІ
+    days_in_month = get_days_in_month(year, month)
 
     # ========== БАЗОВІ ЦІНИ ДЛЯ КРАЇН ==========
     country_prices = {
@@ -170,7 +143,80 @@ def get_realistic_prices(month, year, country, departure):
 
     return {'prices': prices, 'max_price': max_price}
 
-# ========== API ДЛЯ РЕАЛЬНИХ ЦІН З OTPUSK (ЗАЛИШЕНО ДЛЯ СУМІСНОСТІ) ==========
+
+# ========== API ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН ==========
+def calendar_prices_otpusk(request):
+    """
+    API для календаря низьких цін (демо-дані з реалістичними цінами)
+    """
+    country = request.GET.get('country')
+    year = request.GET.get('year')
+    month = request.GET.get('month')
+    departure = request.GET.get('departure')
+    slug = request.GET.get('slug')
+
+    if not all([country, year, month]):
+        return JsonResponse({'error': 'Missing parameters'}, status=400)
+
+    try:
+        year = int(year)
+        month = int(month)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid year/month'}, status=400)
+
+    result = get_realistic_prices(month, year, country, departure)
+    return JsonResponse(result)
+
+
+# ========== API З КЕШУВАННЯМ ДЛЯ КАЛЕНДАРЯ (ГОЛОВНИЙ) ==========
+def calendar_prices_cached(request):
+    """
+    API для календаря низьких цін з кешуванням
+    """
+    country = request.GET.get('country')
+    year = request.GET.get('year')
+    month = request.GET.get('month')
+    departure = request.GET.get('departure')
+    slug = request.GET.get('slug')
+
+    if not all([country, year, month]):
+        return JsonResponse({'error': 'Missing parameters'}, status=400)
+
+    try:
+        year = int(year)
+        month = int(month)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid year/month'}, status=400)
+
+    # Формуємо ключ для кешу
+    cache_key = f"calendar_prices_{country}_{year}_{month}_{departure}_{slug}"
+
+    # Перевіряємо, чи є дані в кеші
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        print(f"✅ Дані з кешу для {country} ({year}-{month})")
+        return JsonResponse(cached_data)
+
+    # Якщо немає в кеші – отримуємо ціни
+    print(f"🔄 Отримуємо ціни для {country} ({year}-{month})")
+
+    try:
+        result = get_realistic_prices(month, year, country, departure)
+        # Зберігаємо в кеш на 24 години
+        cache.set(cache_key, result, 86400)
+        print(f"💾 Збережено в кеш для {country} ({year}-{month})")
+        return JsonResponse(result)
+    except Exception as e:
+        print(f"❌ Помилка генерації цін: {e}")
+        # Повертаємо пусті дані, але без помилки 500
+        days_in_month = get_days_in_month(year, month)
+        empty_prices = [None] * days_in_month
+        return JsonResponse({'prices': empty_prices, 'max_price': None})
+
+
+# ========== ІНШІ ФУНКЦІЇ (БЕЗ ЗМІН) ==========
+
+# ========== API ДЛЯ РЕАЛЬНИХ ЦІН З OTPUSK ==========
 def calendar_prices_from_otpusk(request):
     """
     API для отримання реальних цін безпосередньо з Otpusk.com
@@ -710,38 +756,3 @@ def custom_logout(request):
     from django.contrib.auth import logout
     logout(request)
     return redirect('/')
-
-
-# ========== API З КЕШУВАННЯМ ДЛЯ КАЛЕНДАРЯ ==========
-def calendar_prices_cached(request):
-    """
-    API для календаря низьких цін з кешуванням
-    Працює ШВИДКО і показує РЕАЛЬНІ ціни (з кешу)
-    """
-    country = request.GET.get('country')
-    year = request.GET.get('year')
-    month = request.GET.get('month')
-    departure = request.GET.get('departure')
-    slug = request.GET.get('slug')
-
-    if not all([country, year, month]):
-        return JsonResponse({'error': 'Missing parameters'}, status=400)
-
-    # Формуємо ключ для кешу
-    cache_key = f"calendar_prices_{country}_{year}_{month}_{departure}_{slug}"
-
-    # Перевіряємо, чи є дані в кеші
-    cached_data = cache.get(cache_key)
-    if cached_data:
-        print(f"✅ Дані з кешу для {country} ({year}-{month})")
-        return JsonResponse(cached_data)
-
-    # Якщо немає в кеші – отримуємо ціни
-    print(f"🔄 Отримуємо ціни для {country} ({year}-{month})")
-    result = get_realistic_prices(month, year, country, departure)
-
-    # Зберігаємо в кеш
-    cache.set(cache_key, result, 86400)
-    print(f"💾 Збережено в кеш для {country} ({year}-{month})")
-
-    return JsonResponse(result)
