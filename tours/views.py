@@ -214,8 +214,6 @@ def calendar_prices_cached(request):
         return JsonResponse({'prices': empty_prices, 'max_price': None})
 
 
-# ========== ІНШІ ФУНКЦІЇ (БЕЗ ЗМІН) ==========
-
 # ========== API ДЛЯ РЕАЛЬНИХ ЦІН З OTPUSK ==========
 def calendar_prices_from_otpusk(request):
     """
@@ -494,6 +492,13 @@ def search_otpusk(request, slug=None):
     agent_site = getattr(request, 'current_agent_site', None)
     context = {'agent_site': agent_site}
     return render(request, 'tours/search_results_otpusk.html', context)
+
+
+def search_results_calendar(request, slug=None):
+    """Сторінка результатів пошуку для календаря низьких цін"""
+    agent_site = getattr(request, 'current_agent_site', None)
+    context = {'agent_site': agent_site}
+    return render(request, 'tours/search_results_calendar.html', context)
 
 
 def search_otpusk_by_country(request, slug=None):
