@@ -15,7 +15,6 @@
             <!-- ========== ДОДАТКОВИЙ СКРИПТ ДЛЯ АВТОМАТИЧНОГО ВИБОРУ ОБОХ ДАТ ========== -->
             <script>
             (function() {
-                // Захист від повторного виконання
                 if (window.searchResultsDateSet) return;
                 window.searchResultsDateSet = true;
 
@@ -36,7 +35,6 @@
                     const dayNum = dateFrom.split('.')[0];
                     console.log('📅 Встановлюємо дату:', dateFrom, 'день:', dayNum);
 
-                    // ===== 1. ВИБИРАЄМО ДАТУ ПОЧАТКУ =====
                     if (!dateFromSet) {
                         const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
                         if (startBtn) {
@@ -54,7 +52,6 @@
                                     }
                                 }
 
-                                // ===== 2. ПІСЛЯ ВИБОРУ ПОЧАТКУ - ВИБИРАЄМО ТУ САМУ ДАТУ ДЛЯ КІНЦЯ =====
                                 setTimeout(() => {
                                     if (!dateToSet) {
                                         const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
@@ -73,7 +70,6 @@
                                                     }
                                                 }
 
-                                                // Закриваємо календар
                                                 setTimeout(() => {
                                                     const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
                                                     if (closeBtn) closeBtn.click();
@@ -88,7 +84,6 @@
                     }
                 }
 
-                // Запускаємо кілька разів з затримками (бо форма може ще не завантажитись)
                 setTimeout(setBothDates, 1500);
                 setTimeout(setBothDates, 2500);
                 setTimeout(setBothDates, 3500);
@@ -101,6 +96,7 @@
 
 <!-- ========== СТИЛІ ДЛЯ СТОРІНКИ РЕЗУЛЬТАТІВ ========== -->
 <style>
+/* Основні стилі */
 #otpusk-search-module {
     background: white !important;
     border-radius: 24px !important;
@@ -118,14 +114,111 @@
     font-weight: 600 !important;
     padding: 12px 28px !important;
     cursor: pointer !important;
+    transition: all 0.3s ease !important;
 }
 
-/* СІРИЙ ФОН ДЛЯ ДНІВ БЕЗ ЦІН */
-.price-column.gray {
-    background: #e0e0e0 !important;
+.new_f-form-submit:hover {
+    background: var(--primary-dark) !important;
+    transform: translateY(-2px) !important;
 }
 
-/* КАРТКИ ТУРІВ */
+/* ========== ФІЛЬТРИ ========== */
+.new_f-ext-container {
+    display: block !important;
+    background: #f8f9fa !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    margin-bottom: 25px !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.new_f-ext-bl {
+    margin-bottom: 20px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding-bottom: 15px !important;
+}
+
+.new_f-ext-bl:last-child {
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.new_f-ext-bl-title {
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+    color: #000000 !important;
+    font-size: 0.95rem !important;
+}
+
+.new_f-ext-bl-body {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+}
+
+.new_f-ext-bl-body label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 0.85rem !important;
+    cursor: pointer !important;
+    color: #333 !important;
+}
+
+/* Слайдер ціни */
+.ui-slider {
+    background: #e2e8f0 !important;
+    border: none !important;
+    border-radius: 10px !important;
+    height: 4px !important;
+}
+
+.ui-slider-range {
+    background: var(--primary-color) !important;
+}
+
+.ui-slider-handle {
+    background: white !important;
+    border: 2px solid var(--primary-color) !important;
+    border-radius: 50% !important;
+    width: 16px !important;
+    height: 16px !important;
+    top: -6px !important;
+}
+
+.new_f-ext-scale {
+    margin-top: 10px !important;
+}
+
+.new_f-ext-scale-item {
+    color: #666 !important;
+    font-size: 0.75rem !important;
+}
+
+/* Кнопка скидання фільтрів */
+.new_r-filters-reset {
+    background: #ff4444 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 20px !important;
+    padding: 5px 12px !important;
+    font-size: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+.new_r-filters-reset:hover {
+    background: #cc0000 !important;
+    transform: scale(1.02) !important;
+}
+
+/* Кнопка "Фільтри" для мобільних */
+.new_f-ext-btn {
+    display: none !important;
+}
+
+/* Картки турів */
 .new_r-item {
     background: white !important;
     border-radius: 16px !important;
@@ -135,6 +228,13 @@
     display: flex !important;
     flex-direction: row !important;
     width: 100% !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+.new_r-item:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
 }
 
 .new_r-item-img {
@@ -153,15 +253,104 @@
     font-size: 1.3rem !important;
     font-weight: 700 !important;
     color: #1a202c !important;
+    margin-bottom: 8px !important;
+}
+
+.new_r-item-stars {
+    display: inline-flex !important;
+    gap: 4px !important;
+    margin-left: 10px !important;
+}
+
+.new_r-item-star {
+    fill: #FFD700 !important;
+}
+
+.new_r-item-geo {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 0.85rem !important;
+    color: #666 !important;
+    margin-bottom: 10px !important;
+}
+
+.new_r-item-food {
+    display: inline-block !important;
+    background: #e2e8f0 !important;
+    padding: 4px 12px !important;
+    border-radius: 20px !important;
+    font-size: 0.75rem !important;
+    color: #1a202c !important;
+    margin-bottom: 12px !important;
+}
+
+.new_r-item-table {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 15px !important;
+    margin: 10px 0 !important;
+}
+
+.new_r-item-from,
+.new_r-item-date {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 0.85rem !important;
+    color: #555 !important;
+}
+
+.new_r-item-icon {
+    width: 16px !important;
+    height: 16px !important;
+    fill: #888 !important;
+}
+
+.new_r-item-price {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: baseline !important;
+    margin-top: 12px !important;
+    padding-top: 12px !important;
+    border-top: 1px solid #e2e8f0 !important;
+    gap: 8px !important;
 }
 
 .new_price-value {
     color: #dc2626 !important;
     font-weight: 700 !important;
-    font-size: 1.25rem !important;
+    font-size: 1.4rem !important;
 }
 
-/* РЕЙТИНГ */
+.new_price-desc {
+    font-size: 0.75rem !important;
+    color: #666 !important;
+}
+
+/* Перемикач валюти */
+.new_r-currency-switch {
+    display: flex !important;
+    background: var(--primary-color) !important;
+    border-radius: 30px !important;
+    overflow: hidden !important;
+    width: fit-content !important;
+    margin-bottom: 15px !important;
+}
+
+.new_r-currency-switch span {
+    background: transparent !important;
+    color: white !important;
+    padding: 6px 16px !important;
+    cursor: pointer !important;
+    font-size: 0.85rem !important;
+}
+
+.new_r-currency-switch input[type="radio"]:checked + span {
+    background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Рейтинг */
 .new_r-item-rating-container {
     position: absolute !important;
     top: 12px !important;
@@ -169,12 +358,14 @@
     width: 65px !important;
     height: 65px !important;
     display: flex !important;
+    flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     background: white !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     border-width: 2px !important;
     border-style: solid !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
 .new_r-item-rating-value {
@@ -182,19 +373,144 @@
     font-size: 1.1rem !important;
 }
 
-/* ВИДАЛЕННЯ ПОВІДОМЛЕННЯ */
+.new_r-item-rating-rev {
+    font-size: 0.55rem !important;
+    color: #666 !important;
+}
+
+.new_r-item-rating-rev span {
+    font-weight: 700 !important;
+    font-size: 0.65rem !important;
+}
+
+/* Приховуємо кругові діаграми рейтингу */
+.new_r-item-rating-container .slice,
+.new_r-item-rating-container .bar,
+.new_r-item-rating-container .fill,
+.new_r-item-rating-container svg {
+    display: none !important;
+}
+
+/* Видалення повідомлень */
 .new_os-date-check {
     display: none !important;
 }
 
-/* АДАПТИВ */
+/* ========== МОБІЛЬНА ВЕРСІЯ ========== */
 @media (max-width: 768px) {
     .new_r-item {
         flex-direction: column !important;
     }
+
     .new_r-item-img {
         width: 100% !important;
         height: 220px !important;
+    }
+
+    .new_r-item-body {
+        padding: 15px !important;
+    }
+
+    .new_r-item-hotel {
+        font-size: 1.1rem !important;
+    }
+
+    .new_price-value {
+        font-size: 1.2rem !important;
+    }
+
+    .new_r-item-rating-container {
+        width: 50px !important;
+        height: 50px !important;
+        top: 8px !important;
+        right: 8px !important;
+    }
+
+    .new_r-item-rating-value {
+        font-size: 0.9rem !important;
+    }
+
+    /* Фільтри на мобільних */
+    .new_f-ext-container {
+        display: none !important;
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 90% !important;
+        max-width: 350px !important;
+        max-height: 80vh !important;
+        overflow-y: auto !important;
+        z-index: 1000 !important;
+        background: white !important;
+        border-radius: 20px !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
+        margin: 0 !important;
+    }
+
+    .new_f-ext-container.open {
+        display: block !important;
+    }
+
+    .new_f-ext-btn {
+        display: block !important;
+        background: var(--primary-color) !important;
+        color: white !important;
+        border-radius: 30px !important;
+        padding: 10px 20px !important;
+        margin-bottom: 15px !important;
+        border: none !important;
+        font-weight: 500 !important;
+        width: 100% !important;
+        cursor: pointer !important;
+    }
+
+    .new_f-dropdown-body-top {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 15px 20px !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        background: white !important;
+        border-radius: 20px 20px 0 0 !important;
+    }
+
+    .new_f-dropdown-body-close {
+        font-size: 24px !important;
+        cursor: pointer !important;
+        color: #666 !important;
+    }
+
+    .new_f-dropdown-body-bottom {
+        display: flex !important;
+        gap: 10px !important;
+        padding: 15px 20px !important;
+        border-top: 1px solid #e2e8f0 !important;
+        background: white !important;
+        border-radius: 0 0 20px 20px !important;
+    }
+
+    .new_f-dropdown-btn-cancel,
+    .new_f-dropdown-btn-apply {
+        flex: 1 !important;
+        padding: 10px !important;
+        border-radius: 30px !important;
+        text-align: center !important;
+        cursor: pointer !important;
+        font-weight: 500 !important;
+    }
+
+    .new_f-dropdown-btn-cancel {
+        background: #f0f0f0 !important;
+        color: #333 !important;
+    }
+
+    .new_f-dropdown-btn-apply {
+        background: var(--primary-color) !important;
+        color: white !important;
+        border: none !important;
     }
 }
 </style>
@@ -227,6 +543,65 @@ document.addEventListener('click', function(e) {
         window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}`;
     }
 });
+
+// ========== МОБІЛЬНІ ФІЛЬТРИ З ВИСУВАННЯМ ==========
+(function() {
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) return;
+
+    setTimeout(function() {
+        const filtersContainer = document.querySelector('.new_f-ext-container');
+        const filterBtn = document.querySelector('.new_f-ext-btn');
+
+        if (!filtersContainer || !filterBtn) return;
+
+        if (!filtersContainer.querySelector('.new_f-dropdown-body-top')) {
+            const header = document.createElement('div');
+            header.className = 'new_f-dropdown-body-top';
+            header.innerHTML = 'Фільтри <div class="new_f-dropdown-body-close">×</div>';
+            filtersContainer.insertBefore(header, filtersContainer.firstChild);
+        }
+
+        if (!filtersContainer.querySelector('.new_f-dropdown-body-bottom')) {
+            const footer = document.createElement('div');
+            footer.className = 'new_f-dropdown-body-bottom';
+            footer.innerHTML = `
+                <div class="new_f-dropdown-btn-cancel">Скасувати</div>
+                <div class="new_f-dropdown-btn-apply">Застосувати</div>
+            `;
+            filtersContainer.appendChild(footer);
+        }
+
+        filterBtn.addEventListener('click', function() {
+            filtersContainer.classList.add('open');
+        });
+
+        const closeBtn = filtersContainer.querySelector('.new_f-dropdown-body-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                filtersContainer.classList.remove('open');
+            });
+        }
+
+        const cancelBtn = filtersContainer.querySelector('.new_f-dropdown-btn-cancel');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                filtersContainer.classList.remove('open');
+            });
+        }
+
+        const applyBtn = filtersContainer.querySelector('.new_f-dropdown-btn-apply');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', function() {
+                setTimeout(() => {
+                    filtersContainer.classList.remove('open');
+                }, 500);
+            });
+        }
+
+        console.log('✅ Мобільні фільтри налаштовано');
+    }, 1000);
+})();
 </script>
 
 <!-- ========== ОРАНЖЕВЕ ПОПЕРЕДЖЕННЯ ДЛЯ ПІДТВЕРДЖЕННЯ КРАЇНИ ========== -->
