@@ -38,125 +38,109 @@
                 <script src="https://export.otpusk.com/js/order"></script>
             </div>
 
-            <!-- ========== СПЕЦІАЛЬНИЙ СКРИПТ ДЛЯ КАЛЕНДАРЯ (ВИБІР ОБОХ ДАТ) ========== -->
-            <script>
-            (function() {
-                if (window.calendarDateSet) return;
-                window.calendarDateSet = true;
+            <!-- ========== СПЕЦІАЛЬНИЙ СКРИПТ ДЛЯ КАЛЕНДАРЯ (ВИБІР ОБОХ ДАТ АВТОМАТИЧНО) ========== -->
+<script>
+(function() {
+    if (window.calendarDateSet) return;
+    window.calendarDateSet = true;
 
-                const urlParams = new URLSearchParams(window.location.search);
-                const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
-                const departureText = urlParams.get('departure_text') || '';
-                const dateFrom = urlParams.get('date_from') || '';
-                const duration = urlParams.get('duration') || '0';
+    const urlParams = new URLSearchParams(window.location.search);
+    const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
+    const departureText = urlParams.get('departure_text') || '';
+    const dateFrom = urlParams.get('date_from') || '';
 
-                console.log('📥 Календар отримав:', { geo, departureText, dateFrom, duration });
+    console.log('📥 Календар отримав:', { geo, departureText, dateFrom });
 
-                if (!dateFrom) return;
+    if (!dateFrom) return;
 
-                const dayNum = dateFrom.split('.')[0];
-                let step = 0;
+    const dayNum = dateFrom.split('.')[0];
+    let step = 0;
+    let datesSet = false;
 
-                function setCalendarData() {
-                    // Країна
-                    if (geo && step === 0) {
-                        const input = document.querySelector('#location');
-                        if (input && input.value !== geo) {
-                            input.value = geo;
-                            input.dispatchEvent(new Event('input', { bubbles: true }));
-                            console.log('✅ Країна:', geo);
-                        }
-                        step = 1;
-                        setTimeout(setCalendarData, 500);
-                    }
-                    // Місто
-                    else if (departureText && step === 1) {
-                        const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                        for (let item of items) {
-                            if (item.innerText.trim() === departureText) {
-                                item.click();
-                                console.log('✅ Місто:', departureText);
-                                break;
-                            }
-                        }
-                        step = 2;
-                        setTimeout(setCalendarData, 800);
-                    }
-                    // Дата ПОЧАТКУ
-                    else if (step === 2) {
-                        const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
-                        if (startBtn) {
-                            startBtn.click();
-                            step = 3;
-                            setTimeout(setCalendarData, 200);
-                        } else {
-                            step = 5;
-                        }
-                    }
-                    // Вибрати дату ПОЧАТКУ
-                    else if (step === 3) {
-                        const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                        let clicked = false;
-                        for (let cell of cells) {
-                            if (cell.innerText === dayNum) {
-                                cell.click();
-                                clicked = true;
-                                console.log('✅ Дата ПОЧАТКУ:', dateFrom);
-                                step = 4;
-                                setTimeout(setCalendarData, 300);
-                                break;
-                            }
-                        }
-                        if (!clicked) step = 5;
-                    }
-                    // Дата КІНЦЯ
-                    else if (step === 4) {
-                        const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
-                        if (endBtn) {
-                            endBtn.click();
-                            step = 5;
-                            setTimeout(setCalendarData, 200);
-                        } else {
-                            step = 6;
-                        }
-                    }
-                    // Вибрати ТУ САМУ дату для КІНЦЯ
-                    else if (step === 5) {
-                        const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                        for (let cell of cells) {
-                            if (cell.innerText === dayNum) {
-                                cell.click();
-                                console.log('✅ Дата КІНЦЯ (ТАКА САМА):', dateFrom);
-                                break;
-                            }
-                        }
-                        step = 6;
-                        setTimeout(setCalendarData, 200);
-                    }
-                    // Закрити календар
-                    else if (step === 6) {
-                        const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
-                        if (closeBtn) closeBtn.click();
-                        step = 7;
-                        setTimeout(setCalendarData, 500);
-                    }
-                    // Запустити пошук
-                    else if (step === 7) {
-                        const searchBtn = document.querySelector('.new_f-form-submit');
-                        if (searchBtn) {
-                            searchBtn.click();
-                            console.log('🔍 Пошук запущено!');
-                            step = 8;
-                        }
-                    }
+    function setCalendarData() {
+        // Країна
+        if (geo && step === 0) {
+            const input = document.querySelector('#location');
+            if (input && input.value !== geo) {
+                input.value = geo;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                console.log('✅ Країна:', geo);
+            }
+            step = 1;
+            setTimeout(setCalendarData, 500);
+        }
+        // Місто
+        else if (departureText && step === 1) {
+            const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+            for (let item of items) {
+                if (item.innerText.trim() === departureText) {
+                    item.click();
+                    console.log('✅ Місто:', departureText);
+                    break;
                 }
+            }
+            step = 2;
+            setTimeout(setCalendarData, 800);
+        }
+        // Дата ПОЧАТКУ - відкриваємо календар
+        else if (step === 2) {
+            const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
+            if (startBtn) {
+                startBtn.click();
+                step = 3;
+                setTimeout(setCalendarData, 200);
+            } else {
+                step = 5;
+            }
+        }
+        // Вибрати дату ПОЧАТКУ
+        else if (step === 3) {
+            const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
+            for (let cell of cells) {
+                if (cell.innerText === dayNum) {
+                    cell.click();
+                    console.log('✅ Дата ПОЧАТКУ:', dateFrom);
+                    step = 4;
+                    setTimeout(setCalendarData, 300);
+                    break;
+                }
+            }
+        }
+        // БЛОКУЄМО КАЛЕНДАР КІНЦЯ - НЕ ВІДКРИВАЄМО ЙОГО ВЗАГАЛІ!
+        else if (step === 4) {
+            // Закриваємо календар початку (якщо ще відкритий)
+            const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
+            if (closeBtn) closeBtn.click();
 
-                setTimeout(setCalendarData, 1000);
-                setTimeout(setCalendarData, 2000);
-                setTimeout(setCalendarData, 3000);
-                setTimeout(setCalendarData, 4000);
-            })();
-            </script>
+            // ВАЖЛИВО: ПРИМУСОВО ВСТАНОВЛЮЄМО КІНЦЕВУ ДАТУ ЧЕРЕЗ ПАРАМЕТР
+            // Замість відкриття календаря кінця, просто встановлюємо значення
+            const endDateInput = document.querySelector('.new_f-datepicker-wrap-2 button');
+            if (endDateInput && endDateInput.innerText !== dateFrom) {
+                // Змінюємо текст кнопки без відкриття календаря
+                endDateInput.innerText = dateFrom;
+                console.log('✅ Дата КІНЦЯ встановлена автоматично (без календаря):', dateFrom);
+            }
+
+            step = 5;
+            setTimeout(setCalendarData, 500);
+        }
+        // Запустити пошук
+        else if (step === 5) {
+            const searchBtn = document.querySelector('.new_f-form-submit');
+            if (searchBtn) {
+                searchBtn.click();
+                console.log('🔍 Пошук запущено!');
+                step = 6;
+            }
+        }
+    }
+
+    setTimeout(setCalendarData, 1000);
+    setTimeout(setCalendarData, 2000);
+    setTimeout(setCalendarData, 3000);
+    setTimeout(setCalendarData, 4000);
+})();
+</script>
         </div>
     </div>
 </div>
@@ -234,6 +218,17 @@
 @media (max-width: 768px) {
     .new_r-item { flex-direction: column !important; }
     .new_r-item-img { width: 100% !important; height: 220px !important; }
+}
+    /* Приховуємо календар кінця (користувач не зможе його вибрати) */
+.new_f-datepicker-wrap-2 .new_f-datepicker-calendar {
+    display: none !important;
+    pointer-events: none !important;
+}
+
+/* Або робимо кнопку неактивною */
+.new_f-datepicker-wrap-2 button {
+    pointer-events: none !important;
+    background: #f0f0f0 !important;
 }
 </style>
 
