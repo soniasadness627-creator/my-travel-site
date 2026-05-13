@@ -812,36 +812,57 @@ document.addEventListener('click', function(e) {
     margin-top: 5px !important;
 }
 </style>
-<!-- ========== ТОЧНЕ НАЛАШТУВАННЯ ========== -->
+<!-- ========== ВИПРАВЛЕННЯ ПОЗИЦІЇ ЦІНИ ТА ТРАНСПОРТУ ========== -->
 <style>
-/* Ціна - відступ зверху */
+/* 1. ВИПРАВЛЕННЯ ДЛЯ БЛОКУ ЦІНИ - опускаємо нижче */
 .new_f-ext-bl-price {
-    margin-top: 20px !important;
-    padding-top: 10px !important;
-    border-top: 1px solid #e2e8f0 !important;
+    margin-top: 15px !important;
+    clear: both !important;
 }
 
-/* Транспорт - горизонтальне розміщення */
+.new_f-ext-bl-price .new_f-ext-bl-body {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+}
+
+.new_f-ext-bl-price .slider-container {
+    margin-top: 5px !important;
+}
+
+/* 2. ВИПРАВЛЕННЯ ДЛЯ ТРАНСПОРТУ - рівномірне розміщення */
 .new_f-ext-bl-transp .new_f-ext-bl-body {
     display: flex !important;
     flex-direction: row !important;
-    justify-content: flex-start !important;
-    gap: 30px !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important;
+    align-items: center !important;
 }
 
 .new_f-ext-bl-transp .new_f-ext-bl-body label {
-    display: flex !important;
+    display: inline-flex !important;
     align-items: center !important;
-    gap: 5px !important;
+    gap: 6px !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
 }
 
-/* Вирівнювання висоти всіх блоків */
+/* 3. Загальне вирівнювання всіх блоків фільтрів */
 .new_f-ext-bl {
-    min-height: auto !important;
+    margin-bottom: 20px !important;
 }
 
-.new_f-ext-bl-body {
-    min-height: 40px !important;
+/* 4. Для мобільних пристроїв */
+@media (max-width: 768px) {
+    .new_f-ext-bl-transp .new_f-ext-bl-body {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+
+    .new_f-ext-bl-price {
+        margin-top: 10px !important;
+    }
 }
 </style>
 {% endblock %}
