@@ -847,4 +847,36 @@ document.addEventListener('click', function(e) {
     margin-bottom: 0 !important;
 }
 </style>
+<!-- ========== ЗБІЛЬШУЄМО ВІДСТУП МІЖ БЛОКАМИ ========== -->
+<style>
+/* Відступ між блоками фільтрів */
+.new_f-ext-bl {
+    margin-bottom: 25px !important;
+    padding-bottom: 5px !important;
+}
+
+/* Особливо для блоку рекомендацій */
+.new_f-ext-bl-recommend {
+    margin-bottom: 30px !important;
+    padding-bottom: 10px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Для блоку транспорту */
+.new_f-ext-bl-transp {
+    margin-top: 5px !important;
+}
+
+/* Загальний контейнер колонок */
+.new_f-ext-col {
+    gap: 30px !important;
+}
+
+/* Роздільна лінія між блоками */
+.new_f-ext-bl:not(:last-child) {
+    border-bottom: 1px solid #e9ecef !important;
+    padding-bottom: 20px !important;
+    margin-bottom: 20px !important;
+}
+</style>
 {% endblock %}
