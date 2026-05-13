@@ -197,20 +197,24 @@ function selectCalendarDate(dateISO, price, nights) {
         baseUrl = `/a/${slug}/search-otpusk/`;
     }
 
-    // ВАЖЛИВО: ОДНАКОВА ДАТА ДЛЯ ПОЧАТКУ І КІНЦЯ
     const formatDate = (d) => {
         return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
     };
 
     const dateFromFormatted = formatDate(selectedDate);
-    const dateToFormatted = dateFromFormatted; // ОДНАКОВА ДАТА!
+const dateToFormatted = dateFromFormatted; // ОДНАКОВА ДАТА!
+
+    // ДОДАЄМО +3 ДНІ ДО date_to (бо Otpusk хоче мінімум 0 ночі)
+    const endDate = new Date(selectedDate);
+    endDate.setDate(selectedDate.getDate() + 0);
+    const dateToFormatted = formatDate(endDate);
 
     const params = new URLSearchParams({
         geo: country,
         departure_text: departureText,
         date_from: dateFromFormatted,
         date_to: dateToFormatted,
-        duration: 1,
+        duration: 0,  // 3 ночі
         auto_search: '1'
     });
 
