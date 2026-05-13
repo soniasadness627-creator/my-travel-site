@@ -1220,4 +1220,52 @@ observer.observe(document.body, { childList: true, subtree: true });
     }
 }
 </style>
+<!-- ========== ТОЧНИЙ ВІДСТУП 270px ========== -->
+<style>
+/* Картка туру */
+.new_r-item {
+    display: block !important;
+    position: relative !important;
+    min-height: 220px !important;
+}
+
+/* Фото зліва */
+.new_r-item-img {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 260px !important;
+    height: 100% !important;
+}
+
+/* Текст справа з відступом 270px */
+.new_r-item-body {
+    position: relative !important;
+    left: 270px !important;
+    width: calc(100% - 270px) !important;
+    padding: 16px 20px 16px 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Для мобільних */
+@media (max-width: 768px) {
+    .new_r-item {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .new_r-item-img {
+        position: relative !important;
+        width: 100% !important;
+        height: 200px !important;
+    }
+
+    .new_r-item-body {
+        position: relative !important;
+        left: 0 !important;
+        width: 100% !important;
+        padding: 15px !important;
+    }
+}
+</style>
 {% endblock %}
