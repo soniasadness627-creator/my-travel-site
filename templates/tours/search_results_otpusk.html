@@ -1037,4 +1037,170 @@ observer.observe(document.body, { childList: true, subtree: true });
     }
 }
 </style>
+<!-- ========== ВИПРАВЛЕННЯ КАРТОК ТУРІВ - ПРАВИЛЬНЕ РОЗМІЩЕННЯ ========== -->
+<style>
+/* Основний контейнер картки - горизонтальний flex */
+.new_r-item {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    min-height: 220px !important;
+    overflow: hidden !important;
+}
+
+/* Фото - фіксована ширина, не змінюється */
+.new_r-item-img {
+    width: 260px !important;
+    min-width: 260px !important;
+    height: auto !important;
+    object-fit: cover !important;
+    flex-shrink: 0 !important;
+}
+
+/* Тіло картки - займає всю ширину, що залишилася */
+.new_r-item-body {
+    flex: 1 !important;
+    padding: 16px 20px !important;
+    overflow: hidden !important;
+    min-width: 0 !important;
+}
+
+/* Назва готелю - з переносом слів */
+.new_r-item-hotel {
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+    color: #1a202c !important;
+    margin-bottom: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+}
+
+/* Зірки - не стискаються */
+.new_r-item-stars {
+    display: inline-flex !important;
+    flex-shrink: 0 !important;
+}
+
+/* Блок з інформацією (місто, харчування) */
+.new_r-item-info {
+    display: block !important;
+    width: 100% !important;
+}
+
+/* Геолокація */
+.new_r-item-geo {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 0.85rem !important;
+    color: #666 !important;
+    margin-bottom: 8px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+}
+
+/* Тип харчування */
+.new_r-item-food {
+    display: inline-block !important;
+    background: #e2e8f0 !important;
+    padding: 4px 12px !important;
+    border-radius: 20px !important;
+    font-size: 0.75rem !important;
+    color: #1a202c !important;
+    margin-bottom: 12px !important;
+}
+
+/* Таблиця з деталями (виліт, дата, ціна) */
+.new_r-item-table {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 16px !important;
+    margin: 10px 0 !important;
+    width: 100% !important;
+}
+
+.new_r-item-col {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important;
+    width: 100% !important;
+}
+
+/* Блок вильоту та дати */
+.new_r-item-from,
+.new_r-item-date {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 0.85rem !important;
+    color: #555 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+}
+
+/* Ціна */
+.new_r-item-price {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: baseline !important;
+    margin-top: 12px !important;
+    padding-top: 12px !important;
+    border-top: 1px solid #e2e8f0 !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+}
+
+.new_price-value {
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    color: #dc2626 !important;
+}
+
+/* Іконки */
+.new_r-item-icon {
+    width: 16px !important;
+    height: 16px !important;
+    flex-shrink: 0 !important;
+}
+
+/* Видаляємо white-space: nowrap, який ламав верстку */
+.new_r-item-hotel,
+.new_r-item-geo span,
+.new_r-item-from span,
+.new_r-item-date span {
+    white-space: normal !important;
+}
+
+/* АДАПТИВ ДЛЯ МОБІЛЬНИХ */
+@media (max-width: 768px) {
+    .new_r-item {
+        flex-direction: column !important;
+    }
+
+    .new_r-item-img {
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 200px !important;
+    }
+
+    .new_r-item-body {
+        padding: 15px !important;
+    }
+
+    .new_r-item-col {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    .new_r-item-price {
+        justify-content: flex-start !important;
+    }
+}
+</style>
 {% endblock %}
