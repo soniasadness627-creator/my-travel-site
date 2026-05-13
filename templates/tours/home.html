@@ -191,7 +191,7 @@ function selectCalendarDate(dateISO, price, nights) {
 
     const departureText = departureTextMap[departureName] || departureName;
 
-    let baseUrl = '/search-otpusk/';
+let baseUrl = '/search-results-calendar/';
     if (window.location.pathname.startsWith('/a/')) {
         const slug = window.location.pathname.split('/')[2];
         baseUrl = `/a/${slug}/search-otpusk/`;

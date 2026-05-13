@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Результати пошуку турів{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+            <h2 class="mb-4" style="color: #000000; text-align: left;">Результати пошуку турів</h2>
+
+            <!-- ТІЛЬКИ МОДУЛЬ ПОШУКУ OTPUSK (без скриптів передачі параметрів) -->
+            <div id="otpusk-search-module">
+                <script>
+                    var osGeo = '';
+                    var osDefaultDeparture = '';
+                    var osDefaultDuration = '';
+                    var osDateFrom = '';
+                    var osDateTo = '';
+                    var osHotelCategory = '';
+                    var osFood = '';
+                    var osTransport = '';
+                    var osTarget = '{% if agent_site %}/a/{{ agent_site.slug }}/search-results-calendar/{% else %}/search-results-calendar/{% endif %}';
+                    var osContainer = null;
+                    var osTourContainer = null;
+                    var osLang = 'ua';
+                    var osTourTargetBlank = false;
+                    var osOrderUrl = null;
+                    var osCurrency = 'converted';
+                    var osAutoStart = false;
+                </script>
+                <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+                <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+                <script src="https://export.otpusk.com/js/onsite/"></script>
+                <script src="https://export.otpusk.com/js/order"></script>
+            </div>
+
+            <!-- ========== СПЕЦІАЛЬНИЙ СКРИПТ ДЛЯ КАЛЕНДАРЯ (ВИБІР ОБОХ ДАТ) ========== -->
+            <script>
+            (function() {
+                if (window.calendarDateSet) return;
+                window.calendarDateSet = true;
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
+                const departureText = urlParams.get('departure_text') || '';
+                const dateFrom = urlParams.get('date_from') || '';
+                const duration = urlParams.get('duration') || '0';
+
+                console.log('📥 Календар отримав:', { geo, departureText, dateFrom, duration });
+
+                if (!dateFrom) return;
+
+                const dayNum = dateFrom.split('.')[0];
+                let step = 0;
+
+                function setCalendarData() {
+                    // Країна
+                    if (geo && step === 0) {
+                        const input = document.querySelector('#location');
+                        if (input && input.value !== geo) {
+                            input.value = geo;
+                            input.dispatchEvent(new Event('input', { bubbles: true }));
+                            console.log('✅ Країна:', geo);
+                        }
+                        step = 1;
+                        setTimeout(setCalendarData, 500);
+                    }
+                    // Місто
+                    else if (departureText && step === 1) {
+                        const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                        for (let item of items) {
+                            if (item.innerText.trim() === departureText) {
+                                item.click();
+                                console.log('✅ Місто:', departureText);
+                                break;
+                            }
+                        }
+                        step = 2;
+                        setTimeout(setCalendarData, 800);
+                    }
+                    // Дата ПОЧАТКУ
+                    else if (step === 2) {
+                        const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
+                        if (startBtn) {
+                            startBtn.click();
+                            step = 3;
+                            setTimeout(setCalendarData, 200);
+                        } else {
+                            step = 5;
+                        }
+                    }
+                    // Вибрати дату ПОЧАТКУ
+                    else if (step === 3) {
+                        const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                        let clicked = false;
+                        for (let cell of cells) {
+                            if (cell.innerText === dayNum) {
+                                cell.click();
+                                clicked = true;
+                                console.log('✅ Дата ПОЧАТКУ:', dateFrom);
+                                step = 4;
+                                setTimeout(setCalendarData, 300);
+                                break;
+                            }
+                        }
+                        if (!clicked) step = 5;
+                    }
+                    // Дата КІНЦЯ
+                    else if (step === 4) {
+                        const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
+                        if (endBtn) {
+                            endBtn.click();
+                            step = 5;
+                            setTimeout(setCalendarData, 200);
+                        } else {
+                            step = 6;
+                        }
+                    }
+                    // Вибрати ТУ САМУ дату для КІНЦЯ
+                    else if (step === 5) {
+                        const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                        for (let cell of cells) {
+                            if (cell.innerText === dayNum) {
+                                cell.click();
+                                console.log('✅ Дата КІНЦЯ (ТАКА САМА):', dateFrom);
+                                break;
+                            }
+                        }
+                        step = 6;
+                        setTimeout(setCalendarData, 200);
+                    }
+                    // Закрити календар
+                    else if (step === 6) {
+                        const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
+                        if (closeBtn) closeBtn.click();
+                        step = 7;
+                        setTimeout(setCalendarData, 500);
+                    }
+                    // Запустити пошук
+                    else if (step === 7) {
+                        const searchBtn = document.querySelector('.new_f-form-submit');
+                        if (searchBtn) {
+                            searchBtn.click();
+                            console.log('🔍 Пошук запущено!');
+                            step = 8;
+                        }
+                    }
+                }
+
+                setTimeout(setCalendarData, 1000);
+                setTimeout(setCalendarData, 2000);
+                setTimeout(setCalendarData, 3000);
+                setTimeout(setCalendarData, 4000);
+            })();
+            </script>
+        </div>
+    </div>
+</div>
+
+<!-- ========== СТИЛІ ТА СКРИПТИ (КОПІЮЙ З search_results_otpusk.html) ========== -->
+<style>
+#otpusk-search-module {
+    background: white !important;
+    border-radius: 24px !important;
+    border: 2px solid var(--primary-color) !important;
+    padding: 20px 24px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+}
+.new_f-form-submit {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-radius: 10px !important;
+    border: none !important;
+    font-weight: 600 !important;
+    padding: 12px 28px !important;
+    cursor: pointer !important;
+}
+.new_r-item {
+    background: white !important;
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    margin-bottom: 24px !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+}
+.new_r-item-img {
+    width: 280px !important;
+    height: auto !important;
+    object-fit: cover !important;
+    flex-shrink: 0 !important;
+}
+.new_r-item-body {
+    padding: 18px 22px !important;
+    flex: 1 !important;
+}
+.new_r-item-hotel {
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    color: #1a202c !important;
+}
+.new_price-value {
+    color: #dc2626 !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+}
+.new_r-item-rating-container {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    width: 65px !important;
+    height: 65px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: white !important;
+    border-radius: 10px !important;
+    border-width: 2px !important;
+    border-style: solid !important;
+}
+.new_r-item-rating-value {
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+}
+.new_os-date-check {
+    display: none !important;
+}
+@media (max-width: 768px) {
+    .new_r-item { flex-direction: column !important; }
+    .new_r-item-img { width: 100% !important; height: 220px !important; }
+}
+</style>
+
+<script>
+// Перехоплення кліків на тури
+document.addEventListener('click', function(e) {
+    let target = e.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
+    if (!target) return;
+    let url = target.href || '';
+    if (!url && target.closest('.new_r-item')) {
+        let link = target.closest('.new_r-item').querySelector('a');
+        if (link) url = link.href;
+    }
+    if (!url || !url.includes('hid=')) return;
+    e.preventDefault();
+    let hid = url.match(/hid=(\d+)/)?.[1];
+    let oid = url.match(/oid=([\d]+)/)?.[1];
+    let od = url.match(/od=([\d-]+)/)?.[1];
+    let ol = url.match(/ol=(\d+)/)?.[1];
+    if (hid && oid) {
+        let baseUrl = window.location.pathname.startsWith('/a/')
+            ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
+            : '/tour-detail/';
+        window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}`;
+    }
+});
+</script>
+{% endblock %}

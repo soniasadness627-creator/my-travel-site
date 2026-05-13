@@ -63,7 +63,6 @@ urlpatterns = [
     # ========== МАРШРУТИ ДЛЯ КАЛЕНДАРЯ ЦІН ==========
     # Головний API для календаря (реалістичні демо-дані)
     path('api/calendar-prices/', tours_views.calendar_prices_otpusk, name='calendar_prices'),
-
     # Кешований API для календаря (швидкий)
     path('api/calendar-prices-cached/', tours_views.calendar_prices_cached, name='calendar_prices_cached'),
 
@@ -72,32 +71,33 @@ urlpatterns = [
     path('api/chat/', tours_views.chat_api, name='chat_api'),
     path('api/popular-tours/', tours_views.popular_tours_api, name='popular_tours_api'),
 
-    # ========== 🔥 API ДЛЯ ВІДГУКІВ (ДОДАНО) ==========
+    # ========== 🔥 API ДЛЯ ВІДГУКІВ ==========
     path('api/hotel-reviews/', tours_views.hotel_reviews_api, name='hotel_reviews_api'),
     path('a/<slug:slug>/api/hotel-reviews/', tours_views.hotel_reviews_api, name='agent_hotel_reviews_api'),
-    # ============================================================
 
     # ========== AJAX ОБРОБКА КОНСУЛЬТАЦІЇ ==========
     path('consultation-ajax/', tours_views.consultation_ajax, name='consultation_ajax'),
-    # ДЛЯ АГЕНТСЬКИХ САЙТІВ
     path('a/<slug:slug>/consultation-ajax/', tours_views.consultation_ajax, name='agent_consultation_ajax'),
 
     # ========== AJAX ОБРОБКА БРОНЮВАННЯ (BOOKING) ==========
     path('booking-ajax/', tours_views.booking_ajax, name='booking_ajax'),
-    # ДЛЯ АГЕНТСЬКИХ САЙТІВ
     path('a/<slug:slug>/booking-ajax/', tours_views.booking_ajax, name='agent_booking_ajax'),
 
-    # ========== СТОРІНКА РЕЗУЛЬТАТІВ ПОШУКУ OTPUSK ==========
+    # ========== СТОРІНКИ РЕЗУЛЬТАТІВ ПОШУКУ ==========
     # Сторінка для звичайного пошуку (без блоку консультації)
     path('search-otpusk/', tours_views.search_otpusk, name='search_otpusk'),
     path('a/<slug:slug>/search-otpusk/', tours_views.search_otpusk, name='agent_search_otpusk'),
 
-    # ========== НОВА СТОРІНКА ДЛЯ ПОПУЛЯРНИХ НАПРЯМКІВ (З БЛОКОМ КОНСУЛЬТАЦІЇ) ==========
+    # ========== НОВА СТОРІНКА ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН ==========
+    path('search-results-calendar/', tours_views.search_results_calendar, name='search_results_calendar'),
+    path('a/<slug:slug>/search-results-calendar/', tours_views.search_results_calendar, name='agent_search_results_calendar'),
+
+    # ========== СТОРІНКА ДЛЯ ПОПУЛЯРНИХ НАПРЯМКІВ (З БЛОКОМ КОНСУЛЬТАЦІЇ) ==========
     path('search-otpusk-by-country/', tours_views.search_otpusk_by_country, name='search_otpusk_by_country'),
     path('a/<slug:slug>/search-otpusk-by-country/', tours_views.search_otpusk_by_country,
          name='agent_search_otpusk_by_country'),
 
-    # ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (БЕЗ ФОРМИ ПОШУКУ) ==========
+    # ========== СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ ==========
     path('tour-detail/', tours_views.tour_detail_otpusk, name='tour_detail_otpusk'),
     path('a/<slug:slug>/tour-detail/', tours_views.tour_detail_otpusk, name='agent_tour_detail_otpusk'),
 
