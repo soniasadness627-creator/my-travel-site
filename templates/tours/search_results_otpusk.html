@@ -684,16 +684,19 @@ document.addEventListener('click', function(e) {
 .slider-container {
     width: 100% !important;
     max-width: 100% !important;
+    margin: 0 auto !important;
+    text-align: center !important;
 }
 
-/* Розширюємо сам слайдер */
+/* Розширюємо сам слайдер - робимо трохи вужчим для кращого вирівнювання */
 .ui-slider {
-    width: 100% !important;
-    margin: 15px 0 !important;
+    width: 85% !important;
+    margin: 15px auto !important;
     background: #e2e8f0 !important;
     border: none !important;
     border-radius: 10px !important;
     height: 6px !important;
+    position: relative !important;
 }
 
 /* Стилі для повзунка */
@@ -706,6 +709,7 @@ document.addEventListener('click', function(e) {
     top: -6px !important;
     cursor: pointer !important;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
+    margin-left: -9px !important;
 }
 
 .ui-slider-handle:hover {
@@ -719,12 +723,12 @@ document.addEventListener('click', function(e) {
     border-radius: 10px 0 0 10px !important;
 }
 
-/* Шкала значень під слайдером */
+/* Шкала значень під слайдером - вирівнюємо під слайдером */
 .new_f-ext-scale {
     display: flex !important;
     justify-content: space-between !important;
-    width: 100% !important;
-    margin-top: 10px !important;
+    width: 85% !important;
+    margin: 5px auto 0 auto !important;
 }
 
 .new_f-ext-scale-item {
@@ -734,9 +738,17 @@ document.addEventListener('click', function(e) {
     flex: 1 !important;
 }
 
+/* Ціна - опускаємо нижче, щоб не перекривала слайдер */
+.new_f-ext-bl-price .new_f-ext-bl-body {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+}
+
 /* Для мобільних пристроїв */
 @media (max-width: 768px) {
     .ui-slider {
+        width: 100% !important;
         height: 4px !important;
     }
 
@@ -746,11 +758,16 @@ document.addEventListener('click', function(e) {
         top: -8px !important;
     }
 
+    .new_f-ext-scale {
+        width: 100% !important;
+    }
+
     .new_f-ext-scale-item {
         font-size: 0.7rem !important;
     }
 }
-    /* ========== ФІКС: РОЗМІЩЕННЯ ФІЛЬТРІВ В РЯДОК ========== */
+
+/* ========== ФІКС: РОЗМІЩЕННЯ ФІЛЬТРІВ В РЯДОК ========== */
 .new_f-ext-col {
     display: flex !important;
     flex-wrap: wrap !important;
@@ -788,6 +805,11 @@ document.addEventListener('click', function(e) {
     align-items: center !important;
     gap: 4px !important;
     white-space: nowrap !important;
+}
+
+/* Прибираємо зміщення для ціни */
+.new_f-ext-bl-price .slider-container {
+    margin-top: 5px !important;
 }
 </style>
 
