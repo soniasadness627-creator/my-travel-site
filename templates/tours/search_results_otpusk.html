@@ -942,7 +942,7 @@ observer.observe(document.body, { childList: true, subtree: true });
     text-overflow: clip !important;
 }
 </style>
-<!-- ========== ВИПРАВЛЕННЯ КАРТОК ТУРІВ - ПО ОДНОМУ В РЯД НА ВСЮ ШИРИНУ ========== -->
+<!-- ========== ВИПРАВЛЕННЯ КАРТОК ТУРІВ ========== -->
 <style>
 /* Прибираємо всі сітки та вирівнювання */
 .new_r-container,
@@ -957,7 +957,7 @@ observer.observe(document.body, { childList: true, subtree: true });
     clear: both !important;
 }
 
-/* Кожен тур - з нового рядка, на всю ширину */
+/* Кожен тур - з нового рядка */
 .new_r-item-wrap {
     display: block !important;
     width: 100% !important;
@@ -968,7 +968,7 @@ observer.observe(document.body, { childList: true, subtree: true });
     clear: both !important;
 }
 
-/* Картка туру - горизонтальна, на всю ширину батьківського контейнера */
+/* Картка туру - горизонтальний flex */
 .new_r-item {
     display: flex !important;
     flex-direction: row !important;
@@ -978,77 +978,18 @@ observer.observe(document.body, { childList: true, subtree: true });
     border-radius: 16px !important;
     overflow: hidden !important;
     box-sizing: border-box !important;
+    background: white !important;
+    border: 1px solid #e2e8f0 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
 }
 
-/* Фото - фіксована ширина 260px */
-.new_r-item-img {
-    width: 260px !important;
-    min-width: 260px !important;
-    height: auto !important;
-    object-fit: cover !important;
+.new_r-item:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Тіло картки - займає всю ширину, що залишилася */
-.new_r-item-body {
-    flex: 1 !important;
-    padding: 16px 20px !important;
-}
-
-/* Контейнер з інформацією про тур */
-.new_r-item-info {
-    display: block !important;
-}
-
-/* Таблиця з деталями (виліт, дата) */
-.new_r-item-table {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 16px !important;
-    margin: 10px 0 !important;
-}
-
-.new_r-item-col {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    gap: 20px !important;
-    width: 100% !important;
-}
-
-/* АДАПТИВ ДЛЯ МОБІЛЬНИХ */
-@media (max-width: 768px) {
-    .new_r-item {
-        flex-direction: column !important;
-    }
-
-    .new_r-item-img {
-        width: 100% !important;
-        min-width: 100% !important;
-        height: 220px !important;
-    }
-
-    .new_r-item-body {
-        padding: 15px !important;
-    }
-
-    .new_r-item-col {
-        flex-direction: column !important;
-        gap: 8px !important;
-    }
-}
-</style>
-<!-- ========== ВИПРАВЛЕННЯ КАРТОК ТУРІВ - ПРАВИЛЬНЕ РОЗМІЩЕННЯ ========== -->
-<style>
-/* Основний контейнер картки - горизонтальний flex */
-.new_r-item {
-    display: flex !important;
-    flex-direction: row !important;
-    width: 100% !important;
-    min-height: 220px !important;
-    overflow: hidden !important;
-}
-
-/* Фото - фіксована ширина, не змінюється */
+/* Фото - зліва, фіксована ширина */
 .new_r-item-img {
     width: 260px !important;
     min-width: 260px !important;
@@ -1057,15 +998,17 @@ observer.observe(document.body, { childList: true, subtree: true });
     flex-shrink: 0 !important;
 }
 
-/* Тіло картки - займає всю ширину, що залишилася */
+/* Тіло картки - справа, займає всю ширину, що залишилася */
 .new_r-item-body {
     flex: 1 !important;
     padding: 16px 20px !important;
     overflow: hidden !important;
     min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
-/* Назва готелю - з переносом слів */
+/* Назва готелю - зверху */
 .new_r-item-hotel {
     font-size: 1.2rem !important;
     font-weight: 700 !important;
@@ -1076,20 +1019,17 @@ observer.observe(document.body, { childList: true, subtree: true });
     flex-wrap: wrap !important;
     gap: 8px !important;
     word-break: break-word !important;
-    overflow-wrap: break-word !important;
     white-space: normal !important;
 }
 
-/* Зірки - не стискаються */
+/* Зірки */
 .new_r-item-stars {
     display: inline-flex !important;
     flex-shrink: 0 !important;
 }
 
-/* Блок з інформацією (місто, харчування) */
-.new_r-item-info {
-    display: block !important;
-    width: 100% !important;
+.new_r-item-star {
+    fill: #FFD700 !important;
 }
 
 /* Геолокація */
@@ -1101,10 +1041,9 @@ observer.observe(document.body, { childList: true, subtree: true });
     color: #666 !important;
     margin-bottom: 8px !important;
     white-space: normal !important;
-    word-break: break-word !important;
 }
 
-/* Тип харчування */
+/* Харчування */
 .new_r-item-food {
     display: inline-block !important;
     background: #e2e8f0 !important;
@@ -1113,9 +1052,10 @@ observer.observe(document.body, { childList: true, subtree: true });
     font-size: 0.75rem !important;
     color: #1a202c !important;
     margin-bottom: 12px !important;
+    width: fit-content !important;
 }
 
-/* Таблиця з деталями (виліт, дата, ціна) */
+/* Таблиця з деталями (виліт, дата) */
 .new_r-item-table {
     display: flex !important;
     flex-wrap: wrap !important;
@@ -1132,7 +1072,7 @@ observer.observe(document.body, { childList: true, subtree: true });
     width: 100% !important;
 }
 
-/* Блок вильоту та дати */
+/* Виліт та дата */
 .new_r-item-from,
 .new_r-item-date {
     display: inline-flex !important;
@@ -1141,10 +1081,17 @@ observer.observe(document.body, { childList: true, subtree: true });
     font-size: 0.85rem !important;
     color: #555 !important;
     white-space: normal !important;
-    word-break: break-word !important;
 }
 
-/* Ціна */
+/* Іконки */
+.new_r-item-icon {
+    width: 16px !important;
+    height: 16px !important;
+    flex-shrink: 0 !important;
+    fill: #888 !important;
+}
+
+/* Ціна - внизу праворуч */
 .new_r-item-price {
     display: flex !important;
     justify-content: flex-end !important;
@@ -1162,19 +1109,27 @@ observer.observe(document.body, { childList: true, subtree: true });
     color: #dc2626 !important;
 }
 
-/* Іконки */
-.new_r-item-icon {
-    width: 16px !important;
-    height: 16px !important;
-    flex-shrink: 0 !important;
+.new_price-desc {
+    font-size: 0.75rem !important;
+    color: #666 !important;
 }
 
-/* Видаляємо white-space: nowrap, який ламав верстку */
-.new_r-item-hotel,
-.new_r-item-geo span,
-.new_r-item-from span,
-.new_r-item-date span {
-    white-space: normal !important;
+/* Рейтинг */
+.new_r-item-rating-container {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    width: 65px !important;
+    height: 65px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: white !important;
+    border-radius: 12px !important;
+    border-width: 2px !important;
+    border-style: solid !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* АДАПТИВ ДЛЯ МОБІЛЬНИХ */
@@ -1200,24 +1155,6 @@ observer.observe(document.body, { childList: true, subtree: true });
 
     .new_r-item-price {
         justify-content: flex-start !important;
-    }
-}
-    /* Додаткове виправлення для довгих назв */
-.new_r-item-hotel {
-    overflow-wrap: break-word !important;
-    word-wrap: break-word !important;
-    hyphens: auto !important;
-    max-width: 100% !important;
-}
-
-/* Обмежуємо ширину тексту */
-.new_r-item-body {
-    max-width: calc(100% - 260px) !important;
-}
-
-@media (max-width: 768px) {
-    .new_r-item-body {
-        max-width: 100% !important;
     }
 }
 </style>
