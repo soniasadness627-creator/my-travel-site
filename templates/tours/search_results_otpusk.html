@@ -811,55 +811,15 @@ document.addEventListener('click', function(e) {
 .new_f-ext-bl-price .slider-container {
     margin-top: 5px !important;
 }
-</style>
-<!-- ========== ПОВНЕ ВИПРАВЛЕННЯ СЛАЙДЕРА ========== -->
-<style>
-/* Контейнер слайдера - додаємо більше простору знизу */
+    /* Просто зсуваємо контейнер з цифрами вниз */
 .slider-container {
-    position: relative !important;
-    padding-bottom: 15px !important;
-    margin-bottom: 5px !important;
+    transform: translateY(10px) !important;
+    padding-bottom: 20px !important;
 }
 
-/* Цифри (4 і 10) - опускаємо нижче */
 .slider-container input[readonly] {
-    position: absolute !important;
-    bottom: -2px !important;
-    top: auto !important;
-    background: transparent !important;
-    border: none !important;
-    width: 30px !important;
-    text-align: center !important;
-}
-
-/* Ліва цифра (4) */
-.slider-container input[readonly]:first-of-type {
-    left: 0 !important;
-    right: auto !important;
-}
-
-/* Права цифра (10) */
-.slider-container input[readonly]:last-of-type {
-    right: 0 !important;
-    left: auto !important;
-    text-align: right !important;
-}
-
-/* Слайдер залишається на місці */
-.ui-slider {
-    margin: 80px 0 !important;
-}
-
-/* Шкала значень */
-.new_f-ext-scale {
-    margin-top: 3px !important;
-    clear: both !important;
-}
-
-/* Прибираємо зайві absolute позиціонування */
-.new_f-ext-bl-price .new_f-ext-bl-body {
-    position: relative !important;
-    min-height: 40px !important;
+    transform: translateY(15px) !important;
 }
 </style>
+
 {% endblock %}
