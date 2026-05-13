@@ -849,12 +849,6 @@ document.addEventListener('click', function(e) {
 </style>
 <!-- ========== РОЗДІЛЕННЯ БЛОКІВ ========== -->
 <style>
-/* Розділова лінія між блоками */
-.new_f-ext-bl-recommend {
-    border-bottom: 2px solid #e2e8f0 !important;
-    padding-bottom: 20px !important;
-    margin-bottom: 20px !important;
-}
 
 /* Додатковий відступ для транспорту */
 .new_f-ext-bl-transp {
@@ -928,4 +922,16 @@ document.addEventListener('click', function(e) {
     background: #e0e0e0 !important;
 }
 </style>
+<script>
+// Спостерігаємо за появою кнопки
+const observer = new MutationObserver(function() {
+    const searchBtn = document.querySelector('.new_f-form-submit');
+    if (searchBtn && searchBtn.textContent === 'Знайти') {
+        searchBtn.textContent = 'Пошук';
+        observer.disconnect();
+        console.log('✅ Кнопку змінено на "Пошук"');
+    }
+});
+observer.observe(document.body, { childList: true, subtree: true });
+</script>
 {% endblock %}
