@@ -934,4 +934,12 @@ const observer = new MutationObserver(function() {
 });
 observer.observe(document.body, { childList: true, subtree: true });
 </script>
+<!-- ========== ЗАБОРОНЯЄМО ПЕРЕНОС ТЕКСТУ ========== -->
+<style>
+.new_f-form-submit {
+    white-space: nowrap !important;  /* Текст в один рядок */
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+</style>
 {% endblock %}
