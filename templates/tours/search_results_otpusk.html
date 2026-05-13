@@ -1158,4 +1158,66 @@ observer.observe(document.body, { childList: true, subtree: true });
     }
 }
 </style>
+<!-- ========== ЗБІЛЬШЕННЯ ВИСОТИ КАРТОК ТУРІВ (220px) ========== -->
+<style>
+/* Основний контейнер картки */
+.new_r-item {
+    min-height: 220px !important;
+    height: auto !important;
+}
+
+/* Фото - на всю висоту */
+.new_r-item-img {
+    height: 100% !important;
+    min-height: 220px !important;
+    max-height: 220px !important;
+    object-fit: cover !important;
+}
+
+/* Тіло картки - прибираємо фіксовану висоту */
+.new_r-item-body {
+    height: auto !important;
+    min-height: 180px !important;
+    padding: 16px 20px !important;
+}
+
+/* Назва готелю */
+.new_r-item-hotel {
+    font-size: 1.2rem !important;
+    margin-bottom: 10px !important;
+}
+
+/* Геолокація */
+.new_r-item-geo {
+    margin-bottom: 10px !important;
+}
+
+/* Харчування */
+.new_r-item-food {
+    margin-bottom: 14px !important;
+}
+
+/* Таблиця деталей */
+.new_r-item-table {
+    margin: 12px 0 !important;
+}
+
+/* Ціна */
+.new_r-item-price {
+    margin-top: 14px !important;
+    padding-top: 14px !important;
+}
+
+/* АДАПТИВ */
+@media (max-width: 768px) {
+    .new_r-item {
+        min-height: auto !important;
+    }
+
+    .new_r-item-img {
+        min-height: 200px !important;
+        height: 200px !important;
+    }
+}
+</style>
 {% endblock %}
