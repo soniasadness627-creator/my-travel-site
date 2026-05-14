@@ -3051,5 +3051,100 @@ setTimeout(function() {
     }
 }
 </style>
+<script>
+// Діагностика відгуків - примусове завантаження
+(function() {
+    console.log('🔍 Діагностика відгуків запущена');
 
+    async function forceLoadReviews() {
+        const hid = new URLSearchParams(window.location.search).get('hid');
+        if (!hid) {
+            console.error('❌ hid не знайдено');
+            return;
+        }
+
+        console.log('📡 Завантаження відгуків для hid:', hid);
+
+        try {
+            // Визначаємо URL з урахуванням агента
+            let url = `/api/hotel-reviews/?hid=${hid}`;
+            const pathParts = window.location.pathname.split('/');
+            for (let i = 0; i < pathParts.length; i++) {
+                if (pathParts[i] === 'a' && pathParts[i + 1]) {
+                    url = `/a/${pathParts[i + 1]}/api/hotel-reviews/?hid=${hid}`;
+                    break;
+                }
+            }
+
+            console.log('🌐 Запит до:', url);
+            const response = await fetch(url);
+            const data = await response.json();
+            console.log('📥 Отримані відгуки:', data);
+
+            if (data.reviews && data.reviews.length > 0) {
+                console.log(`✅ Знайдено ${data.reviews.length} відгуків`);
+                // Примусово оновлюємо відображення
+                const container = document.getElementById('reviewsList');
+                if (container) {
+                    renderReviewsManually(data.reviews, container);
+                }
+            } else {
+                console.log('ℹ️ Відгуків поки немає');
+            }
+        } catch (error) {
+            console.error('❌ Помилка завантаження:', error);
+        }
+    }
+
+    function renderReviewsManually(reviews, container) {
+        if (reviews.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fa-regular fa-message fa-4x text-muted mb-3"></i>
+                    <h5 class="text-muted">Поки що немає відгуків</h5>
+                    <p class="text-muted">Будьте першим, хто залишить відгук про цей готель!</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        reviews.forEach(review => {
+            const date = new Date(review.created_at);
+            const formattedDate = date.toLocaleDateString('uk-UA');
+            const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+
+            html += `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-name">
+                            <i class="fa-regular fa-user-circle"></i>
+                            ${escapeHtml(review.guest_name)}
+                        </div>
+                        <div class="review-date">${formattedDate}</div>
+                    </div>
+                    <div class="review-rating" style="color: #f59e0b; font-size: 14px;">
+                        ${stars}
+                    </div>
+                    <div class="review-comment">
+                        ${escapeHtml(review.comment)}
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Запускаємо через 2 секунди після завантаження
+    setTimeout(forceLoadReviews, 2000);
+})();
+</script>
 {% endblock %}
