@@ -1541,4 +1541,105 @@ observer.observe(document.body, { childList: true, subtree: true });
     }
 }
 </style>
+<script>
+// ========== ВИПРАВЛЕНИЙ ПЕРЕХІД НА СТОРІНКУ ДЕТАЛЕЙ ТУРУ ==========
+(function() {
+    // Функція для отримання base URL з урахуванням агента
+    function getBaseUrl() {
+        const pathParts = window.location.pathname.split('/');
+        for (let i = 0; i < pathParts.length; i++) {
+            if (pathParts[i] === 'a' && pathParts[i + 1]) {
+                return `/a/${pathParts[i + 1]}/tour-detail/`;
+            }
+        }
+        return '/tour-detail/';
+    }
+
+    // Перехоплення кліків на тури
+    document.addEventListener('click', function(e) {
+        // Шукаємо посилання або картку туру
+        let target = e.target.closest('.new_r-item a, .new_r-item, .new_t-order-btn, .new_t-order-btn-true');
+        if (!target) return;
+
+        // Отримуємо URL з посилання, якщо воно є
+        let url = '';
+        const link = target.closest('.new_r-item')?.querySelector('a');
+        if (link) {
+            url = link.href;
+        } else if (target.href) {
+            url = target.href;
+        }
+
+        // Якщо URL не містить параметрів туру, пробуємо отримати їх з data-атрибутів
+        if (!url || !url.includes('hid=')) {
+            const item = target.closest('.new_r-item');
+            if (item) {
+                // Шукаємо приховані дані про тур
+                const hidElement = item.querySelector('[data-hid], input[name="hid"]');
+                const oidElement = item.querySelector('[data-oid], input[name="oid"]');
+                const odElement = item.querySelector('[data-od], input[name="od"]');
+                const olElement = item.querySelector('[data-ol], input[name="ol"]');
+
+                const hid = hidElement?.getAttribute('data-hid') || hidElement?.value;
+                const oid = oidElement?.getAttribute('data-oid') || oidElement?.value;
+                const od = odElement?.getAttribute('data-od') || odElement?.value;
+                const ol = olElement?.getAttribute('data-ol') || olElement?.value;
+
+                if (hid && oid) {
+                    const baseUrl = getBaseUrl();
+                    url = `${baseUrl}?hid=${hid}&oid=${oid}`;
+                    if (od) url += `&od=${od}`;
+                    if (ol) url += `&ol=${ol}`;
+                }
+            }
+        }
+
+        // Якщо знайшли URL з параметрами - перенаправляємо
+        if (url && (url.includes('hid=') || url.includes('/tour-detail/'))) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = url;
+            return;
+        }
+
+        // Спроба отримати параметри з самої картки
+        const item = target.closest('.new_r-item');
+        if (item) {
+            // Шукаємо посилання всередині картки
+            const itemLink = item.querySelector('a');
+            if (itemLink && itemLink.href) {
+                let href = itemLink.href;
+
+                // Перевіряємо чи це посилання на тур
+                if (href.includes('hid=')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = href;
+                    return;
+                }
+
+                // Якщо посилання відносне, додаємо base URL
+                if (href.startsWith('/') && !href.startsWith('//')) {
+                    const baseUrl = getBaseUrl();
+                    // Парсимо параметри з href
+                    const hidMatch = href.match(/hid=(\d+)/);
+                    const oidMatch = href.match(/oid=(\d+)/);
+                    const odMatch = href.match(/od=([\d-]+)/);
+                    const olMatch = href.match(/ol=(\d+)/);
+
+                    if (hidMatch && oidMatch) {
+                        let newUrl = `${baseUrl}?hid=${hidMatch[1]}&oid=${oidMatch[1]}`;
+                        if (odMatch) newUrl += `&od=${odMatch[1]}`;
+                        if (olMatch) newUrl += `&ol=${olMatch[1]}`;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.location.href = newUrl;
+                        return;
+                    }
+                }
+            }
+        }
+    });
+})();
+</script>
 {% endblock %}
