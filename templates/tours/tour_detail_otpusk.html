@@ -2801,7 +2801,7 @@ setTimeout(function() {
 }
 </style>
 <script>
-// ========== ВІДГУКИ З КНОПКОЮ "ПЕРЕГЛЯНУТИ ВСІ" ==========
+// ========== ВІДГУКИ З КНОПКОЮ "ПЕРЕГЛЯНУТИ ВСІ" (БЕЗ ALERT) ==========
 document.addEventListener('DOMContentLoaded', function() {
     const hid = new URLSearchParams(window.location.search).get('hid');
     const oid = new URLSearchParams(window.location.search).get('oid');
@@ -2882,7 +2882,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (showAll) {
                     renderAllReviewsModal(allReviews);
                 } else {
-                    renderReviews(allReviews.slice(0, 3)); // Показуємо тільки 3 відгуки
+                    renderReviews(allReviews.slice(0, 3));
                     if (allReviews.length > 3) {
                         addViewAllButton();
                     }
@@ -3063,7 +3063,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadReviews();
 });
 
-// Функція відправки відгуку
+// Функція відправки відгуку (БЕЗ ALERT)
 async function submitReview(event) {
     event.preventDefault();
 
@@ -3075,11 +3075,11 @@ async function submitReview(event) {
     const oid = new URLSearchParams(window.location.search).get('oid');
 
     if (!guestName) {
-        alert('Будь ласка, введіть ваше ім\'я');
+        // Без alert - просто вихід
         return;
     }
     if (!comment) {
-        alert('Будь ласка, введіть текст відгуку');
+        // Без alert - просто вихід
         return;
     }
 
@@ -3116,17 +3116,18 @@ async function submitReview(event) {
         const data = await response.json();
 
         if (data.success) {
-            alert(data.message || 'Дякуємо за ваш відгук!');
+            // ALERT ПРИБРАНО - просто очищаємо форму і перезавантажуємо
             document.getElementById('reviewGuestName').value = '';
             document.getElementById('reviewComment').value = '';
             document.getElementById('reviewRating').value = '5';
+            // Перезавантажуємо сторінку, щоб побачити новий відгук
             location.reload();
         } else {
-            alert(data.error || 'Сталася помилка. Спробуйте пізніше.');
+            // Помилку пишемо тільки в консоль
+            console.error('Помилка:', data.error);
         }
     } catch (error) {
         console.error('Помилка відправки:', error);
-        alert('Помилка з\'єднання. Спробуйте пізніше.');
     } finally {
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
