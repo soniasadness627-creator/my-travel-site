@@ -1594,4 +1594,33 @@ observer.observe(document.body, { childList: true, subtree: true });
     });
 })();
 </script>
+<style>
+/* ========== ЦЕНТРУВАННЯ ФОРМИ ВІДГУКУ ========== */
+#reviews-section .card.shadow-lg.mb-4 {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    max-width: 500px !important;
+}
+
+/* Додатково для батьківського контейнера */
+#reviews-section .card-body.p-4 {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+#reviews-section .card.shadow-lg.mb-4 {
+    align-self: center !important;
+}
+
+/* Для мобільних пристроїв */
+@media (max-width: 768px) {
+    #reviews-section .card.shadow-lg.mb-4 {
+        max-width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+</style>
 {% endblock %}
