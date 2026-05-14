@@ -256,8 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const cityName = tour.city || 'популярний курорт';
 
             html += `
-                <div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(countryName)}')">
-                    <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.unsplash.com/photo-1468824357306-a439d58ccb1c?w=400&h=250&fit=crop'">
+<div class="popular-tour-card" onclick="goToTourDetail()">                    <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.unsplash.com/photo-1468824357306-a439d58ccb1c?w=400&h=250&fit=crop'">
                     <div class="popular-tour-info">
                         <div class="popular-tour-hotel">${escapeHtml(hotelName)}</div>
                         <div class="popular-tour-location">
@@ -272,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 ${priceFormatted} ₴
                                 <small>за тур</small>
                             </div>
-                            <button class="popular-tour-btn" onclick="event.stopPropagation(); searchByCountry('${encodeURIComponent(countryName)}')">
+<button class="popular-tour-btn" onclick="event.stopPropagation(); goToTourDetail()">
                                 Дивитись
                             </button>
                         </div>
@@ -304,6 +303,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Завантаження та відображення турів
     fetchPopularTours().then(tours => renderTours(tours));
 });
+    // ========== ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА СТОРІНКУ ДЕТАЛЕЙ ТУРУ ==========
+window.goToTourDetail = function() {
+    let baseUrl = '/tour-detail/';
+    const pathParts = window.location.pathname.split('/');
+    for (let i = 0; i < pathParts.length; i++) {
+        if (pathParts[i] === 'a' && pathParts[i + 1]) {
+            baseUrl = `/a/${pathParts[i + 1]}/tour-detail/`;
+            break;
+        }
+    }
+    // Тимчасово ведемо на один тестовий тур
+    window.location.href = `${baseUrl}?hid=8028&oid=7113825143490080129&od=2026-05-26&ol=8`;
+};
 </script>
 
 <!-- ========== КАЛЕНДАР НИЗЬКИХ ЦІН ========== -->
@@ -1159,4 +1171,5 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 {% endif %}
+
 {% endblock %}
