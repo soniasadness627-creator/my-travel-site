@@ -13,83 +13,189 @@
             {% include "tours/otpusk_search.html" %}
 
             <!-- ========== ДОДАТКОВИЙ СКРИПТ ДЛЯ АВТОМАТИЧНОГО ВИБОРУ ОБОХ ДАТ ========== -->
-            <script>
-            (function() {
-                if (window.searchResultsDateSet) return;
-                window.searchResultsDateSet = true;
+            <!-- ========== ДОДАТКОВИЙ СКРИПТ ДЛЯ АВТОМАТИЧНОГО ВИБОРУ ========== -->
+<script>
+(function() {
+    if (window.searchResultsDateSet) return;
+    window.searchResultsDateSet = true;
 
-                const urlParams = new URLSearchParams(window.location.search);
-                const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
-                const departureText = urlParams.get('departure_text') || '';
-                const dateFrom = urlParams.get('date_from') || '';
-                const dateTo = urlParams.get('date_to') || '';
+    const urlParams = new URLSearchParams(window.location.search);
+    const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
+    const departureText = urlParams.get('departure_text') || '';
+    const dateFrom = urlParams.get('date_from') || '';
+    const dateTo = urlParams.get('date_to') || '';
+    const autoSearch = urlParams.get('auto_search') === '1';
 
-                console.log('📥 search_results_otpusk отримав:', { geo, departureText, dateFrom, dateTo });
+    console.log('📥 search_results_otpusk отримав:', { geo, departureText, dateFrom, dateTo, autoSearch });
 
-                if (!dateFrom) return;
+    let searchTriggered = false;
+    let countrySelected = false;
+    let dateFromSet = false;
+    let dateToSet = false;
 
-                let dateFromSet = false;
-                let dateToSet = false;
+    // ========== 1. ВИБІР КРАЇНИ ==========
+    function selectCountryFromDropdown() {
+        const items = document.querySelectorAll('#cntList .ui-menu-item, .ui-autocomplete li');
+        for (let item of items) {
+            const text = item.innerText || item.textContent;
+            if (text && text.toLowerCase().trim() === geo.toLowerCase().trim()) {
+                const link = item.querySelector('a') || item;
+                link.click();
+                countrySelected = true;
+                console.log('✅ Вибрано країну зі списку:', geo);
+                return true;
+            }
+        }
+        return false;
+    }
 
-                function setBothDates() {
-                    const dayNum = dateFrom.split('.')[0];
-                    console.log('📅 Встановлюємо дату:', dateFrom, 'день:', dayNum);
+    function setCountry() {
+        if (!geo || countrySelected) return;
 
-                    if (!dateFromSet) {
-                        const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
-                        if (startBtn) {
-                            startBtn.click();
-                            console.log('📅 Календар ПОЧАТКУ відкрито');
+        const countryInput = document.querySelector('#location');
+        if (countryInput) {
+            countryInput.value = geo;
+            countryInput.dispatchEvent(new Event('input', { bubbles: true }));
+            countryInput.dispatchEvent(new Event('change', { bubbles: true }));
 
-                            setTimeout(() => {
-                                const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                                for (let cell of cells) {
-                                    if (cell.innerText === dayNum) {
-                                        cell.click();
-                                        dateFromSet = true;
-                                        console.log('✅ Дата ПОЧАТКУ вибрана:', dateFrom);
-                                        break;
-                                    }
-                                }
+            setTimeout(() => {
+                if (!selectCountryFromDropdown()) {
+                    setTimeout(selectCountryFromDropdown, 500);
+                    setTimeout(selectCountryFromDropdown, 1000);
+                }
+            }, 400);
+        }
+    }
 
-                                setTimeout(() => {
-                                    if (!dateToSet) {
-                                        const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
-                                        if (endBtn) {
-                                            endBtn.click();
-                                            console.log('📅 Календар КІНЦЯ відкрито');
+    // ========== 2. ВИБІР ДАТ ==========
+    function setBothDates() {
+        if (!dateFrom) return;
 
-                                            setTimeout(() => {
-                                                const endCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                                                for (let cell of endCells) {
-                                                    if (cell.innerText === dayNum) {
-                                                        cell.click();
-                                                        dateToSet = true;
-                                                        console.log('✅ Дата КІНЦЯ вибрана (ТАКА САМА):', dateFrom);
-                                                        break;
-                                                    }
-                                                }
+        const dayNum = dateFrom.split('.')[0];
+        console.log('📅 Встановлюємо дату:', dateFrom, 'день:', dayNum);
 
-                                                setTimeout(() => {
-                                                    const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
-                                                    if (closeBtn) closeBtn.click();
-                                                    console.log('✅ Календар закрито');
-                                                }, 100);
-                                            }, 200);
-                                        }
-                                    }
-                                }, 300);
-                            }, 200);
+        if (!dateFromSet) {
+            const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
+            if (startBtn) {
+                startBtn.click();
+                console.log('📅 Календар ПОЧАТКУ відкрито');
+
+                setTimeout(() => {
+                    const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                    for (let cell of cells) {
+                        if (cell.innerText === dayNum) {
+                            cell.click();
+                            dateFromSet = true;
+                            console.log('✅ Дата ПОЧАТКУ вибрана:', dateFrom);
+                            break;
                         }
                     }
-                }
 
-                setTimeout(setBothDates, 1500);
-                setTimeout(setBothDates, 2500);
-                setTimeout(setBothDates, 3500);
-                setTimeout(setBothDates, 4500);
-            })();
-            </script>
+                    setTimeout(() => {
+                        if (!dateToSet) {
+                            const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
+                            if (endBtn) {
+                                endBtn.click();
+                                console.log('📅 Календар КІНЦЯ відкрито');
+
+                                setTimeout(() => {
+                                    const endCells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                                    for (let cell of endCells) {
+                                        if (cell.innerText === dayNum) {
+                                            cell.click();
+                                            dateToSet = true;
+                                            console.log('✅ Дата КІНЦЯ вибрана (ТАКА САМА):', dateFrom);
+                                            break;
+                                        }
+                                    }
+
+                                    setTimeout(() => {
+                                        const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
+                                        if (closeBtn) closeBtn.click();
+                                        console.log('✅ Календар закрито');
+                                    }, 100);
+                                }, 200);
+                            }
+                        }
+                    }, 300);
+                }, 200);
+            }
+        }
+    }
+
+    // ========== 3. ЗАПУСК ПОШУКУ ==========
+    function triggerSearch() {
+        if (searchTriggered) return;
+
+        // Чекаємо, поки країна вибрана (або її немає в параметрах)
+        if (autoSearch && (countrySelected || !geo)) {
+            setTimeout(() => {
+                const searchBtn = document.querySelector('.new_f-form-submit');
+                if (searchBtn) {
+                    searchBtn.click();
+                    searchTriggered = true;
+                    console.log('🔍 Авто-пошук запущено (з популярних напрямків)');
+                }
+            }, 800);
+        }
+    }
+
+    // ========== 4. ВИБІР МІСТА ВИЛЬОТУ ==========
+    function setDeparture() {
+        if (!departureText) return;
+
+        setTimeout(() => {
+            const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
+            if (departureBtn && !departureBtn.innerText.includes(departureText)) {
+                departureBtn.click();
+                setTimeout(() => {
+                    const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                    for (let item of items) {
+                        if (item.innerText.trim() === departureText) {
+                            item.click();
+                            console.log('✅ Встановлено місто вильоту:', departureText);
+                            break;
+                        }
+                    }
+                }, 200);
+            }
+        }, 500);
+    }
+
+    // ========== 5. ЗАПУСК ВСІХ ФУНКЦІЙ ==========
+    function init() {
+        setCountry();
+        setDeparture();
+
+        if (dateFrom) {
+            setTimeout(setBothDates, 1000);
+            setTimeout(setBothDates, 2000);
+            setTimeout(setBothDates, 3000);
+            setTimeout(setBothDates, 4000);
+        }
+
+        // Запускаємо перевірку для авто-пошуку
+        let attempts = 0;
+        function checkAndSearch() {
+            attempts++;
+            if (autoSearch && !searchTriggered && (countrySelected || !geo)) {
+                triggerSearch();
+            } else if (attempts < 15 && autoSearch) {
+                setTimeout(checkAndSearch, 500);
+            }
+        }
+
+        if (autoSearch) {
+            setTimeout(checkAndSearch, 1000);
+            setTimeout(checkAndSearch, 2000);
+            setTimeout(checkAndSearch, 3000);
+        }
+    }
+
+    // Запускаємо ініціалізацію з затримкою
+    setTimeout(init, 500);
+})();
+</script>
         </div>
     </div>
 </div>

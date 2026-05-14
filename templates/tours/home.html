@@ -44,6 +44,7 @@
     <script src="https://export.otpusk.com/js/onsite/"></script>
     <script src="https://export.otpusk.com/js/order"></script>
 
+</div>
 
 <!-- ========== БЛОК "ПОПУЛЯРНІ ТУРИ" ========== -->
 <div class="container my-5">
@@ -71,7 +72,6 @@
             </div>
         </div>
     </div>
-</div>
 </div>
 <style>
 .popular-slider-container::-webkit-scrollbar {
@@ -228,16 +228,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.searchByCountry = function(country) {
-        let baseUrl = '/search-otpusk/';
-        const pathParts = window.location.pathname.split('/');
-        for (let i = 0; i < pathParts.length; i++) {
-            if (pathParts[i] === 'a' && pathParts[i + 1]) {
-                baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
-                break;
-            }
+    let baseUrl = '/search-otpusk/';
+    const pathParts = window.location.pathname.split('/');
+    for (let i = 0; i < pathParts.length; i++) {
+        if (pathParts[i] === 'a' && pathParts[i + 1]) {
+            baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
+            break;
         }
-        window.location.href = `${baseUrl}?geo=${encodeURIComponent(country)}`;
-    };
+    }
+    // Додаємо параметр, який запустить автоматичний пошук
+    window.location.href = `${baseUrl}?geo=${encodeURIComponent(country)}&auto_search=1`;
+};
 
     function renderTours(tours) {
     if (!track) return;
@@ -256,8 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const cityName = tour.city || 'популярний курорт';
 
         html += `
-<div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(countryName)}')">
-    <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop'">
+<div class="popular-tour-card" onclick="goToSearch('${encodeURIComponent(countryName)}')">    <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop'">
     <div class="popular-tour-info">
         <div class="popular-tour-hotel">${escapeHtml(hotelName)}</div>
         <div class="popular-tour-location">
