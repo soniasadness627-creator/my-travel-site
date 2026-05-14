@@ -1417,4 +1417,115 @@ observer.observe(document.body, { childList: true, subtree: true });
     }
 }
 </style>
+<!-- ========== ПЕРЕМИКАЧ ВАЛЮТИ - ГОРИЗОНТАЛЬНИЙ ========== -->
+<style>
+/* Контейнер перемикача */
+.new_r-currency-switch {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    background: var(--primary-color) !important;
+    border-radius: 30px !important;
+    overflow: hidden !important;
+    width: fit-content !important;
+    margin: 0 0 15px auto !important;
+    float: right !important;
+}
+
+/* Кожен елемент перемикача */
+.new_r-currency-switch label {
+    display: flex !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Стилі для кнопок */
+.new_r-currency-switch span {
+    display: inline-block !important;
+    background: transparent !important;
+    color: white !important;
+    padding: 8px 16px !important;
+    cursor: pointer !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    text-align: center !important;
+}
+
+/* Активний стан */
+.new_r-currency-switch input[type="radio"]:checked + span {
+    background: rgba(255, 255, 255, 0.25) !important;
+    backdrop-filter: blur(4px) !important;
+}
+
+/* Ховер ефект */
+.new_r-currency-switch label:hover span {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Прибираємо радіо-кнопки */
+.new_r-currency-switch input[type="radio"] {
+    display: none !important;
+}
+
+/* Для мобільних */
+@media (max-width: 768px) {
+    .new_r-currency-switch span {
+        padding: 6px 12px !important;
+        font-size: 0.8rem !important;
+    }
+}
+</style>
+<!-- ========== РОЗМІЩЕННЯ ЦІНИ СПРАВА ========== -->
+<style>
+/* Контейнер колонки ціни */
+.new_r-item-col {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: flex-end !important;
+}
+
+/* Сам блок ціни */
+.new_r-item-price {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    text-align: right !important;
+    width: auto !important;
+    min-width: 140px !important;
+}
+
+/* Контейнер всіх колонок */
+.new_r-item-col {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+}
+
+/* Ліва частина (виліт, дата) */
+.new_r-item-col:first-child {
+    justify-content: flex-start !important;
+}
+
+/* Права частина (ціна) */
+.new_r-item-col:last-child {
+    justify-content: flex-end !important;
+}
+
+/* Для мобільних */
+@media (max-width: 768px) {
+    .new_r-item-col {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    .new_r-item-price {
+        margin-left: 0 !important;
+        text-align: left !important;
+        width: 100% !important;
+    }
+}
+</style>
 {% endblock %}
