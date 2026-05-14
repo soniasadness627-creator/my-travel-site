@@ -3052,51 +3052,135 @@ setTimeout(function() {
 }
 </style>
 <script>
-// Діагностика відгуків - примусове завантаження
-(function() {
-    console.log('🔍 Діагностика відгуків запущена');
+// ========== ВІДГУКИ З КНОПКОЮ "ПЕРЕГЛЯНУТИ ВСІ" ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const hid = new URLSearchParams(window.location.search).get('hid');
+    const oid = new URLSearchParams(window.location.search).get('oid');
+    let allReviews = [];
 
-    async function forceLoadReviews() {
-        const hid = new URLSearchParams(window.location.search).get('hid');
+    // Оновлення назви готелю в заголовку
+    function updateReviewsTitle() {
+        const hotelTitle = document.querySelector('.new_t-header-title');
+        const reviewsTitle = document.getElementById('reviewsTitle');
+        if (hotelTitle && reviewsTitle) {
+            let hotelName = hotelTitle.innerText.trim();
+            hotelName = hotelName.replace(/\s*\*+\s*$/g, '').trim();
+            reviewsTitle.textContent = `Відгуки про готель ${hotelName}`;
+        }
+    }
+
+    // Функція для відображення зірок
+    function renderStars(rating) {
+        let stars = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                stars += '<i class="fa-solid fa-star" style="color: #f59e0b;"></i>';
+            } else {
+                stars += '<i class="fa-regular fa-star" style="color: #f59e0b;"></i>';
+            }
+        }
+        return stars;
+    }
+
+    // Розгортання відгуку
+    window.toggleReviewComment = function(btn) {
+        const card = btn.closest('.review-card');
+        const shortDiv = card.querySelector('.review-comment-short');
+        const fullDiv = card.querySelector('.review-comment-full');
+
+        if (fullDiv && shortDiv) {
+            if (fullDiv.style.display === 'none') {
+                shortDiv.style.display = 'none';
+                fullDiv.style.display = 'block';
+                btn.textContent = 'менше';
+            } else {
+                shortDiv.style.display = 'block';
+                fullDiv.style.display = 'none';
+                btn.textContent = '... більше';
+            }
+        }
+    };
+
+    // Завантаження відгуків через Django API
+    async function loadReviews(showAll = false) {
+        const container = document.getElementById('reviewsList');
+        if (!container) return;
+
         if (!hid) {
-            console.error('❌ hid не знайдено');
+            container.innerHTML = '<div class="text-center py-5"><p class="text-muted">Не вдалося визначити готель</p></div>';
             return;
         }
 
-        console.log('📡 Завантаження відгуків для hid:', hid);
-
         try {
-            // Визначаємо URL з урахуванням агента
-            let url = `/api/hotel-reviews/?hid=${hid}`;
+            let url = '/api/hotel-reviews/?hid=' + hid;
+            if (oid) url += '&oid=' + oid;
+
             const pathParts = window.location.pathname.split('/');
             for (let i = 0; i < pathParts.length; i++) {
                 if (pathParts[i] === 'a' && pathParts[i + 1]) {
-                    url = `/a/${pathParts[i + 1]}/api/hotel-reviews/?hid=${hid}`;
+                    url = '/a/' + pathParts[i + 1] + '/api/hotel-reviews/?hid=' + hid;
+                    if (oid) url += '&oid=' + oid;
                     break;
                 }
             }
 
-            console.log('🌐 Запит до:', url);
             const response = await fetch(url);
             const data = await response.json();
-            console.log('📥 Отримані відгуки:', data);
 
             if (data.reviews && data.reviews.length > 0) {
-                console.log(`✅ Знайдено ${data.reviews.length} відгуків`);
-                // Примусово оновлюємо відображення
-                const container = document.getElementById('reviewsList');
-                if (container) {
-                    renderReviewsManually(data.reviews, container);
+                allReviews = data.reviews;
+
+                if (showAll) {
+                    renderAllReviewsModal(allReviews);
+                } else {
+                    renderReviews(allReviews.slice(0, 3)); // Показуємо тільки 3 відгуки
+                    if (allReviews.length > 3) {
+                        addViewAllButton();
+                    }
                 }
             } else {
-                console.log('ℹ️ Відгуків поки немає');
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fa-regular fa-message fa-4x text-muted mb-3"></i>
+                        <h5 class="text-muted">Поки що немає відгуків</h5>
+                        <p class="text-muted">Будьте першим, хто залишить відгук про цей готель!</p>
+                    </div>
+                `;
             }
         } catch (error) {
-            console.error('❌ Помилка завантаження:', error);
+            console.error('Помилка завантаження відгуків:', error);
+            container.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fa-regular fa-circle-exclamation fa-4x text-warning mb-3"></i>
+                    <h5 class="text-warning">Не вдалося завантажити відгуки</h5>
+                    <p class="text-muted">Спробуйте оновити сторінку пізніше</p>
+                </div>
+            `;
         }
     }
 
-    function renderReviewsManually(reviews, container) {
+    // Додавання кнопки "Переглянути всі відгуки"
+    function addViewAllButton() {
+        const container = document.getElementById('reviewsList');
+        if (!container) return;
+
+        if (document.querySelector('.view-all-reviews-btn')) return;
+
+        const btnContainer = document.createElement('div');
+        btnContainer.className = 'text-center mt-4';
+        btnContainer.innerHTML = `
+            <button class="view-all-reviews-btn" onclick="window.openAllReviewsModal()">
+                Переглянути всі відгуки (${allReviews.length})
+            </button>
+        `;
+        container.parentNode.insertBefore(btnContainer, container.nextSibling);
+    }
+
+    // Відображення перших 3 відгуків
+    function renderReviews(reviews) {
+        const container = document.getElementById('reviewsList');
+        if (!container) return;
+
         if (reviews.length === 0) {
             container.innerHTML = `
                 <div class="text-center py-5">
@@ -3112,28 +3196,88 @@ setTimeout(function() {
         reviews.forEach(review => {
             const date = new Date(review.created_at);
             const formattedDate = date.toLocaleDateString('uk-UA');
-            const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+            const comment = review.comment || '';
+            const isLong = comment.length > 200;
+            const shortComment = isLong ? comment.substring(0, 200) + '...' : comment;
 
             html += `
-                <div class="review-card">
+                <div class="review-card" data-review-id="${review.id}">
                     <div class="review-header">
                         <div class="reviewer-name">
                             <i class="fa-regular fa-user-circle"></i>
-                            ${escapeHtml(review.guest_name)}
+                            ${escapeHtml(review.guest_name || 'Гість')}
                         </div>
                         <div class="review-date">${formattedDate}</div>
                     </div>
-                    <div class="review-rating" style="color: #f59e0b; font-size: 14px;">
-                        ${stars}
+                    <div class="review-rating">
+                        ${renderStars(review.rating)}
                     </div>
                     <div class="review-comment">
-                        ${escapeHtml(review.comment)}
+                        <div class="review-comment-short">${escapeHtml(shortComment).replace(/\n/g, '<br>')}</div>
+                        ${isLong ? `<div class="review-comment-full" style="display: none;">${escapeHtml(comment).replace(/\n/g, '<br>')}</div>
+                        <button class="read-more-btn" onclick="window.toggleReviewComment(this)">... більше</button>` : ''}
                     </div>
                 </div>
             `;
         });
 
         container.innerHTML = html;
+    }
+
+    // Відображення ВСІХ відгуків у модальному вікні
+    function renderAllReviewsModal(reviews) {
+        const modalContainer = document.getElementById('reviewsModalList');
+        if (!modalContainer) return;
+
+        let html = '';
+        reviews.forEach(review => {
+            const date = new Date(review.created_at);
+            const formattedDate = date.toLocaleDateString('uk-UA');
+            const comment = review.comment || '';
+            const isLong = comment.length > 200;
+            const shortComment = isLong ? comment.substring(0, 200) + '...' : comment;
+
+            html += `
+                <div class="review-card" style="margin-bottom: 20px;">
+                    <div class="review-header">
+                        <div class="reviewer-name">
+                            <i class="fa-regular fa-user-circle"></i>
+                            ${escapeHtml(review.guest_name || 'Гість')}
+                        </div>
+                        <div class="review-date">${formattedDate}</div>
+                    </div>
+                    <div class="review-rating">
+                        ${renderStars(review.rating)}
+                    </div>
+                    <div class="review-comment">
+                        <div class="review-comment-short">${escapeHtml(shortComment).replace(/\n/g, '<br>')}</div>
+                        ${isLong ? `<div class="review-comment-full" style="display: none;">${escapeHtml(comment).replace(/\n/g, '<br>')}</div>
+                        <button class="read-more-btn" onclick="window.toggleReviewComment(this)">... більше</button>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+
+        modalContainer.innerHTML = html;
+    }
+
+    // Відкриття модального вікна
+    window.openAllReviewsModal = function() {
+        const modal = document.getElementById('reviewsModal');
+        if (modal) {
+            modal.style.display = 'block';
+            renderAllReviewsModal(allReviews);
+            document.body.style.overflow = 'hidden';
+        }
+    };
+
+    // Закриття модального вікна
+    function closeModal() {
+        const modal = document.getElementById('reviewsModal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
     }
 
     function escapeHtml(text) {
@@ -3143,8 +3287,233 @@ setTimeout(function() {
         return div.innerHTML;
     }
 
-    // Запускаємо через 2 секунди після завантаження
-    setTimeout(forceLoadReviews, 2000);
-})();
+    // Ініціалізація форми відгуку
+    const reviewForm = document.getElementById('reviewForm');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', submitReview);
+    }
+
+    // Закриття модального вікна
+    const modal = document.getElementById('reviewsModal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+        const closeBtn = modal.querySelector('.reviews-modal-close');
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    }
+
+    updateReviewsTitle();
+
+    const hotelTitleObserver = new MutationObserver(updateReviewsTitle);
+    const hotelTitle = document.querySelector('.new_t-header-title');
+    if (hotelTitle) {
+        hotelTitleObserver.observe(hotelTitle, { childList: true, subtree: true, characterData: true });
+    }
+
+    loadReviews();
+});
+
+// Функція відправки відгуку
+async function submitReview(event) {
+    event.preventDefault();
+
+    const guestName = document.getElementById('reviewGuestName')?.value.trim();
+    const rating = document.getElementById('reviewRating')?.value;
+    const comment = document.getElementById('reviewComment')?.value.trim();
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    const hid = new URLSearchParams(window.location.search).get('hid');
+    const oid = new URLSearchParams(window.location.search).get('oid');
+
+    if (!guestName) {
+        alert('Будь ласка, введіть ваше ім\'я');
+        return;
+    }
+    if (!comment) {
+        alert('Будь ласка, введіть текст відгуку');
+        return;
+    }
+
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Відправка...';
+    submitBtn.disabled = true;
+
+    try {
+        let url = '/api/hotel-reviews/';
+        const pathParts = window.location.pathname.split('/');
+        for (let i = 0; i < pathParts.length; i++) {
+            if (pathParts[i] === 'a' && pathParts[i + 1]) {
+                url = '/a/' + pathParts[i + 1] + '/api/hotel-reviews/';
+                break;
+            }
+        }
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                hid: hid,
+                oid: oid,
+                guest_name: guestName,
+                rating: parseInt(rating),
+                comment: comment
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert(data.message || 'Дякуємо за ваш відгук!');
+            document.getElementById('reviewGuestName').value = '';
+            document.getElementById('reviewComment').value = '';
+            document.getElementById('reviewRating').value = '5';
+            location.reload();
+        } else {
+            alert(data.error || 'Сталася помилка. Спробуйте пізніше.');
+        }
+    } catch (error) {
+        console.error('Помилка відправки:', error);
+        alert('Помилка з\'єднання. Спробуйте пізніше.');
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+}
 </script>
+<style>
+/* ========== ЦЕНТРУВАННЯ ФОРМИ ВІДГУКУ ========== */
+#reviews-section .card.shadow-lg.mb-4 {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    max-width: 500px !important;
+}
+
+/* Додатково для батьківського контейнера */
+#reviews-section .card-body.p-4 {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+#reviews-section .card.shadow-lg.mb-4 {
+    align-self: center !important;
+}
+
+/* Для мобільних пристроїв */
+@media (max-width: 768px) {
+    #reviews-section .card.shadow-lg.mb-4 {
+        max-width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+</style>
+<style>
+/* ========== КНОПКА "ПЕРЕГЛЯНУТИ ВСІ ВІДГУКИ" ========== */
+.view-all-reviews-btn {
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 8px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    display: inline-block;
+}
+
+.view-all-reviews-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Модальне вікно для всіх відгуків */
+.reviews-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000000;
+    overflow-y: auto;
+    cursor: pointer;
+}
+
+.reviews-modal-content {
+    position: relative;
+    max-width: 800px;
+    margin: 50px auto;
+    background: white;
+    border-radius: 24px;
+    padding: 30px;
+    cursor: default;
+}
+
+.reviews-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.reviews-modal-header h3 {
+    margin: 0;
+    color: #1e293b;
+}
+
+.reviews-modal-close {
+    font-size: 32px;
+    cursor: pointer;
+    color: #64748b;
+    line-height: 1;
+}
+
+.reviews-modal-close:hover {
+    color: var(--primary-color);
+}
+
+.reviews-modal-list {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+@media (max-width: 768px) {
+    .reviews-modal-content {
+        margin: 20px;
+        padding: 20px;
+    }
+    .reviews-modal-list {
+        max-height: 60vh;
+    }
+}
+</style>
+<!-- ========== МОДАЛЬНЕ ВІКНО ДЛЯ ВСІХ ВІДГУКІВ ========== -->
+<div id="reviewsModal" class="reviews-modal">
+    <div class="reviews-modal-content">
+        <div class="reviews-modal-header">
+            <h3>Всі відгуки про готель</h3>
+            <span class="reviews-modal-close">&times;</span>
+        </div>
+        <div id="reviewsModalList" class="reviews-modal-list">
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Завантаження...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
