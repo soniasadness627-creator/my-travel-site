@@ -462,7 +462,7 @@ def get_popular_tours_api(request, slug=None):
     tours = []
     current_month = datetime.now()
 
-    for country in popular_countries:
+    for idx, country in enumerate(popular_countries):
         # Отримуємо ціну
         price_data = get_realistic_prices(current_month.month, current_month.year, country, 'Кишинів')
 
@@ -479,12 +479,23 @@ def get_popular_tours_api(request, slug=None):
         first_city = City.objects.filter(country=country).first()
         city_name = first_city.name if first_city else 'популярний курорт'
 
-        # Отримуємо фото (якщо немає в словнику, використовуємо фото за замовчуванням)
+        # Отримуємо фото
         image_url = country_images.get(country,
                                        'https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop')
 
+        # Генеруємо унікальні параметри для КОЖНОЇ країни
+        # Використовуємо різні ID для різних країн
+        hid = str(8000 + idx)  # 8000, 8001, 8002, ...
+        oid = str(1000000000000000000 + idx)  # різні oid
+        od = (datetime.now() + timedelta(days=14 + idx)).strftime('%Y-%m-%d')  # різні дати
+        ol = str(7 + (idx % 4))  # 7, 8, 9, або 10 ночей
+
         tours.append({
             'id': country,
+            'hid': hid,
+            'oid': oid,
+            'od': od,
+            'ol': ol,
             'hotel': f"Подорож до {country}",
             'country': country,
             'city': city_name,
