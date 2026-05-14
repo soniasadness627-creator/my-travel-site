@@ -1614,7 +1614,205 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => observer.disconnect(), 15000);
 })();
 </script>
+<!-- ========== ВІДГУКИ ========== -->
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <section id="reviews-section" class="mb-5 scroll-margin">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-white py-3 px-4 border-0">
+                        <h3 class="fw-bold mb-0" style="color: #000000;" id="reviewsTitle">Відгуки про готель</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- ФОРМА ДЛЯ ВІДГУКУ -->
+                        <div class="card shadow-lg mb-4" style="max-width: 500px; background: #f8fafc; border: none;">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold mb-3">Залиште ваш відгук</h5>
 
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                            {{ message }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+
+                                <form method="post" id="reviewForm">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="review_submit" value="1">
+                                    <input type="hidden" name="hid" value="{{ hid }}">
+                                    <input type="hidden" name="oid" value="{{ oid }}">
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Ваше ім'я</label>
+                                        <input type="text" name="guest_name" id="reviewGuestName" class="form-control" placeholder="Введіть ваше ім'я" required>
+                                        <small class="text-muted form-text">Ви зможете залишити тільки один відгук з цим іменем</small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Оцінка</label>
+                                        <select name="rating" id="reviewRating" class="form-select" required>
+                                            <option value="5">5 - Відмінно</option>
+                                            <option value="4">4 - Добре</option>
+                                            <option value="3">3 - Задовільно</option>
+                                            <option value="2">2 - Погано</option>
+                                            <option value="1">1 - Жахливо</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Ваш відгук</label>
+                                        <textarea name="comment" id="reviewComment" class="form-control" rows="3" placeholder="Поділіться враженнями..." required></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn w-100" style="background: var(--primary-color); border-color: var(--primary-color); color: white;">
+                                        <i class="fa-regular fa-paper-plane me-2"></i> Надіслати відгук
+                                    </button>
+                                </form>
+
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">Вже залишали відгук? Введіть те саме ім'я, щоб оновити свій відгук.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- СПИСОК ВІДГУКІВ -->
+                        <div id="reviewsList" class="reviews-list">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Завантаження...</span>
+                                </div>
+                                <p class="mt-3 text-muted">Завантаження відгуків...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ========== СТИЛІ ДЛЯ ВІДГУКІВ ========== */
+.scroll-margin {
+    scroll-margin-top: 30px;
+}
+
+.reviews-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    max-width: 100%;
+}
+
+.review-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.review-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.reviewer-name {
+    font-weight: 700;
+    font-size: 16px;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.reviewer-name i {
+    color: var(--primary-color);
+    font-size: 18px;
+}
+
+.review-date {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.review-rating {
+    margin-bottom: 12px;
+}
+
+.review-rating i {
+    font-size: 14px;
+    margin-right: 2px;
+}
+
+.review-comment {
+    color: #475569;
+    line-height: 1.5;
+    font-size: 14px;
+    word-wrap: break-word;
+}
+
+.review-comment p {
+    margin-bottom: 0;
+}
+
+.read-more-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-size: 13px;
+    margin-top: 8px;
+    padding: 0;
+    text-decoration: none;
+}
+
+.read-more-btn:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .reviews-list {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .review-card {
+        padding: 15px;
+    }
+
+    .review-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 576px) {
+    .review-card {
+        padding: 12px;
+    }
+
+    .reviewer-name {
+        font-size: 14px;
+    }
+
+    .review-comment {
+        font-size: 13px;
+    }
+}
+</style>
 
 <!-- ========== БЛОК "ГОТЕЛІ ЗІ СХОЖИМ РЕЙТИНГОМ" ========== -->
 <div class="container mt-5 mb-5" id="similarRatingSection" style="display: none;">
