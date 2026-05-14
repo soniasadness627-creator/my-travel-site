@@ -1417,28 +1417,40 @@ observer.observe(document.body, { childList: true, subtree: true });
     }
 }
 </style>
-<!-- ========== ПЕРЕМИКАЧ ВАЛЮТИ - ГОРИЗОНТАЛЬНИЙ ========== -->
+<!-- ========== ПЕРЕМИКАЧ ВАЛЮТИ - ГОРИЗОНТАЛЬНИЙ (ФІКС) ========== -->
 <style>
-/* Контейнер перемикача */
+/* Основний контейнер */
 .new_r-currency-switch {
     position: relative !important;
     top: auto !important;
     right: auto !important;
     display: flex !important;
     flex-direction: row !important;
+    flex-wrap: nowrap !important;
     background: var(--primary-color) !important;
     border-radius: 30px !important;
     overflow: hidden !important;
-    width: fit-content !important;
+    width: auto !important;
+    min-width: auto !important;
+    max-width: none !important;
     margin: 0 0 15px auto !important;
     float: right !important;
+    clear: both !important;
 }
 
-/* Кожен елемент перемикача */
+/* Кожен label - горизонтально */
 .new_r-currency-switch label {
-    display: flex !important;
+    display: inline-flex !important;
+    flex-direction: row !important;
     margin: 0 !important;
     padding: 0 !important;
+    float: none !important;
+    width: auto !important;
+}
+
+/* Прибираємо будь-які вертикальні стилі */
+.new_r-currency-switch label {
+    display: inline-block !important;
 }
 
 /* Стилі для кнопок */
@@ -1446,18 +1458,19 @@ observer.observe(document.body, { childList: true, subtree: true });
     display: inline-block !important;
     background: transparent !important;
     color: white !important;
-    padding: 8px 16px !important;
+    padding: 6px 16px !important;
     cursor: pointer !important;
     font-size: 0.85rem !important;
-    font-weight: 600 !important;
+    font-weight: 500 !important;
     transition: all 0.3s ease !important;
     text-align: center !important;
+    white-space: nowrap !important;
+    letter-spacing: normal !important;
 }
 
 /* Активний стан */
 .new_r-currency-switch input[type="radio"]:checked + span {
     background: rgba(255, 255, 255, 0.25) !important;
-    backdrop-filter: blur(4px) !important;
 }
 
 /* Ховер ефект */
@@ -1473,7 +1486,7 @@ observer.observe(document.body, { childList: true, subtree: true });
 /* Для мобільних */
 @media (max-width: 768px) {
     .new_r-currency-switch span {
-        padding: 6px 12px !important;
+        padding: 5px 12px !important;
         font-size: 0.8rem !important;
     }
 }
