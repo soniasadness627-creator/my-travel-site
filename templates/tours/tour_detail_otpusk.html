@@ -213,16 +213,7 @@
         color: var(--primary-color) !important;
     }
 
-    /* Ефект при наведенні – темно-сірий */
-    .new_r-item-price:hover .new_price-value,
-    .new_r-item-price:hover .currency,
-    .new_r-item-price:hover .new_price-desc,
-    .new_t-similar-viewed .new_r-item-price:hover .new_price-value,
-    .new_t-similar-viewed .new_r-item-price:hover .currency,
-    .new_t-similar-viewed .new_r-item-price:hover .new_price-desc {
-        color: #1f2937 !important;
-        transition: color 0.2s ease;
-    }
+
 
     /* Кнопки "Детальніше" */
     .new_r-item .btn,
@@ -3291,6 +3282,55 @@ div[class*="alert"],
 .messagelist,
 ul.messages {
     display: none !important;
+}
+</style>
+<style>
+/* ========== СТИЛІ ДЛЯ БЛОКУ ЦІНИ (ЗМІНА ПРИ НАВЕДЕННІ) ========== */
+
+/* Блок ціни - звичайний стан */
+.new_r-item-price {
+    background: transparent !important;
+    border: 2px solid var(--primary-color) !important;
+    border-radius: 12px !important;
+    padding: 8px 16px !important;
+    transition: all 0.3s ease !important;
+    display: inline-flex !important;
+    align-items: baseline !important;
+    gap: 8px !important;
+    cursor: pointer !important;
+}
+
+/* Текст ціни в звичайному стані */
+.new_r-item-price .new_price-value,
+.new_r-item-price .new_price-value .currency,
+.new_r-item-price .new_price-desc {
+    color: var(--primary-color) !important;
+    transition: all 0.3s ease !important;
+}
+
+/* ПРИ НАВЕДЕННІ НА ВЕСЬ БЛОК ЦІНИ */
+.new_r-item-price:hover {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* При наведенні текст ціни стає БІЛИМ */
+.new_r-item-price:hover .new_price-value,
+.new_r-item-price:hover .new_price-value .currency,
+.new_r-item-price:hover .new_price-desc {
+    color: #ffffff !important;
+}
+
+/* Додатково для іконок, якщо є */
+.new_r-item-price:hover svg {
+    fill: #ffffff !important;
+}
+
+/* Для мобільних */
+@media (max-width: 768px) {
+    .new_r-item-price {
+        padding: 6px 12px !important;
+    }
 }
 </style>
 {% endblock %}
