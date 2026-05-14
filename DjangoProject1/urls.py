@@ -130,6 +130,7 @@ urlpatterns = [
     path('a/<slug:slug>/privacy-policy/', constructor_views.agent_public_site, name='agent_privacy_policy'),
     path('a/<slug:slug>/terms-of-service/', constructor_views.agent_public_site, name='agent_terms_of_service'),
     path('a/<slug:slug>/login/', constructor_views.agent_public_site, name='agent_login'),
+path('a/<slug:slug>/api/get-popular-tours/', tours_views.get_popular_tours_api, name='agent_get_popular_tours'),
 ]
 
 # ========== СТАТИЧНІ ТА МЕДІА ФАЙЛИ ==========
