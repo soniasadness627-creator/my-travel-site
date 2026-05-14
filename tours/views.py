@@ -386,6 +386,93 @@ def calendar_prices_from_db(request):
     return JsonResponse({'prices': prices, 'max_price': max_price})
 
 
+# ========== API ДЛЯ ПОПУЛЯРНИХ ТУРІВ (НОВИЙ) ==========
+def get_popular_tours_api(request):
+    """
+    API для отримання популярних турів з бази даних City
+    """
+    from .models import City
+
+    # Отримуємо всі унікальні країни з бази даних міст
+    countries_with_cities = City.objects.values_list('country', flat=True).distinct()
+
+    # Беремо перші 12 країн для популярних турів
+    popular_countries = list(countries_with_cities)[:12]
+
+    # Якщо немає даних в базі, використовуємо стандартний список
+    if not popular_countries:
+        popular_countries = [
+            'Єгипет', 'Туреччина', 'ОАЕ', 'Греція', 'Кіпр', 'Іспанія',
+            'Таїланд', 'Мальдіви', 'Італія', 'Хорватія', 'Чорногорія', 'Болгарія'
+        ]
+
+    # Зображення для країн
+    country_images = {
+        'Єгипет': 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=250&fit=crop',
+        'Туреччина': 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=400&h=250&fit=crop',
+        'ОАЕ': 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=400&h=250&fit=crop',
+        'Греція': 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=400&h=250&fit=crop',
+        'Кіпр': 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=400&h=250&fit=crop',
+        'Іспанія': 'https://images.unsplash.com/photo-1468824357306-a439d58ccb1c?w=400&h=250&fit=crop',
+        'Таїланд': 'https://images.unsplash.com/photo-1559599238-308793637427?w=400&h=250&fit=crop',
+        'Мальдіви': 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=250&fit=crop',
+        'Італія': 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&h=250&fit=crop',
+        'Хорватія': 'https://images.unsplash.com/photo-1556107005-4c0e6f6a4a3e?w=400&h=250&fit=crop',
+        'Чорногорія': 'https://images.unsplash.com/photo-1563403309755-8d4c8c6d4e12?w=400&h=250&fit=crop',
+        'Болгарія': 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&h=250&fit=crop',
+    }
+
+    # Ціни для країн (якщо немає в календарі)
+    country_prices = {
+        'Єгипет': 45000,
+        'Туреччина': 40000,
+        'ОАЕ': 55000,
+        'Греція': 48000,
+        'Кіпр': 42000,
+        'Іспанія': 52000,
+        'Таїланд': 85000,
+        'Мальдіви': 120000,
+        'Італія': 65000,
+        'Хорватія': 58000,
+        'Чорногорія': 49000,
+        'Болгарія': 35000,
+    }
+
+    tours = []
+    current_month = datetime.now()
+
+    for country in popular_countries:
+        # Спроба отримати ціну через календар
+        price_data = get_realistic_prices(current_month.month, current_month.year, country, 'Кишинів')
+
+        if price_data and price_data.get('prices'):
+            valid_prices = [p for p in price_data['prices'] if p is not None]
+            if valid_prices:
+                price = min(valid_prices)  # Беремо мінімальну ціну
+            else:
+                price = country_prices.get(country, 50000)
+        else:
+            price = country_prices.get(country, 50000)
+
+        # Отримуємо перше місто для цієї країни
+        first_city = City.objects.filter(country=country).first()
+        city_name = first_city.name if first_city else 'популярний курорт'
+
+        tours.append({
+            'id': country,
+            'hotel': f"{country} - {city_name}",
+            'country': country,
+            'city': city_name,
+            'price': price,
+            'stars': 4,
+            'image': country_images.get(country,
+                                        'https://images.unsplash.com/photo-1468824357306-a439d58ccb1c?w=400&h=250&fit=crop'),
+            'departure': 'Кишинів'
+        })
+
+    return JsonResponse({'tours': tours})
+
+
 # ========== ГОЛОВНА СТОРІНКА ==========
 def home(request):
     """Головна сторінка з пошуком Otpusk та календарем низьких цін"""

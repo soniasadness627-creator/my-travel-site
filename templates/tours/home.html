@@ -45,6 +45,261 @@
     <script src="https://export.otpusk.com/js/order"></script>
 </div>
 
+<!-- ========== БЛОК "ПОПУЛЯРНІ ТУРИ" ========== -->
+<div class="container my-5">
+    <div class="popular-tours-wrapper">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold" style="color: #000000; font-size: 1.8rem;">Популярні напрямки</h2>
+            <div class="popular-slider-nav d-flex gap-2">
+                <button class="btn btn-sm rounded-circle popular-prev" style="width: 36px; height: 36px; border: 1px solid #dee2e6; background: white; color: var(--primary-color);">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button class="btn btn-sm rounded-circle popular-next" style="width: 36px; height: 36px; border: 1px solid #dee2e6; background: white; color: var(--primary-color);">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="popular-slider-container" style="position: relative; overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+            <div class="popular-slider-track d-flex gap-3" id="popularToursTrack">
+                <div class="text-center py-5 w-100">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Завантаження...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Завантаження популярних напрямків...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.popular-slider-container::-webkit-scrollbar {
+    display: none;
+}
+
+.popular-tour-card {
+    flex: 0 0 auto;
+    width: 280px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.popular-tour-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+
+.popular-tour-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.popular-tour-info {
+    padding: 15px;
+}
+
+.popular-tour-hotel {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #1e293b;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.popular-tour-location {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.popular-tour-stars {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 10px;
+}
+
+.popular-tour-stars i {
+    font-size: 11px;
+    color: #f59e0b;
+}
+
+.popular-tour-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e9ecef;
+}
+
+.popular-tour-price {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.popular-tour-price small {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: #64748b;
+}
+
+.popular-tour-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.popular-tour-btn:hover {
+    background: var(--primary-dark);
+    transform: scale(1.02);
+}
+
+@media (max-width: 768px) {
+    .popular-tour-card {
+        width: 260px;
+    }
+    .popular-tour-img {
+        height: 150px;
+    }
+}
+</style>
+
+<script>
+// ========== БЛОК ПОПУЛЯРНИХ ТУРІВ ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const track = document.getElementById('popularToursTrack');
+    if (!track) return;
+
+    async function fetchPopularTours() {
+        try {
+            let url = '/api/get-popular-tours/';
+            const pathParts = window.location.pathname.split('/');
+            for (let i = 0; i < pathParts.length; i++) {
+                if (pathParts[i] === 'a' && pathParts[i + 1]) {
+                    url = `/a/${pathParts[i + 1]}/api/get-popular-tours/`;
+                    break;
+                }
+            }
+            const response = await fetch(url);
+            const data = await response.json();
+            return data.tours || [];
+        } catch (error) {
+            console.error('Помилка завантаження турів:', error);
+            return [];
+        }
+    }
+
+    function renderStars(rating) {
+        let starsHtml = '';
+        for (let i = 0; i < rating; i++) {
+            starsHtml += '<i class="fa-solid fa-star"></i>';
+        }
+        for (let i = rating; i < 5; i++) {
+            starsHtml += '<i class="fa-regular fa-star"></i>';
+        }
+        return starsHtml;
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    window.searchByCountry = function(country) {
+        let baseUrl = '/search-otpusk/';
+        const pathParts = window.location.pathname.split('/');
+        for (let i = 0; i < pathParts.length; i++) {
+            if (pathParts[i] === 'a' && pathParts[i + 1]) {
+                baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
+                break;
+            }
+        }
+        window.location.href = `${baseUrl}?geo=${encodeURIComponent(decodeURIComponent(country))}`;
+    };
+
+    function renderTours(tours) {
+        if (!track) return;
+
+        if (tours.length === 0) {
+            track.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних турів. Спробуйте пізніше.</div>';
+            return;
+        }
+
+        let html = '';
+        tours.forEach(tour => {
+            const starsHtml = renderStars(tour.stars);
+            const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
+
+            html += `
+                <div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(tour.country)}')">
+                    <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(tour.country)}" onerror="this.src='https://images.unsplash.com/photo-1468824357306-a439d58ccb1c?w=400&h=250&fit=crop'">
+                    <div class="popular-tour-info">
+                        <div class="popular-tour-hotel">${escapeHtml(tour.hotel)}</div>
+                        <div class="popular-tour-location">
+                            <i class="fa-regular fa-location-dot"></i>
+                            ${escapeHtml(tour.country)}, ${escapeHtml(tour.city)}
+                        </div>
+                        <div class="popular-tour-stars">
+                            ${starsHtml}
+                        </div>
+                        <div class="popular-tour-footer">
+                            <div class="popular-tour-price">
+                                ${priceFormatted} ₴
+                                <small>за тур</small>
+                            </div>
+                            <button class="popular-tour-btn" onclick="event.stopPropagation(); searchByCountry('${encodeURIComponent(tour.country)}')">
+                                Дивитись
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        track.innerHTML = html;
+    }
+
+    const sliderContainer = document.querySelector('.popular-slider-container');
+    const prevBtn = document.querySelector('.popular-prev');
+    const nextBtn = document.querySelector('.popular-next');
+
+    if (prevBtn && sliderContainer) {
+        prevBtn.addEventListener('click', () => {
+            sliderContainer.scrollBy({ left: -300, behavior: 'smooth' });
+        });
+    }
+
+    if (nextBtn && sliderContainer) {
+        nextBtn.addEventListener('click', () => {
+            sliderContainer.scrollBy({ left: 300, behavior: 'smooth' });
+        });
+    }
+
+    fetchPopularTours().then(tours => renderTours(tours));
+});
+</script>
+
 <!-- ========== КАЛЕНДАР НИЗЬКИХ ЦІН ========== -->
 <div class="container my-5 pt-4">
     <div class="price-calendar-wrapper">
@@ -806,6 +1061,7 @@ document.addEventListener('DOMContentLoaded', function() {
     color: #000000 !important;
 }
 </style>
+
 <!-- ========== БЛОК "ПРО НАС" (з конструктора) ========== -->
 {% if agent_site and agent_site.about_us_title and agent_site.about_us_text %}
 <div class="container my-5">
@@ -860,19 +1116,6 @@ document.addEventListener('DOMContentLoaded', function() {
     position: relative;
     display: inline-block;
     text-align: left !important;
-}
-
-/* Лінія під заголовком - ліворуч */
-.about-us-title:after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    right: auto;
-    width: 60px;
-    height: 2px;
-    background: var(--primary-color);
-    border-radius: 2px;
 }
 
 /* Текст */

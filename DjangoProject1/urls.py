@@ -70,6 +70,8 @@ urlpatterns = [
     path('get-cities/', tours_views.get_cities, name='get_cities'),
     path('api/chat/', tours_views.chat_api, name='chat_api'),
     path('api/popular-tours/', tours_views.popular_tours_api, name='popular_tours_api'),
+    # НОВИЙ МАРШРУТ ДЛЯ ПОПУЛЯРНИХ ТУРІВ (З БАЗИ ДАНИХ МІСТ)
+    path('api/get-popular-tours/', tours_views.get_popular_tours_api, name='get_popular_tours'),
 
     # ========== 🔥 API ДЛЯ ВІДГУКІВ ==========
     path('api/hotel-reviews/', tours_views.hotel_reviews_api, name='hotel_reviews_api'),
