@@ -227,37 +227,40 @@ document.addEventListener('DOMContentLoaded', function() {
         return div.innerHTML;
     }
 
+    // ЦЕ ГОЛОВНЕ - ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА ПОШУК
     window.searchByCountry = function(country) {
-    let baseUrl = '/search-otpusk/';
-    const pathParts = window.location.pathname.split('/');
-    for (let i = 0; i < pathParts.length; i++) {
-        if (pathParts[i] === 'a' && pathParts[i + 1]) {
-            baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
-            break;
+        let baseUrl = '/search-otpusk/';
+        const pathParts = window.location.pathname.split('/');
+        for (let i = 0; i < pathParts.length; i++) {
+            if (pathParts[i] === 'a' && pathParts[i + 1]) {
+                baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
+                break;
+            }
         }
-    }
-    // Додаємо параметр, який запустить автоматичний пошук
-    window.location.href = `${baseUrl}?geo=${encodeURIComponent(country)}&auto_search=1`;
-};
+        // Додаємо параметр для автоматичного пошуку
+        window.location.href = `${baseUrl}?geo=${encodeURIComponent(country)}&auto_search=1`;
+    };
 
+    // ФУНКЦІЯ ДЛЯ ВІДОБРАЖЕННЯ ТУРІВ - ТІЛЬКИ searchByCountry, БЕЗ goToSearch
     function renderTours(tours) {
-    if (!track) return;
+        if (!track) return;
 
-    if (!tours || tours.length === 0) {
-        track.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних турів. Спробуйте пізніше.</div>';
-        return;
-    }
+        if (!tours || tours.length === 0) {
+            track.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних турів. Спробуйте пізніше.</div>';
+            return;
+        }
 
-    let html = '';
-    tours.forEach(tour => {
-        const starsHtml = renderStars(5);  // 5 зірок
-        const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
-        const hotelName = tour.hotel || `${tour.country} - ${tour.city}`;
-        const countryName = tour.country;
-        const cityName = tour.city || 'популярний курорт';
+        let html = '';
+        tours.forEach(tour => {
+            const starsHtml = renderStars(5);  // 5 зірок
+            const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
+            const hotelName = tour.hotel || `${tour.country} - ${tour.city}`;
+            const countryName = tour.country;
+            const cityName = tour.city || 'популярний курорт';
 
-        html += `
-<div class="popular-tour-card" onclick="goToSearch('${encodeURIComponent(countryName)}')">    <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop'">
+            html += `
+<div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(countryName)}')">
+    <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop'">
     <div class="popular-tour-info">
         <div class="popular-tour-hotel">${escapeHtml(hotelName)}</div>
         <div class="popular-tour-location">
@@ -278,11 +281,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </div>
-        `;
-    });
+            `;
+        });
 
-    track.innerHTML = html;
-}
+        track.innerHTML = html;
+    }
 
     // Навігація слайдера
     const sliderContainer = document.querySelector('.popular-slider-container');
@@ -304,68 +307,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Завантаження та відображення турів
     fetchPopularTours().then(tours => renderTours(tours));
 });
-    // ========== ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА СТОРІНКУ ДЕТАЛЕЙ ТУРУ ==========
-window.goToTourDetail = function(hid, oid, od, ol) {
-    let baseUrl = '/tour-detail/';
-    const pathParts = window.location.pathname.split('/');
-    for (let i = 0; i < pathParts.length; i++) {
-        if (pathParts[i] === 'a' && pathParts[i + 1]) {
-            baseUrl = `/a/${pathParts[i + 1]}/tour-detail/`;
-            break;
-        }
-    }
-    window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od}&ol=${ol}`;
-};
-
-function renderTours(tours) {
-    if (!track) return;
-
-    if (!tours || tours.length === 0) {
-        track.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних турів. Спробуйте пізніше.</div>';
-        return;
-    }
-
-    let html = '';
-    tours.forEach(tour => {
-const starsHtml = renderStars(5);  // Завжди 5 зірок для популярних турів        const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
-        const hotelName = tour.hotel || `${tour.country} - ${tour.city}`;
-        const countryName = tour.country;
-        const cityName = tour.city || 'популярний курорт';
-
-        // Отримуємо реальні параметри з API
-        const hid = tour.hid;
-        const oid = tour.oid;
-        const od = tour.od;
-        const ol = tour.ol;
-
-        html += `
-<div class="popular-tour-card" onclick="goToTourDetail('${hid}', '${oid}', '${od}', '${ol}')">
-    <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop'">
-    <div class="popular-tour-info">
-        <div class="popular-tour-hotel">${escapeHtml(hotelName)}</div>
-        <div class="popular-tour-location">
-            <i class="fa-regular fa-location-dot"></i>
-            ${escapeHtml(countryName)}, ${escapeHtml(cityName)}
-        </div>
-        <div class="popular-tour-stars">
-            ${starsHtml}
-        </div>
-        <div class="popular-tour-footer">
-            <div class="popular-tour-price">
-                ${priceFormatted} ₴
-                <small>за тур</small>
-            </div>
-            <button class="popular-tour-btn" onclick="event.stopPropagation(); goToTourDetail('${hid}', '${oid}', '${od}', '${ol}')">
-                Дивитись
-            </button>
-        </div>
-    </div>
-</div>
-        `;
-    });
-
-    track.innerHTML = html;
-}
 </script>
 
 <!-- ========== КАЛЕНДАР НИЗЬКИХ ЦІН ========== -->
