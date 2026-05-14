@@ -812,8 +812,8 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="row justify-content-center">
         <div class="col-12 col-md-10">
             <div class="about-us-section">
-                <!-- Заголовок над фото (не жирний, праворуч) -->
-                <div class="text-end mb-4">
+                <!-- Заголовок ліворуч -->
+                <div class="mb-4">
                     <h3 class="about-us-title mb-0">
                         {{ agent_site.about_us_title }}
                     </h3>
@@ -851,23 +851,24 @@ document.addEventListener('DOMContentLoaded', function() {
     padding: 20px 0;
 }
 
-/* Заголовок - не жирний, чорний, праворуч */
+/* Заголовок - не жирний, чорний, ліворуч */
 .about-us-title {
-    font-weight: 500 !important;  /* Не жирний (400 - normal, 500 - medium) */
+    font-weight: 500 !important;  /* Не жирний */
     font-size: 1.8rem !important;
     color: #000000 !important;  /* Чорний колір */
     margin-bottom: 0;
     position: relative;
     display: inline-block;
+    text-align: left !important;
 }
 
-/* Лінія під заголовком - праворуч */
+/* Лінія під заголовком - ліворуч */
 .about-us-title:after {
     content: '';
     position: absolute;
     bottom: -10px;
-    right: 0;  /* Праворуч */
-    left: auto;  /* Скасовуємо ліворуч */
+    left: 0;
+    right: auto;
     width: 60px;
     height: 2px;
     background: var(--primary-color);
@@ -899,12 +900,9 @@ document.addEventListener('DOMContentLoaded', function() {
         display: block !important;
     }
     .about-us-title:after {
-        right: 50% !important;
-        transform: translateX(50%) !important;
-        left: auto !important;
-    }
-    .text-end {
-        text-align: center !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        right: auto !important;
     }
     .about-us-content {
         text-align: center;
