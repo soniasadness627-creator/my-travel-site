@@ -389,66 +389,84 @@ def calendar_prices_from_db(request):
 # ========== API ДЛЯ ПОПУЛЯРНИХ ТУРІВ (НОВИЙ) ==========
 def get_popular_tours_api(request, slug=None):
     """
-    API для отримання популярних турів з бази даних City
+    API для отримання популярних турів з реальними фото
     """
     from .models import City
 
     # Отримуємо всі унікальні країни з бази даних міст
     countries_with_cities = City.objects.values_list('country', flat=True).distinct()
 
-    # Беремо перші 12 країн для популярних турів
-    popular_countries = list(countries_with_cities)[:12]
+    # Беремо перші 20 країн для популярних турів (більше, ніж було)
+    popular_countries = list(countries_with_cities)[:20]
 
     # Якщо немає даних в базі, використовуємо стандартний список
     if not popular_countries:
         popular_countries = [
             'Єгипет', 'Туреччина', 'ОАЕ', 'Греція', 'Кіпр', 'Іспанія',
-            'Таїланд', 'Мальдіви', 'Італія', 'Хорватія', 'Чорногорія', 'Болгарія'
+            'Таїланд', 'Мальдіви', 'Італія', 'Хорватія', 'Чорногорія', 'Болгарія',
+            'Грузія', 'Польща', 'Угорщина', 'Словаччина', 'Чехія', 'Австрія',
+            'Франція', 'Німеччина'
         ]
 
-    # Зображення для країн
+    # РЕАЛЬНІ ФОТО ДЛЯ КРАЇН (з Unsplash та Pexels)
     country_images = {
-        'Єгипет': 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=250&fit=crop',
-        'Туреччина': 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=400&h=250&fit=crop',
-        'ОАЕ': 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=400&h=250&fit=crop',
-        'Греція': 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=400&h=250&fit=crop',
-        'Кіпр': 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=400&h=250&fit=crop',
-        'Іспанія': 'https://images.unsplash.com/photo-1468824357306-a439d58ccb1c?w=400&h=250&fit=crop',
-        'Таїланд': 'https://images.unsplash.com/photo-1559599238-308793637427?w=400&h=250&fit=crop',
-        'Мальдіви': 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=250&fit=crop',
-        'Італія': 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&h=250&fit=crop',
-        'Хорватія': 'https://images.unsplash.com/photo-1556107005-4c0e6f6a4a3e?w=400&h=250&fit=crop',
-        'Чорногорія': 'https://images.unsplash.com/photo-1563403309755-8d4c8c6d4e12?w=400&h=250&fit=crop',
-        'Болгарія': 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&h=250&fit=crop',
+        'Єгипет': 'https://images.pexels.com/photos/1268855/pexels-photo-1268855.jpeg?w=400&h=250&fit=crop',
+        'Туреччина': 'https://images.pexels.com/photos/256541/pexels-photo-256541.jpeg?w=400&h=250&fit=crop',
+        'ОАЕ': 'https://images.pexels.com/photos/169198/pexels-photo-169198.jpeg?w=400&h=250&fit=crop',
+        'Греція': 'https://images.pexels.com/photos/1427303/pexels-photo-1427303.jpeg?w=400&h=250&fit=crop',
+        'Кіпр': 'https://images.pexels.com/photos/258117/pexels-photo-258117.jpeg?w=400&h=250&fit=crop',
+        'Іспанія': 'https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?w=400&h=250&fit=crop',
+        'Таїланд': 'https://images.pexels.com/photos/1450360/pexels-photo-1450360.jpeg?w=400&h=250&fit=crop',
+        'Мальдіви': 'https://images.pexels.com/photos/753626/pexels-photo-753626.jpeg?w=400&h=250&fit=crop',
+        'Італія': 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?w=400&h=250&fit=crop',
+        'Хорватія': 'https://images.pexels.com/photos/553699/pexels-photo-553699.jpeg?w=400&h=250&fit=crop',
+        'Чорногорія': 'https://images.pexels.com/photos/488202/pexels-photo-488202.jpeg?w=400&h=250&fit=crop',
+        'Болгарія': 'https://images.pexels.com/photos/490926/pexels-photo-490926.jpeg?w=400&h=250&fit=crop',
+        'Грузія': 'https://images.pexels.com/photos/1294506/pexels-photo-1294506.jpeg?w=400&h=250&fit=crop',
+        'Польща': 'https://images.pexels.com/photos/357338/pexels-photo-357338.jpeg?w=400&h=250&fit=crop',
+        'Угорщина': 'https://images.pexels.com/photos/1120659/pexels-photo-1120659.jpeg?w=400&h=250&fit=crop',
+        'Словаччина': 'https://images.pexels.com/photos/1436284/pexels-photo-1436284.jpeg?w=400&h=250&fit=crop',
+        'Чехія': 'https://images.pexels.com/photos/1533724/pexels-photo-1533724.jpeg?w=400&h=250&fit=crop',
+        'Австрія': 'https://images.pexels.com/photos/442963/pexels-photo-442963.jpeg?w=400&h=250&fit=crop',
+        'Франція': 'https://images.pexels.com/photos/208736/pexels-photo-208736.jpeg?w=400&h=250&fit=crop',
+        'Німеччина': 'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?w=400&h=250&fit=crop',
+        'Шрі-Ланка': 'https://images.pexels.com/photos/670720/pexels-photo-670720.jpeg?w=400&h=250&fit=crop',
+        'Танзанія': 'https://images.pexels.com/photos/192686/pexels-photo-192686.jpeg?w=400&h=250&fit=crop',
+        'Індія': 'https://images.pexels.com/photos/434212/pexels-photo-434212.jpeg?w=400&h=250&fit=crop',
+        'Індонезія': 'https://images.pexels.com/photos/1877805/pexels-photo-1877805.jpeg?w=400&h=250&fit=crop',
+        'Вєтнам': 'https: // images.pexels.com / photos / 449812 / pexels - photo - 449812.jpeg?w = 400 & h = 250 & fit = crop',
+    'Малайзія': 'https://images.pexels.com/photos/1157702/pexels-photo-1157702.jpeg?w=400&h=250&fit=crop',
+    'Філіппіни': 'https://images.pexels.com/photos/684458/pexels-photo-684458.jpeg?w=400&h=250&fit=crop',
+    'Марокко': 'https://images.pexels.com/photos/3089741/pexels-photo-3089741.jpeg?w=400&h=250&fit=crop',
+    'Туніс': 'https://images.pexels.com/photos/2351921/pexels-photo-2351921.jpeg?w=400&h=250&fit=crop',
+    'Кенія': 'https://images.pexels.com/photos/1187940/pexels-photo-1187940.jpeg?w=400&h=250&fit=crop',
+    'Південна Африка': 'https://images.pexels.com/photos/158911/pexels-photo-158911.jpeg?w=400&h=250&fit=crop',
     }
 
-    # Ціни для країн (якщо немає в календарі)
+    # Ціни для країн
     country_prices = {
-        'Єгипет': 45000,
-        'Туреччина': 40000,
-        'ОАЕ': 55000,
-        'Греція': 48000,
-        'Кіпр': 42000,
-        'Іспанія': 52000,
-        'Таїланд': 85000,
-        'Мальдіви': 120000,
-        'Італія': 65000,
-        'Хорватія': 58000,
-        'Чорногорія': 49000,
-        'Болгарія': 35000,
+        'Єгипет': 45000, 'Туреччина': 40000, 'ОАЕ': 55000, 'Греція': 48000,
+        'Кіпр': 42000, 'Іспанія': 52000, 'Таїланд': 85000, 'Мальдіви': 120000,
+        'Італія': 65000, 'Хорватія': 58000, 'Чорногорія': 49000, 'Болгарія': 35000,
+        'Грузія': 28000, 'Польща': 32000, 'Угорщина': 34000, 'Словаччина': 31000,
+        'Чехія': 38000, 'Австрія': 45000, 'Франція': 68000, 'Німеччина': 52000,
+        'Шрі-Ланка': 81000, 'Танзанія': 95000, 'Індія': 55000, 'Індонезія': 78000,
+        'Вєтнам': 65000, 'Малайзія': 58000, 'Філіппіни': 62000, 'Марокко': 48000,
+                                                                        'Туніс': 59000, 'Кенія': 72000,
+        'Південна Африка': 88000,
     }
 
     tours = []
     current_month = datetime.now()
 
     for country in popular_countries:
-        # Спроба отримати ціну через календар
+        # Отримуємо ціну
         price_data = get_realistic_prices(current_month.month, current_month.year, country, 'Кишинів')
 
         if price_data and price_data.get('prices'):
             valid_prices = [p for p in price_data['prices'] if p is not None]
             if valid_prices:
-                price = min(valid_prices)  # Беремо мінімальну ціну
+                price = min(valid_prices)
             else:
                 price = country_prices.get(country, 50000)
         else:
@@ -458,20 +476,22 @@ def get_popular_tours_api(request, slug=None):
         first_city = City.objects.filter(country=country).first()
         city_name = first_city.name if first_city else 'популярний курорт'
 
+        # Отримуємо фото (якщо немає в словнику, використовуємо фото за замовчуванням)
+        image_url = country_images.get(country,
+                                       'https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop')
+
         tours.append({
             'id': country,
-            'hotel': f"{country} - {city_name}",
+            'hotel': f"Подорож до {country}",
             'country': country,
             'city': city_name,
             'price': price,
             'stars': 4,
-            'image': country_images.get(country,
-                                        'https://images.unsplash.com/photo-1468824357306-a439d58ccb1c?w=400&h=250&fit=crop'),
+            'image': image_url,
             'departure': 'Кишинів'
         })
 
     return JsonResponse({'tours': tours})
-
 
 # ========== ГОЛОВНА СТОРІНКА ==========
 def home(request):
