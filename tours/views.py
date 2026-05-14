@@ -397,31 +397,23 @@ def get_popular_tours_api(request, slug=None):
     from .models import City
     from datetime import timedelta
 
-    # Список країн з індивідуальними містами вильоту
+    # Список країн з індивідуальними містами вильоту (ЗАМІСТЬ ЖИТОМИРА)
     countries_config = [
-        {'country': 'Єгипет', 'departure': 'Бакеу', 'departure_text': 'Бакеу'},
-        {'country': 'Туреччина', 'departure': 'Берлін', 'departure_text': 'Берліна'},
-        {'country': 'ОАЕ', 'departure': 'Варшава', 'departure_text': 'Варшави'},
-        {'country': 'Греція', 'departure': 'Відень', 'departure_text': 'Відня'},
-        {'country': 'Кіпр', 'departure': 'Кишинів', 'departure_text': 'Кишинева'},
-        {'country': 'Іспанія', 'departure': 'Кишинів', 'departure_text': 'Кишинева'},
-        {'country': 'Таїланд', 'departure': 'Київ', 'departure_text': 'Києва'},
-        {'country': 'Мальдіви', 'departure': 'Кишинів', 'departure_text': 'Кишинева'},
-        {'country': 'Італія', 'departure': 'Краків', 'departure_text': 'Кракова'},
-        {'country': 'Хорватія', 'departure': 'Познань', 'departure_text': 'Познані'},
-        {'country': 'Чорногорія', 'departure': 'Вроцлав', 'departure_text': 'Вроцлава'},
-        {'country': 'Болгарія', 'departure': 'Київ', 'departure_text': 'Києва'},
-        {'country': 'Грузія', 'departure': 'Тбілісі', 'departure_text': 'Тбілісі'},
-        {'country': 'Польща', 'departure': 'Варшава', 'departure_text': 'Варшави'},
-        {'country': 'Угорщина', 'departure': 'Будапешт', 'departure_text': 'Будапешта'},
-        {'country': 'Чехія', 'departure': 'Прага', 'departure_text': 'Праги'},
-        {'country': 'Австрія', 'departure': 'Відень', 'departure_text': 'Відня'},
-        {'country': 'Франція', 'departure': 'Париж', 'departure_text': 'Парижа'},
-        {'country': 'Німеччина', 'departure': 'Берлін', 'departure_text': 'Берліна'},
-        {'country': 'Шрі-Ланка', 'departure': 'Кишинів', 'departure_text': 'Кишинева'},
+        {'country': 'Єгипет', 'departure': 'Бакеу', 'departure_text': 'з Бакеу'},
+        {'country': 'Туреччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},
+        {'country': 'ОАЕ', 'departure': 'Варшава', 'departure_text': 'з Варшави'},
+        {'country': 'Греція', 'departure': 'Відень', 'departure_text': 'з Відня'},
+        {'country': 'Кіпр', 'departure': 'Кишинів', 'departure_text': 'з Кишинева'},
+        {'country': 'Іспанія', 'departure': 'Кишинів', 'departure_text': 'з Кишинева'},
+        {'country': 'Таїланд', 'departure': 'Київ', 'departure_text': 'з Києва'},
+        {'country': 'Мальдіви', 'departure': 'Кишинів', 'departure_text': 'з Кишинева'},
+        {'country': 'Італія', 'departure': 'Краків', 'departure_text': 'з Кракова'},
+        {'country': 'Хорватія', 'departure': 'Познань', 'departure_text': 'з Познані'},
+        {'country': 'Чорногорія', 'departure': 'Вроцлав', 'departure_text': 'з Вроцлава'},
+        {'country': 'Болгарія', 'departure': 'Київ', 'departure_text': 'з Києва'},
     ]
 
-    # ФОТО ДЛЯ КОЖНОЇ КРАЇНИ (тематичні фото подорожей)
+    # ФОТО ДЛЯ КОЖНОЇ КРАЇНИ
     country_images = {
         'Єгипет': 'https://images.pexels.com/photos/1450353/pexels-photo-1450353.jpeg?w=400&h=250&fit=crop',
         'Туреччина': 'https://images.pexels.com/photos/1927430/pexels-photo-1927430.jpeg?w=400&h=250&fit=crop',
@@ -435,44 +427,24 @@ def get_popular_tours_api(request, slug=None):
         'Хорватія': 'https://images.pexels.com/photos/1722420/pexels-photo-1722420.jpeg?w=400&h=250&fit=crop',
         'Чорногорія': 'https://images.pexels.com/photos/1572248/pexels-photo-1572248.jpeg?w=400&h=250&fit=crop',
         'Болгарія': 'https://images.pexels.com/photos/1515648/pexels-photo-1515648.jpeg?w=400&h=250&fit=crop',
-        'Грузія': 'https://images.pexels.com/photos/1294506/pexels-photo-1294506.jpeg?w=400&h=250&fit=crop',
-        'Польща': 'https://images.pexels.com/photos/357338/pexels-photo-357338.jpeg?w=400&h=250&fit=crop',
-        'Угорщина': 'https://images.pexels.com/photos/1120659/pexels-photo-1120659.jpeg?w=400&h=250&fit=crop',
-        'Чехія': 'https://images.pexels.com/photos/1533724/pexels-photo-1533724.jpeg?w=400&h=250&fit=crop',
-        'Австрія': 'https://images.pexels.com/photos/442963/pexels-photo-442963.jpeg?w=400&h=250&fit=crop',
-        'Франція': 'https://images.pexels.com/photos/208736/pexels-photo-208736.jpeg?w=400&h=250&fit=crop',
-        'Німеччина': 'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?w=400&h=250&fit=crop',
-        'Шрі-Ланка': 'https://images.pexels.com/photos/670720/pexels-photo-670720.jpeg?w=400&h=250&fit=crop',
-    }
-
-    # Ціни для країн
-    country_prices = {
-        'Єгипет': 45000, 'Туреччина': 42000, 'ОАЕ': 55000, 'Греція': 38000,
-        'Кіпр': 42000, 'Іспанія': 52000, 'Таїланд': 85000, 'Мальдіви': 120000,
-        'Італія': 65000, 'Хорватія': 58000, 'Чорногорія': 49000, 'Болгарія': 35000,
-        'Грузія': 28000, 'Польща': 32000, 'Угорщина': 34000, 'Чехія': 38000,
-        'Австрія': 45000, 'Франція': 68000, 'Німеччина': 52000, 'Шрі-Ланка': 81000,
     }
 
     tours = []
     current_month = datetime.now()
 
-    for idx, config in enumerate(countries_config[:20]):
+    for idx, config in enumerate(countries_config):
         country = config['country']
         departure_city = config['departure']
         departure_text = config['departure_text']
 
-        # Отримуємо ціну для конкретного міста вильоту
+        # Отримуємо ціну
         price_data = get_realistic_prices(current_month.month, current_month.year, country, departure_city)
 
         if price_data and price_data.get('prices'):
             valid_prices = [p for p in price_data['prices'] if p is not None]
-            if valid_prices:
-                price = min(valid_prices)
-            else:
-                price = country_prices.get(country, 50000)
+            price = min(valid_prices) if valid_prices else 50000
         else:
-            price = country_prices.get(country, 50000)
+            price = 50000
 
         # Отримуємо перше місто для цієї країни
         first_city = City.objects.filter(country=country).first()
@@ -482,7 +454,7 @@ def get_popular_tours_api(request, slug=None):
         image_url = country_images.get(country,
                                        'https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop')
 
-        # Генеруємо унікальні параметри
+        # Генеруємо дати
         start_date = (datetime.now() + timedelta(days=14 + idx)).strftime('%Y-%m-%d')
         nights = str(7 + (idx % 4))
         hid = str(8000 + idx)
@@ -498,7 +470,7 @@ def get_popular_tours_api(request, slug=None):
             'country': country,
             'city': city_name,
             'price': price,
-            'stars': 4,
+            'stars': 5,  # 5 зірок!
             'image': image_url,
             'departure': departure_city,
             'departure_text': departure_text

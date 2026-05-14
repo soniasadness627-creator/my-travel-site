@@ -326,8 +326,7 @@ function renderTours(tours) {
 
     let html = '';
     tours.forEach(tour => {
-        const starsHtml = renderStars(tour.stars || 4);
-        const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
+const starsHtml = renderStars(5);  // Завжди 5 зірок для популярних турів        const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
         const hotelName = tour.hotel || `${tour.country} - ${tour.city}`;
         const countryName = tour.country;
         const cityName = tour.city || 'популярний курорт';
