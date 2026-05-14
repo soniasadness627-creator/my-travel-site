@@ -434,13 +434,16 @@ def get_popular_tours_api(request, slug=None):
         'Танзанія': 'https://images.pexels.com/photos/192686/pexels-photo-192686.jpeg?w=400&h=250&fit=crop',
         'Індія': 'https://images.pexels.com/photos/434212/pexels-photo-434212.jpeg?w=400&h=250&fit=crop',
         'Індонезія': 'https://images.pexels.com/photos/1877805/pexels-photo-1877805.jpeg?w=400&h=250&fit=crop',
-        'Вєтнам': 'https: // images.pexels.com / photos / 449812 / pexels - photo - 449812.jpeg?w = 400 & h = 250 & fit = crop',
+        'В"єтнам': 'https: // images.pexels.com / photos / 449812 / pexels - photo - 449812.jpeg?w = 400 & h = 250 & fit = crop',
     'Малайзія': 'https://images.pexels.com/photos/1157702/pexels-photo-1157702.jpeg?w=400&h=250&fit=crop',
     'Філіппіни': 'https://images.pexels.com/photos/684458/pexels-photo-684458.jpeg?w=400&h=250&fit=crop',
     'Марокко': 'https://images.pexels.com/photos/3089741/pexels-photo-3089741.jpeg?w=400&h=250&fit=crop',
     'Туніс': 'https://images.pexels.com/photos/2351921/pexels-photo-2351921.jpeg?w=400&h=250&fit=crop',
     'Кенія': 'https://images.pexels.com/photos/1187940/pexels-photo-1187940.jpeg?w=400&h=250&fit=crop',
     'Південна Африка': 'https://images.pexels.com/photos/158911/pexels-photo-158911.jpeg?w=400&h=250&fit=crop',
+    'США': 'https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?w=400&h=250&fit=crop',
+    'Великобританія': 'https://images.pexels.com/photos/460672/pexels-photo-460672.jpeg?w=400&h=250&fit=crop',
+    'Швейцарія': 'https://images.pexels.com/photos/346885/pexels-photo-346885.jpeg?w=400&h=250&fit=crop',
     }
 
     # Ціни для країн
