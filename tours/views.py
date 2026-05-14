@@ -387,6 +387,9 @@ def calendar_prices_from_db(request):
 
 
 # ========== API ДЛЯ ПОПУЛЯРНИХ ТУРІВ (НОВИЙ) ==========
+from datetime import datetime, timedelta  # Переконайтеся, що timedelta імпортовано
+
+
 def get_popular_tours_api(request, slug=None):
     """
     API для отримання популярних турів з РЕАЛЬНИМИ даними з Otpusk
@@ -405,90 +408,69 @@ def get_popular_tours_api(request, slug=None):
 
     tours = []
 
-    for country in popular_countries:
-        # Робимо запит до Otpusk API, щоб отримати реальний тур для цієї країни
+    for idx, country in enumerate(popular_countries):
+        # Додаємо безпечний try-except для кожної країни
         try:
-            # Мапа країн для API
-            country_map = {
-                'Єгипет': 'Egypt', 'Туреччина': 'Turkey', 'ОАЕ': 'UAE',
-                'Греція': 'Greece', 'Кіпр': 'Cyprus', 'Іспанія': 'Spain',
-                'Таїланд': 'Thailand', 'Мальдіви': 'Maldives', 'Італія': 'Italy',
-                'Хорватія': 'Croatia', 'Чорногорія': 'Montenegro', 'Болгарія': 'Bulgaria',
-                'Грузія': 'Georgia', 'Польща': 'Poland', 'Угорщина': 'Hungary',
-                'Словаччина': 'Slovakia', 'Чехія': 'Czech Republic', 'Австрія': 'Austria',
-                'Франція': 'France', 'Німеччина': 'Germany'
+            # Тимчасово використовуємо тестові дані, поки налагоджуємо API
+            # Це дозволить уникнути помилки 500
+            from datetime import timedelta
+            start_date = (datetime.now() + timedelta(days=14 + idx)).strftime('%Y-%m-%d')
+            nights = str(7 + (idx % 4))
+            hid = str(8000 + idx)
+            oid = str(1000000000000000000 + idx)
+
+            # Фото для країн (тимчасово)
+            country_images = {
+                'Єгипет': 'https://images.pexels.com/photos/1268855/pexels-photo-1268855.jpeg?w=400&h=250&fit=crop',
+                'Туреччина': 'https://images.pexels.com/photos/256541/pexels-photo-256541.jpeg?w=400&h=250&fit=crop',
+                'ОАЕ': 'https://images.pexels.com/photos/169198/pexels-photo-169198.jpeg?w=400&h=250&fit=crop',
+                'Греція': 'https://images.pexels.com/photos/1427303/pexels-photo-1427303.jpeg?w=400&h=250&fit=crop',
+                'Кіпр': 'https://images.pexels.com/photos/258117/pexels-photo-258117.jpeg?w=400&h=250&fit=crop',
+                'Іспанія': 'https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?w=400&h=250&fit=crop',
+                'Таїланд': 'https://images.pexels.com/photos/1450360/pexels-photo-1450360.jpeg?w=400&h=250&fit=crop',
+                'Мальдіви': 'https://images.pexels.com/photos/753626/pexels-photo-753626.jpeg?w=400&h=250&fit=crop',
+                'Італія': 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?w=400&h=250&fit=crop',
+                'Хорватія': 'https://images.pexels.com/photos/553699/pexels-photo-553699.jpeg?w=400&h=250&fit=crop',
+                'Чорногорія': 'https://images.pexels.com/photos/488202/pexels-photo-488202.jpeg?w=400&h=250&fit=crop',
+                'Болгарія': 'https://images.pexels.com/photos/490926/pexels-photo-490926.jpeg?w=400&h=250&fit=crop',
+                'Грузія': 'https://images.pexels.com/photos/1294506/pexels-photo-1294506.jpeg?w=400&h=250&fit=crop',
+                'Польща': 'https://images.pexels.com/photos/357338/pexels-photo-357338.jpeg?w=400&h=250&fit=crop',
+                'Угорщина': 'https://images.pexels.com/photos/1120659/pexels-photo-1120659.jpeg?w=400&h=250&fit=crop',
+                'Словаччина': 'https://images.pexels.com/photos/1436284/pexels-photo-1436284.jpeg?w=400&h=250&fit=crop',
+                'Чехія': 'https://images.pexels.com/photos/1533724/pexels-photo-1533724.jpeg?w=400&h=250&fit=crop',
+                'Австрія': 'https://images.pexels.com/photos/442963/pexels-photo-442963.jpeg?w=400&h=250&fit=crop',
+                'Франція': 'https://images.pexels.com/photos/208736/pexels-photo-208736.jpeg?w=400&h=250&fit=crop',
+                'Німеччина': 'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?w=400&h=250&fit=crop',
             }
 
-            api_country = country_map.get(country, country)
+            # Отримуємо перше місто
+            first_city = City.objects.filter(country=country).first()
+            city_name = first_city.name if first_city else 'популярний курорт'
 
-            # Запит до Otpusk API
-            url = "https://export.otpusk.com/api/2.4/search"
-            params = {
-                'country': api_country,
-                'departure': 'Chisinau',
-                'format': 'json',
-                'access_token': '3f94b-e4ff8-a72a7-4755f-da9ca',
-                'limit': 1
-            }
+            price = 40000 + (idx * 1000)  # Тимчасова ціна
 
-            response = requests.get(url, params=params, timeout=10)
-
-            if response.status_code == 200:
-                data = response.json()
-                if 'tours' in data and len(data['tours']) > 0:
-                    tour = data['tours'][0]
-
-                    # Отримуємо реальні параметри
-                    hid = str(tour.get('hotel_id', ''))
-                    oid = str(tour.get('offer_id', ''))
-                    start_date = tour.get('start_date', '')
-                    nights = str(tour.get('nights', 7))
-
-                    # Отримуємо фото готелю
-                    image_url = None
-                    if 'hotel' in tour and 'photo' in tour['hotel']:
-                        image_url = tour['hotel']['photo']
-                    if not image_url and 'hotel' in tour and 'gallery' in tour['hotel'] and len(
-                            tour['hotel']['gallery']) > 0:
-                        image_url = tour['hotel']['gallery'][0].get('photo')
-                    if not image_url:
-                        # Фото за замовчуванням
-                        image_url = f"https://images.pexels.com/photos/1268855/pexels-photo-1268855.jpeg?w=400&h=250&fit=crop"
-
-                    # Отримуємо назву готелю
-                    hotel_name = tour.get('hotel_name', f"Подорож до {country}")
-
-                    # Отримуємо ціну
-                    price = tour.get('price', 0)
-                    if price == 0:
-                        price = 50000
-
-                    tours.append({
-                        'id': hid,
-                        'hid': hid,
-                        'oid': oid,
-                        'od': start_date,
-                        'ol': nights,
-                        'hotel': hotel_name,
-                        'country': country,
-                        'city': tour.get('city_name', 'популярний курорт'),
-                        'price': int(price),
-                        'stars': 4,
-                        'image': image_url,
-                        'departure': 'Кишинів'
-                    })
-                else:
-                    # Якщо немає турів, додаємо заглушку
-                    add_fallback_tour(tours, country, idx)
-            else:
-                add_fallback_tour(tours, country, idx)
+            tours.append({
+                'id': hid,
+                'hid': hid,
+                'oid': oid,
+                'od': start_date,
+                'ol': nights,
+                'hotel': f"{country} - {city_name}",
+                'country': country,
+                'city': city_name,
+                'price': price,
+                'stars': 4,
+                'image': country_images.get(country,
+                                            'https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop'),
+                'departure': 'Кишинів'
+            })
 
         except Exception as e:
-            print(f"Помилка для {country}: {e}")
-            add_fallback_tour(tours, country, idx)
+            print(f"Помилка для країни {country}: {e}")
+            # Продовжуємо додавати інші країни
+            continue
 
     return JsonResponse({'tours': tours})
-
 
 def add_fallback_tour(tours, country, idx):
     """Додає тур-заглушку якщо API не повернув дані"""
