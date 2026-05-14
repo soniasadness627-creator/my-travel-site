@@ -655,5 +655,155 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+<style>
+/* ========== ЗМІНА КОЛЬОРУ БЛОКУ ПОШУКУ OTPUSK (ГОЛУБИЙ → БІЛИЙ) ========== */
 
+/* 1. Основний блок пошуку - змінюємо фон з голубого на білий */
+.new_f-wrapper {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+}
+
+/* 2. Контейнер віджета - білий фон */
+.new_f-container,
+.new_os,
+.new_f-form {
+    background: #ffffff !important;
+}
+
+/* 3. Заголовок "Пошук туру" - робимо чорним */
+.new_f-title {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+/* 4. Кнопка "Розширений пошук" - робимо текст чорним */
+.new_f-ext-btn .new_f-ext-btn-text,
+.new_f-ext-btn .new_f-ext-btn-filters-num {
+    color: #000000 !important;
+}
+
+/* 5. Всі тексти в полях форми - робимо чорними */
+.new_f-dropdown-btn,
+.new_f-dropdown-btn-text,
+.new_f-dropdown-btn span:not(.new_f-duration-days),
+.new_f-form-field .new_f-dropdown-btn span,
+.new_f-dates-container .new_f-search-dates-wrap button {
+    color: #000000 !important;
+}
+
+/* 6. Плейсхолдер - чорний */
+.new_f-dropdown-btn input::placeholder {
+    color: #000000 !important;
+    opacity: 1 !important;
+}
+
+/* 7. Маска введення (Єгипет: 18 курортів) - чорний текст */
+.new_input-mask span,
+.new_input-mask .new_input-mask-country,
+.new_input-mask .new_input-mask-cities {
+    color: #000000 !important;
+}
+
+/* 8. Іконки (календар, люди) - робимо чорними через filter */
+.new_f-search-dates-wrap svg,
+.new_f-dates-container svg {
+    filter: brightness(0) invert(0) !important;
+}
+
+/* 9. Кнопка "Знайти" - залишаємо кольором агента, текст білий */
+.new_f-form-submit {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+.new_f-form-submit:hover {
+    background: var(--primary-dark) !important;
+}
+
+/* 10. Випадаючі списки - фон білий, текст чорний */
+.new_f-dropdown-body,
+.new_f-dropdown-list,
+.new_f-dropdown-item {
+    background: #ffffff !important;
+    color: #000000 !important;
+}
+
+.new_f-dropdown-item.selected,
+.new_f-dropdown-item:hover {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+/* 11. Календар (дати) - текст чорний */
+.ui-datepicker .ui-datepicker-title,
+.ui-datepicker-calendar thead th span,
+.ui-datepicker-calendar .ui-state-default {
+    color: #000000 !important;
+}
+
+/* 12. Стрілки календаря - чорні */
+.ui-datepicker .ui-datepicker-prev span,
+.ui-datepicker .ui-datepicker-next span {
+    filter: brightness(0) invert(0) !important;
+}
+
+/* 13. Блок з фільтрами (Розширений пошук) - текст чорний */
+.new_f-ext-container .new_f-ext-bl-title,
+.new_f-ext-container .new_f-ext-bl-body label span,
+.new_f-ext-container .new_f-ext-bl-body label,
+.new_f-ext-scale-item {
+    color: #000000 !important;
+}
+
+/* 14. Кнопка "Очистити фільтри" - чорний текст */
+.new_f-ext-clear-btn {
+    color: #000000 !important;
+    background: transparent !important;
+}
+
+/* 15. Кнопки "Відміна" та "Застосувати" */
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-cancel {
+    background: #f0f0f0 !important;
+    color: #000000 !important;
+}
+
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+/* 16. Текст у полі "Кількість дорослих" */
+.new_f-people-title,
+.new_f-children-accordion-btn,
+.new_f-children-age-item {
+    color: #000000 !important;
+}
+
+/* 17. Активний елемент вибору дорослих */
+.new_f-people-item.active {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+/* 18. Для мобільної версії */
+@media (max-width: 768px) {
+    .new_f-ext-btn .new_f-ext-btn-text,
+    .new_f-ext-btn .new_f-ext-btn-filters-num {
+        color: #000000 !important;
+    }
+}
+
+/* 19. Видаляємо голубий фон у всьому віджеті */
+#otpusk-search-module .new_f-wrapper,
+#otpusk-search-module .new_f-container {
+    background: #ffffff !important;
+}
+
+/* 20. Текст "з Брно" і подібні */
+.new_f-dropdown-btn .new_f-dropdown-btn-text,
+.new_f-dropdown-btn span {
+    color: #000000 !important;
+}
+</style>
 {% endblock %}
