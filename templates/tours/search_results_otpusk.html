@@ -1364,15 +1364,15 @@ observer.observe(document.body, { childList: true, subtree: true });
     }
 }
 </style>
-<!-- ========== СТИЛІ ДЛЯ БЛОКУ ЦІНИ ========== -->
+<!-- ========== СТИЛІ ДЛЯ БЛОКУ ЦІНИ (РАМКА + ПРОЗОРИЙ ФОН) ========== -->
 <style>
-/* Звичайний стан - фон = колір агента, текст чорний */
+/* Звичайний стан - прозорий фон, рамка кольором агента */
 .new_r-item-price {
-    background: var(--primary-color) !important;
+    background: transparent !important;
     border-radius: 12px !important;
     padding: 8px 16px !important;
     transition: all 0.3s ease !important;
-    border-top: none !important;
+    border: 2px solid var(--primary-color) !important;
     margin-top: 8px !important;
     display: inline-flex !important;
     width: auto !important;
@@ -1386,28 +1386,28 @@ observer.observe(document.body, { childList: true, subtree: true });
     font-weight: 700 !important;
 }
 
-/* Опис "за двох" - теж чорний */
+/* Опис "за двох" - чорний */
 .new_price-desc {
     color: #000000 !important;
     opacity: 0.7 !important;
 }
 
-/* ПРИ НАВЕДЕННІ НА ВЕСЬ БЛОК ТУРУ - фон стає білим */
+/* ПРИ НАВЕДЕННІ НА ВЕСЬ БЛОК ТУРУ - фон стає кольором агента, текст білий */
 .new_r-item:hover .new_r-item-price {
-    background: #ffffff !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
 }
 
-/* При наведенні текст ціни залишається чорним */
+/* При наведенні текст ціни стає БІЛИМ */
 .new_r-item:hover .new_price-value,
 .new_r-item:hover .new_price-value .currency {
-    color: #000000 !important;
+    color: #ffffff !important;
 }
 
-/* При наведенні опис залишається чорним */
+/* При наведенні опис стає білим */
 .new_r-item:hover .new_price-desc {
-    color: #000000 !important;
-    opacity: 0.7 !important;
+    color: #ffffff !important;
+    opacity: 0.9 !important;
 }
 
 /* Для мобільних */
