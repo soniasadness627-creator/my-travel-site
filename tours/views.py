@@ -397,9 +397,9 @@ def get_popular_tours_api(request, slug=None):
     from .models import City
     from datetime import timedelta
 
-    # Список країн з індивідуальними містами вильоту (ЗАМІСТЬ ЖИТОМИРА)
+    # Список країн з індивідуальними містами вильоту
     countries_config = [
-        {'country': 'Єгипет', 'departure': 'Бакеу', 'departure_text': 'з Бакеу'},
+        {'country': 'Єгипет', 'departure': 'Брно', 'departure_text': 'з Брно'},
         {'country': 'Туреччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},
         {'country': 'ОАЕ', 'departure': 'Варшава', 'departure_text': 'з Варшави'},
         {'country': 'Греція', 'departure': 'Відень', 'departure_text': 'з Відня'},
@@ -411,11 +411,18 @@ def get_popular_tours_api(request, slug=None):
         {'country': 'Хорватія', 'departure': 'Познань', 'departure_text': 'з Познані'},
         {'country': 'Чорногорія', 'departure': 'Вроцлав', 'departure_text': 'з Вроцлава'},
         {'country': 'Болгарія', 'departure': 'Київ', 'departure_text': 'з Києва'},
+        {'country': 'Грузія', 'departure': 'Тбілісі', 'departure_text': 'з Тбілісі'},
+        {'country': 'Польща', 'departure': 'Варшава', 'departure_text': 'з Варшави'},
+        {'country': 'Угорщина', 'departure': 'Будапешт', 'departure_text': 'з Будапешта'},
+        {'country': 'Чехія', 'departure': 'Прага', 'departure_text': 'з Праги'},
+        {'country': 'Австрія', 'departure': 'Відень', 'departure_text': 'з Відня'},
+        {'country': 'Франція', 'departure': 'Париж', 'departure_text': 'з Парижа'},
+        {'country': 'Німеччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},
     ]
 
-    # ФОТО ДЛЯ КОЖНОЇ КРАЇНИ
+    # ФОТО ДЛЯ КОЖНОЇ КРАЇНИ (ПЛЯЖІ - АЛЬТЕРНАТИВНІ)
     country_images = {
-        'Єгипет': 'https://images.pexels.com/photos/1450353/pexels-photo-1450353.jpeg?w=400&h=250&fit=crop',
+        'Єгипет': 'https://images.pexels.com/photos/258117/pexels-photo-258117.jpeg?w=400&h=250&fit=crop',
         'Туреччина': 'https://images.pexels.com/photos/1927430/pexels-photo-1927430.jpeg?w=400&h=250&fit=crop',
         'ОАЕ': 'https://images.pexels.com/photos/2632755/pexels-photo-2632755.jpeg?w=400&h=250&fit=crop',
         'Греція': 'https://images.pexels.com/photos/3282168/pexels-photo-3282168.jpeg?w=400&h=250&fit=crop',
@@ -427,6 +434,13 @@ def get_popular_tours_api(request, slug=None):
         'Хорватія': 'https://images.pexels.com/photos/1722420/pexels-photo-1722420.jpeg?w=400&h=250&fit=crop',
         'Чорногорія': 'https://images.pexels.com/photos/1572248/pexels-photo-1572248.jpeg?w=400&h=250&fit=crop',
         'Болгарія': 'https://images.pexels.com/photos/1515648/pexels-photo-1515648.jpeg?w=400&h=250&fit=crop',
+        'Грузія': 'https://images.pexels.com/photos/1294506/pexels-photo-1294506.jpeg?w=400&h=250&fit=crop',
+        'Польща': 'https://images.pexels.com/photos/357338/pexels-photo-357338.jpeg?w=400&h=250&fit=crop',
+        'Угорщина': 'https://images.pexels.com/photos/1120659/pexels-photo-1120659.jpeg?w=400&h=250&fit=crop',
+        'Чехія': 'https://images.pexels.com/photos/1533724/pexels-photo-1533724.jpeg?w=400&h=250&fit=crop',
+        'Австрія': 'https://images.pexels.com/photos/442963/pexels-photo-442963.jpeg?w=400&h=250&fit=crop',
+        'Франція': 'https://images.pexels.com/photos/208736/pexels-photo-208736.jpeg?w=400&h=250&fit=crop',
+        'Німеччина': 'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?w=400&h=250&fit=crop',
     }
 
     tours = []
