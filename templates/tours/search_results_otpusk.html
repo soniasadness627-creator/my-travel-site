@@ -1326,37 +1326,41 @@ observer.observe(document.body, { childList: true, subtree: true });
     }
 }
 </style>
-<!-- ========== ВІДСТУПИ МІЖ КАРТКАМИ ТУРІВ ========== -->
+<!-- ========== ВІДСТУПИ МІЖ КАРТКАМИ ТУРІВ (БІЛЬШІ) ========== -->
 <style>
 /* Відступ між блоками турів */
 .new_r-item-wrap {
-    margin-bottom: 30px !important;
+    margin-bottom: 40px !important;
+    padding-bottom: 20px !important;
+    border-bottom: 2px solid #e9ecef !important;
 }
 
-/* Останній блок не має відступу знизу */
+/* Останній блок - без лінії */
 .new_r-item-wrap:last-child {
+    border-bottom: none !important;
     margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
 }
 
-/* Додатковий внутрішній відступ для картки */
+/* Картка туру */
 .new_r-item {
     margin-bottom: 0 !important;
 }
 
-/* Роздільна лінія між турами (опціонально) */
-.new_r-item-wrap:not(:last-child) {
-    border-bottom: 1px solid #e2e8f0;
-    padding-bottom: 30px;
+/* Тінь для картки */
+.new_r-item {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Для мобільних пристроїв - менший відступ */
+.new_r-item:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Для мобільних */
 @media (max-width: 768px) {
     .new_r-item-wrap {
-        margin-bottom: 20px !important;
-    }
-
-    .new_r-item-wrap:not(:last-child) {
-        padding-bottom: 20px;
+        margin-bottom: 30px !important;
+        padding-bottom: 15px !important;
     }
 }
 </style>
