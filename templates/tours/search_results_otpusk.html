@@ -1326,4 +1326,38 @@ observer.observe(document.body, { childList: true, subtree: true });
     }
 }
 </style>
+<!-- ========== ВІДСТУПИ МІЖ КАРТКАМИ ТУРІВ ========== -->
+<style>
+/* Відступ між блоками турів */
+.new_r-item-wrap {
+    margin-bottom: 30px !important;
+}
+
+/* Останній блок не має відступу знизу */
+.new_r-item-wrap:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* Додатковий внутрішній відступ для картки */
+.new_r-item {
+    margin-bottom: 0 !important;
+}
+
+/* Роздільна лінія між турами (опціонально) */
+.new_r-item-wrap:not(:last-child) {
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 30px;
+}
+
+/* Для мобільних пристроїв - менший відступ */
+@media (max-width: 768px) {
+    .new_r-item-wrap {
+        margin-bottom: 20px !important;
+    }
+
+    .new_r-item-wrap:not(:last-child) {
+        padding-bottom: 20px;
+    }
+}
+</style>
 {% endblock %}
