@@ -201,6 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             const response = await fetch(url);
             const data = await response.json();
+            console.log('✅ Отримано тури:', data.tours?.length);
             return data.tours || [];
         } catch (error) {
             console.error('Помилка завантаження турів:', error);
@@ -235,30 +236,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
             }
         }
-        window.location.href = `${baseUrl}?geo=${encodeURIComponent(decodeURIComponent(country))}`;
+        window.location.href = `${baseUrl}?geo=${encodeURIComponent(country)}`;
     };
 
     function renderTours(tours) {
         if (!track) return;
 
-        if (tours.length === 0) {
+        if (!tours || tours.length === 0) {
             track.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних турів. Спробуйте пізніше.</div>';
             return;
         }
 
         let html = '';
         tours.forEach(tour => {
-            const starsHtml = renderStars(tour.stars);
+            const starsHtml = renderStars(tour.stars || 4);
             const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
+            const hotelName = tour.hotel || `${tour.country} - ${tour.city}`;
+            const countryName = tour.country;
+            const cityName = tour.city || 'популярний курорт';
 
             html += `
-                <div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(tour.country)}')">
-                    <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(tour.country)}" onerror="this.src='https://images.unsplash.com/photo-1468824357306-a439d58ccb1c?w=400&h=250&fit=crop'">
+                <div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(countryName)}')">
+                    <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.unsplash.com/photo-1468824357306-a439d58ccb1c?w=400&h=250&fit=crop'">
                     <div class="popular-tour-info">
-                        <div class="popular-tour-hotel">${escapeHtml(tour.hotel)}</div>
+                        <div class="popular-tour-hotel">${escapeHtml(hotelName)}</div>
                         <div class="popular-tour-location">
                             <i class="fa-regular fa-location-dot"></i>
-                            ${escapeHtml(tour.country)}, ${escapeHtml(tour.city)}
+                            ${escapeHtml(countryName)}, ${escapeHtml(cityName)}
                         </div>
                         <div class="popular-tour-stars">
                             ${starsHtml}
@@ -268,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 ${priceFormatted} ₴
                                 <small>за тур</small>
                             </div>
-                            <button class="popular-tour-btn" onclick="event.stopPropagation(); searchByCountry('${encodeURIComponent(tour.country)}')">
+                            <button class="popular-tour-btn" onclick="event.stopPropagation(); searchByCountry('${encodeURIComponent(countryName)}')">
                                 Дивитись
                             </button>
                         </div>
@@ -280,6 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
         track.innerHTML = html;
     }
 
+    // Навігація слайдера
     const sliderContainer = document.querySelector('.popular-slider-container');
     const prevBtn = document.querySelector('.popular-prev');
     const nextBtn = document.querySelector('.popular-next');
@@ -296,6 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Завантаження та відображення турів
     fetchPopularTours().then(tours => renderTours(tours));
 });
 </script>
