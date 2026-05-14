@@ -315,6 +315,57 @@ window.goToTourDetail = function(hid, oid, od, ol) {
     }
     window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od}&ol=${ol}`;
 };
+
+function renderTours(tours) {
+    if (!track) return;
+
+    if (!tours || tours.length === 0) {
+        track.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних турів. Спробуйте пізніше.</div>';
+        return;
+    }
+
+    let html = '';
+    tours.forEach(tour => {
+        const starsHtml = renderStars(tour.stars || 4);
+        const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
+        const hotelName = tour.hotel || `${tour.country} - ${tour.city}`;
+        const countryName = tour.country;
+        const cityName = tour.city || 'популярний курорт';
+
+        // Отримуємо реальні параметри з API
+        const hid = tour.hid;
+        const oid = tour.oid;
+        const od = tour.od;
+        const ol = tour.ol;
+
+        html += `
+<div class="popular-tour-card" onclick="goToTourDetail('${hid}', '${oid}', '${od}', '${ol}')">
+    <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop'">
+    <div class="popular-tour-info">
+        <div class="popular-tour-hotel">${escapeHtml(hotelName)}</div>
+        <div class="popular-tour-location">
+            <i class="fa-regular fa-location-dot"></i>
+            ${escapeHtml(countryName)}, ${escapeHtml(cityName)}
+        </div>
+        <div class="popular-tour-stars">
+            ${starsHtml}
+        </div>
+        <div class="popular-tour-footer">
+            <div class="popular-tour-price">
+                ${priceFormatted} ₴
+                <small>за тур</small>
+            </div>
+            <button class="popular-tour-btn" onclick="event.stopPropagation(); goToTourDetail('${hid}', '${oid}', '${od}', '${ol}')">
+                Дивитись
+            </button>
+        </div>
+    </div>
+</div>
+        `;
+    });
+
+    track.innerHTML = html;
+}
 </script>
 
 <!-- ========== КАЛЕНДАР НИЗЬКИХ ЦІН ========== -->
