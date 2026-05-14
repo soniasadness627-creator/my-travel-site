@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const cityName = tour.city || 'популярний курорт';
 
             html += `
-<div class="popular-tour-card" onclick="goToTourDetail('${tour.hid}', '${tour.oid}', '${tour.od}', '${tour.ol}')">
+<div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(countryName)}')">
                     <div class="popular-tour-info">
                         <div class="popular-tour-hotel">${escapeHtml(hotelName)}</div>
                         <div class="popular-tour-location">
@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 ${priceFormatted} ₴
                                 <small>за тур</small>
                             </div>
-    <button class="popular-tour-btn" onclick="event.stopPropagation(); goToTourDetail('${tour.hid}', '${tour.oid}', '${tour.od}', '${tour.ol}')">
+<button class="popular-tour-btn" onclick="event.stopPropagation(); searchByCountry('${encodeURIComponent(countryName)}')">
                                 Дивитись
                             </button>
                         </div>
