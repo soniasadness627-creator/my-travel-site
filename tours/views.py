@@ -387,7 +387,7 @@ def calendar_prices_from_db(request):
 
 
 # ========== API ДЛЯ ПОПУЛЯРНИХ ТУРІВ (НОВИЙ) ==========
-def get_popular_tours_api(request):
+def get_popular_tours_api(request, slug=None):
     """
     API для отримання популярних турів з бази даних City
     """
