@@ -806,4 +806,88 @@ document.addEventListener('DOMContentLoaded', function() {
     color: #000000 !important;
 }
 </style>
+<!-- ========== БЛОК "ПРО НАС" (з конструктора) ========== -->
+{% if agent_site and agent_site.about_us_title and agent_site.about_us_text %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10">
+            <div class="about-us-section">
+                <div class="row align-items-center g-4">
+                    {% if agent_site.about_us_image %}
+                    <div class="col-md-6">
+                        <div class="about-us-image-wrapper">
+                            <img src="{{ agent_site.about_us_image.url }}"
+                                 alt="{{ agent_site.about_us_title }}"
+                                 class="img-fluid rounded-4 shadow-sm"
+                                 style="width: 100%; object-fit: cover; height: 100%; min-height: 300px;">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                    {% else %}
+                    <div class="col-12">
+                    {% endif %}
+                        <div class="about-us-content">
+                            <h2 class="about-us-title mb-4" style="color: var(--primary-color);">
+                                {{ agent_site.about_us_title }}
+                            </h2>
+                            <div class="about-us-text" style="color: #475569; line-height: 1.7; font-size: 1rem;">
+                                {{ agent_site.about_us_text|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Стилі для блоку "Про нас" */
+.about-us-section {
+    padding: 20px 0;
+}
+.about-us-title {
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+}
+.about-us-title:after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+.about-us-text p {
+    margin-bottom: 15px;
+}
+.about-us-image-wrapper {
+    overflow: hidden;
+    border-radius: 16px;
+}
+.about-us-image-wrapper img {
+    transition: transform 0.3s ease;
+}
+.about-us-image-wrapper img:hover {
+    transform: scale(1.02);
+}
+@media (max-width: 768px) {
+    .about-us-title:after {
+        bottom: -8px;
+        width: 50px;
+    }
+    .about-us-content {
+        text-align: center;
+    }
+    .about-us-title:after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+</style>
+{% endif %}
+
 {% endblock %}
