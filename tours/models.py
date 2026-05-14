@@ -507,3 +507,21 @@ class HotelReview(models.Model):
 
     def __str__(self):
         return f"{self.guest_name} - {self.hid} - {self.rating}★"
+
+
+class TourVisit(models.Model):
+    tour_hid = models.CharField(max_length=50, db_index=True)
+    tour_oid = models.CharField(max_length=100, db_index=True)
+    user_ip = models.GenericIPAddressField(null=True)
+    user_agent = models.TextField(blank=True)
+    session_key = models.CharField(max_length=40, null=True, blank=True)
+    visited_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['tour_hid', 'tour_oid']),
+            models.Index(fields=['visited_at']),
+        ]
+
+    def __str__(self):
+        return f"Tour {self.tour_hid} visited at {self.visited_at}"
