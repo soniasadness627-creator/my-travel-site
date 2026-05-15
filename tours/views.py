@@ -399,7 +399,7 @@ def get_popular_tours_api(request, slug=None):
 
     # Список країн з індивідуальними містами вильоту
     countries_config = [
-        {'country': 'Єгипет', 'departure': 'Бакеу', 'departure_text': 'з Бакеу'},  # ← ВИПРАВЛЕНО
+        {'country': 'Єгипет', 'departure': 'Брно', 'departure_text': 'з Брно'},  # ← ВИПРАВЛЕНО
         {'country': 'Туреччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},
         {'country': 'ОАЕ', 'departure': 'Варшава', 'departure_text': 'з Варшави'},
         {'country': 'Греція', 'departure': 'Відень', 'departure_text': 'з Відня'},
