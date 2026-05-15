@@ -1615,13 +1615,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (hasHalf) {
             starsHtml += '<i class="fa-solid fa-star-half-alt"></i>';
         }
-        for (let i = starsHtml.length / 3; i < 5; i++) {
+        for (let i = Math.ceil(rating); i < 5; i++) {
             starsHtml += '<i class="fa-regular fa-star"></i>';
         }
         return starsHtml;
     }
 
-    function goToHotelDetail(hid, oid) {
+    // Функція для переходу на деталі туру
+    window.goToHotelDetail = function(hid, oid) {
         let baseUrl = '/tour-detail/';
         const pathParts = window.location.pathname.split('/');
         for (let i = 0; i < pathParts.length; i++) {
@@ -1631,7 +1632,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}`;
-    }
+    };
 
     function renderHotels(hotels) {
         if (!track) return;
