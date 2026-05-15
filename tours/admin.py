@@ -542,7 +542,7 @@ class AmenityNameAdmin(admin.ModelAdmin):
 # ========== АДМІНКА ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ (ТІЛЬКИ СУПЕРАДМІН) ==========
 @admin.register(PopularHotel)
 class PopularHotelAdmin(admin.ModelAdmin):
-    list_display = ('hotel_name', 'country', 'city', 'rating', 'reviews_count', 'price', 'order', 'is_active')
+    list_display = ('hotel_name', 'country', 'city', 'rating', 'reviews_count', 'price', 'od', 'ol', 'order', 'is_active')
     list_editable = ('order', 'is_active')
     list_filter = ('country', 'is_active')
     search_fields = ('hotel_name', 'country', 'city', 'hid', 'oid')
@@ -554,6 +554,9 @@ class PopularHotelAdmin(admin.ModelAdmin):
         }),
         ('Рейтинг та ціна', {
             'fields': ('rating', 'reviews_count', 'price')
+        }),
+        ('Дати та тривалість', {          # ← ДОДАЙТЕ ЦЕЙ РОЗДІЛ
+            'fields': ('od', 'ol')
         }),
         ('Фото', {
             'fields': ('image', 'image_url')
