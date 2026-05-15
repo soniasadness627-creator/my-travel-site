@@ -539,7 +539,8 @@ class PopularHotel(models.Model):
     rating = models.FloatField(default=8.0, verbose_name='Рейтинг (0-10)')
     reviews_count = models.IntegerField(default=0, verbose_name='Кількість відгуків')
     price = models.IntegerField(verbose_name='Ціна за тур (грн)')
-    image = CloudinaryField(verbose_name='Фото готелю', folder='popular_hotels', blank=True, null=True)
+    # ТИМЧАСОВО: замінюємо CloudinaryField на звичайний ImageField
+    image = models.ImageField(upload_to='popular_hotels/', blank=True, null=True, verbose_name='Фото готелю')
     image_url = models.URLField(blank=True, verbose_name='URL фото (якщо немає завантаженого)')
     order = models.IntegerField(default=0, verbose_name='Порядок сортування')
     is_active = models.BooleanField(default=True, verbose_name='Показувати на сайті')
@@ -555,5 +556,4 @@ class PopularHotel(models.Model):
         return f"{self.hotel_name} ({self.country})"
 
     def get_detail_url(self):
-        """Повертає URL для переходу на сторінку деталей туру"""
         return f"/tour-detail/?hid={self.hid}&oid={self.oid}"
