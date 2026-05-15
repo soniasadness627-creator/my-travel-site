@@ -1652,8 +1652,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const priceFormatted = Math.round(hotel.price).toLocaleString('uk-UA');
 
             html += `
-                <div class="popular-hotel-card" onclick="goToHotelDetail('${hotel.hid}', '${hotel.oid}')">
-                    <img class="popular-hotel-img" src="${hotel.image}" alt="${hotel.hotel_name}" onerror="this.src='/static/images/default-hotel.jpg'">
+<div class="popular-hotel-card" onclick="goToHotelDetail('${hotel.hid}', '${hotel.oid}', '${hotel.od || ''}', '${hotel.ol || ''}')">                    <img class="popular-hotel-img" src="${hotel.image}" alt="${hotel.hotel_name}" onerror="this.src='/static/images/default-hotel.jpg'">
                     <div class="popular-hotel-info">
                         <div class="popular-hotel-name">${hotel.hotel_name}</div>
                         <div class="popular-hotel-location">
@@ -1669,7 +1668,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 ${priceFormatted} ₴
                                 <small>за тур</small>
                             </div>
-                            <button class="popular-hotel-btn" onclick="event.stopPropagation(); goToHotelDetail('${hotel.hid}', '${hotel.oid}')">
+<button class="popular-hotel-btn" onclick="event.stopPropagation(); goToHotelDetail('${hotel.hid}', '${hotel.oid}', '${hotel.od || ''}', '${hotel.ol || ''}')">
+
                                 Детальніше →
                             </button>
                         </div>

@@ -542,6 +542,8 @@ def get_popular_hotels_api(request, slug=None):
             'id': hotel.id,
             'hid': hotel.hid,
             'oid': hotel.oid,
+            'od': hotel.od,  # ← ДОДАТИ
+            'ol': hotel.ol,  # ← ДОДАТИ
             'hotel_name': hotel.hotel_name,
             'country': hotel.country,
             'city': hotel.city,
