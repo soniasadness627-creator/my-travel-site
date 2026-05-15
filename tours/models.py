@@ -554,6 +554,5 @@ class PopularHotel(models.Model):
 
     def __str__(self):
         return f"{self.hotel_name} ({self.country})"
-
     def get_detail_url(self):
         return f"/tour-detail/?hid={self.hid}&oid={self.oid}"
