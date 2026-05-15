@@ -73,7 +73,6 @@ class ReviewInline(admin.TabularInline):
 
 # ========== ФОРМА ДЛЯ ТУРУ ==========
 class TourAdminForm(forms.ModelForm):
-    # ТИМЧАСОВО: замінюємо запит до БД на статичний список
     country = forms.ChoiceField(
         choices=[('', '---------')] + [('Україна', 'Україна'), ('Єгипет', 'Єгипет'), ('Туреччина', 'Туреччина'),
                                        ('Іспанія', 'Іспанія'), ('Греція', 'Греція'), ('Італія', 'Італія')],
@@ -127,27 +126,60 @@ class TourAdminForm(forms.ModelForm):
         return instance
 
 
-# ========== АДМІНКИ ==========
+# ========== АДМІНКИ З РОЗМЕЖУВАННЯМ ПРАВ ==========
 
 @admin.register(CountryInfo)
 class CountryInfoAdmin(admin.ModelAdmin):
     list_display = ('country',)
     search_fields = ('country',)
 
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
 
 @admin.register(Consultation)
 class ConsultationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone', 'created_at')
-    list_filter = ('created_at',)
+    list_display = ('name', 'phone', 'created_at', 'agent', 'is_processed')
+    list_filter = ('created_at', 'is_processed')
     search_fields = ('name', 'phone', 'comment')
     readonly_fields = ('created_at',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(agent=request.user)
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser and not obj.agent:
+            obj.agent = request.user
+        super().save_model(request, obj, form, change)
+
+    def has_change_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        if obj and obj.agent != request.user:
+            return False
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
 
 
 @admin.register(Tour)
 class TourAdmin(admin.ModelAdmin):
     form = TourAdminForm
-    list_display = ("title", "country", "city", "stars", "price", "is_popular", "duration", "room_type", "meal_type",
-                    "start_date", "departure_city", "transport", "author")
+    list_display = ("title", "country", "city", "stars", "price", "is_popular", "duration",
+                    "room_type", "meal_type", "start_date", "departure_city", "transport", "author")
     list_filter = ("country", "city", "stars", "start_date", "author", "transport", "meal_type", "is_popular")
     search_fields = ("title", "country", "city__name", "description")
     readonly_fields = ("created_at",)
@@ -180,9 +212,36 @@ class TourAdmin(admin.ModelAdmin):
         }),
     )
 
-    def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
-        return form
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(author=request.user)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "author" and not request.user.is_superuser:
+            kwargs["initial"] = request.user
+            kwargs["queryset"] = User.objects.filter(id=request.user.id)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser and not obj.author:
+            obj.author = request.user
+        super().save_model(request, obj, form, change)
+
+    def has_change_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        if obj and obj.author != request.user:
+            return False
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        if obj and obj.author != request.user:
+            return False
+        return True
 
 
 @admin.register(News)
@@ -198,6 +257,31 @@ class NewsAdmin(admin.ModelAdmin):
         ("Службова інформація", {"fields": ("created_at",), "classes": ("collapse",)}),
     )
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(author=request.user)
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser and not obj.author:
+            obj.author = request.user
+        super().save_model(request, obj, form, change)
+
+    def has_change_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        if obj and obj.author != request.user:
+            return False
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        if obj and obj.author != request.user:
+            return False
+        return True
+
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
@@ -208,9 +292,25 @@ class BookingAdmin(admin.ModelAdmin):
     list_per_page = 20
 
     def get_tour_title(self, obj):
-        return obj.tour.title
+        return obj.tour.title if obj.tour else 'Немає туру'
 
     get_tour_title.short_description = 'Тур'
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(tour__author=request.user)
+
+    def has_change_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        if obj and obj.tour and obj.tour.author != request.user:
+            return False
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
 
 
 @admin.register(Review)
@@ -238,6 +338,15 @@ class ReviewAdmin(admin.ModelAdmin):
 
     comment_preview.short_description = 'Коментар'
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(tour__author=request.user)
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
 
 @admin.register(PriceOption)
 class PriceOptionAdmin(admin.ModelAdmin):
@@ -246,6 +355,19 @@ class PriceOptionAdmin(admin.ModelAdmin):
     list_filter = ('tour', 'departure_city', 'is_available')
     search_fields = ('tour__title',)
     list_editable = ('price', 'is_available')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(tour__author=request.user)
+
+    def has_change_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        if obj and obj.tour and obj.tour.author != request.user:
+            return False
+        return True
 
 
 @admin.register(TourPriceByTourists)
@@ -256,6 +378,39 @@ class TourPriceByTouristsAdmin(admin.ModelAdmin):
     search_fields = ('tour__title',)
     list_editable = ('price', 'is_default')
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(tour__author=request.user)
+
+    def has_change_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        if obj and obj.tour and obj.tour.author != request.user:
+            return False
+        return True
+
+
+@admin.register(PriceCalendar)
+class PriceCalendarAdmin(admin.ModelAdmin):
+    list_display = ('tour', 'date', 'duration', 'price')
+    list_filter = ('tour', 'date')
+    search_fields = ('tour__title',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(tour__author=request.user)
+
+    def has_change_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        if obj and obj.tour and obj.tour.author != request.user:
+            return False
+        return True
+
 
 @admin.register(PopularDestination)
 class PopularDestinationAdmin(admin.ModelAdmin):
@@ -263,12 +418,36 @@ class PopularDestinationAdmin(admin.ModelAdmin):
     list_editable = ('order',)
     search_fields = ('country',)
 
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
 
 @admin.register(AmenityCategory)
 class AmenityCategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'order']
     list_editable = ['order']
     fields = ('name', 'order')
+
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
 
 
 @admin.register(Amenity)
@@ -278,6 +457,18 @@ class AmenityAdmin(admin.ModelAdmin):
     search_fields = ['name__name']
     list_editable = ['order', 'is_popular']
     fields = ('category', 'name', 'order', 'is_popular')
+
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
 
 
 @admin.register(City)
@@ -290,6 +481,18 @@ class CityAdmin(admin.ModelAdmin):
         (None, {'fields': ('name', 'country')}),
         ('Додаткова інформація', {'fields': ('description', 'activities', 'sights'), 'classes': ('collapse',)}),
     )
+
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
 
 
 @admin.register(DepartureCity)
@@ -304,12 +507,17 @@ class DepartureCityAdmin(admin.ModelAdmin):
 
     get_transport_display.short_description = 'Транспорт'
 
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser
 
-@admin.register(PriceCalendar)
-class PriceCalendarAdmin(admin.ModelAdmin):
-    list_display = ('tour', 'date', 'duration', 'price')
-    list_filter = ('tour', 'date')
-    search_fields = ('tour__title',)
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
 
 
 @admin.register(AmenityName)
@@ -318,8 +526,20 @@ class AmenityNameAdmin(admin.ModelAdmin):
     list_filter = ('category',)
     search_fields = ('name',)
 
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser
 
-# ========== НОВА АДМІНКА ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ ==========
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+
+# ========== АДМІНКА ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ (ТІЛЬКИ СУПЕРАДМІН) ==========
 @admin.register(PopularHotel)
 class PopularHotelAdmin(admin.ModelAdmin):
     list_display = ('hotel_name', 'country', 'city', 'rating', 'reviews_count', 'price', 'order', 'is_active')
@@ -342,3 +562,15 @@ class PopularHotelAdmin(admin.ModelAdmin):
             'fields': ('order', 'is_active')
         }),
     )
+
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
