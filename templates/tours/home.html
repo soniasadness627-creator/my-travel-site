@@ -46,6 +46,57 @@
 
 </div>
 
+
+
+<!-- ========== КАЛЕНДАР НИЗЬКИХ ЦІН ========== -->
+<div class="container my-5 pt-4">
+    <div class="price-calendar-wrapper">
+        <h2 class="text-center mb-4">Календар низьких цін</h2>
+
+        <div class="departure-city mb-3 text-center">
+            <label class="fw-bold me-2">Місто виїзду:</label>
+            <select id="departureCitySelect" class="form-select d-inline-block w-auto">
+                <option value="Кишинів" selected>Кишинів</option>
+                <option value="Варшава">Варшава</option>
+                <option value="Краків">Краків</option>
+                <option value="Бухарест">Бухарест</option>
+                <option value="Будапешт">Будапешт</option>
+                <option value="Берлін">Берлін</option>
+                <option value="Прага">Прага</option>
+                <option value="Тбілісі">Тбілісі</option>
+                <option value="Стамбул">Стамбул</option>
+            </select>
+        </div>
+
+        <div class="country-tabs mb-4"></div>
+
+        <div class="text-muted small mb-3 text-center">
+            Ціни вказані за двох дорослих на 6-8 ночей
+        </div>
+
+        <div class="calendar-container">
+            <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
+                <div class="price-range-indicator">
+                    <div class="max-price text-end">—</div>
+                    <div class="min-price text-end">—</div>
+                </div>
+                <div class="month-controls">
+                    <button class="btn btn-sm btn-outline-secondary" id="prevMonthBtn">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <span id="monthYearDisplay" class="fw-bold mx-2">Травень 2026</span>
+                    <button class="btn btn-sm btn-outline-secondary" id="nextMonthBtn">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="calendar-scroll">
+                <div class="calendar-days" id="calendarDays"></div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- ========== БЛОК "ПОПУЛЯРНІ ТУРИ" ========== -->
 <div class="container my-5">
     <div class="popular-tours-wrapper">
@@ -308,57 +359,6 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchPopularTours().then(tours => renderTours(tours));
 });
 </script>
-
-<!-- ========== КАЛЕНДАР НИЗЬКИХ ЦІН ========== -->
-<div class="container my-5 pt-4">
-    <div class="price-calendar-wrapper">
-        <h2 class="text-center mb-4">Календар низьких цін</h2>
-
-        <div class="departure-city mb-3 text-center">
-            <label class="fw-bold me-2">Місто виїзду:</label>
-            <select id="departureCitySelect" class="form-select d-inline-block w-auto">
-                <option value="Кишинів" selected>Кишинів</option>
-                <option value="Варшава">Варшава</option>
-                <option value="Краків">Краків</option>
-                <option value="Бухарест">Бухарест</option>
-                <option value="Будапешт">Будапешт</option>
-                <option value="Берлін">Берлін</option>
-                <option value="Прага">Прага</option>
-                <option value="Тбілісі">Тбілісі</option>
-                <option value="Стамбул">Стамбул</option>
-            </select>
-        </div>
-
-        <div class="country-tabs mb-4"></div>
-
-        <div class="text-muted small mb-3 text-center">
-            Ціни вказані за двох дорослих на 6-8 ночей
-        </div>
-
-        <div class="calendar-container">
-            <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
-                <div class="price-range-indicator">
-                    <div class="max-price text-end">—</div>
-                    <div class="min-price text-end">—</div>
-                </div>
-                <div class="month-controls">
-                    <button class="btn btn-sm btn-outline-secondary" id="prevMonthBtn">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-                    <span id="monthYearDisplay" class="fw-bold mx-2">Травень 2026</span>
-                    <button class="btn btn-sm btn-outline-secondary" id="nextMonthBtn">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="calendar-scroll">
-                <div class="calendar-days" id="calendarDays"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- ========== БЛОК КОНСУЛЬТАЦІЇ ========== -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">

@@ -399,7 +399,7 @@ def get_popular_tours_api(request, slug=None):
 
     # Список країн з індивідуальними містами вильоту
     countries_config = [
-        {'country': 'Єгипет', 'departure': 'Брно', 'departure_text': 'з Брно'},
+        {'country': 'Єгипет', 'departure': 'Бакеу', 'departure_text': 'з Бакеу'},  # ← ВИПРАВЛЕНО
         {'country': 'Туреччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},
         {'country': 'ОАЕ', 'departure': 'Варшава', 'departure_text': 'з Варшави'},
         {'country': 'Греція', 'departure': 'Відень', 'departure_text': 'з Відня'},
@@ -422,25 +422,25 @@ def get_popular_tours_api(request, slug=None):
 
     # ФОТО ДЛЯ КОЖНОЇ КРАЇНИ (ПЛЯЖІ - АЛЬТЕРНАТИВНІ)
     country_images = {
-        'Єгипет': 'https://images.pexels.com/photos/258117/pexels-photo-258117.jpeg?w=400&h=250&fit=crop',
-        'Туреччина': 'https://images.pexels.com/photos/1927430/pexels-photo-1927430.jpeg?w=400&h=250&fit=crop',
-        'ОАЕ': 'https://images.pexels.com/photos/2632755/pexels-photo-2632755.jpeg?w=400&h=250&fit=crop',
-        'Греція': 'https://images.pexels.com/photos/3282168/pexels-photo-3282168.jpeg?w=400&h=250&fit=crop',
-        'Кіпр': 'https://images.pexels.com/photos/1078983/pexels-photo-1078983.jpeg?w=400&h=250&fit=crop',
-        'Іспанія': 'https://images.pexels.com/photos/2478342/pexels-photo-2478342.jpeg?w=400&h=250&fit=crop',
-        'Таїланд': 'https://images.pexels.com/photos/1450362/pexels-photo-1450362.jpeg?w=400&h=250&fit=crop',
-        'Мальдіви': 'https://images.pexels.com/photos/753626/pexels-photo-753626.jpeg?w=400&h=250&fit=crop',
-        'Італія': 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?w=400&h=250&fit=crop',
-        'Хорватія': 'https://images.pexels.com/photos/1722420/pexels-photo-1722420.jpeg?w=400&h=250&fit=crop',
-        'Чорногорія': 'https://images.pexels.com/photos/1572248/pexels-photo-1572248.jpeg?w=400&h=250&fit=crop',
-        'Болгарія': 'https://images.pexels.com/photos/1515648/pexels-photo-1515648.jpeg?w=400&h=250&fit=crop',
-        'Грузія': 'https://images.pexels.com/photos/1294506/pexels-photo-1294506.jpeg?w=400&h=250&fit=crop',
-        'Польща': 'https://images.pexels.com/photos/357338/pexels-photo-357338.jpeg?w=400&h=250&fit=crop',
-        'Угорщина': 'https://images.pexels.com/photos/1120659/pexels-photo-1120659.jpeg?w=400&h=250&fit=crop',
-        'Чехія': 'https://images.pexels.com/photos/1533724/pexels-photo-1533724.jpeg?w=400&h=250&fit=crop',
-        'Австрія': 'https://images.pexels.com/photos/442963/pexels-photo-442963.jpeg?w=400&h=250&fit=crop',
-        'Франція': 'https://images.pexels.com/photos/208736/pexels-photo-208736.jpeg?w=400&h=250&fit=crop',
-        'Німеччина': 'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?w=400&h=250&fit=crop',
+        'Єгипет': 'https://images.pexels.com/photos/2166927/pexels-photo-2166927.jpeg?w=400&h=250&fit=crop',
+        'Туреччина': 'https://images.pexels.com/photos/2114017/pexels-photo-2114017.jpeg?w=400&h=250&fit=crop',
+        'ОАЕ': 'https://images.pexels.com/photos/2549018/pexels-photo-2549018.jpeg?w=400&h=250&fit=crop',
+        'Греція': 'https://images.pexels.com/photos/1229042/pexels-photo-1229042.jpeg?w=400&h=250&fit=crop',
+        'Кіпр': 'https://images.pexels.com/photos/1687845/pexels-photo-1687845.jpeg?w=400&h=250&fit=crop',
+        'Іспанія': 'https://images.pexels.com/photos/1529094/pexels-photo-1529094.jpeg?w=400&h=250&fit=crop',
+        'Таїланд': 'https://images.pexels.com/photos/753626/pexels-photo-753626.jpeg?w=400&h=250&fit=crop',
+        'Мальдіви': 'https://images.pexels.com/photos/1644126/pexels-photo-1644126.jpeg?w=400&h=250&fit=crop',
+        'Італія': 'https://images.pexels.com/photos/1643400/pexels-photo-1643400.jpeg?w=400&h=250&fit=crop',
+        'Хорватія': 'https://images.pexels.com/photos/1644361/pexels-photo-1644361.jpeg?w=400&h=250&fit=crop',
+        'Чорногорія': 'https://images.pexels.com/photos/1591677/pexels-photo-1591677.jpeg?w=400&h=250&fit=crop',
+        'Болгарія': 'https://images.pexels.com/photos/1478402/pexels-photo-1478402.jpeg?w=400&h=250&fit=crop',
+        'Грузія': 'https://images.pexels.com/photos/1202107/pexels-photo-1202107.jpeg?w=400&h=250&fit=crop',
+        'Польща': 'https://images.pexels.com/photos/808747/pexels-photo-808747.jpeg?w=400&h=250&fit=crop',
+        'Угорщина': 'https://images.pexels.com/photos/2523895/pexels-photo-2523895.jpeg?w=400&h=250&fit=crop',
+        'Чехія': 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?w=400&h=250&fit=crop',
+        'Австрія': 'https://images.pexels.com/photos/173760/pexels-photo-173760.jpeg?w=400&h=250&fit=crop',
+        'Франція': 'https://images.pexels.com/photos/984837/pexels-photo-984837.jpeg?w=400&h=250&fit=crop',
+        'Німеччина': 'https://images.pexels.com/photos/1529324/pexels-photo-1529324.jpeg?w=400&h=250&fit=crop',
     }
 
     tours = []
