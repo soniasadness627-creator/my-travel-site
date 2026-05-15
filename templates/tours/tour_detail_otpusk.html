@@ -3300,53 +3300,52 @@ ul.messages {
     cursor: pointer !important;
 }
 
-/* ========== ЗМІНА РОЗМІРІВ КАРТОК У КАРУСЕЛІ (ГОРИЗОНТАЛЬНІ НА ВЕСЬ КОНТЕЙНЕР) ========== */
+/* ========== КАРУСЕЛЬ "ПЕРЕГЛЯНУТІ ТУРИ" - ОДИН РЯД, РОЗМІР 560x350 ========== */
 
 /* Контейнер каруселі */
 .new_t-similar-viewed-gallery {
-    max-width: 1212px !important;
-    width: 100% !important;
+    max-width: 1200px !important;
     margin-left: auto !important;
     margin-right: auto !important;
     overflow: visible !important;
 }
 
-/* Кожен елемент каруселі - ФІКСОВАНА ШИРИНА 1212px */
+/* Кожен елемент каруселі - ФІКСОВАНИЙ РОЗМІР 560px */
 .new_t-similar-viewed .owl-item {
-    width: 1212px !important;
-    max-width: 1212px !important;
-    min-width: 1212px !important;
+    width: 560px !important;
+    max-width: 560px !important;
+    min-width: 560px !important;
 }
 
 /* Блок картки */
 .new_t-similar-viewed .new_r-item-wrap {
-    margin: 5px !important;
+    margin: 0 10px !important;
     height: auto !important;
     display: flex !important;
 }
 
-/* Сама картка - ГОРИЗОНТАЛЬНА 1212x165 */
+/* Сама картка - ВЕРТИКАЛЬНА, розмір 560x350 */
 .new_t-similar-viewed .new_r-item {
     display: flex !important;
-    flex-direction: row !important;
-    width: 1212px !important;
-    height: 165px !important;
+    flex-direction: column !important;
+    width: 540px !important;
+    height: 350px !important;
     background: white !important;
-    border-radius: 12px !important;
+    border-radius: 16px !important;
     overflow: hidden !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 .new_t-similar-viewed .new_r-item:hover {
     transform: translateY(-4px) !important;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.15) !important;
 }
 
-/* Зображення - ЛІВА ЧАСТИНА (збільшено для пропорції) */
+/* Зображення - ВЕРХНЯ ЧАСТИНА */
 .new_t-similar-viewed .new_r-item-img {
-    width: 220px !important;
-    height: 165px !important;
+    width: 100% !important;
+    height: 200px !important;
     background-size: cover !important;
     background-position: center !important;
     flex-shrink: 0 !important;
@@ -3354,9 +3353,9 @@ ul.messages {
     display: block !important;
 }
 
-/* Тіло картки - ПРАВА ЧАСТИНА (розтягується на всю ширину) */
+/* Тіло картки - НИЖНЯ ЧАСТИНА (розтягується на решту висоти) */
 .new_t-similar-viewed .new_r-item-body {
-    padding: 10px 15px !important;
+    padding: 12px 15px !important;
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
@@ -3364,26 +3363,22 @@ ul.messages {
     overflow: hidden !important;
 }
 
-/* Назва готелю - більший шрифт */
+/* Назва готелю */
 .new_t-similar-viewed .new_r-item-hotel {
     font-size: 16px !important;
     font-weight: 600 !important;
     line-height: 1.3 !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 8px !important;
     display: -webkit-box !important;
-    -webkit-line-clamp: 1 !important;
+    -webkit-line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
+    color: #1e293b !important;
 }
 
-/* Інформаційний блок - горизонтальне розташування */
+/* Інформаційний блок */
 .new_t-similar-viewed .new_r-item-info {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 12px !important;
-    margin-bottom: 6px !important;
-    flex-wrap: wrap !important;
+    margin-bottom: 10px !important;
 }
 
 /* Локація */
@@ -3392,11 +3387,14 @@ ul.messages {
     display: flex !important;
     align-items: center !important;
     gap: 4px !important;
+    margin-bottom: 6px !important;
+    color: #64748b !important;
 }
 
 .new_t-similar-viewed .new_r-item-geo svg {
     width: 12px !important;
     height: 12px !important;
+    fill: #64748b !important;
 }
 
 /* Харчування */
@@ -3406,25 +3404,24 @@ ul.messages {
     padding: 2px 10px !important;
     background: #f1f5f9 !important;
     border-radius: 20px !important;
+    color: #475569 !important;
 }
 
-/* Таблиця з даними - горизонтальне розташування */
+/* Таблиця з даними */
 .new_t-similar-viewed .new_r-item-table {
     display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    gap: 15px !important;
-    margin-top: 4px !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    margin-top: 8px !important;
 }
 
 /* Колонки таблиці */
 .new_t-similar-viewed .new_r-item-col {
-    flex: 1 !important;
+    width: 100% !important;
     margin-bottom: 0 !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 3px !important;
+    gap: 4px !important;
 }
 
 .new_t-similar-viewed .new_r-item-from,
@@ -3432,42 +3429,114 @@ ul.messages {
     font-size: 11px !important;
     display: flex !important;
     align-items: center !important;
-    gap: 4px !important;
+    gap: 5px !important;
+    color: #475569 !important;
 }
 
 .new_t-similar-viewed .new_r-item-from svg,
 .new_t-similar-viewed .new_r-item-date svg {
-    width: 11px !important;
-    height: 11px !important;
+    width: 12px !important;
+    height: 12px !important;
     flex-shrink: 0 !important;
+    fill: #475569 !important;
 }
 
-/* Блок ціни - праворуч */
+/* Блок ціни - внизу */
 .new_t-similar-viewed .new_r-item-price {
-    margin-top: 0 !important;
-    padding: 0 !important;
-    border-top: none !important;
+    margin-top: 10px !important;
+    padding-top: 8px !important;
+    border-top: 1px solid #e2e8f0 !important;
     text-align: right !important;
-    min-width: 120px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
 }
 
 .new_t-similar-viewed .new_price-value {
     font-size: 18px !important;
     font-weight: 700 !important;
+    color: var(--primary-color) !important;
 }
 
 .new_t-similar-viewed .new_price-desc {
     font-size: 10px !important;
+    color: #64748b !important;
 }
 
-/* Прибираємо зайве */
+/* Прибираємо зірки та рейтинг */
 .new_t-similar-viewed .new_r-item-stars,
 .new_t-similar-viewed .new_r-item-rating-container {
     display: none !important;
 }
 
+/* ========== СТРІЛКИ КАРУСЕЛІ ========== */
+.new_t-similar-viewed .owl-nav {
+    position: absolute !important;
+    top: 50% !important;
+    left: 0 !important;
+    transform: translateY(-50%) !important;
+    width: 100% !important;
+    margin: 0 !important;
+    pointer-events: none !important;
+    z-index: 10 !important;
+}
+
+.new_t-similar-viewed .owl-prev,
+.new_t-similar-viewed .owl-next {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 40px !important;
+    height: 40px !important;
+    background: rgba(0,0,0,0.5) !important;
+    border-radius: 50% !important;
+    color: white !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    transition: all 0.2s ease !important;
+    font-size: 0 !important;
+    line-height: 40px !important;
+}
+
+.new_t-similar-viewed .owl-prev::before,
+.new_t-similar-viewed .owl-next::before {
+    font-family: monospace;
+    font-size: 32px;
+    display: block;
+    line-height: 40px;
+}
+
+.new_t-similar-viewed .owl-prev::before {
+    content: "‹";
+}
+
+.new_t-similar-viewed .owl-next::before {
+    content: "›";
+}
+
+.new_t-similar-viewed .owl-prev {
+    left: -20px !important;
+}
+
+.new_t-similar-viewed .owl-next {
+    right: -20px !important;
+}
+
+.new_t-similar-viewed .owl-prev:hover,
+.new_t-similar-viewed .owl-next:hover {
+    background: var(--primary-color) !important;
+}
+
+.new_t-similar-viewed .owl-prev.disabled,
+.new_t-similar-viewed .owl-next.disabled {
+    opacity: 0.3 !important;
+    cursor: default !important;
+    pointer-events: none !important;
+}
+
 /* ========== АДАПТИВНІСТЬ ========== */
-@media (max-width: 1250px) {
+@media (max-width: 620px) {
     .new_t-similar-viewed .owl-item {
         width: 100% !important;
         min-width: auto !important;
@@ -3477,28 +3546,11 @@ ul.messages {
     .new_t-similar-viewed .new_r-item {
         width: 100% !important;
         height: auto !important;
-        flex-direction: column !important;
+        min-height: 320px !important;
     }
 
     .new_t-similar-viewed .new_r-item-img {
-        width: 100% !important;
         height: 160px !important;
-    }
-
-    .new_t-similar-viewed .new_r-item-table {
-        flex-direction: column !important;
-        align-items: stretch !important;
-    }
-
-    .new_t-similar-viewed .new_r-item-price {
-        text-align: left !important;
-        margin-top: 8px !important;
-        padding-top: 8px !important;
-        border-top: 1px solid #e2e8f0 !important;
-    }
-
-    .new_t-similar-viewed .new_r-item-info {
-        flex-wrap: wrap !important;
     }
 }
 </style>
