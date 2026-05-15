@@ -554,13 +554,13 @@ def get_popular_hotels_api(request, slug=None):
     return JsonResponse({'hotels': data})
 
 
-# ========== ГОЛОВНА СТОРІНКА ==========
 def home(request):
     """Головна сторінка з пошуком Otpusk та календарем низьких цін"""
     agent_site = getattr(request, 'current_agent_site', None)
 
     context = {
         'agent_site': agent_site,
+        'random_agent': get_random_agent(),  # ← ДОДАТИ ЦЕЙ РЯДОК
         'blocks_order': getattr(request, 'blocks_order', []),
         'active_blocks': getattr(request, 'active_blocks', []),
         'banners': getattr(request, 'banners', []),
