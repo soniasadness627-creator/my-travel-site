@@ -280,20 +280,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА ПОШУК (з передачею міста вильоту)
     window.searchByCountry = function(country, departureText) {
-        let baseUrl = '/search-otpusk/';
-        const pathParts = window.location.pathname.split('/');
-        for (let i = 0; i < pathParts.length; i++) {
-            if (pathParts[i] === 'a' && pathParts[i + 1]) {
-                baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
-                break;
-            }
+    let baseUrl = '/search-otpusk/';
+    const pathParts = window.location.pathname.split('/');
+    for (let i = 0; i < pathParts.length; i++) {
+        if (pathParts[i] === 'a' && pathParts[i + 1]) {
+            baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
+            break;
         }
-        let url = `${baseUrl}?geo=${encodeURIComponent(country)}&auto_search=1`;
-        if (departureText) {
-            url += `&departure_text=${encodeURIComponent(departureText)}`;
-        }
-        window.location.href = url;
-    };
+    }
+    let url = `${baseUrl}?geo=${encodeURIComponent(country)}&auto_search=1`;
+    if (departureText) {
+        url += `&departure_text=${encodeURIComponent(departureText)}`;
+    }
+    console.log('🔗 Перехід за URL:', url);
+    window.location.href = url;
+};
 
     // ФУНКЦІЯ ДЛЯ ВІДОБРАЖЕННЯ ТУРІВ
     function renderTours(tours) {

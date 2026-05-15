@@ -30,40 +30,61 @@
     let countrySelected = false;
     let departureSelected = false;
 
-    // ========== ВИБІР КРАЇНИ ==========
+    // ========== ВИБІР КРАЇНИ (ПОСИЛЕНИЙ) ==========
     function setCountry() {
         if (!geo || countrySelected) return;
 
-        const countryInput = document.querySelector('#location');
-        if (countryInput) {
-            countryInput.value = geo;
-            countryInput.dispatchEvent(new Event('input', { bubbles: true }));
-            countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+        console.log('🌍 Шукаємо країну:', geo);
 
-            // Шукаємо і клікаємо на країну в списку
-            setTimeout(() => {
-                const items = document.querySelectorAll('#cntList .ui-menu-item, .ui-autocomplete li');
-                for (let item of items) {
-                    const text = item.innerText || item.textContent;
-                    if (text && text.toLowerCase().trim() === geo.toLowerCase().trim()) {
-                        const link = item.querySelector('a') || item;
-                        link.click();
-                        countrySelected = true;
-                        console.log('✅ Вибрано країну:', geo);
-                        break;
-                    }
-                }
-            }, 500);
+        const countryInput = document.querySelector('#location');
+        if (!countryInput) {
+            console.log('⏳ Поле країни ще не з\'явилось');
+            setTimeout(setCountry, 300);
+            return;
         }
+
+        // Встановлюємо значення
+        countryInput.value = geo;
+        countryInput.dispatchEvent(new Event('input', { bubbles: true }));
+        countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        // Шукаємо і клікаємо на країну в списку
+        setTimeout(() => {
+            const items = document.querySelectorAll('#cntList .ui-menu-item, .ui-autocomplete li');
+            console.log('📋 Знайдено елементів у списку:', items.length);
+
+            for (let item of items) {
+                const text = item.innerText || item.textContent;
+                console.log('🔍 Перевіряємо:', text);
+
+                if (text && text.toLowerCase().trim() === geo.toLowerCase().trim()) {
+                    const link = item.querySelector('a') || item;
+                    link.click();
+                    countrySelected = true;
+                    console.log('✅ Вибрано країну:', geo);
+
+                    // Після вибору країни, вибираємо місто вильоту
+                    if (departureText && !departureSelected) {
+                        setTimeout(setDeparture, 500);
+                    }
+                    return;
+                }
+            }
+
+            // Якщо не знайшли, пробуємо ще раз
+            if (!countrySelected) {
+                console.log('❌ Не знайдено країну, пробуємо ще...');
+                setTimeout(setCountry, 500);
+            }
+        }, 400);
     }
 
-    // ========== ВИБІР МІСТА ВИЛЬОТУ (ПОСИЛЕНИЙ) ==========
+    // ========== ВИБІР МІСТА ВИЛЬОТУ ==========
     function setDeparture() {
         if (!departureText || departureSelected) return;
 
         console.log('🛫 Шукаємо місто вильоту:', departureText);
 
-        // Отримуємо назву без "з " для пошуку
         const searchCity = departureText.replace('з ', '').trim();
 
         function trySelect() {
@@ -81,7 +102,6 @@
                 return;
             }
 
-            // Відкриваємо список
             departureBtn.click();
             console.log('📋 Відкрито список міст');
 
@@ -91,7 +111,6 @@
 
                 for (let item of items) {
                     const itemText = item.innerText.trim();
-                    // Шукаємо точний збіг або збіг без "з"
                     if (itemText === departureText ||
                         itemText === searchCity ||
                         itemText.toLowerCase() === searchCity.toLowerCase()) {
@@ -105,18 +124,6 @@
 
                 if (!found) {
                     console.log('❌ Не знайдено місто:', departureText);
-                    // Пробуємо частковий збіг
-                    for (let item of items) {
-                        const itemText = item.innerText.trim();
-                        if (itemText.toLowerCase().includes(searchCity.toLowerCase()) ||
-                            searchCity.toLowerCase().includes(itemText.toLowerCase())) {
-                            item.click();
-                            departureSelected = true;
-                            console.log('✅ Вибрано місто (частковий збіг):', itemText);
-                            found = true;
-                            break;
-                        }
-                    }
                 }
             }, 400);
         }
@@ -128,7 +135,8 @@
     function triggerSearch() {
         if (searchTriggered) return;
 
-        if (autoSearch && (countrySelected || !geo)) {
+        // Чекаємо, поки країна вибрана
+        if (autoSearch && countrySelected) {
             setTimeout(() => {
                 const searchBtn = document.querySelector('.new_f-form-submit');
                 if (searchBtn) {
@@ -136,27 +144,23 @@
                     searchTriggered = true;
                     console.log('🔍 Пошук запущено!');
                 }
-            }, 1000);
+            }, 800);
+        } else if (autoSearch && !countrySelected && geo) {
+            console.log('⏳ Чекаємо вибору країни...');
+            setTimeout(triggerSearch, 500);
         }
     }
 
     // ========== ІНІЦІАЛІЗАЦІЯ ==========
     function init() {
+        // Спочатку вибираємо країну
         setCountry();
 
-        // Вибираємо місто вильоту через різні затримки
-        if (departureText) {
-            setTimeout(setDeparture, 800);
-            setTimeout(setDeparture, 1500);
-            setTimeout(setDeparture, 2500);
-            setTimeout(setDeparture, 3500);
-        }
-
-        // Авто-пошук
+        // Запускаємо перевірку для авто-пошуку
         if (autoSearch) {
-            setTimeout(triggerSearch, 1200);
-            setTimeout(triggerSearch, 2000);
-            setTimeout(triggerSearch, 3000);
+            setTimeout(triggerSearch, 1500);
+            setTimeout(triggerSearch, 2500);
+            setTimeout(triggerSearch, 3500);
         }
     }
 
