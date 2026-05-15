@@ -847,6 +847,19 @@ function selectCalendarDate(dateISO, price, nights) {
         grid-template-columns: 1fr;
     }
 }
+    .country-departure {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.country-departure i {
+    font-size: 0.7rem;
+}
 </style>
 
 <script>
@@ -877,29 +890,31 @@ document.addEventListener('DOMContentLoaded', function() {
         'Відень': ['Мальдіви', 'Таїланд', 'Маврикій', 'Індонезія']
     };
 
-    // Фото для країн
-    const countryImages = {
-        'Єгипет': 'https://images.pexels.com/photos/2166927/pexels-photo-2166927.jpeg?w=300&h=180&fit=crop',
-        'Туреччина': 'https://images.pexels.com/photos/2114017/pexels-photo-2114017.jpeg?w=300&h=180&fit=crop',
-        'ОАЕ': 'https://images.pexels.com/photos/2549018/pexels-photo-2549018.jpeg?w=300&h=180&fit=crop',
-        'Греція': 'https://images.pexels.com/photos/1229042/pexels-photo-1229042.jpeg?w=300&h=180&fit=crop',
-        'Кіпр': 'https://images.pexels.com/photos/1687845/pexels-photo-1687845.jpeg?w=300&h=180&fit=crop',
-        'Іспанія': 'https://images.pexels.com/photos/1529094/pexels-photo-1529094.jpeg?w=300&h=180&fit=crop',
-        'Таїланд': 'https://images.pexels.com/photos/753626/pexels-photo-753626.jpeg?w=300&h=180&fit=crop',
-        'Мальдіви': 'https://images.pexels.com/photos/1644126/pexels-photo-1644126.jpeg?w=300&h=180&fit=crop',
-        'Італія': 'https://images.pexels.com/photos/1643400/pexels-photo-1643400.jpeg?w=300&h=180&fit=crop',
-        'Хорватія': 'https://images.pexels.com/photos/1644361/pexels-photo-1644361.jpeg?w=300&h=180&fit=crop',
-        'Чорногорія': 'https://images.pexels.com/photos/1591677/pexels-photo-1591677.jpeg?w=300&h=180&fit=crop',
-        'Болгарія': 'https://images.pexels.com/photos/1478402/pexels-photo-1478402.jpeg?w=300&h=180&fit=crop',
-        'Албанія': 'https://images.pexels.com/photos/1591677/pexels-photo-1591677.jpeg?w=300&h=180&fit=crop',
-        'Чехія': 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?w=300&h=180&fit=crop',
-        'Шрі Ланка': 'https://images.pexels.com/photos/670720/pexels-photo-670720.jpeg?w=300&h=180&fit=crop',
-        'В\'єтнам': 'https://images.pexels.com/photos/2397658/pexels-photo-2397658.jpeg?w=300&h=180&fit=crop',
-        'Туніс': 'https://images.pexels.com/photos/2351921/pexels-photo-2351921.jpeg?w=300&h=180&fit=crop',
-        'Домінікана': 'https://images.pexels.com/photos/2166927/pexels-photo-2166927.jpeg?w=300&h=180&fit=crop',
-        'Індонезія': 'https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?w=300&h=180&fit=crop',
-        'Маврикій': 'https://images.pexels.com/photos/1644126/pexels-photo-1644126.jpeg?w=300&h=180&fit=crop'
-    };
+    // Фото для країн (ваші локальні фото)
+const countryImages = {
+    'Єгипет': '/static/images/Egypt.jpg',
+    'Туреччина': '/static/images/Turkey.jpg',
+    'ОАЕ': '/static/images/UAE.jpg',  // Якщо немає, залиште старе або додайте
+    'Греція': '/static/images/Greece.jpg',
+    'Кіпр': '/static/images/Cyprus.jpg',
+    'Іспанія': '/static/images/Spain.jpg',
+    'Таїланд': '/static/images/Thailand.jpg',
+    'Мальдіви': '/static/images/maldives.jpg',
+    'Італія': '/static/images/Italy.jpg',
+    'Хорватія': '/static/images/Croatia.jpg',
+    'Чорногорія': '/static/images/Montenegro.jpg',
+    'Болгарія': '/static/images/Bulgaria.jpg',
+    'Албанія': '/static/images/Albania.jpg',
+    'Чехія': '/static/images/the Czech Republic.jpg',
+    'Шрі Ланка': '/static/images/SriLanka.jpg',
+    'В\'єтнам': '/static/images/Vietnam.jpg',
+    'Туніс': '/static/images/Tunisia.jpg',
+    'Домінікана': '/static/images/dominican.jpg',
+    'Індонезія': '/static/images/Indonesia.jpg',
+    'Маврикій': '/static/images/mauritius.jpg'
+};
+// Фото за замовчуванням (якщо якоїсь країни немає в списку)
+const defaultImage = '/static/images/default-tour.jpg';
 
     // Ціни для країн (приблизні)
     const countryPrices = {
@@ -908,6 +923,15 @@ document.addEventListener('DOMContentLoaded', function() {
         'Італія': 50950, 'Хорватія': 79250, 'Чорногорія': 71900, 'Болгарія': 29450,
         'Албанія': 35000, 'Чехія': 63700, 'Шрі Ланка': 81000, 'В\'єтнам': 65000,
         'Туніс': 59000, 'Домінікана': 85000, 'Індонезія': 78000, 'Маврикій': 120000
+    };
+
+    // Мапа для відмінювання міст
+    const cityMap = {
+        'Кишинів': 'Кишинева', 'Київ': 'Києва', 'Одеса': 'Одеси', 'Дніпро': 'Дніпра',
+        'Львів': 'Львова', 'Харків': 'Харкова', 'Варшава': 'Варшави', 'Краків': 'Кракова',
+        'Жешув': 'Жешува', 'Вроцлав': 'Вроцлава', 'Катовіце': 'Катовіце', 'Бухарест': 'Бухареста',
+        'Будапешт': 'Будапешта', 'Прага': 'Праги', 'Берлін': 'Берліна', 'Кривий Ріг': 'Кривого Рогу',
+        'Сучава': 'Сучави', 'Ясси': 'Ясс', 'Житомир': 'Житомира', 'Запоріжжя': 'Запоріжжя', 'Відень': 'Відня'
     };
 
     let currentCity = 'Кишинів';
@@ -925,56 +949,46 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        let departureText = '';
-        const cityMap = {
-            'Кишинів': 'Кишинева', 'Київ': 'Києва', 'Одеса': 'Одеси', 'Дніпро': 'Дніпра',
-            'Львів': 'Львова', 'Харків': 'Харкова', 'Варшава': 'Варшави', 'Краків': 'Кракова',
-            'Жешув': 'Жешува', 'Вроцлав': 'Вроцлава', 'Катовіце': 'Катовіце', 'Бухарест': 'Бухареста',
-            'Будапешт': 'Будапешта', 'Прага': 'Праги', 'Берлін': 'Берліна', 'Кривий Ріг': 'Кривого Рогу',
-            'Сучава': 'Сучави', 'Ясси': 'Ясс', 'Житомир': 'Житомира', 'Запоріжжя': 'Запоріжжя', 'Відень': 'Відня'
-        };
-
-        departureText = `з ${cityMap[departureCity] || departureCity}`;
-
-        let url = `${baseUrl}?geo=${encodeURIComponent(country)}&auto_search=1&departure_text=${encodeURIComponent(departureText)}`;
+        const departureText = `з ${cityMap[departureCity] || departureCity}`;
+        const url = `${baseUrl}?geo=${encodeURIComponent(country)}&auto_search=1&departure_text=${encodeURIComponent(departureText)}`;
         window.location.href = url;
     };
 
-    // Функція для відображення країн
+    // Функція для відображення країн (без зірок, з вильотом)
     function renderCountries(countries) {
-        if (!countries || countries.length === 0) {
-            countriesGrid.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних напрямків для цього міста</div>';
-            return;
-        }
-
-        let html = '';
-        countries.forEach(country => {
-            const imageUrl = countryImages[country] || 'https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=300&h=180&fit=crop';
-            const price = countryPrices[country] || 50000;
-            const priceFormatted = price.toLocaleString('uk-UA');
-
-            html += `
-                <div class="country-card" onclick="searchByCityAndCountry('${country}', '${currentCity}')">
-                    <img class="country-img" src="${imageUrl}" alt="${country}" onerror="this.src='https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=300&h=180&fit=crop'">
-                    <div class="country-info">
-                        <div class="country-name">${country}</div>
-                        <div class="country-stars">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        </div>
-                        <div class="country-price">${priceFormatted} ₴ <small>за тур</small></div>
-                    </div>
-                </div>
-            `;
-        });
-
-        countriesGrid.innerHTML = html;
+    if (!countries || countries.length === 0) {
+        countriesGrid.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних напрямків для цього міста</div>';
+        return;
     }
+
+    let html = '';
+    countries.forEach(country => {
+        const imageUrl = countryImages[country] || defaultImage;
+        const price = countryPrices[country] || 50000;
+        const priceFormatted = price.toLocaleString('uk-UA');
+        const departureText = `з ${cityMap[currentCity] || currentCity}`;
+
+        html += `
+            <div class="country-card" onclick="searchByCityAndCountry('${country}', '${currentCity}')">
+                <img class="country-img" src="${imageUrl}" alt="${country}" onerror="this.src='${defaultImage}'">
+                <div class="country-info">
+                    <div class="country-name">${country}</div>
+                    <div class="country-departure">
+                        <i class="fa-regular fa-plane"></i> ${departureText}
+                    </div>
+                    <div class="country-price">${priceFormatted} ₴ <small>за тур</small></div>
+                </div>
+            </div>
+        `;
+    });
+
+    countriesGrid.innerHTML = html;
+}
 
     // Обробник кліку на місто
     function onCityClick(city) {
         currentCity = city;
 
-        // Оновлюємо активний клас на кнопках
         cityBtns.forEach(btn => {
             if (btn.getAttribute('data-city') === city) {
                 btn.classList.add('active');
@@ -983,10 +997,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Отримуємо країни для вибраного міста
         const countries = citiesCountries[city] || [];
-
-        // Показуємо країни
         renderCountries(countries);
     }
 
