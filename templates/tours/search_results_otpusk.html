@@ -30,6 +30,7 @@
 
     let searchTriggered = false;
     let countrySelected = false;
+    let departureSelected = false;
     let dateFromSet = false;
     let dateToSet = false;
 
@@ -127,45 +128,102 @@
     function triggerSearch() {
         if (searchTriggered) return;
 
-        // Чекаємо, поки країна вибрана (або її немає в параметрах)
         if (autoSearch && (countrySelected || !geo)) {
             setTimeout(() => {
                 const searchBtn = document.querySelector('.new_f-form-submit');
                 if (searchBtn) {
                     searchBtn.click();
                     searchTriggered = true;
-                    console.log('🔍 Авто-пошук запущено (з популярних напрямків)');
+                    console.log('🔍 Авто-пошук запущено');
                 }
             }, 800);
         }
     }
 
-    // ========== 4. ВИБІР МІСТА ВИЛЬОТУ ==========
+    // ========== 4. ВИБІР МІСТА ВИЛЬОТУ (ПОСИЛЕНИЙ) ==========
     function setDeparture() {
-        if (!departureText) return;
+        if (!departureText || departureSelected) return;
 
-        setTimeout(() => {
+        console.log('🛫 Спробуємо вибрати місто вильоту:', departureText);
+
+        function trySelect() {
             const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
-            if (departureBtn && !departureBtn.innerText.includes(departureText)) {
-                departureBtn.click();
-                setTimeout(() => {
-                    const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                    for (let item of items) {
-                        if (item.innerText.trim() === departureText) {
+            if (!departureBtn) {
+                console.log('⏳ Кнопка вибору міста ще не з\'явилась, повторюємо...');
+                setTimeout(trySelect, 500);
+                return;
+            }
+
+            // Якщо вже вибрано правильне місто
+            const currentText = departureBtn.innerText;
+            if (currentText.includes(departureText) || currentText.includes(departureText.replace('з ', ''))) {
+                console.log('✅ Вже вибрано правильне місто:', currentText);
+                departureSelected = true;
+                return;
+            }
+
+            // Відкриваємо список
+            departureBtn.click();
+            console.log('📋 Відкрито список міст');
+
+            setTimeout(() => {
+                const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                let found = false;
+
+                // Список можливих назв для пошуку
+                const searchVariants = [
+                    departureText,
+                    departureText.replace('з ', ''),
+                    departureText.replace('з ', '').replace('а', ''),
+                    departureText.toLowerCase(),
+                    departureText.replace('з ', '').toLowerCase(),
+                ];
+
+                for (let item of items) {
+                    const itemText = item.innerText.trim();
+                    for (let variant of searchVariants) {
+                        if (itemText === variant || itemText.toLowerCase() === variant.toLowerCase()) {
                             item.click();
-                            console.log('✅ Встановлено місто вильоту:', departureText);
+                            found = true;
+                            departureSelected = true;
+                            console.log('✅ Вибрано місто вильоту:', itemText);
                             break;
                         }
                     }
-                }, 200);
-            }
-        }, 500);
+                    if (found) break;
+                }
+
+                if (!found) {
+                    console.log('❌ Не знайдено місто:', departureText);
+                    // Пробуємо знайти частковий збіг
+                    for (let item of items) {
+                        const itemText = item.innerText.trim();
+                        if (itemText.toLowerCase().includes(departureText.toLowerCase()) ||
+                            departureText.toLowerCase().includes(itemText.toLowerCase())) {
+                            item.click();
+                            departureSelected = true;
+                            console.log('✅ Вибрано місто (частковий збіг):', itemText);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+            }, 300);
+        }
+
+        trySelect();
     }
 
     // ========== 5. ЗАПУСК ВСІХ ФУНКЦІЙ ==========
     function init() {
         setCountry();
-        setDeparture();
+
+        // Вибираємо місто вильоту ПІСЛЯ вибору країни
+        if (departureText) {
+            setTimeout(setDeparture, 1000);
+            setTimeout(setDeparture, 2000);
+            setTimeout(setDeparture, 3000);
+        }
 
         if (dateFrom) {
             setTimeout(setBothDates, 1000);
@@ -174,13 +232,13 @@
             setTimeout(setBothDates, 4000);
         }
 
-        // Запускаємо перевірку для авто-пошуку
+        // Авто-пошук
         let attempts = 0;
         function checkAndSearch() {
             attempts++;
             if (autoSearch && !searchTriggered && (countrySelected || !geo)) {
                 triggerSearch();
-            } else if (attempts < 15 && autoSearch) {
+            } else if (attempts < 20 && autoSearch) {
                 setTimeout(checkAndSearch, 500);
             }
         }
@@ -192,7 +250,6 @@
         }
     }
 
-    // Запускаємо ініціалізацію з затримкою
     setTimeout(init, 500);
 })();
 </script>

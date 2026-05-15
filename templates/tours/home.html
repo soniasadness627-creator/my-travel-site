@@ -278,8 +278,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return div.innerHTML;
     }
 
-    // ЦЕ ГОЛОВНЕ - ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА ПОШУК
-    window.searchByCountry = function(country) {
+    // ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА ПОШУК (з передачею міста вильоту)
+    window.searchByCountry = function(country, departureText) {
         let baseUrl = '/search-otpusk/';
         const pathParts = window.location.pathname.split('/');
         for (let i = 0; i < pathParts.length; i++) {
@@ -288,32 +288,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
             }
         }
-        // Додаємо параметр для автоматичного пошуку
-        window.location.href = `${baseUrl}?geo=${encodeURIComponent(country)}&auto_search=1`;
+        let url = `${baseUrl}?geo=${encodeURIComponent(country)}&auto_search=1`;
+        if (departureText) {
+            url += `&departure_text=${encodeURIComponent(departureText)}`;
+        }
+        window.location.href = url;
     };
 
-    // ФУНКЦІЯ ДЛЯ ВІДОБРАЖЕННЯ ТУРІВ - ТІЛЬКИ searchByCountry, БЕЗ goToSearch
+    // ФУНКЦІЯ ДЛЯ ВІДОБРАЖЕННЯ ТУРІВ
     function renderTours(tours) {
-    if (!track) return;
+        if (!track) return;
 
-    if (!tours || tours.length === 0) {
-        track.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних турів. Спробуйте пізніше.</div>';
-        return;
-    }
+        if (!tours || tours.length === 0) {
+            track.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних турів. Спробуйте пізніше.</div>';
+            return;
+        }
 
-    let html = '';
-    tours.forEach(tour => {
-        const starsHtml = renderStars(5);
-        const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
-        const hotelName = tour.hotel || `${tour.country} - ${tour.city}`;
-        const countryName = tour.country;
-        const cityName = tour.city || 'популярний курорт';
+        let html = '';
+        tours.forEach(tour => {
+            const starsHtml = renderStars(5);
+            const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
+            const hotelName = tour.hotel || `${tour.country} - ${tour.city}`;
+            const countryName = tour.country;
+            const cityName = tour.city || 'популярний курорт';
 
-        // Отримуємо місто вильоту з API (воно вже є!)
-        const departureText = tour.departure_text || tour.departure || 'з Кишинева';
+            // Отримуємо місто вильоту з API
+            const departureText = tour.departure_text || tour.departure || '';
 
-        html += `
-<div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(countryName)}')">
+            html += `
+<div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(countryName)}', '${escapeHtml(departureText)}')">
     <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop'">
     <div class="popular-tour-info">
         <div class="popular-tour-hotel">${escapeHtml(hotelName)}</div>
@@ -322,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ${escapeHtml(countryName)}, ${escapeHtml(cityName)}
         </div>
         <div class="popular-tour-departure" style="font-size: 0.7rem; color: #64748b; margin-bottom: 8px;">
-            <i class="fa-regular fa-plane"></i> Виліт: ${escapeHtml(departureText)}
+            <i class="fa-regular fa-plane"></i> Виліт: ${escapeHtml(departureText || 'з Кишинева')}
         </div>
         <div class="popular-tour-stars">
             ${starsHtml}
@@ -332,17 +335,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 ${priceFormatted} ₴
                 <small>за тур</small>
             </div>
-            <button class="popular-tour-btn" onclick="event.stopPropagation(); searchByCountry('${encodeURIComponent(countryName)}')">
+            <button class="popular-tour-btn" onclick="event.stopPropagation(); searchByCountry('${encodeURIComponent(countryName)}', '${escapeHtml(departureText)}')">
                 Дивитись
             </button>
         </div>
     </div>
 </div>
-        `;
-    });
+            `;
+        });
 
-    track.innerHTML = html;
-}
+        track.innerHTML = html;
+    }
 
     // Навігація слайдера
     const sliderContainer = document.querySelector('.popular-slider-container');
