@@ -3319,11 +3319,11 @@ ul.messages {
     min-width: 200px !important;
 }
 
-/* Блок картки */
+/* Блок картки - ЗБІЛЬШУЄМО ВИСОТУ */
 .new_t-similar-viewed .new_r-item-wrap {
     margin: 10px !important;
     height: auto !important;
-    min-height: 380px !important;
+    min-height: 420px !important;  /* Збільшено з 380 до 420 */
     display: flex !important;
     flex-direction: column !important;
 }
@@ -3348,32 +3348,33 @@ ul.messages {
 /* Зображення */
 .new_t-similar-viewed .new_r-item-img {
     width: 100% !important;
-    height: 300px !important;
+    height: 180px !important;
     background-size: cover !important;
     background-position: center !important;
     position: relative !important;
     display: block !important;
+    flex-shrink: 0 !important;  /* Забороняємо стискатися */
 }
 
-/* Тіло картки */
+/* Тіло картки - розтягується на всю доступну висоту */
 .new_t-similar-viewed .new_r-item-body {
     padding: 12px !important;
-    flex: 1 !important;
+    flex: 1 1 auto !important;  /* Змінюємо на auto, щоб розтягувалося */
     display: flex !important;
     flex-direction: column !important;
+    min-height: 200px !important;  /* Мінімальна висота для тексту */
 }
 
-/* Назва готелю */
+/* Назва готелю - показуємо більше тексту */
 .new_t-similar-viewed .new_r-item-hotel {
     font-size: 14px !important;
     font-weight: 600 !important;
     line-height: 1.3 !important;
     margin-bottom: 8px !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
-    min-height: 36px !important;
+    display: block !important;  /* Змінюємо з -webkit-box */
+    overflow: visible !important;
+    white-space: normal !important;
+    min-height: auto !important;
 }
 
 /* Інформаційний блок (гео, харчування) */
@@ -3405,14 +3406,15 @@ ul.messages {
     margin-bottom: 8px !important;
 }
 
-/* Таблиця з даними */
+/* Таблиця з даними - притискаємо до низу */
 .new_t-similar-viewed .new_r-item-table {
     margin-top: auto !important;
+    padding-top: 8px !important;
 }
 
 /* Колонка з датою та вильотом */
 .new_t-similar-viewed .new_r-item-col {
-    margin-bottom: 8px !important;
+    margin-bottom: 6px !important;
 }
 
 .new_t-similar-viewed .new_r-item-from,
@@ -3433,12 +3435,12 @@ ul.messages {
 /* Блок ціни */
 .new_t-similar-viewed .new_r-item-price {
     margin-top: 8px !important;
-    padding-top: 8px !important;
+    padding-top: 6px !important;
     border-top: 1px solid #e2e8f0 !important;
 }
 
 .new_t-similar-viewed .new_price-value {
-    font-size: 18px !important;
+    font-size: 16px !important;  /* Трохи зменшено */
     font-weight: 700 !important;
 }
 
@@ -3446,7 +3448,7 @@ ul.messages {
     font-size: 10px !important;
 }
 
-/* ========== АДАПТИВНІСТЬ ========== */
+/* ========== АДАПТИВНІСТЬ - ЗБІЛЬШУЄМО ВИСОТУ НА ВСІХ РОЗМІРАХ ========== */
 @media (max-width: 1200px) {
     .new_t-similar-viewed .owl-item {
         min-width: 280px !important;
@@ -3455,7 +3457,10 @@ ul.messages {
         height: 160px !important;
     }
     .new_t-similar-viewed .new_r-item-wrap {
-        min-height: 360px !important;
+        min-height: 400px !important;
+    }
+    .new_t-similar-viewed .new_r-item-body {
+        min-height: 200px !important;
     }
 }
 
@@ -3467,7 +3472,10 @@ ul.messages {
         height: 150px !important;
     }
     .new_t-similar-viewed .new_r-item-wrap {
-        min-height: 350px !important;
+        min-height: 390px !important;
+    }
+    .new_t-similar-viewed .new_r-item-body {
+        min-height: 200px !important;
     }
     .new_t-similar-viewed .new_r-item-hotel {
         font-size: 13px !important;
@@ -3482,10 +3490,13 @@ ul.messages {
         height: 140px !important;
     }
     .new_t-similar-viewed .new_r-item-wrap {
-        min-height: 340px !important;
+        min-height: 380px !important;
+    }
+    .new_t-similar-viewed .new_r-item-body {
+        min-height: 200px !important;
     }
     .new_t-similar-viewed .new_price-value {
-        font-size: 16px !important;
+        font-size: 15px !important;
     }
 }
 
@@ -3497,14 +3508,14 @@ ul.messages {
         height: 130px !important;
     }
     .new_t-similar-viewed .new_r-item-wrap {
-        min-height: 330px !important;
+        min-height: 370px !important;
     }
     .new_t-similar-viewed .new_r-item-body {
         padding: 10px !important;
+        min-height: 200px !important;
     }
 }
 
-/* Для дуже маленьких екранів */
 @media (max-width: 480px) {
     .new_t-similar-viewed .owl-item {
         min-width: 200px !important;
@@ -3513,7 +3524,7 @@ ul.messages {
         height: 120px !important;
     }
     .new_t-similar-viewed .new_r-item-wrap {
-        min-height: 320px !important;
+        min-height: 360px !important;
     }
     .new_t-similar-viewed .new_r-item-from,
     .new_t-similar-viewed .new_r-item-date {
