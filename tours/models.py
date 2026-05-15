@@ -525,3 +525,35 @@ class TourVisit(models.Model):
 
     def __str__(self):
         return f"Tour {self.tour_hid} visited at {self.visited_at}"
+
+# ========== МОДЕЛЬ ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ (НОВИЙ БЛОК) ==========
+class PopularHotel(models.Model):
+    """
+    Модель для популярних готелів (блок на головній сторінці)
+    """
+    hid = models.CharField(max_length=50, verbose_name='ID готелю (hid)')
+    oid = models.CharField(max_length=100, verbose_name='ID пропозиції (oid)')
+    hotel_name = models.CharField(max_length=200, verbose_name='Назва готелю')
+    country = models.CharField(max_length=100, verbose_name='Країна')
+    city = models.CharField(max_length=100, blank=True, verbose_name='Місто/курорт')
+    rating = models.FloatField(default=8.0, verbose_name='Рейтинг (0-10)')
+    reviews_count = models.IntegerField(default=0, verbose_name='Кількість відгуків')
+    price = models.IntegerField(verbose_name='Ціна за тур (грн)')
+    image = CloudinaryField(verbose_name='Фото готелю', folder='popular_hotels', blank=True, null=True)
+    image_url = models.URLField(blank=True, verbose_name='URL фото (якщо немає завантаженого)')
+    order = models.IntegerField(default=0, verbose_name='Порядок сортування')
+    is_active = models.BooleanField(default=True, verbose_name='Показувати на сайті')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата створення')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата оновлення')
+
+    class Meta:
+        verbose_name = 'Популярний готель'
+        verbose_name_plural = 'Популярні готелі'
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return f"{self.hotel_name} ({self.country})"
+
+    def get_detail_url(self):
+        """Повертає URL для переходу на сторінку деталей туру"""
+        return f"/tour-detail/?hid={self.hid}&oid={self.oid}"

@@ -73,6 +73,9 @@ urlpatterns = [
     # НОВИЙ МАРШРУТ ДЛЯ ПОПУЛЯРНИХ ТУРІВ (З БАЗИ ДАНИХ МІСТ)
     path('api/get-popular-tours/', tours_views.get_popular_tours_api, name='get_popular_tours'),
 
+    # ========== НОВИЙ API ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ ==========
+    path('api/get-popular-hotels/', tours_views.get_popular_hotels_api, name='get_popular_hotels'),
+
     # ========== 🔥 API ДЛЯ ВІДГУКІВ ==========
     path('api/hotel-reviews/', tours_views.hotel_reviews_api, name='hotel_reviews_api'),
     path('a/<slug:slug>/api/hotel-reviews/', tours_views.hotel_reviews_api, name='agent_hotel_reviews_api'),
@@ -92,7 +95,8 @@ urlpatterns = [
 
     # ========== НОВА СТОРІНКА ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН ==========
     path('search-results-calendar/', tours_views.search_results_calendar, name='search_results_calendar'),
-    path('a/<slug:slug>/search-results-calendar/', tours_views.search_results_calendar, name='agent_search_results_calendar'),
+    path('a/<slug:slug>/search-results-calendar/', tours_views.search_results_calendar,
+         name='agent_search_results_calendar'),
 
     # ========== СТОРІНКА ДЛЯ ПОПУЛЯРНИХ НАПРЯМКІВ (З БЛОКОМ КОНСУЛЬТАЦІЇ) ==========
     path('search-otpusk-by-country/', tours_views.search_otpusk_by_country, name='search_otpusk_by_country'),
@@ -130,7 +134,10 @@ urlpatterns = [
     path('a/<slug:slug>/privacy-policy/', constructor_views.agent_public_site, name='agent_privacy_policy'),
     path('a/<slug:slug>/terms-of-service/', constructor_views.agent_public_site, name='agent_terms_of_service'),
     path('a/<slug:slug>/login/', constructor_views.agent_public_site, name='agent_login'),
-path('a/<slug:slug>/api/get-popular-tours/', tours_views.get_popular_tours_api, name='agent_get_popular_tours'),
+
+    # ========== АГЕНТСЬКІ API МАРШРУТИ ==========
+    path('a/<slug:slug>/api/get-popular-tours/', tours_views.get_popular_tours_api, name='agent_get_popular_tours'),
+    path('a/<slug:slug>/api/get-popular-hotels/', tours_views.get_popular_hotels_api, name='agent_get_popular_hotels'),
 ]
 
 # ========== СТАТИЧНІ ТА МЕДІА ФАЙЛИ ==========

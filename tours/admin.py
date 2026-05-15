@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from .models import (
     Tour, Booking, News, TourImage, Review, Consultation,
     PriceOption, AmenityCategory, Amenity, City, DepartureCity, PopularDestination,
-    NewsImage, TourPriceByTourists, CountryInfo, PriceCalendar, AmenityName
+    NewsImage, TourPriceByTourists, CountryInfo, PriceCalendar, AmenityName, PopularHotel
 )
 
 User = get_user_model()
@@ -53,10 +53,12 @@ class ReviewInline(admin.TabularInline):
         if obj.user:
             return obj.user.username
         return obj.guest_name or 'Гість'
+
     get_author_name.short_description = 'Автор'
 
     def comment_preview(self, obj):
         return obj.comment[:50] + '...' if len(obj.comment) > 50 else obj.comment
+
     comment_preview.short_description = 'Коментар'
 
     def has_add_permission(self, request, obj=None):
@@ -125,7 +127,7 @@ class TourAdminForm(forms.ModelForm):
         return instance
 
 
-# ========== АДМІНКИ ТІЛЬКИ ДЛЯ СУПЕРАДМІНА ==========
+# ========== АДМІНКИ ==========
 
 @admin.register(CountryInfo)
 class CountryInfoAdmin(admin.ModelAdmin):
@@ -154,7 +156,8 @@ class TourAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ("Основна інформація", {
-            "fields": ("title", "description", "country", "city", "price", "stars", "map_url", "amenities", "is_popular")
+            "fields": ("title", "description", "country", "city", "price", "stars", "map_url", "amenities",
+                       "is_popular")
         }),
         ("Дати", {
             "fields": ("start_date", "end_date")
@@ -206,6 +209,7 @@ class BookingAdmin(admin.ModelAdmin):
 
     def get_tour_title(self, obj):
         return obj.tour.title
+
     get_tour_title.short_description = 'Тур'
 
 
@@ -219,22 +223,26 @@ class ReviewAdmin(admin.ModelAdmin):
 
     def get_tour_title(self, obj):
         return obj.tour.title
+
     get_tour_title.short_description = 'Тур'
 
     def get_author_name(self, obj):
         if obj.user:
             return obj.user.username
         return obj.guest_name or 'Гість'
+
     get_author_name.short_description = 'Автор'
 
     def comment_preview(self, obj):
         return obj.comment[:50] + '...' if len(obj.comment) > 50 else obj.comment
+
     comment_preview.short_description = 'Коментар'
 
 
 @admin.register(PriceOption)
 class PriceOptionAdmin(admin.ModelAdmin):
-    list_display = ('tour', 'departure_date', 'duration', 'departure_city', 'room_type', 'meal_type', 'price', 'is_available')
+    list_display = ('tour', 'departure_date', 'duration', 'departure_city', 'room_type', 'meal_type', 'price',
+                    'is_available')
     list_filter = ('tour', 'departure_city', 'is_available')
     search_fields = ('tour__title',)
     list_editable = ('price', 'is_available')
@@ -242,7 +250,8 @@ class PriceOptionAdmin(admin.ModelAdmin):
 
 @admin.register(TourPriceByTourists)
 class TourPriceByTouristsAdmin(admin.ModelAdmin):
-    list_display = ('tour', 'adults', 'infants', 'children_2_3', 'children_4_10', 'children_11_16', 'price', 'is_default')
+    list_display = ('tour', 'adults', 'infants', 'children_2_3', 'children_4_10', 'children_11_16', 'price',
+                    'is_default')
     list_filter = ('tour', 'adults', 'is_default')
     search_fields = ('tour__title',)
     list_editable = ('price', 'is_default')
@@ -292,6 +301,7 @@ class DepartureCityAdmin(admin.ModelAdmin):
 
     def get_transport_display(self, obj):
         return obj.get_transport_display()
+
     get_transport_display.short_description = 'Транспорт'
 
 
@@ -307,3 +317,28 @@ class AmenityNameAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'order', 'is_popular_default')
     list_filter = ('category',)
     search_fields = ('name',)
+
+
+# ========== НОВА АДМІНКА ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ ==========
+@admin.register(PopularHotel)
+class PopularHotelAdmin(admin.ModelAdmin):
+    list_display = ('hotel_name', 'country', 'city', 'rating', 'reviews_count', 'price', 'order', 'is_active')
+    list_editable = ('order', 'is_active')
+    list_filter = ('country', 'is_active')
+    search_fields = ('hotel_name', 'country', 'city', 'hid', 'oid')
+    list_per_page = 20
+
+    fieldsets = (
+        ('Основна інформація', {
+            'fields': ('hid', 'oid', 'hotel_name', 'country', 'city')
+        }),
+        ('Рейтинг та ціна', {
+            'fields': ('rating', 'reviews_count', 'price')
+        }),
+        ('Фото', {
+            'fields': ('image', 'image_url')
+        }),
+        ('Налаштування', {
+            'fields': ('order', 'is_active')
+        }),
+    )

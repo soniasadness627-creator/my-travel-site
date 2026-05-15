@@ -16,7 +16,7 @@ from django.contrib.auth import get_user_model
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
-from .models import Tour, News, Review, Consultation, Booking, HotelReview, PriceCalendar
+from .models import Tour, News, Review, Consultation, Booking, HotelReview, PriceCalendar, PopularHotel
 from .forms import ConsultationForm, ReviewForm
 
 User = get_user_model()
@@ -386,8 +386,8 @@ def calendar_prices_from_db(request):
     return JsonResponse({'prices': prices, 'max_price': max_price})
 
 
-# ========== API ДЛЯ ПОПУЛЯРНИХ ТУРІВ (НОВИЙ) ==========
-from datetime import datetime, timedelta  # Переконайтеся, що timedelta імпортовано
+# ========== API ДЛЯ ПОПУЛЯРНИХ ТУРІВ ==========
+from datetime import datetime, timedelta
 
 
 def get_popular_tours_api(request, slug=None):
@@ -501,6 +501,7 @@ def get_popular_tours_api(request, slug=None):
 
     return JsonResponse({'tours': tours})
 
+
 def add_fallback_tour(tours, country, idx):
     """Додає тур-заглушку якщо API не повернув дані"""
     from datetime import timedelta
@@ -519,7 +520,39 @@ def add_fallback_tour(tours, country, idx):
         'departure': 'Кишинів'
     })
 
-    return JsonResponse({'tours': tours})
+
+# ========== НОВИЙ API ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ ==========
+def get_popular_hotels_api(request, slug=None):
+    """
+    API для отримання популярних готелів з бази даних
+    """
+    hotels = PopularHotel.objects.filter(is_active=True)[:12]
+
+    data = []
+    for hotel in hotels:
+        # Отримуємо фото
+        if hotel.image:
+            image_url = hotel.image.url
+        elif hotel.image_url:
+            image_url = hotel.image_url
+        else:
+            image_url = '/static/images/default-hotel.jpg'
+
+        data.append({
+            'id': hotel.id,
+            'hid': hotel.hid,
+            'oid': hotel.oid,
+            'hotel_name': hotel.hotel_name,
+            'country': hotel.country,
+            'city': hotel.city,
+            'rating': hotel.rating,
+            'reviews_count': hotel.reviews_count,
+            'price': hotel.price,
+            'image': image_url,
+        })
+
+    return JsonResponse({'hotels': data})
+
 
 # ========== ГОЛОВНА СТОРІНКА ==========
 def home(request):
