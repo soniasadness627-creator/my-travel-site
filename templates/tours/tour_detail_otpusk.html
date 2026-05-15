@@ -3300,224 +3300,36 @@ ul.messages {
     cursor: pointer !important;
 }
 
-/* ========== ЗМІНА РОЗМІРІВ КАРТОК У КАРУСЕЛІ ========== */
-.new_t-similar-viewed-gallery {
-    max-width: 1200px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+/* Текст ціни в звичайному стані */
+.new_r-item-price .new_price-value,
+.new_r-item-price .new_price-value .currency,
+.new_r-item-price .new_price-desc {
+    color: var(--primary-color) !important;
+    transition: all 0.3s ease !important;
 }
 
-/* Основний контейнер каруселі */
-.new_t-similar-viewed .owl-stage {
-    display: flex !important;
-    align-items: stretch !important;
+/* ПРИ НАВЕДЕННІ НА ВЕСЬ БЛОК ЦІНИ */
+.new_r-item-price:hover {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
 }
 
-/* Кожен елемент каруселі */
-.new_t-similar-viewed .owl-item {
-    width: auto !important;
-    min-width: 200px !important;
+/* При наведенні текст ціни стає БІЛИМ */
+.new_r-item-price:hover .new_price-value,
+.new_r-item-price:hover .new_price-value .currency,
+.new_r-item-price:hover .new_price-desc {
+    color: #ffffff !important;
 }
 
-/* Блок картки */
-.new_t-similar-viewed .new_r-item-wrap {
-    margin: 10px !important;
-    height: auto !important;
-    min-height: 380px !important;
-    display: flex !important;
-    flex-direction: column !important;
+/* Додатково для іконок, якщо є */
+.new_r-item-price:hover svg {
+    fill: #ffffff !important;
 }
 
-/* Сама картка */
-.new_t-similar-viewed .new_r-item {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
-    background: white !important;
-    border-radius: 16px !important;
-    overflow: hidden !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-}
-
-.new_t-similar-viewed .new_r-item:hover {
-    transform: translateY(-4px) !important;
-    box-shadow: 0 12px 24px rgba(0,0,0,0.12) !important;
-}
-
-/* Зображення */
-.new_t-similar-viewed .new_r-item-img {
-    width: 100% !important;
-    height: 180px !important;
-    background-size: cover !important;
-    background-position: center !important;
-    position: relative !important;
-    display: block !important;
-}
-
-/* Тіло картки */
-.new_t-similar-viewed .new_r-item-body {
-    padding: 12px !important;
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-/* Назва готелю */
-.new_t-similar-viewed .new_r-item-hotel {
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    line-height: 1.3 !important;
-    margin-bottom: 8px !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
-    min-height: 36px !important;
-}
-
-/* Інформаційний блок (гео, харчування) */
-.new_t-similar-viewed .new_r-item-info {
-    margin-bottom: 8px !important;
-}
-
-/* Локація */
-.new_t-similar-viewed .new_r-item-geo {
-    font-size: 11px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    margin-bottom: 6px !important;
-}
-
-.new_t-similar-viewed .new_r-item-geo svg {
-    width: 12px !important;
-    height: 12px !important;
-}
-
-/* Харчування */
-.new_t-similar-viewed .new_r-item-food {
-    font-size: 11px !important;
-    display: inline-block !important;
-    padding: 2px 8px !important;
-    background: #f1f5f9 !important;
-    border-radius: 20px !important;
-    margin-bottom: 8px !important;
-}
-
-/* Таблиця з даними */
-.new_t-similar-viewed .new_r-item-table {
-    margin-top: auto !important;
-}
-
-/* Колонка з датою та вильотом */
-.new_t-similar-viewed .new_r-item-col {
-    margin-bottom: 8px !important;
-}
-
-.new_t-similar-viewed .new_r-item-from,
-.new_t-similar-viewed .new_r-item-date {
-    font-size: 11px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    margin-bottom: 4px !important;
-}
-
-.new_t-similar-viewed .new_r-item-from svg,
-.new_t-similar-viewed .new_r-item-date svg {
-    width: 12px !important;
-    height: 12px !important;
-}
-
-/* Блок ціни */
-.new_t-similar-viewed .new_r-item-price {
-    margin-top: 8px !important;
-    padding-top: 8px !important;
-    border-top: 1px solid #e2e8f0 !important;
-}
-
-.new_t-similar-viewed .new_price-value {
-    font-size: 18px !important;
-    font-weight: 700 !important;
-}
-
-.new_t-similar-viewed .new_price-desc {
-    font-size: 10px !important;
-}
-
-/* ========== АДАПТИВНІСТЬ ========== */
-@media (max-width: 1200px) {
-    .new_t-similar-viewed .owl-item {
-        min-width: 280px !important;
-    }
-    .new_t-similar-viewed .new_r-item-img {
-        height: 160px !important;
-    }
-    .new_t-similar-viewed .new_r-item-wrap {
-        min-height: 360px !important;
-    }
-}
-
-@media (max-width: 992px) {
-    .new_t-similar-viewed .owl-item {
-        min-width: 260px !important;
-    }
-    .new_t-similar-viewed .new_r-item-img {
-        height: 150px !important;
-    }
-    .new_t-similar-viewed .new_r-item-wrap {
-        min-height: 350px !important;
-    }
-    .new_t-similar-viewed .new_r-item-hotel {
-        font-size: 13px !important;
-    }
-}
-
+/* Для мобільних */
 @media (max-width: 768px) {
-    .new_t-similar-viewed .owl-item {
-        min-width: 240px !important;
-    }
-    .new_t-similar-viewed .new_r-item-img {
-        height: 140px !important;
-    }
-    .new_t-similar-viewed .new_r-item-wrap {
-        min-height: 340px !important;
-    }
-    .new_t-similar-viewed .new_price-value {
-        font-size: 16px !important;
-    }
-}
-
-@media (max-width: 576px) {
-    .new_t-similar-viewed .owl-item {
-        min-width: 220px !important;
-    }
-    .new_t-similar-viewed .new_r-item-img {
-        height: 130px !important;
-    }
-    .new_t-similar-viewed .new_r-item-wrap {
-        min-height: 330px !important;
-    }
-    .new_t-similar-viewed .new_r-item-body {
-        padding: 10px !important;
-    }
-}
-
-/* Для дуже маленьких екранів */
-@media (max-width: 480px) {
-    .new_t-similar-viewed .owl-item {
-        min-width: 200px !important;
-    }
-    .new_t-similar-viewed .new_r-item-img {
-        height: 120px !important;
-    }
-    .new_t-similar-viewed .new_r-item-wrap {
-        min-height: 320px !important;
-    }
-    .new_t-similar-viewed .new_r-item-from,
-    .new_t-similar-viewed .new_r-item-date {
-        font-size: 10px !important;
+    .new_r-item-price {
+        padding: 6px 12px !important;
     }
 }
 </style>
