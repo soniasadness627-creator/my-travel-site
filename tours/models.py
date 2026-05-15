@@ -546,6 +546,8 @@ class PopularHotel(models.Model):
     is_active = models.BooleanField(default=True, verbose_name='Показувати на сайті')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата створення')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата оновлення')
+    od = models.CharField(max_length=20, blank=True, default='', verbose_name='Дата вильоту')
+    ol = models.CharField(max_length=10, blank=True, default='', verbose_name='Тривалість (ночей)')
 
     class Meta:
         verbose_name = 'Популярний готель'

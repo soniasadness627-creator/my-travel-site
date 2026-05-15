@@ -1622,17 +1622,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Функція для переходу на деталі туру
-    window.goToHotelDetail = function(hid, oid) {
-        let baseUrl = '/tour-detail/';
-        const pathParts = window.location.pathname.split('/');
-        for (let i = 0; i < pathParts.length; i++) {
-            if (pathParts[i] === 'a' && pathParts[i + 1]) {
-                baseUrl = `/a/${pathParts[i + 1]}/tour-detail/`;
-                break;
-            }
+    window.goToHotelDetail = function(hid, oid, od, ol) {
+    let baseUrl = '/tour-detail/';
+    const pathParts = window.location.pathname.split('/');
+    for (let i = 0; i < pathParts.length; i++) {
+        if (pathParts[i] === 'a' && pathParts[i + 1]) {
+            baseUrl = `/a/${pathParts[i + 1]}/tour-detail/`;
+            break;
         }
-        window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}`;
-    };
+    }
+    // Додаємо параметри od та ol
+    let url = `${baseUrl}?hid=${hid}&oid=${oid}`;
+    if (od) url += `&od=${od}`;
+    if (ol) url += `&ol=${ol}`;
+    window.location.href = url;
+};
 
     function renderHotels(hotels) {
         if (!track) return;
