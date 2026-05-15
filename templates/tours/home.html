@@ -294,22 +294,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ФУНКЦІЯ ДЛЯ ВІДОБРАЖЕННЯ ТУРІВ - ТІЛЬКИ searchByCountry, БЕЗ goToSearch
     function renderTours(tours) {
-        if (!track) return;
+    if (!track) return;
 
-        if (!tours || tours.length === 0) {
-            track.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних турів. Спробуйте пізніше.</div>';
-            return;
-        }
+    if (!tours || tours.length === 0) {
+        track.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних турів. Спробуйте пізніше.</div>';
+        return;
+    }
 
-        let html = '';
-        tours.forEach(tour => {
-            const starsHtml = renderStars(5);  // 5 зірок
-            const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
-            const hotelName = tour.hotel || `${tour.country} - ${tour.city}`;
-            const countryName = tour.country;
-            const cityName = tour.city || 'популярний курорт';
+    let html = '';
+    tours.forEach(tour => {
+        const starsHtml = renderStars(5);
+        const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
+        const hotelName = tour.hotel || `${tour.country} - ${tour.city}`;
+        const countryName = tour.country;
+        const cityName = tour.city || 'популярний курорт';
 
-            html += `
+        // Отримуємо місто вильоту з API (воно вже є!)
+        const departureText = tour.departure_text || tour.departure || 'з Кишинева';
+
+        html += `
 <div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(countryName)}')">
     <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop'">
     <div class="popular-tour-info">
@@ -317,6 +320,9 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="popular-tour-location">
             <i class="fa-regular fa-location-dot"></i>
             ${escapeHtml(countryName)}, ${escapeHtml(cityName)}
+        </div>
+        <div class="popular-tour-departure" style="font-size: 0.7rem; color: #64748b; margin-bottom: 8px;">
+            <i class="fa-regular fa-plane"></i> Виліт: ${escapeHtml(departureText)}
         </div>
         <div class="popular-tour-stars">
             ${starsHtml}
@@ -332,11 +338,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </div>
-            `;
-        });
+        `;
+    });
 
-        track.innerHTML = html;
-    }
+    track.innerHTML = html;
+}
 
     // Навігація слайдера
     const sliderContainer = document.querySelector('.popular-slider-container');
