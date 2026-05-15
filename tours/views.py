@@ -399,7 +399,7 @@ def get_popular_tours_api(request, slug=None):
 
     # Список країн з індивідуальними містами вильоту
     countries_config = [
-        {'country': 'Єгипет', 'departure': 'Брно', 'departure_text': 'з Брно'},  # ← ВИПРАВЛЕНО
+        {'country': 'Єгипет', 'departure': 'Брно', 'departure_text': 'з Брно'},
         {'country': 'Туреччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},
         {'country': 'ОАЕ', 'departure': 'Варшава', 'departure_text': 'з Варшави'},
         {'country': 'Греція', 'departure': 'Відень', 'departure_text': 'з Відня'},
@@ -420,28 +420,38 @@ def get_popular_tours_api(request, slug=None):
         {'country': 'Німеччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},
     ]
 
-    # ФОТО ДЛЯ КОЖНОЇ КРАЇНИ (ПЛЯЖІ - АЛЬТЕРНАТИВНІ)
+    # ФОТО ДЛЯ КОЖНОЇ КРАЇНИ (ВАШІ ЛОКАЛЬНІ ФОТО)
     country_images = {
-        'Єгипет': 'https://images.pexels.com/photos/2166927/pexels-photo-2166927.jpeg?w=400&h=250&fit=crop',
-        'Туреччина': 'https://images.pexels.com/photos/2114017/pexels-photo-2114017.jpeg?w=400&h=250&fit=crop',
-        'ОАЕ': 'https://images.pexels.com/photos/2549018/pexels-photo-2549018.jpeg?w=400&h=250&fit=crop',
-        'Греція': 'https://images.pexels.com/photos/1229042/pexels-photo-1229042.jpeg?w=400&h=250&fit=crop',
-        'Кіпр': 'https://images.pexels.com/photos/1687845/pexels-photo-1687845.jpeg?w=400&h=250&fit=crop',
-        'Іспанія': 'https://images.pexels.com/photos/1529094/pexels-photo-1529094.jpeg?w=400&h=250&fit=crop',
-        'Таїланд': 'https://images.pexels.com/photos/753626/pexels-photo-753626.jpeg?w=400&h=250&fit=crop',
-        'Мальдіви': 'https://images.pexels.com/photos/1644126/pexels-photo-1644126.jpeg?w=400&h=250&fit=crop',
-        'Італія': 'https://images.pexels.com/photos/1643400/pexels-photo-1643400.jpeg?w=400&h=250&fit=crop',
-        'Хорватія': 'https://images.pexels.com/photos/1644361/pexels-photo-1644361.jpeg?w=400&h=250&fit=crop',
-        'Чорногорія': 'https://images.pexels.com/photos/1591677/pexels-photo-1591677.jpeg?w=400&h=250&fit=crop',
-        'Болгарія': 'https://images.pexels.com/photos/1478402/pexels-photo-1478402.jpeg?w=400&h=250&fit=crop',
-        'Грузія': 'https://images.pexels.com/photos/1202107/pexels-photo-1202107.jpeg?w=400&h=250&fit=crop',
-        'Польща': 'https://images.pexels.com/photos/808747/pexels-photo-808747.jpeg?w=400&h=250&fit=crop',
-        'Угорщина': 'https://images.pexels.com/photos/2523895/pexels-photo-2523895.jpeg?w=400&h=250&fit=crop',
-        'Чехія': 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?w=400&h=250&fit=crop',
-        'Австрія': 'https://images.pexels.com/photos/173760/pexels-photo-173760.jpeg?w=400&h=250&fit=crop',
-        'Франція': 'https://images.pexels.com/photos/984837/pexels-photo-984837.jpeg?w=400&h=250&fit=crop',
-        'Німеччина': 'https://images.pexels.com/photos/1529324/pexels-photo-1529324.jpeg?w=400&h=250&fit=crop',
+        'Єгипет': '/static/images/Egypt.jpg',
+        'Туреччина': '/static/images/Turkey.jpg',
+        'ОАЕ': '/static/images/UAE.jpg',
+        'Греція': '/static/images/Greece.jpg',
+        'Кіпр': '/static/images/Cyprus.jpg',
+        'Іспанія': '/static/images/Spain.jpg',
+        'Таїланд': '/static/images/Thailand.jpg',
+        'Мальдіви': '/static/images/maldives.jpg',
+        'Італія': '/static/images/Italy.jpg',
+        'Хорватія': '/static/images/Croatia.jpg',
+        'Чорногорія': '/static/images/Montenegro.jpg',
+        'Болгарія': '/static/images/Bulgaria.jpg',
+        'Грузія': '/static/images/Georgia.jpg',
+        'Польща': '/static/images/Poland.jpg',
+        'Угорщина': '/static/images/Hungary.jpg',
+        'Чехія': '/static/images/the Czech Republic.jpg',
+        'Австрія': '/static/images/Austria.jpg',
+        'Франція': '/static/images/France.jpg',
+        'Німеччина': '/static/images/Germany.jpg',
+        'Албанія': '/static/images/Albania.jpg',
+        'Шрі Ланка': '/static/images/SriLanka.jpg',
+        'В\'єтнам': '/static/images/Vietnam.jpg',
+        'Туніс': '/static/images/Tunisia.jpg',
+        'Домінікана': '/static/images/dominican.jpg',
+        'Індонезія': '/static/images/Indonesia.jpg',
+        'Маврикій': '/static/images/mauritius.jpg',
     }
+
+    # Фото за замовчуванням (якщо якоїсь країни немає в списку)
+    default_image = '/static/images/default-tour.jpg'
 
     tours = []
     current_month = datetime.now()
@@ -464,9 +474,8 @@ def get_popular_tours_api(request, slug=None):
         first_city = City.objects.filter(country=country).first()
         city_name = first_city.name if first_city else 'популярний курорт'
 
-        # Отримуємо фото
-        image_url = country_images.get(country,
-                                       'https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop')
+        # Отримуємо фото (якщо немає в словнику, використовуємо фото за замовчуванням)
+        image_url = country_images.get(country, default_image)
 
         # Генеруємо дати
         start_date = (datetime.now() + timedelta(days=14 + idx)).strftime('%Y-%m-%d')
@@ -484,7 +493,7 @@ def get_popular_tours_api(request, slug=None):
             'country': country,
             'city': city_name,
             'price': price,
-            'stars': 5,  # 5 зірок!
+            'stars': 5,
             'image': image_url,
             'departure': departure_city,
             'departure_text': departure_text

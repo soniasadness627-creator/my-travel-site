@@ -698,11 +698,21 @@ function selectCalendarDate(dateISO, price, nights) {
 <!-- ========== БЛОК "ТУРИ З ВАШОГО МІСТА" ========== -->
 <div class="container my-5">
     <div class="city-tours-wrapper">
-        <h2 class="fw-bold mb-4" style="color: #000000; font-size: 1.8rem; text-align: center;">Тури з вашого міста</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold" style="color: #000000; font-size: 1.8rem;">Тури з вашого міста</h2>
+            <div class="city-slider-nav d-flex gap-2">
+                <button class="btn btn-sm rounded-circle city-prev" style="width: 36px; height: 36px; border: 1px solid #dee2e6; background: white; color: var(--primary-color);">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button class="btn btn-sm rounded-circle city-next" style="width: 36px; height: 36px; border: 1px solid #dee2e6; background: white; color: var(--primary-color);">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
 
-        <!-- Вибір міста -->
-        <div class="city-selector mb-4">
-            <div class="city-buttons-wrapper" style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+        <!-- Вибір міста (карусель) -->
+        <div class="city-slider-container" style="position: relative; overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+            <div class="city-buttons-wrapper" id="cityButtonsWrapper" style="display: flex; gap: 12px; padding-bottom: 10px;">
                 <button class="city-btn active" data-city="Кишинів">Кишинів</button>
                 <button class="city-btn" data-city="Київ">Київ</button>
                 <button class="city-btn" data-city="Одеса">Одеса</button>
@@ -860,6 +870,42 @@ function selectCalendarDate(dateISO, price, nights) {
 .country-departure i {
     font-size: 0.7rem;
 }
+    /* Стилі для каруселі міст */
+.city-slider-container::-webkit-scrollbar {
+    display: none;
+}
+
+.city-buttons-wrapper {
+    display: flex;
+    gap: 12px;
+    padding-bottom: 5px;
+}
+
+.city-btn {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 30px;
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #495057;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.city-btn:hover {
+    background: var(--primary-light);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.city-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
 </style>
 
 <script>
@@ -1012,6 +1058,22 @@ const defaultImage = '/static/images/default-tour.jpg';
     // Завантажуємо країни для міста за замовчуванням (Кишинів)
     onCityClick('Кишинів');
 });
+    // Навігація каруселі міст
+const citySlider = document.querySelector('.city-slider-container');
+const cityPrevBtn = document.querySelector('.city-prev');
+const cityNextBtn = document.querySelector('.city-next');
+
+if (cityPrevBtn && citySlider) {
+    cityPrevBtn.addEventListener('click', () => {
+        citySlider.scrollBy({ left: -300, behavior: 'smooth' });
+    });
+}
+
+if (cityNextBtn && citySlider) {
+    cityNextBtn.addEventListener('click', () => {
+        citySlider.scrollBy({ left: 300, behavior: 'smooth' });
+    });
+}
 </script>
 <script>
 // ========== КАЛЕНДАР НИЗЬКИХ ЦІН ==========
