@@ -3300,34 +3300,35 @@ ul.messages {
     cursor: pointer !important;
 }
 
-/* ========== ЗМІНА РОЗМІРІВ КАРТОК У КАРУСЕЛІ (ГОРИЗОНТАЛЬНІ) ========== */
+/* ========== ЗМІНА РОЗМІРІВ КАРТОК У КАРУСЕЛІ (620x165 ГОРИЗОНТАЛЬНІ) ========== */
+
+/* Перевизначаємо ширину Owl Carousel */
+.new_t-similar-viewed .owl-item {
+    width: 620px !important;
+    max-width: 620px !important;
+    flex: 0 0 620px !important;
+}
 
 /* Контейнер каруселі */
 .new_t-similar-viewed-gallery {
     max-width: 1200px !important;
     margin-left: auto !important;
     margin-right: auto !important;
-}
-
-/* Кожен елемент каруселі - ФІКСОВАНА ШИРИНА */
-.new_t-similar-viewed .owl-item {
-    width: 620px !important;
-    max-width: 620px !important;
-    min-width: 620px !important;
+    overflow: visible !important;
 }
 
 /* Блок картки */
 .new_t-similar-viewed .new_r-item-wrap {
     margin: 5px !important;
-    height: auto !important;
-    display: flex !important;
+    height: 165px !important;
+    display: block !important;
 }
 
 /* Сама картка - ГОРИЗОНТАЛЬНА */
 .new_t-similar-viewed .new_r-item {
     display: flex !important;
     flex-direction: row !important;
-    width: 620px !important;
+    width: 100% !important;
     height: 165px !important;
     background: white !important;
     border-radius: 12px !important;
@@ -3344,6 +3345,7 @@ ul.messages {
 /* Зображення - ЛІВА ЧАСТИНА (фіксована ширина) */
 .new_t-similar-viewed .new_r-item-img {
     width: 200px !important;
+    min-width: 200px !important;
     height: 165px !important;
     background-size: cover !important;
     background-position: center !important;
@@ -3362,27 +3364,18 @@ ul.messages {
     overflow: hidden !important;
 }
 
-/* Верхня частина тіла (назва + інфо) */
-.new_r-item-body > span:first-child {
-    display: block !important;
-}
-
 /* Назва готелю */
 .new_t-similar-viewed .new_r-item-hotel {
     font-size: 14px !important;
     font-weight: 600 !important;
     line-height: 1.3 !important;
     margin-bottom: 6px !important;
+    white-space: normal !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
-    white-space: normal !important;
-}
-
-/* Інформаційний блок */
-.new_t-similar-viewed .new_r-item-info {
-    margin-bottom: 6px !important;
 }
 
 /* Локація */
@@ -3416,7 +3409,7 @@ ul.messages {
     justify-content: space-between !important;
     align-items: center !important;
     gap: 8px !important;
-    margin-top: 0 !important;
+    margin-top: 4px !important;
 }
 
 /* Колонки таблиці */
@@ -3427,10 +3420,10 @@ ul.messages {
 
 .new_t-similar-viewed .new_r-item-from,
 .new_t-similar-viewed .new_r-item-date {
-    font-size: 10px !important;
+    font-size: 9px !important;
     display: flex !important;
     align-items: center !important;
-    gap: 3px !important;
+    gap: 2px !important;
     margin-bottom: 2px !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -3439,8 +3432,8 @@ ul.messages {
 
 .new_t-similar-viewed .new_r-item-from svg,
 .new_t-similar-viewed .new_r-item-date svg {
-    width: 10px !important;
-    height: 10px !important;
+    width: 9px !important;
+    height: 9px !important;
     flex-shrink: 0 !important;
 }
 
@@ -3454,7 +3447,7 @@ ul.messages {
 }
 
 .new_t-similar-viewed .new_price-value {
-    font-size: 16px !important;
+    font-size: 15px !important;
     font-weight: 700 !important;
 }
 
@@ -3464,22 +3457,55 @@ ul.messages {
 
 /* Прибираємо зайве */
 .new_t-similar-viewed .new_r-item-stars,
-.new_t-similar-viewed .new_r-item-rating-container {
+.new_t-similar-viewed .new_r-item-rating-container,
+.new_t-similar-viewed .new_r-item-rating-value,
+.new_t-similar-viewed .new_r-item-rating-rev {
     display: none !important;
 }
 
-/* ========== АДАПТИВНІСТЬ ========== */
+/* Кнопки навігації каруселі */
+.new_t-similar-viewed .owl-nav .owl-prev,
+.new_t-similar-viewed .owl-nav .owl-next {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 36px !important;
+    height: 36px !important;
+    background: rgba(0,0,0,0.5) !important;
+    border-radius: 50% !important;
+    color: white !important;
+    font-size: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+}
+
+.new_t-similar-viewed .owl-nav .owl-prev {
+    left: -18px !important;
+}
+
+.new_t-similar-viewed .owl-nav .owl-next {
+    right: -18px !important;
+}
+
+.new_t-similar-viewed .owl-nav .owl-prev:hover,
+.new_t-similar-viewed .owl-nav .owl-next:hover {
+    background: var(--primary-color) !important;
+}
+
+/* ========== АДАПТИВНІСТЬ ДЛЯ МОБІЛЬНИХ ========== */
 @media (max-width: 700px) {
     .new_t-similar-viewed .owl-item {
         width: 100% !important;
-        min-width: auto !important;
         max-width: 100% !important;
+        flex: 0 0 100% !important;
     }
 
     .new_t-similar-viewed .new_r-item {
-        width: 100% !important;
-        height: auto !important;
         flex-direction: column !important;
+        height: auto !important;
     }
 
     .new_t-similar-viewed .new_r-item-img {
