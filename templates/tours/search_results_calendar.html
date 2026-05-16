@@ -554,4 +554,98 @@ document.addEventListener('click', function(e) {
     setTimeout(fixSearchButton, 2000);
 })();
 </script>
+<!-- ========== ФІКС ДЛЯ МОБІЛЬНОЇ ВЕРСІЇ КАЛЕНДАРЯ НИЗЬКИХ ЦІН ========== -->
+<style>
+/* ТІЛЬКИ ДЛЯ МОБІЛЬНИХ (ширина до 768px) */
+@media (max-width: 768px) {
+    /* Картка - робимо вертикальною */
+    .new_r-item {
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: auto !important;
+        height: auto !important;
+    }
+
+    /* Фото - на всю ширину */
+    .new_r-item-img {
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 180px !important;
+        min-height: 180px !important;
+        max-height: 180px !important;
+    }
+
+    /* Текст - під фото */
+    .new_r-item-body {
+        position: relative !important;
+        margin-left: 0 !important;
+        padding: 12px 15px !important;
+        min-height: auto !important;
+        width: 100% !important;
+    }
+
+    /* Рейтинг - менший */
+    .new_r-item-rating-container {
+        width: 50px !important;
+        height: 50px !important;
+        top: 8px !important;
+        right: 8px !important;
+    }
+
+    .new_r-item-rating-value {
+        font-size: 0.9rem !important;
+    }
+
+    /* Колонки в стовпчик */
+    .new_r-item-col {
+        flex-direction: column !important;
+        gap: 6px !important;
+    }
+
+    /* Ціна - ліворуч */
+    .new_r-item-price {
+        margin-left: 0 !important;
+        text-align: left !important;
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
+
+    /* Перемикач валюти - по центру */
+    .new_r-currency-switch {
+        float: none !important;
+        margin: 0 auto 15px auto !important;
+        width: fit-content !important;
+    }
+
+    /* Відступи між картками */
+    .new_r-item-wrap {
+        margin-bottom: 30px !important;
+        padding-bottom: 15px !important;
+    }
+}
+
+/* ДЛЯ ДУЖЕ МАЛЕНЬКИХ (до 480px) */
+@media (max-width: 480px) {
+    .new_r-item-img {
+        height: 150px !important;
+        min-height: 150px !important;
+        max-height: 150px !important;
+    }
+
+    .new_r-item-body {
+        padding: 10px 12px !important;
+    }
+
+    .new_r-item-hotel {
+        font-size: 0.95rem !important;
+    }
+
+    .new_price-value {
+        font-size: 0.9rem !important;
+    }
+}
+</style>
 {% endblock %}
