@@ -494,7 +494,12 @@
         flex-direction: column !important;
         gap: 12px !important;
     }
-
+    .new_r-item-price {
+        margin-left: 0 !important;
+        text-align: left !important;
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
     .new_r-item-wrap {
         margin-bottom: 30px !important;
         padding-bottom: 15px !important;
@@ -549,7 +554,6 @@ document.addEventListener('click', function(e) {
     setTimeout(fixSearchButton, 2000);
 })();
 </script>
-<!-- ========== ФІКС ДЛЯ МОБІЛЬНОЇ ВЕРСІЇ КАЛЕНДАРЯ НИЗЬКИХ ЦІН ========== -->
 
 <!-- ========== ПЕРЕМИКАЧ ВАЛЮТИ - ГОРИЗОНТАЛЬНИЙ (ФІКС) ========== -->
 <style>
@@ -836,6 +840,7 @@ document.addEventListener('click', function(e) {
     }
 }
 </style>
+
 <style>
     /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
 @media (max-width: 768px) {
@@ -873,4 +878,5 @@ document.addEventListener('click', function(e) {
     }
 }
 </style>
+
 {% endblock %}
