@@ -727,4 +727,39 @@ document.addEventListener('click', function(e) {
     setTimeout(fixCurrency, 1000);
 })();
 </script>
+<!-- ========== ТІЛЬКИ ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН - ТІЛЬКИ МОБІЛЬНІ СТИЛІ ========== -->
+<style>
+/* Ці стилі працюють ТІЛЬКИ на мобільних пристроях (ширина до 768px) */
+@media (max-width: 768px) {
+
+    /* Картки туру - вертикальні на мобільних */
+    .new_r-item {
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: auto !important;
+    }
+
+    .new_r-item-img {
+        position: relative !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 180px !important;
+    }
+
+    .new_r-item-body {
+        margin-left: 0 !important;
+        padding: 12px 15px !important;
+    }
+
+    .new_r-item-col {
+        flex-direction: column !important;
+        gap: 6px !important;
+    }
+
+    .new_r-item-price {
+        margin-left: 0 !important;
+        justify-content: flex-start !important;
+    }
+}
+</style>
 {% endblock %}
