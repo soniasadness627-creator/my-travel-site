@@ -911,41 +911,38 @@ document.addEventListener('click', function(e) {
     }
 }
 </style>
-<!-- ========== ФІКС ФОТО НА ВЕСЬ БЛОК ТІЛЬКИ ДЛЯ МОБІЛЬНИХ ========== -->
+<!-- ========== ФІКС ФОТО НА ВСЮ ШИРИНУ ДЛЯ МОБІЛЬНИХ ========== -->
 <style>
 @media (max-width: 768px) {
-    /* Картка - вертикальна */
-    .new_r-item {
-        display: flex !important;
-        flex-direction: column !important;
-        overflow: hidden !important;
-        background: white !important;
-    }
-
-    /* Фото - зверху, на всю ширину, без затемнення */
+    /* Фото - на всю ширину, звичайна висота */
     .new_r-item .new_r-item-img {
         position: relative !important;
-        top: auto !important;
-        left: auto !important;
         width: 100% !important;
+        min-width: 100% !important;
         height: 200px !important;
         min-height: 200px !important;
         max-height: 200px !important;
         object-fit: cover !important;
         background-size: cover !important;
         background-position: center !important;
-        z-index: 1 !important;
+        /* Ніякого absolute, ніякого z-index - фото просто блок зверху */
     }
 
-    /* Текстовий блок - ПІД фото, білий фон, без прозорості */
+    /* Текст - звичайний блок ПІД фото, без змін кольору */
     .new_r-item .new_r-item-body {
         position: relative !important;
-        z-index: 2 !important;
-        background: white !important;
-        width: 100% !important;
         margin-left: 0 !important;
+        background: white !important; /* Залишаємо білий фон */
+        width: 100% !important;
         padding: 15px !important;
-        border-radius: 0 !important;
+        /* Ніякої прозорості, ніякого z-index для накладання */
+    }
+
+    /* Картка - вертикальний блок */
+    .new_r-item {
+        display: flex !important;
+        flex-direction: column !important;
+        background: white !important;
     }
 }
 </style>
