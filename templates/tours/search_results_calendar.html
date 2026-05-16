@@ -222,7 +222,7 @@
     font-weight: 700 !important;
 }
 
-/* ========== КАРТКИ ТУРІВ (ПК) ========== */
+/* ========== КАРТКИ ТУРІВ ========== */
 .new_r-container,
 .new_r-wrapper,
 .new_r-wrapper > div {
@@ -363,7 +363,6 @@
     fill: #888 !important;
 }
 
-/* Блок ціни на ПК */
 .new_r-item-price {
     background: transparent !important;
     border-radius: 12px !important;
@@ -401,7 +400,6 @@
     color: #ffffff !important;
 }
 
-/* Рейтинг */
 .new_r-item-rating-container {
     position: absolute !important;
     top: 12px !important;
@@ -434,7 +432,7 @@
     font-size: 0.65rem !important;
 }
 
-/* Перемикач валюти на ПК */
+/* Перемикач валюти */
 .new_r-currency-switch {
     position: relative !important;
     top: auto !important;
@@ -501,9 +499,6 @@
         text-align: left !important;
         width: 100% !important;
         justify-content: flex-start !important;
-        position: relative !important;
-        bottom: auto !important;
-        right: auto !important;
     }
     .new_r-item-wrap {
         margin-bottom: 30px !important;
@@ -513,16 +508,6 @@
         float: none !important;
         margin: 0 auto 15px auto !important;
         width: fit-content !important;
-    }
-    /* Рейтинг на мобільних */
-    .new_r-item-rating-container {
-        width: 50px !important;
-        height: 50px !important;
-        top: 8px !important;
-        right: 8px !important;
-    }
-    .new_r-item-rating-value {
-        font-size: 0.9rem !important;
     }
 }
 </style>
@@ -570,6 +555,80 @@ document.addEventListener('click', function(e) {
 })();
 </script>
 
+<!-- ========== ПЕРЕМИКАЧ ВАЛЮТИ - ГОРИЗОНТАЛЬНИЙ (ФІКС) ========== -->
+<style>
+/* Основний контейнер */
+.new_r-currency-switch {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    background: var(--primary-color) !important;
+    border-radius: 30px !important;
+    overflow: hidden !important;
+    width: auto !important;
+    min-width: auto !important;
+    max-width: none !important;
+    margin: 0 0 15px auto !important;
+    float: right !important;
+    clear: both !important;
+}
+
+/* Кожен label - горизонтально */
+.new_r-currency-switch label {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    float: none !important;
+    width: auto !important;
+}
+
+/* Прибираємо будь-які вертикальні стилі */
+.new_r-currency-switch label {
+    display: inline-block !important;
+}
+
+/* Стилі для кнопок */
+.new_r-currency-switch span {
+    display: inline-block !important;
+    background: transparent !important;
+    color: white !important;
+    padding: 6px 16px !important;
+    cursor: pointer !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    letter-spacing: normal !important;
+}
+
+/* Активний стан */
+.new_r-currency-switch input[type="radio"]:checked + span {
+    background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Ховер ефект */
+.new_r-currency-switch label:hover span {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Прибираємо радіо-кнопки */
+.new_r-currency-switch input[type="radio"] {
+    display: none !important;
+}
+
+/* Для мобільних */
+@media (max-width: 768px) {
+    .new_r-currency-switch span {
+        padding: 5px 12px !important;
+        font-size: 0.8rem !important;
+    }
+}
+</style>
 <!-- ========== ОРАНЖЕВЕ ПОПЕРЕДЖЕННЯ ДЛЯ ПІДТВЕРДЖЕННЯ КРАЇНИ ========== -->
 <style>
 .orange-warning {
@@ -639,4 +698,253 @@ document.addEventListener('click', function(e) {
 })();
 </script>
 
+<!-- ========== ФІКС РЕЙТИНГУ - ТІЛЬКИ КВАДРАТНИЙ ========== -->
+<style>
+/* Основний блок рейтингу - квадратний */
+.new_r-item-rating-container {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    width: 65px !important;
+    height: 65px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 12px !important;
+    border: 2px solid var(--primary-color) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    z-index: 10 !important;
+    /* Видаляємо зайве */
+    float: none !important;
+    font-size: inherit !important;
+    margin: 0 !important;
+}
+
+/* Значення рейтингу */
+.new_r-item-rating-value {
+    font-size: 1.3rem !important;
+    font-weight: 800 !important;
+    color: var(--primary-color) !important;
+    line-height: 1.2 !important;
+}
+
+/* Текст "оцінок" */
+.new_r-item-rating-rev {
+    font-size: 0.55rem !important;
+    color: #666 !important;
+}
+
+.new_r-item-rating-rev span {
+    font-weight: 700 !important;
+    font-size: 0.65rem !important;
+}
+
+/* ХОВАЄМО кругову діаграму (slice, bar, fill) */
+.new_r-item-rating-container .slice,
+.new_r-item-rating-container .bar,
+.new_r-item-rating-container .fill {
+    display: none !important;
+}
+
+/* Для мобільних - менший квадрат */
+@media (max-width: 768px) {
+    .new_r-item-rating-container {
+        width: 60px !important;
+        height: 60px !important;
+        top: 8px !important;
+        right: 8px !important;
+    }
+    .new_r-item-rating-value {
+        font-size: 1rem !important;
+    }
+    .new_r-item-rating-rev {
+        font-size: 0.45rem !important;
+    }
+}
+</style>
+
+
+<!-- ========== ФІКС БЛОКУ ЦІНИ - ВУЗЬКИЙ ТА ПО ПРАВОМУ КРАЮ ========== -->
+<style>
+/* Основний блок ціни */
+.new_r-item-price {
+    width: 150px !important;
+    min-width: 150px !important;
+    max-width: 150px !important;
+    height: 45px !important;
+    padding: 8px 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    position: absolute !important;
+    bottom: 12px !important;
+    right: 12px !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: 2px solid var(--primary-color) !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Значення ціни */
+.new_price-value {
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    color: #000000 !important;
+    white-space: nowrap !important;
+}
+
+.new_price-value .currency {
+    font-size: 0.8rem !important;
+}
+
+/* Опис ціни */
+.new_price-desc {
+    font-size: 0.65rem !important;
+    color: #000000 !important;
+    opacity: 0.7 !important;
+    white-space: nowrap !important;
+}
+
+/* Ховер ефект */
+.new_r-item:hover .new_r-item-price {
+    background: var(--primary-color) !important;
+}
+
+.new_r-item:hover .new_price-value,
+.new_r-item:hover .new_price-value .currency,
+.new_r-item:hover .new_price-desc {
+    color: #ffffff !important;
+}
+
+/* На мобільних - ширина на всю ширину */
+@media (max-width: 768px) {
+    .new_r-item-price {
+        width: calc(100% - 24px) !important;
+        max-width: none !important;
+        position: relative !important;
+        bottom: auto !important;
+        right: auto !important;
+        margin-top: 12px !important;
+        margin-left: 12px !important;
+        margin-right: 12px !important;
+        justify-content: space-between !important;
+        padding: 10px 16px !important;
+    }
+
+    .new_price-value {
+        font-size: 1rem !important;
+    }
+}
+</style>
+
+<style>
+    /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
+@media (max-width: 768px) {
+    .new_r-item {
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: auto !important;
+    }
+    .new_r-item-img {
+        position: relative !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 200px !important;
+        min-height: 200px !important;
+        max-height: 200px !important;
+    }
+    .new_r-item-body {
+        margin-left: 0 !important;
+        padding: 15px !important;
+        min-height: auto !important;
+    }
+    .new_r-item-col {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    .new_r-item-wrap {
+        margin-bottom: 30px !important;
+        padding-bottom: 15px !important;
+    }
+    .new_r-currency-switch {
+        float: none !important;
+        margin: 0 auto 15px auto !important;
+        width: fit-content !important;
+    }
+}
+</style>
+<!-- ========== ЕКСТРЕНЕ ВИПРАВЛЕННЯ – ПОКАЗАТИ ТЕКСТ ========== -->
+<style>
+/* Видаляємо обмеження висоти на мобільних */
+@media (max-width: 768px) {
+    /* Картка – висота автоматична */
+    .new_r-item {
+        min-height: auto !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    /* Фото – зверху, фіксована висота, не перекриває текст */
+    .new_r-item-img {
+        position: relative !important;
+        width: 100% !important;
+        height: 200px !important;
+        min-height: 200px !important;
+        max-height: 200px !important;
+        overflow: hidden !important;
+    }
+
+    /* Текст – видимий, під фото */
+    .new_r-item-body {
+        display: block !important;
+        position: relative !important;
+        margin-left: 0 !important;
+        padding: 15px !important;
+        background: white !important;
+        min-height: auto !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    /* Всі текстові елементи – видимі */
+    .new_r-item-hotel,
+    .new_r-item-geo,
+    .new_r-item-food,
+    .new_r-item-table,
+    .new_r-item-col,
+    .new_r-item-from,
+    .new_r-item-date,
+    .new_r-item-price {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+</style>
+<!-- ========== ПЕРЕВИЗНАЧЕННЯ ВИСОТИ ВІД OTPUSK ========== -->
+<style>
+/* ПЕРЕКРИВАЄМО ЗОВНІШНІ СТИЛІ Otpusk */
+.new_r-item {
+    height: auto !important;
+    min-height: 200px !important;
+    max-height: none !important;
+}
+
+/* Для мобільних – точно auto */
+@media (max-width: 768px) {
+    .new_r-item {
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+}
+</style>
 {% endblock %}
