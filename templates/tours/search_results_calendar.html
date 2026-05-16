@@ -911,7 +911,7 @@ document.addEventListener('click', function(e) {
     }
 }
 </style>
-<!-- ========== ФІКС ФОТО ТА ТЕКСТУ ДЛЯ МОБІЛЬНИХ ========== -->
+<!-- ========== ФІКС ФОТО НА ВЕСЬ БЛОК ТІЛЬКИ ДЛЯ МОБІЛЬНИХ ========== -->
 <style>
 @media (max-width: 768px) {
     /* Картка - вертикальна */
@@ -919,37 +919,33 @@ document.addEventListener('click', function(e) {
         display: flex !important;
         flex-direction: column !important;
         overflow: hidden !important;
-        position: relative !important;
         background: white !important;
     }
 
     /* Фото - зверху, на всю ширину, без затемнення */
     .new_r-item .new_r-item-img {
         position: relative !important;
+        top: auto !important;
+        left: auto !important;
         width: 100% !important;
         height: 200px !important;
         min-height: 200px !important;
         max-height: 200px !important;
         object-fit: cover !important;
-        z-index: 1 !important;
         background-size: cover !important;
         background-position: center !important;
+        z-index: 1 !important;
     }
 
-    /* Текстовий блок - ПІД ФОТО, білий фон, без прозорості */
+    /* Текстовий блок - ПІД фото, білий фон, без прозорості */
     .new_r-item .new_r-item-body {
         position: relative !important;
         z-index: 2 !important;
-        background: #ffffff !important;  /* Білий фон - без затемнення */
+        background: white !important;
         width: 100% !important;
         margin-left: 0 !important;
         padding: 15px !important;
         border-radius: 0 !important;
-    }
-
-    /* Рейтинг - залишається поверх фото */
-    .new_r-item-rating-container {
-        z-index: 3 !important;
     }
 }
 </style>
