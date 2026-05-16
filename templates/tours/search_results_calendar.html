@@ -790,102 +790,7 @@ document.addEventListener('click', function(e) {
     setTimeout(showWarning, 1500);
 })();
 </script>
-<!-- ========== ФІКС ФОТО НА ВЕСЬ БЛОК ТУРУ ========== -->
-<style>
-/* Фікс для батьківського блоку - відносне позиціонування */
-.new_r-item {
-    position: relative !important;
-    display: flex !important;
-    flex-direction: row !important;
-    min-height: 259px !important;
-    overflow: hidden !important;
-    border-radius: 16px !important;
-}
 
-/* Фото - на всю ВИСОТУ і ШИРИНУ блоку (абсолютно) */
-.new_r-item .new_r-item-img {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 100% !important;
-    min-height: 100% !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-    object-fit: cover !important;
-    display: block !important;
-    z-index: 1 !important;
-}
-
-/* Текстовий блок - поверх фото з напівпрозорим фоном */
-.new_r-item .new_r-item-body {
-    position: relative !important;
-    z-index: 2 !important;
-    background: rgba(255, 255, 255, 0.92) !important;
-    margin-left: 0 !important;
-    width: 60% !important;
-    min-width: 280px !important;
-    padding: 16px 20px !important;
-    border-radius: 0 16px 16px 0 !important;
-    backdrop-filter: blur(2px) !important;
-}
-
-/* Рейтинг - поверх фото, але поверх тексту */
-.new_r-item-rating-container {
-    position: absolute !important;
-    top: 12px !important;
-    right: 12px !important;
-    z-index: 3 !important;
-    width: 55px !important;
-    height: 55px !important;
-    background: rgba(255, 255, 255, 0.95) !important;
-    border-radius: 12px !important;
-    border: 2px solid var(--primary-color) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
-}
-
-/* Ховаємо кругову діаграму */
-.new_r-item-rating-container .slice,
-.new_r-item-rating-container .bar,
-.new_r-item-rating-container .fill {
-    display: none !important;
-}
-
-/* Для мобільних - текстовий блок на всю ширину знизу */
-@media (max-width: 768px) {
-    .new_r-item {
-        flex-direction: column !important;
-        min-height: auto !important;
-    }
-
-    .new_r-item .new_r-item-img {
-        position: relative !important;
-        height: 200px !important;
-        width: 100% !important;
-    }
-
-    .new_r-item .new_r-item-body {
-        width: 100% !important;
-        border-radius: 0 0 16px 16px !important;
-        background: rgba(255, 255, 255, 0.95) !important;
-    }
-
-    .new_r-item-rating-container {
-        width: 45px !important;
-        height: 45px !important;
-        top: 8px !important;
-        right: 8px !important;
-    }
-}
-</style>
 <!-- ========== ФІКС РЕЙТИНГУ - ТІЛЬКИ КВАДРАТНИЙ ========== -->
 <style>
 /* Основний блок рейтингу - квадратний */
@@ -949,6 +854,60 @@ document.addEventListener('click', function(e) {
     }
     .new_r-item-rating-rev {
         font-size: 0.45rem !important;
+    }
+}
+</style>
+<!-- ========== ФІКС ВИСОТИ БЛОКУ ТУРУ ТІЛЬКИ ДЛЯ МОБІЛЬНИХ ========== -->
+<style>
+@media (max-width: 768px) {
+    /* Збільшуємо висоту всього блоку */
+    .new_r-item-wrap {
+        min-height: auto !important;
+        height: auto !important;
+    }
+
+    /* Збільшуємо висоту картки туру */
+    .new_r-item {
+        min-height: 420px !important;
+        height: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* Фото - збільшуємо висоту */
+    .new_r-item .new_r-item-img {
+        height: 220px !important;
+        min-height: 220px !important;
+        max-height: 220px !important;
+        position: relative !important;
+    }
+
+    /* Текстовий блок */
+    .new_r-item .new_r-item-body {
+        flex: 1 !important;
+        padding: 15px !important;
+    }
+
+    /* Додаємо відступи всередині */
+    .new_r-item-info {
+        margin-bottom: 10px !important;
+    }
+
+    .new_r-item-table {
+        margin-top: 10px !important;
+    }
+}
+
+/* Для дуже маленьких екранів (до 480px) */
+@media (max-width: 480px) {
+    .new_r-item {
+        min-height: 420px !important;
+    }
+
+    .new_r-item .new_r-item-img {
+        height: 200px !important;
+        min-height: 200px !important;
+        max-height: 200px !important;
     }
 }
 </style>
