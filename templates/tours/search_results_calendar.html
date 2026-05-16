@@ -850,7 +850,7 @@ document.addEventListener('click', function(e) {
         right: 8px !important;
     }
     .new_r-item-rating-value {
-        font-size: 1.5rem !important;
+        font-size: 1rem !important;
     }
     .new_r-item-rating-rev {
         font-size: 0.45rem !important;
@@ -908,6 +908,37 @@ document.addEventListener('click', function(e) {
         height: 200px !important;
         min-height: 200px !important;
         max-height: 200px !important;
+    }
+}
+</style>
+<!-- ========== ФІКС ФОТО НА ВЕСЬ БЛОК ТІЛЬКИ ДЛЯ МОБІЛЬНИХ ========== -->
+<style>
+@media (max-width: 768px) {
+    /* Тільки на мобільних - фото на весь фон */
+    .new_r-item {
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+    }
+
+    .new_r-item .new_r-item-img {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        z-index: 1 !important;
+    }
+
+    .new_r-item .new_r-item-body {
+        position: relative !important;
+        z-index: 2 !important;
+        background: rgba(255, 255, 255, 0.92) !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+        border-radius: 0 !important;
     }
 }
 </style>
