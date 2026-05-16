@@ -886,4 +886,70 @@ document.addEventListener('click', function(e) {
     }
 }
 </style>
+<!-- ========== ФІКС РЕЙТИНГУ - ТІЛЬКИ КВАДРАТНИЙ ========== -->
+<style>
+/* Основний блок рейтингу - квадратний */
+.new_r-item-rating-container {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    width: 65px !important;
+    height: 65px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 12px !important;
+    border: 2px solid var(--primary-color) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    z-index: 10 !important;
+    /* Видаляємо зайве */
+    float: none !important;
+    font-size: inherit !important;
+    margin: 0 !important;
+}
+
+/* Значення рейтингу */
+.new_r-item-rating-value {
+    font-size: 1.3rem !important;
+    font-weight: 800 !important;
+    color: var(--primary-color) !important;
+    line-height: 1.2 !important;
+}
+
+/* Текст "оцінок" */
+.new_r-item-rating-rev {
+    font-size: 0.55rem !important;
+    color: #666 !important;
+}
+
+.new_r-item-rating-rev span {
+    font-weight: 700 !important;
+    font-size: 0.65rem !important;
+}
+
+/* ХОВАЄМО кругову діаграму (slice, bar, fill) */
+.new_r-item-rating-container .slice,
+.new_r-item-rating-container .bar,
+.new_r-item-rating-container .fill {
+    display: none !important;
+}
+
+/* Для мобільних - менший квадрат */
+@media (max-width: 768px) {
+    .new_r-item-rating-container {
+        width: 70px !important;
+        height: 70px !important;
+        top: 8px !important;
+        right: 8px !important;
+    }
+    .new_r-item-rating-value {
+        font-size: 1.5rem !important;
+    }
+    .new_r-item-rating-rev {
+        font-size: 0.45rem !important;
+    }
+}
+</style>
 {% endblock %}
