@@ -947,4 +947,21 @@ document.addEventListener('click', function(e) {
     }
 }
 </style>
+<!-- ========== ФІКС ПЕРЕМИКАЧА ВАЛЮТИ - ЛІВА СТОРОНА ========== -->
+<style>
+/* Перемикач валюти - по лівій стороні */
+.new_r-currency-switch {
+    float: left !important;
+    margin: 0 0 15px 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Для мобільних - залишаємо по центру або теж зліва */
+@media (max-width: 768px) {
+    .new_r-currency-switch {
+        float: left !important;
+        margin: 0 0 15px 0 !important;
+    }
+}
+</style>
 {% endblock %}
