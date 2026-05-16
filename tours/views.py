@@ -524,12 +524,27 @@ def add_fallback_tour(tours, country, idx):
 # ========== НОВИЙ API ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ ==========
 def get_popular_hotels_api(request, slug=None):
     """
-    API для отримання популярних готелів з бази даних
+    API для отримання випадкових 10 популярних готелів з бази даних
+    (якщо в адмінці додано 30 - показує 10 випадкових)
     """
-    hotels = PopularHotel.objects.filter(is_active=True)[:12]
+    # Отримуємо всі активні готелі
+    all_hotels = list(PopularHotel.objects.filter(is_active=True))
+
+    print(f"📊 Всього активних готелів в БД: {len(all_hotels)}")
+
+    # Якщо готелів більше ніж 10, вибираємо випадкові 10
+    if len(all_hotels) > 10:
+        selected_hotels = random.sample(all_hotels, 10)
+        print(f"🎲 Вибрано {len(selected_hotels)} випадкових готелів із {len(all_hotels)}")
+    else:
+        selected_hotels = all_hotels
+        print(f"📋 Показано всі {len(selected_hotels)} готелі (менше або дорівнює 10)")
+
+    # Перемішуємо для додаткового рандому порядку
+    random.shuffle(selected_hotels)
 
     data = []
-    for hotel in hotels:
+    for hotel in selected_hotels:
         # Отримуємо фото
         if hotel.image:
             image_url = hotel.image.url
@@ -542,19 +557,18 @@ def get_popular_hotels_api(request, slug=None):
             'id': hotel.id,
             'hid': hotel.hid,
             'oid': hotel.oid,
-            'od': hotel.od,  # ← ДОДАТИ
-            'ol': hotel.ol,  # ← ДОДАТИ
+            'od': hotel.od,
+            'ol': hotel.ol,
             'hotel_name': hotel.hotel_name,
             'country': hotel.country,
             'city': hotel.city,
-            'rating': hotel.rating,
+            'rating': float(hotel.rating) if hotel.rating else 8.0,
             'reviews_count': hotel.reviews_count,
-            'price': hotel.price,
+            'price': float(hotel.price),
             'image': image_url,
         })
 
     return JsonResponse({'hotels': data})
-
 
 def home(request):
     """Головна сторінка з пошуком Otpusk та календарем низьких цін"""
