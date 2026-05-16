@@ -939,16 +939,104 @@ document.addEventListener('click', function(e) {
 /* Для мобільних - менший квадрат */
 @media (max-width: 768px) {
     .new_r-item-rating-container {
-        width: 70px !important;
-        height: 70px !important;
+        width: 50px !important;
+        height: 50px !important;
         top: 8px !important;
         right: 8px !important;
     }
     .new_r-item-rating-value {
-        font-size: 1.5rem !important;
+        font-size: 1rem !important;
     }
     .new_r-item-rating-rev {
         font-size: 0.45rem !important;
+    }
+}
+</style>
+<!-- ========== ФІКС ВІДСТУПІВ МІЖ ЕЛЕМЕНТАМИ ТУРУ ========== -->
+<style>
+/* Відступи для основного блоку тіла картки */
+.new_r-item-body {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+}
+
+/* Відступ між назвою готелю та інформацією */
+.new_r-item-hotel {
+    margin-bottom: 0 !important;
+}
+
+/* Блок інформації (гео + харчування) */
+.new_r-item-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-bottom: 5px !important;
+}
+
+/* Геолокація */
+.new_r-item-geo {
+    margin-bottom: 0 !important;
+}
+
+/* Харчування */
+.new_r-item-food {
+    margin-bottom: 0 !important;
+    width: fit-content !important;
+}
+
+/* Таблиця з датами та ціною */
+.new_r-item-table {
+    margin-top: 8px !important;
+    margin-bottom: 0 !important;
+}
+
+/* Колонка з датами */
+.new_r-item-col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+}
+
+/* Відступ для рядка "з Кишинева" */
+.new_r-item-from {
+    margin-bottom: 0 !important;
+}
+
+/* Відступ для рядка з датою */
+.new_r-item-date {
+    margin-bottom: 0 !important;
+}
+
+/* Блок ціни - додаємо відступ зверху */
+.new_r-item-price {
+    margin-top: 12px !important;
+    margin-bottom: 0 !important;
+    align-self: flex-start !important;
+}
+
+/* Якщо ціна все ще накладається - додаємо додатковий відступ */
+.new_r-item-col:last-child {
+    margin-top: 5px !important;
+}
+
+/* Для мобільних - збільшуємо відступи */
+@media (max-width: 768px) {
+    .new_r-item-body {
+        gap: 12px !important;
+    }
+
+    .new_r-item-info {
+        gap: 10px !important;
+    }
+
+    .new_r-item-col {
+        gap: 15px !important;
+    }
+
+    .new_r-item-price {
+        margin-top: 15px !important;
     }
 }
 </style>
