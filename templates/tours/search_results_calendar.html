@@ -790,4 +790,72 @@ document.addEventListener('click', function(e) {
     setTimeout(showWarning, 1500);
 })();
 </script>
+<!-- ========== ФІКС ФОТО ТА РЕЙТИНГУ ========== -->
+<style>
+/* Фікс для фото - центрування та object-fit cover */
+.new_r-item-img {
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+
+/* Фікс для рейтингу - квадратний блок */
+.new_r-item-rating-container {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    width: 55px !important;
+    height: 55px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 12px !important;
+    border: 2px solid var(--primary-color) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    z-index: 5 !important;
+}
+
+.new_r-item-rating-value {
+    font-size: 1rem !important;
+    font-weight: 800 !important;
+    color: var(--primary-color) !important;
+    line-height: 1.2 !important;
+}
+
+.new_r-item-rating-rev {
+    font-size: 0.55rem !important;
+    color: #666 !important;
+}
+
+.new_r-item-rating-rev span {
+    font-weight: 700 !important;
+}
+
+/* Ховаємо кругову діаграму */
+.new_r-item-rating-container .slice,
+.new_r-item-rating-container .bar,
+.new_r-item-rating-container .fill {
+    display: none !important;
+}
+
+/* Для мобільних - менший рейтинг */
+@media (max-width: 768px) {
+    .new_r-item-rating-container {
+        width: 45px !important;
+        height: 45px !important;
+        top: 8px !important;
+        right: 8px !important;
+    }
+    .new_r-item-rating-value {
+        font-size: 0.85rem !important;
+    }
+    .new_r-item-rating-rev {
+        font-size: 0.45rem !important;
+    }
+}
+</style>
 {% endblock %}
