@@ -103,13 +103,10 @@ urlpatterns = [
     path('a/<slug:slug>/search-otpusk-by-country/', tours_views.search_otpusk_by_country,
          name='agent_search_otpusk_by_country'),
 
-    # ========== СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (API OTPUSK) ==========
-    path('tour-detail/', tours_views.tour_detail_otpusk, name='tour_detail_otpusk'),
-    path('a/<slug:slug>/tour-detail/', tours_views.tour_detail_otpusk, name='agent_tour_detail_otpusk'),
-
-    # ========== НОВА СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (КАСТОМНИЙ ШАБЛОН + API) ==========
-    path('tour-page/', tours_views.tour_detail, name='tour_detail_page'),
-    path('a/<slug:slug>/tour-page/', tours_views.tour_detail, name='agent_tour_detail_page'),
+    # ========== СТОРІНКА ДЛЯ ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТУРУ (КАСТОМНИЙ ШАБЛОН) ==========
+    # ЗМІНЕНО: тепер /tour-detail/ веде на ваш кастомний tour_detail.html
+    path('tour-detail/', tours_views.tour_detail, name='tour_detail'),
+    path('a/<slug:slug>/tour-detail/', tours_views.tour_detail, name='agent_tour_detail'),
 
     # ========== КОНСУЛЬТАЦІЯ (ЗВИЧАЙНА ФОРМА З ПЕРЕНАПРАВЛЕННЯМ) ==========
     path('consultation/', TemplateView.as_view(template_name='tours/consultation_form.html'), name='consultation'),

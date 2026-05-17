@@ -614,11 +614,11 @@ document.addEventListener('click', function(e) {
     let ol = url.match(/ol=(\d+)/)?.[1];
 
     if (hid && oid) {
-        let baseUrl = window.location.pathname.startsWith('/a/')
-            ? `/a/${window.location.pathname.split('/')[2]}/tour-page/`   // ← ЗМІНЕНО!
-            : '/tour-page/';                                              // ← ЗМІНЕНО!
-        window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}`;
-    }
+    let baseUrl = window.location.pathname.startsWith('/a/')
+        ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
+        : '/tour-detail/';
+    window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}`;
+}
 });
 
 // ========== МОБІЛЬНІ ФІЛЬТРИ З ВИСУВАННЯМ ==========
@@ -1615,11 +1615,11 @@ document.addEventListener('click', function(e) {
     let ol = url.match(/ol=(\d+)/)?.[1];
 
     if (hid && oid) {
-        let baseUrl = window.location.pathname.startsWith('/a/')
-            ? `/a/${window.location.pathname.split('/')[2]}/tour-page/`
-            : '/tour-page/';
-        window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}`;
-    }
+    let baseUrl = window.location.pathname.startsWith('/a/')
+    ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
+    : '/tour-detail/';
+    window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}`;
+}
 });
 </script>
 <!-- ========== ФІКС ВИСОТИ ТА ВІДСТУПІВ (ЦІНА СПРАВА) - ЗМЕНШЕНА ВЕРСІЯ ========== -->
