@@ -615,8 +615,8 @@ document.addEventListener('click', function(e) {
 
     if (hid && oid) {
     let baseUrl = window.location.pathname.startsWith('/a/')
-        ? `/a/${window.location.pathname.split('/')[2]}/tour-page/`   // ЗМІНЕНО
-        : '/tour-page/';                                              // ЗМІНЕНО
+        ? `/a/${window.location.pathname.split('/')[2]}/tour-page/`
+        : '/tour-page/';
     window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}`;
 }
 });
@@ -1609,13 +1609,13 @@ observer.observe(document.body, { childList: true, subtree: true });
 
     // Формуємо правильний URL для деталей
     function buildTourUrl(hid, oid, od, ol) {
-        const slug = getAgentSlug();
-        const baseUrl = slug ? `/a/${slug}/tour-detail/` : '/tour-detail/';
-        let url = `${baseUrl}?hid=${hid}&oid=${oid}`;
-        if (od) url += `&od=${od}`;
-        if (ol) url += `&ol=${ol}`;
-        return url;
-    }
+    const slug = getAgentSlug();
+    const baseUrl = slug ? `/a/${slug}/tour-page/` : '/tour-page/';  // ← ЗМІНЕНО
+    let url = `${baseUrl}?hid=${hid}&oid=${oid}`;
+    if (od) url += `&od=${od}`;
+    if (ol) url += `&ol=${ol}`;
+    return url;
+}
 
     // Перехоплюємо кліки на картках турів
     document.addEventListener('click', function(e) {

@@ -1650,28 +1650,34 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>
 
-        <script>
+                <script>
             (function() {
-                // Отримуємо параметри з URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const hid = urlParams.get('hid');
-                const oid = urlParams.get('oid');
-                const od = urlParams.get('od');
-                const ol = urlParams.get('ol');
+                // ВИКОРИСТОВУЄМО ПАРАМЕТРИ З CONTEXT (Django)
+                const hid = '{{ hid|default:"" }}';
+                const oid = '{{ oid|default:"" }}';
+                const od = '{{ od|default:"" }}';
+                const ol = '{{ ol|default:"" }}';
 
-                if (!hid || !oid) {
+                // Резервний варіант з URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const finalHid = hid || urlParams.get('hid');
+                const finalOid = oid || urlParams.get('oid');
+                const finalOd = od || urlParams.get('od');
+                const finalOl = ol || urlParams.get('ol');
+
+                if (!finalHid || !finalOid) {
                     document.getElementById('otpusk-tour-container').innerHTML =
                         '<div class="alert alert-warning">⚠️ Параметри туру не знайдено. Спробуйте повернутися до результатів пошуку та вибрати тур знову.</div>';
                     return;
                 }
 
-                console.log('🔄 Завантаження API OTPUSK для туру:', {hid, oid, od, ol});
+                console.log('🔄 Завантаження API OTPUSK для туру:', {hid: finalHid, oid: finalOid, od: finalOd, ol: finalOl});
 
                 // Налаштування для API
-                window.osHotelId = hid;
-                window.osOperatorId = oid;
-                window.osDateFrom = od || '';
-                window.osDuration = ol || '';
+                window.osHotelId = finalHid;
+                window.osOperatorId = finalOid;
+                window.osDateFrom = finalOd || '';
+                window.osDuration = finalOl || '';
                 window.osLang = 'ua';
                 window.osCurrency = 'converted';
                 window.osTarget = '_blank';

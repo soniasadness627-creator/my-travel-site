@@ -588,21 +588,38 @@ def home(request):
 
 # ========== ОСНОВНІ ФУНКЦІЇ ДЛЯ АГЕНТСЬКИХ САЙТІВ ==========
 
-def tour_detail(request, pk):
+def tour_detail(request, pk=None, slug=None):
     """Деталі туру - використовує дані з Otpusk"""
-    try:
-        tour = get_object_or_404(Tour, pk=pk)
-    except Http404:
-        return redirect('/search-otpusk/')
+    tour = None
 
-    reviews = tour.reviews.all()
-    avg_rating = reviews.aggregate(models.Avg('rating'))['rating__avg']
-    gallery_images = tour.gallery.all()
+    # Якщо є pk, шукаємо тур в БД
+    if pk:
+        try:
+            tour = get_object_or_404(Tour, pk=pk)
+        except Http404:
+            pass
 
-    similar_tours = Tour.objects.filter(
-        country=tour.country,
-        stars=tour.stars
-    ).exclude(pk=tour.pk)[:8]
+    # Отримуємо параметри з URL для API OTPUSK
+    hid = request.GET.get('hid')
+    oid = request.GET.get('oid')
+    od = request.GET.get('od')
+    ol = request.GET.get('ol')
+
+    # Ініціалізуємо порожні значення
+    reviews = []
+    avg_rating = None
+    gallery_images = []
+    similar_tours = []
+
+    # Якщо тур знайдено, отримуємо всі дані
+    if tour:
+        reviews = tour.reviews.all()
+        avg_rating = reviews.aggregate(models.Avg('rating'))['rating__avg']
+        gallery_images = tour.gallery.all()
+        similar_tours = Tour.objects.filter(
+            country=tour.country,
+            stars=tour.stars
+        ).exclude(pk=tour.pk)[:8] if tour.pk else []
 
     context = {
         'tour': tour,
@@ -611,9 +628,13 @@ def tour_detail(request, pk):
         'gallery_images': gallery_images,
         'similar_tours': similar_tours,
         'review_form': ReviewForm(),
+        # Додаємо параметри з URL для API OTPUSK
+        'hid': hid,
+        'oid': oid,
+        'od': od,
+        'ol': ol,
     }
     return render(request, 'tours/tour_detail.html', context)
-
 
 def search_results(request):
     """Результати пошуку - перенаправляємо на Otpusk"""
