@@ -1594,83 +1594,33 @@ observer.observe(document.body, { childList: true, subtree: true });
 }
 </style>
 <script>
-// ========== ВИПРАВЛЕННЯ ПЕРЕХОДУ НА ДЕТАЛІ ТУРУ ==========
-(function() {
-    // Отримуємо slug агента з URL
-    function getAgentSlug() {
-        const pathParts = window.location.pathname.split('/');
-        for (let i = 0; i < pathParts.length; i++) {
-            if (pathParts[i] === 'a' && pathParts[i + 1]) {
-                return pathParts[i + 1];
-            }
-        }
-        return null;
+// Перехоплення кліків на тури
+document.addEventListener('click', function(e) {
+    let target = e.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
+    if (!target) return;
+
+    let url = target.href || '';
+    if (!url && target.closest('.new_r-item')) {
+        let link = target.closest('.new_r-item').querySelector('a');
+        if (link) url = link.href;
     }
 
-    // Формуємо правильний URL для деталей
-    function buildTourUrl(hid, oid, od, ol) {
-        const slug = getAgentSlug();
-        const baseUrl = slug ? `/a/${slug}/tour-detail/` : '/tour-detail/';
-        let url = `${baseUrl}?hid=${hid}&oid=${oid}`;
-        if (od) url += `&od=${od}`;
-        if (ol) url += `&ol=${ol}`;
-        return url;
+    if (!url || !url.includes('hid=')) return;
+
+    e.preventDefault();
+
+    let hid = url.match(/hid=(\d+)/)?.[1];
+    let oid = url.match(/oid=([\d]+)/)?.[1];
+    let od = url.match(/od=([\d-]+)/)?.[1];
+    let ol = url.match(/ol=(\d+)/)?.[1];
+
+    if (hid && oid) {
+        let baseUrl = window.location.pathname.startsWith('/a/')
+            ? `/a/${window.location.pathname.split('/')[2]}/tour-page/`
+            : '/tour-page/';
+        window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}`;
     }
-
-    // Перехоплюємо кліки на картках турів
-    document.addEventListener('click', function(e) {
-        // Шукаємо картку туру
-        const tourItem = e.target.closest('.new_r-item');
-        if (!tourItem) return;
-
-        // Шукаємо посилання всередині картки
-        const link = tourItem.querySelector('a');
-        if (!link) return;
-
-        const href = link.getAttribute('href') || '';
-
-        // Витягуємо параметри з URL
-        let hid = href.match(/hid=(\d+)/)?.[1];
-        let oid = href.match(/oid=(\d+)/)?.[1];
-       // ========== ВИПРАВЛЕННЯ ПЕРЕХОДУ НА ДЕТАЛІ ТУРУ ==========
-(function() {
-    function getAgentSlug() {
-        const pathParts = window.location.pathname.split('/');
-        for (let i = 0; i < pathParts.length; i++) {
-            if (pathParts[i] === 'a' && pathParts[i + 1]) {
-                return pathParts[i + 1];
-            }
-        }
-        return null;
-    }
-
-    function buildTourUrl(hid, oid, od, ol) {
-        const slug = getAgentSlug();
-        const baseUrl = slug ? `/a/${slug}/tour-page/` : '/tour-page/';   // ← ЗМІНЕНО!
-        let url = `${baseUrl}?hid=${hid}&oid=${oid}`;
-        if (od) url += `&od=${od}`;
-        if (ol) url += `&ol=${ol}`;
-        return url;
-    }
-
-    document.addEventListener('click', function(e) {
-        const tourItem = e.target.closest('.new_r-item');
-        if (!tourItem) return;
-        const link = tourItem.querySelector('a');
-        if (!link) return;
-        const href = link.getAttribute('href') || '';
-        let hid = href.match(/hid=(\d+)/)?.[1];
-        let oid = href.match(/oid=(\d+)/)?.[1];
-        let od = href.match(/od=([\d-]+)/)?.[1];
-        let ol = href.match(/ol=(\d+)/)?.[1];
-        if (hid && oid) {
-            e.preventDefault();
-            e.stopPropagation();
-            const newUrl = buildTourUrl(hid, oid, od, ol);
-            window.location.href = newUrl;
-        }
-    });
-})();
+});
 </script>
 <!-- ========== ФІКС ВИСОТИ ТА ВІДСТУПІВ (ЦІНА СПРАВА) - ЗМЕНШЕНА ВЕРСІЯ ========== -->
 <style>
