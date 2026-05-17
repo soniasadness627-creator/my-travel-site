@@ -1671,4 +1671,68 @@ observer.observe(document.body, { childList: true, subtree: true });
     });
 })();
 </script>
+<!-- ========== ФІКС ВИСОТИ ТА ВІДСТУПІВ (ЦІНА СПРАВА) ========== -->
+<style>
+/* ЗБІЛЬШУЄМО ВИСОТУ КАРТКИ НА ПК */
+.new_r-item {
+    min-height: 453px !important;
+    height: auto !important;
+}
+
+/* Текст "з Брно / 24 травня" - по лівій стороні */
+.new_r-item-table {
+    justify-content: flex-start !important;
+}
+
+.new_r-item-col:first-child {
+    justify-content: flex-start !important;
+    text-align: left !important;
+}
+
+/* ЦІНА - ПО ПРАВІЙ СТОРОНІ */
+.new_r-item-col:last-child {
+    justify-content: flex-end !important;
+}
+
+/* Блок ціни - залишаємо absolute, але зміщуємо вниз */
+.new_r-item-price {
+    position: absolute !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    margin-top: 0 !important;
+    width: auto !important;
+    min-width: 140px !important;
+    justify-content: center !important;
+}
+
+/* ЗБІЛЬШУЄМО ВІДСТУП МІЖ ТЕКСТОМ ТА ЦІНОЮ */
+.new_r-item-table {
+    margin-bottom: 30px !important;
+}
+
+/* Відступ між рядками в таблиці */
+.new_r-item-col {
+    gap: 15px !important;
+}
+
+/* Для мобільних */
+@media (max-width: 768px) {
+    .new_r-item {
+        min-height: auto !important;
+    }
+
+    .new_r-item-price {
+        position: relative !important;
+        bottom: auto !important;
+        right: auto !important;
+        width: 100% !important;
+        margin-top: 20px !important;
+        justify-content: center !important;
+    }
+
+    .new_r-item-col:last-child {
+        justify-content: center !important;
+    }
+}
+</style>
 {% endblock %}
