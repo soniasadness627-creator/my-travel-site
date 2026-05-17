@@ -615,8 +615,8 @@ document.addEventListener('click', function(e) {
 
     if (hid && oid) {
     let baseUrl = window.location.pathname.startsWith('/a/')
-        ? `/a/${window.location.pathname.split('/')[2]}/tour-page/`
-        : '/tour-page/';
+        ? `/a/${window.location.pathname.split('/')[2]}/tour-page/`   // ЗМІНЕНО
+        : '/tour-page/';                                              // ЗМІНЕНО
     window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}`;
 }
 });
