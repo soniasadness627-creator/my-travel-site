@@ -38,11 +38,11 @@
                 <script src="https://export.otpusk.com/js/order"></script>
             </div>
 
-            <!-- ========== СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ОДНАКОВИХ ДАТ (ДЛЯ КАЛЕНДАРЯ) ========== -->
+            <!-- ========== СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ОДНАКОВИХ ДАТ ========== -->
 <script>
 (function() {
-    if (window.calendarDateSet) return;
-    window.calendarDateSet = true;
+    if (window.calendarDateFixed) return;
+    window.calendarDateFixed = true;
 
     const urlParams = new URLSearchParams(window.location.search);
     const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
@@ -51,121 +51,137 @@
     let dateTo = urlParams.get('date_to') || '';
     const autoSearch = urlParams.get('auto_search') === '1';
 
-    console.log('📥 Календар отримав параметри:', { geo, departureText, dateFrom, dateTo, autoSearch });
+    console.log('📥 Параметри:', { geo, departureText, dateFrom, dateTo, autoSearch });
 
-    // ПРИМУСОВО ВСТАНОВЛЮЄМО ОДНАКОВІ ДАТИ
-    if (dateFrom && (!dateTo || dateFrom !== dateTo)) {
-        dateTo = dateFrom;
-        console.log('📅 ПРИМУСОВО ВСТАНОВЛЮЄМО ОДНАКОВІ ДАТИ:', { dateFrom, dateTo });
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.set('date_to', dateTo);
-        window.history.replaceState({}, '', newUrl);
-    }
-
+    // Якщо немає дати - виходимо
     if (!dateFrom) return;
 
-    const dayNum = dateFrom.split('.')[0];
-    const month = dateFrom.split('.')[1];
-    const year = dateFrom.split('.')[2];
-    let step = 0;
-    let searchTriggered = false;
+    // Робимо дати однаковими
+    dateTo = dateFrom;
 
-    function setCalendarData() {
-        console.log('🔄 Крок:', step);
+    let attempts = 0;
+    let maxAttempts = 20;
+    let countrySet = false;
+    let departureSet = false;
 
-        // Крок 0: Вибір країни
-        if (geo && step === 0) {
-            const input = document.querySelector('#location');
-            if (input && input.value !== geo) {
-                input.value = geo;
-                input.dispatchEvent(new Event('input', { bubbles: true }));
+    function splitDate(dateStr) {
+        if (!dateStr) return { day: '', month: '', year: '' };
+        const parts = dateStr.split('.');
+        return { day: parts[0] || '', month: parts[1] || '', year: parts[2] || '' };
+    }
+
+    const fromDate = splitDate(dateFrom);
+    const toDate = splitDate(dateTo);
+
+    function applyDateToField(btn, day, month, year) {
+        if (!btn) return false;
+
+        // Змінюємо текст кнопки безпосередньо
+        const daySpan = btn.querySelector('span');
+        if (daySpan) {
+            daySpan.textContent = day;
+        }
+
+        // Змінюємо повний текст
+        const monthNames = ['січ', 'лют', 'бер', 'кві', 'тра', 'чер', 'лип', 'сер', 'вер', 'жов', 'лис', 'гру'];
+        const monthName = monthNames[parseInt(month) - 1] || 'тра';
+        btn.childNodes.forEach(node => {
+            if (node.nodeType === 3 && node.textContent) {
+                node.textContent = node.textContent.replace(/\d+/, day);
+            }
+        });
+
+        // Якщо є місяць в тексті
+        if (btn.innerHTML && monthName) {
+            const monthsInText = ['січ', 'лют', 'бер', 'кві', 'тра', 'чер', 'лип', 'сер', 'вер', 'жов', 'лис', 'гру'];
+            for (let m of monthsInText) {
+                if (btn.innerHTML.includes(m)) {
+                    btn.innerHTML = btn.innerHTML.replace(m, monthName);
+                    break;
+                }
+            }
+        }
+
+        console.log(`📅 Встановлено дату: ${day} ${monthName}`);
+        return true;
+    }
+
+    function trySetDates() {
+        attempts++;
+        console.log(`🔄 Спроба ${attempts}...`);
+
+        // Встановлюємо КРАЇНУ
+        if (geo && !countrySet) {
+            const countryInput = document.querySelector('#location');
+            if (countryInput && countryInput.value !== geo) {
+                countryInput.value = geo;
+                countryInput.dispatchEvent(new Event('input', { bubbles: true }));
+                countryInput.dispatchEvent(new Event('change', { bubbles: true }));
                 console.log('✅ Країна:', geo);
+                countrySet = true;
+            } else if (countryInput && countryInput.value === geo) {
+                countrySet = true;
             }
-            step = 1;
-            setTimeout(setCalendarData, 500);
         }
-        // Крок 1: Вибір міста вильоту
-        else if (departureText && step === 1) {
-            const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-            for (let item of items) {
-                if (item.innerText.trim() === departureText) {
-                    item.click();
-                    console.log('✅ Місто вильоту:', departureText);
-                    break;
+
+        // Встановлюємо МІСТО ВИЛЬОТУ
+        if (departureText && !departureSet) {
+            const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
+            if (departureBtn && !departureBtn.innerText.includes(departureText)) {
+                departureBtn.click();
+                setTimeout(() => {
+                    const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                    for (let item of items) {
+                        if (item.innerText.trim() === departureText) {
+                            item.click();
+                            departureSet = true;
+                            console.log('✅ Місто вильоту:', departureText);
+                            break;
+                        }
+                    }
+                }, 200);
+            } else if (departureBtn && departureBtn.innerText.includes(departureText)) {
+                departureSet = true;
+            }
+        }
+
+        // Встановлюємо ДАТУ ПОЧАТКУ
+        const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
+        if (startBtn && fromDate.day) {
+            applyDateToField(startBtn, fromDate.day, fromDate.month, fromDate.year);
+        }
+
+        // Встановлюємо ДАТУ КІНЦЯ (ТАКУ САМУ)
+        const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
+        if (endBtn && toDate.day) {
+            applyDateToField(endBtn, toDate.day, toDate.month, toDate.year);
+        }
+
+        // Якщо обидві дати встановлені та країна вибрана - запускаємо пошук
+        if (autoSearch && countrySet && attempts > 3 && !window.searchStarted) {
+            window.searchStarted = true;
+            setTimeout(() => {
+                const searchBtn = document.querySelector('.new_f-form-submit');
+                if (searchBtn) {
+                    searchBtn.click();
+                    console.log('🔍 Пошук запущено з датами: початок=' + dateFrom + ', кінець=' + dateTo);
                 }
-            }
-            step = 2;
-            setTimeout(setCalendarData, 800);
+            }, 1000);
         }
-        // Крок 2: Відкриваємо календар ПОЧАТКУ
-        else if (step === 2) {
-            const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
-            if (startBtn) {
-                startBtn.click();
-                console.log('📅 Відкрито календар початку');
-                step = 3;
-                setTimeout(setCalendarData, 500);
-            } else {
-                console.log('❌ Кнопка календаря не знайдена');
-                step = 6;
-                setTimeout(setCalendarData, 500);
-            }
-        }
-        // Крок 3: Вибираємо дату в календарі
-        else if (step === 3) {
-            // Шукаємо клітинку з потрібним числом
-            const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
-            let clicked = false;
-            for (let cell of cells) {
-                if (cell.innerText === dayNum) {
-                    cell.click();
-                    clicked = true;
-                    console.log('✅ Дата вибрана:', dateFrom);
-                    step = 4;
-                    setTimeout(setCalendarData, 500);
-                    break;
-                }
-            }
-            if (!clicked) {
-                console.log('❌ Не знайдено дату', dayNum);
-                step = 5;
-                setTimeout(setCalendarData, 500);
-            }
-        }
-        // Крок 4: Закриваємо календар
-        else if (step === 4) {
-            // Шукаємо кнопку закриття календаря
-            const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child, .ui-datepicker-cancel');
-            if (closeBtn) {
-                closeBtn.click();
-                console.log('📅 Календар закрито');
-            } else {
-                // Якщо кнопки немає, клікаємо поза календарем
-                document.body.click();
-                console.log('📅 Календар закрито (кліком поза)');
-            }
-            step = 5;
-            setTimeout(setCalendarData, 500);
-        }
-        // Крок 5: Запуск пошуку
-        else if (step === 5 && !searchTriggered && autoSearch) {
-            const searchBtn = document.querySelector('.new_f-form-submit');
-            if (searchBtn) {
-                searchBtn.click();
-                searchTriggered = true;
-                console.log('🔍 Пошук запущено з однаковими датами!');
-            }
-            step = 6;
+
+        // Повторюємо, поки не встановимо всі значення
+        if (attempts < maxAttempts) {
+            setTimeout(trySetDates, 800);
         }
     }
 
-    // Запускаємо з різними затримками для надійності
-    setTimeout(setCalendarData, 1000);
-    setTimeout(setCalendarData, 2000);
-    setTimeout(setCalendarData, 3000);
-    setTimeout(setCalendarData, 4000);
-    setTimeout(setCalendarData, 5000);
-    setTimeout(setCalendarData, 6000);
+    // Запускаємо спроби
+    setTimeout(trySetDates, 1000);
+    setTimeout(trySetDates, 2000);
+    setTimeout(trySetDates, 3000);
+    setTimeout(trySetDates, 4000);
+    setTimeout(trySetDates, 5000);
+    setTimeout(trySetDates, 6000);
 })();
 </script>
         </div>
