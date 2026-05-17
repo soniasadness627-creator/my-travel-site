@@ -1159,4 +1159,61 @@ document.addEventListener('DOMContentLoaded', function() {
     overflow: visible !important;
 }
 </style>
+<!-- ========== ФІКС КОЛЬОРІВ ФІЛЬТРІВ (ГОЛУБИЙ → ЧОРНИЙ) ========== -->
+<style>
+/* Змінюємо колір всіх заголовків фільтрів з голубого на чорний */
+.new_f-ext-bl-title,
+.new_f-ext-bl-title span,
+.new_f-ext-bl-title * {
+    color: #000000 !important;
+}
+
+/* Додатково для всіх елементів фільтрів */
+.new_f-ext-bl-title {
+    color: #000000 !important;
+}
+
+/* Якщо є інші голубі елементи в фільтрах */
+.new_f-ext-bl-body label span,
+.new_f-services-label .new_f-label-name,
+.new_f-ext-scale-item {
+    color: #333333 !important;
+}
+
+/* Слайдер (повзунок) - змінюємо колір на чорний/сірий */
+.ui-slider-range {
+    background: #333333 !important;
+}
+
+.ui-slider-handle {
+    border-color: #333333 !important;
+    background: #333333 !important;
+}
+
+/* Кнопка "Очистити фільтри" */
+.new_f-ext-clear-btn {
+    color: #000000 !important;
+    border-color: #cccccc !important;
+}
+
+.new_f-ext-clear-btn:hover {
+    background: #f0f0f0 !important;
+}
+
+/* Чекбокси та радіо кнопки */
+.new_f-ext-bl-body input[type="checkbox"]:checked,
+.new_f-ext-bl-body input[type="radio"]:checked {
+    accent-color: var(--primary-color, #9f3c3c) !important;
+}
+
+/* Текст "Оцінки готелю" */
+.new_f-ext-bl-rat .new_f-ext-bl-title,
+.new_f-ext-bl-price .new_f-ext-bl-title,
+.new_f-ext-bl-transp .new_f-ext-bl-title,
+.new_f-ext-bl-recommend .new_f-ext-bl-title,
+.new_f-ext-bl-cat .new_f-ext-bl-title,
+.new_f-ext-bl-food .new_f-ext-bl-title {
+    color: #000000 !important;
+}
+</style>
 {% endblock %}
