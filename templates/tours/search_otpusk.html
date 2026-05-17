@@ -539,4 +539,38 @@ document.addEventListener('click', function(e) {
     font-weight: normal !important;
 }
 </style>
+<!-- ========== ФІКС КОЛЬОРУ КНОПКИ "ЗАСТОСУВАТИ" ========== -->
+<style>
+/* Кнопка "Застосувати" - використовує колір агента з конструктора */
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply,
+.new_f-dropdown-btn-apply {
+    background: var(--primary-color) !important;
+    border: none !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 16px !important;
+    cursor: pointer !important;
+    border-radius: 3px !important;
+    text-align: center !important;
+}
+
+/* Ховер ефект */
+.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover,
+.new_f-dropdown-btn-apply:hover {
+    background: var(--primary-dark) !important;
+    transform: scale(1.02) !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Кнопка "Скасувати" - залишаємо нейтральною */
+.new_f-dropdown-btn-cancel {
+    background: #f0f0f0 !important;
+    color: #333 !important;
+    border: none !important;
+}
+
+.new_f-dropdown-btn-cancel:hover {
+    background: #e0e0e0 !important;
+}
+</style>
 {% endblock %}
