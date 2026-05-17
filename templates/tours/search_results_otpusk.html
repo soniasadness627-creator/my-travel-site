@@ -1783,4 +1783,37 @@ observer.observe(document.body, { childList: true, subtree: true });
     display: none !important;
 }
 </style>
+<!-- ========== ГОЛОВНИЙ ФІКС КНОПКИ "ПОШУК" ========== -->
+<script>
+(function() {
+    function fixSearchButton() {
+        const btn = document.querySelector('.new_f-form-submit');
+        if (!btn) return false;
+        if (btn.getAttribute('data-fixed') === 'true') return true;
+
+        btn.textContent = 'Пошук';
+        btn.style.whiteSpace = 'nowrap';
+        btn.style.width = 'auto';
+        btn.style.minWidth = '80px';
+        btn.style.padding = '10px 20px';
+        btn.setAttribute('data-fixed', 'true');
+        console.log('✅ Кнопку змінено на "Пошук"');
+        return true;
+    }
+
+    // Спроба одразу
+    if (fixSearchButton()) return;
+
+    // Спостерігаємо за появою кнопки
+    const observer = new MutationObserver(function() {
+        if (fixSearchButton()) observer.disconnect();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Запасні варіанти
+    setTimeout(fixSearchButton, 3000);
+    setTimeout(fixSearchButton, 5000);
+    setTimeout(fixSearchButton, 7000);
+})();
+</script>
 {% endblock %}

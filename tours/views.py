@@ -672,11 +672,31 @@ def tour_reviews(request, pk):
 
 
 def search_otpusk(request, slug=None):
-    """Сторінка результатів пошуку Otpusk.com (БЕЗ блоку консультації)"""
-    agent_site = getattr(request, 'current_agent_site', None)
-    context = {'agent_site': agent_site}
-    return render(request, 'tours/search_results_otpusk.html', context)
+    """
+    Сторінка результатів пошуку турів через Otpusk API
+    """
+    # Отримуємо параметри з URL
+    geo = request.GET.get('geo', '')
+    departure_text = request.GET.get('departure_text', '')
+    date_from = request.GET.get('date_from', '')
+    date_to = request.GET.get('date_to', '')
+    duration = request.GET.get('duration', '')
+    auto_search = request.GET.get('auto_search', '1')
 
+    agent_site = getattr(request, 'current_agent_site', None)
+
+    context = {
+        'agent_site': agent_site,
+        'geo': geo,
+        'departure_text': departure_text,
+        'date_from': date_from,
+        'date_to': date_to,
+        'duration': duration,
+        'auto_search': auto_search,
+    }
+
+    # ВАЖЛИВО: використовуємо правильний шаблон!
+    return render(request, 'search_otpusk_results.html', context)
 
 def search_results_calendar(request, slug=None):
     """Сторінка результатів пошуку для календаря низьких цін"""
