@@ -527,65 +527,70 @@ document.addEventListener('click', function(e) {
 </script>
 <!-- ========== ФІКС КОЛЬОРІВ ФІЛЬТРІВ ТА КНОПОК ========== -->
 <style>
-/* Зміна фону блоку пошуку на білий */
-.new_f-container {
-    background: white !important;
+/* ========== ПРИМУСОВА ЗМІНА ФОНУ ПОШУКУ НА БІЛИЙ ========== */
+#otpusk-search-module .new_f-container,
+#otpusk-search-module .new_f-wrapper,
+#otpusk-search-module .new_f-wrapper-bg-imgs {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
     background-image: none !important;
-    background-color: white !important;
 }
 
-/* Видаляємо градієнтний фон */
-.new_f-container,
-.new_f-wrapper-bg-imgs,
-.new_f-wrapper {
-    background: white !important;
-    background-image: none !important;
-    background-color: white !important;
-}
-
-/* Зміна кольору заголовка "Пошук туру" на чорний */
-.new_f-title {
+/* ========== ПРИМУСОВА ЗМІНА КОЛЬОРУ ТЕКСТУ "ПОШУК ТУРУ" НА ЧОРНИЙ ========== */
+#otpusk-search-module .new_f-title,
+#otpusk-search-module .new_f-title span {
     color: #000000 !important;
+    background: transparent !important;
 }
 
-/* Додаткові стилі для всіх текстів у формі пошуку (робляться чорними/темними) */
-.new_f-wrapper * {
+/* ========== ДОДАТКОВО: ЗМІНА КОЛЬОРУ ВСЬОГО ТЕКСТУ В ФОРМІ ========== */
+#otpusk-search-module .new_f-wrapper,
+#otpusk-search-module .new_f-dropdown-btn,
+#otpusk-search-module .new_f-dropdown-btn-text,
+#otpusk-search-module .new_f-dropdown-item,
+#otpusk-search-module .new_input-mask,
+#otpusk-search-module .new_input-mask-country,
+#otpusk-search-module .new_input-mask-cities,
+#otpusk-search-module .new_f-ext-bl-title,
+#otpusk-search-module .new_f-ext-bl-title span,
+#otpusk-search-module .new_f-dropdown-body-top {
     color: #333333 !important;
 }
 
-/* Але залишаємо посилання та кнопки в їхніх кольорах */
-.new_f-wrapper a,
-.new_f-wrapper button,
-.new_f-wrapper .new_f-form-submit {
-    color: inherit !important;
-}
-
-/* Кнопка пошуку залишається в стилі агента */
-.new_f-wrapper .new_f-form-submit {
-    background: var(--primary-color) !important;
+/* Залишаємо кнопку пошуку в стилі вашого агента */
+#otpusk-search-module .new_f-form-submit {
+    background: var(--primary-color, #9f3c3c) !important;
     color: white !important;
-}
-
-/* Виправлення для місць, де може залишитись блакитний текст */
-.new_f-dropdown-btn,
-.new_f-dropdown-btn-text,
-.new_f-wrapper .new_f-dropdown-item,
-.new_f-wrapper .new_f-ext-bl-title {
-    color: #333333 !important;
-}
-
-/* Підзаголовки фільтрів */
-.new_f-ext-bl-title span {
-    color: #666666 !important;
-}
-
-/* Поле вводу країни */
-.new_input-mask,
-.new_input-mask-country,
-.new_input-mask-cities {
-    color: #333333 !important;
+    border: none !important;
 }
 </style>
+<script>
+// Примусове змінення стилів після завантаження всіх скриптів
+setTimeout(function() {
+    const searchContainer = document.querySelector('.new_f-container');
+    const titleElement = document.querySelector('.new_f-title');
+
+    if (searchContainer) {
+        searchContainer.style.background = 'white';
+        searchContainer.style.backgroundColor = 'white';
+        searchContainer.style.backgroundImage = 'none';
+    }
+
+    if (titleElement) {
+        titleElement.style.color = 'black';
+    }
+
+    // Зміна всіх елементів з блакитним фоном
+    const blueElements = document.querySelectorAll('.new_f-wrapper-bg-imgs, .new_f-wrapper');
+    blueElements.forEach(el => {
+        el.style.background = 'white';
+        el.style.backgroundColor = 'white';
+        el.style.backgroundImage = 'none';
+    });
+
+    console.log('✅ Стилі пошуку примусово змінено');
+}, 500);
+</script>
 <!-- ========== ПРИМУСОВА ЗМІНА ТЕКСТУ КНОПКИ ========== -->
 <style>
 /* Приховуємо старий текст і додаємо новий через псевдоелемент - ТІЛЬКИ ЯКЩО ТЕКСТ "Знайти" */
