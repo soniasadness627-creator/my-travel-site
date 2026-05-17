@@ -633,6 +633,8 @@ def tour_detail(request, pk=None, slug=None):
         'oid': oid,
         'od': od,
         'ol': ol,
+        # ДОДАЙТЕ ЦЕЙ РЯДОК:
+        'random_agent': get_random_agent(),
     }
     return render(request, 'tours/tour_detail.html', context)
 
