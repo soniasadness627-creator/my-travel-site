@@ -1722,4 +1722,52 @@ observer.observe(document.body, { childList: true, subtree: true });
     }
 }
 </style>
+<!-- ========== ФІКС ФОНУ ТА КОЛЬОРУ ТЕКСТУ ========== -->
+<style>
+/* Білий фон для кнопки "Розширений пошук" */
+.new_f-ext-btn-container,
+.new_f-ext-btn {
+    background: white !important;
+}
+
+/* Кнопка "Розширений пошук" - чорний текст */
+.new_f-ext-btn-text {
+    color: #000000 !important;
+}
+
+/* Цифра в дужках (3) - також чорна */
+.new_f-ext-btn-filters-num,
+.new_f-ext-btn-filters-num span {
+    color: #000000 !important;
+}
+
+/* Заголовок "Пошук туру" - чорний текст */
+.new_f-title {
+    color: #000000 !important;
+}
+</style>
+<!-- ========== ФІКС ФОНУ ФОРМИ ПОШУКУ ========== -->
+<style>
+/* Робимо фон форми пошуку білим */
+.new_f-container,
+.new_f-wrapper,
+.new_f-wrapper-bg-imgs,
+.new_f-form {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+}
+
+/* Видаляємо градієнт і робимо фон білим */
+.new_f-container {
+    background: #ffffff !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+/* Додатково для будь-яких інших елементів */
+.new_f-wrapper-bg-imgs {
+    display: none !important;
+}
+</style>
 {% endblock %}
