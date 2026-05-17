@@ -39,137 +39,135 @@
             </div>
 
             <!-- ========== СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ОДНАКОВИХ ДАТ (ДЛЯ КАЛЕНДАРЯ) ========== -->
-            <script>
-            (function() {
-                if (window.calendarDateSet) return;
-                window.calendarDateSet = true;
+<script>
+(function() {
+    if (window.calendarDateSet) return;
+    window.calendarDateSet = true;
 
-                const urlParams = new URLSearchParams(window.location.search);
-                const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
-                const departureText = urlParams.get('departure_text') || '';
-                let dateFrom = urlParams.get('date_from') || '';
-                let dateTo = urlParams.get('date_to') || '';
-                const autoSearch = urlParams.get('auto_search') === '1';
+    const urlParams = new URLSearchParams(window.location.search);
+    const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
+    const departureText = urlParams.get('departure_text') || '';
+    let dateFrom = urlParams.get('date_from') || '';
+    let dateTo = urlParams.get('date_to') || '';
+    const autoSearch = urlParams.get('auto_search') === '1';
 
-                console.log('📥 Календар отримав параметри:', { geo, departureText, dateFrom, dateTo, autoSearch });
+    console.log('📥 Календар отримав параметри:', { geo, departureText, dateFrom, dateTo, autoSearch });
 
-                // ПРИМУСОВО ВСТАНОВЛЮЄМО ОДНАКОВІ ДАТИ
-                if (dateFrom && (!dateTo || dateFrom !== dateTo)) {
-                    dateTo = dateFrom;
-                    console.log('📅 ПРИМУСОВО ВСТАНОВЛЮЄМО ОДНАКОВІ ДАТИ:', { dateFrom, dateTo });
-                    const newUrl = new URL(window.location.href);
-                    newUrl.searchParams.set('date_to', dateTo);
-                    window.history.replaceState({}, '', newUrl);
+    // ПРИМУСОВО ВСТАНОВЛЮЄМО ОДНАКОВІ ДАТИ
+    if (dateFrom && (!dateTo || dateFrom !== dateTo)) {
+        dateTo = dateFrom;
+        console.log('📅 ПРИМУСОВО ВСТАНОВЛЮЄМО ОДНАКОВІ ДАТИ:', { dateFrom, dateTo });
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set('date_to', dateTo);
+        window.history.replaceState({}, '', newUrl);
+    }
+
+    if (!dateFrom) return;
+
+    const dayNum = dateFrom.split('.')[0];
+    const month = dateFrom.split('.')[1];
+    const year = dateFrom.split('.')[2];
+    let step = 0;
+    let searchTriggered = false;
+
+    function setCalendarData() {
+        console.log('🔄 Крок:', step);
+
+        // Крок 0: Вибір країни
+        if (geo && step === 0) {
+            const input = document.querySelector('#location');
+            if (input && input.value !== geo) {
+                input.value = geo;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                console.log('✅ Країна:', geo);
+            }
+            step = 1;
+            setTimeout(setCalendarData, 500);
+        }
+        // Крок 1: Вибір міста вильоту
+        else if (departureText && step === 1) {
+            const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+            for (let item of items) {
+                if (item.innerText.trim() === departureText) {
+                    item.click();
+                    console.log('✅ Місто вильоту:', departureText);
+                    break;
                 }
-
-                if (!dateFrom) return;
-
-                const dayNum = dateFrom.split('.')[0];
-                let step = 0;
-                let searchTriggered = false;
-
-                function setCalendarData() {
-                    // Країна
-                    if (geo && step === 0) {
-                        const input = document.querySelector('#location');
-                        if (input && input.value !== geo) {
-                            input.value = geo;
-                            input.dispatchEvent(new Event('input', { bubbles: true }));
-                            console.log('✅ Країна:', geo);
-                        }
-                        step = 1;
-                        setTimeout(setCalendarData, 500);
-                    }
-                    // Місто вильоту
-                    else if (departureText && step === 1) {
-                        const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                        for (let item of items) {
-                            if (item.innerText.trim() === departureText) {
-                                item.click();
-                                console.log('✅ Місто вильоту:', departureText);
-                                break;
-                            }
-                        }
-                        step = 2;
-                        setTimeout(setCalendarData, 800);
-                    }
-                    // Дата ПОЧАТКУ - відкриваємо календар
-                    else if (step === 2) {
-                        const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
-                        if (startBtn) {
-                            startBtn.click();
-                            step = 3;
-                            setTimeout(setCalendarData, 200);
-                        } else {
-                            step = 6;
-                        }
-                    }
-                    // Вибрати дату ПОЧАТКУ
-                    else if (step === 3) {
-                        const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                        let clicked = false;
-                        for (let cell of cells) {
-                            if (cell.innerText === dayNum) {
-                                cell.click();
-                                clicked = true;
-                                console.log('✅ Дата ПОЧАТКУ вибрана:', dateFrom);
-                                step = 4;
-                                setTimeout(setCalendarData, 300);
-                                break;
-                            }
-                        }
-                        if (!clicked) step = 6;
-                    }
-                    // Дата КІНЦЯ - відкриваємо календар
-                    else if (step === 4) {
-                        const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
-                        if (endBtn) {
-                            endBtn.click();
-                            step = 5;
-                            setTimeout(setCalendarData, 200);
-                        } else {
-                            step = 6;
-                        }
-                    }
-                    // Вибрати ТУ САМУ дату для КІНЦЯ
-                    else if (step === 5) {
-                        const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                        for (let cell of cells) {
-                            if (cell.innerText === dayNum) {
-                                cell.click();
-                                console.log('✅ Дата КІНЦЯ вибрана (ТАКА САМА):', dateTo);
-                                break;
-                            }
-                        }
-                        step = 6;
-                        setTimeout(setCalendarData, 200);
-                    }
-                    // Закрити календар
-                    else if (step === 6) {
-                        const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
-                        if (closeBtn) closeBtn.click();
-                        step = 7;
-                        setTimeout(setCalendarData, 500);
-                    }
-                    // Запустити пошук
-                    else if (step === 7 && !searchTriggered && autoSearch) {
-                        const searchBtn = document.querySelector('.new_f-form-submit');
-                        if (searchBtn) {
-                            searchBtn.click();
-                            searchTriggered = true;
-                            console.log('🔍 Пошук запущено з однаковими датами!');
-                        }
-                        step = 8;
-                    }
+            }
+            step = 2;
+            setTimeout(setCalendarData, 800);
+        }
+        // Крок 2: Відкриваємо календар ПОЧАТКУ
+        else if (step === 2) {
+            const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
+            if (startBtn) {
+                startBtn.click();
+                console.log('📅 Відкрито календар початку');
+                step = 3;
+                setTimeout(setCalendarData, 500);
+            } else {
+                console.log('❌ Кнопка календаря не знайдена');
+                step = 6;
+                setTimeout(setCalendarData, 500);
+            }
+        }
+        // Крок 3: Вибираємо дату в календарі
+        else if (step === 3) {
+            // Шукаємо клітинку з потрібним числом
+            const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
+            let clicked = false;
+            for (let cell of cells) {
+                if (cell.innerText === dayNum) {
+                    cell.click();
+                    clicked = true;
+                    console.log('✅ Дата вибрана:', dateFrom);
+                    step = 4;
+                    setTimeout(setCalendarData, 500);
+                    break;
                 }
+            }
+            if (!clicked) {
+                console.log('❌ Не знайдено дату', dayNum);
+                step = 5;
+                setTimeout(setCalendarData, 500);
+            }
+        }
+        // Крок 4: Закриваємо календар
+        else if (step === 4) {
+            // Шукаємо кнопку закриття календаря
+            const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child, .ui-datepicker-cancel');
+            if (closeBtn) {
+                closeBtn.click();
+                console.log('📅 Календар закрито');
+            } else {
+                // Якщо кнопки немає, клікаємо поза календарем
+                document.body.click();
+                console.log('📅 Календар закрито (кліком поза)');
+            }
+            step = 5;
+            setTimeout(setCalendarData, 500);
+        }
+        // Крок 5: Запуск пошуку
+        else if (step === 5 && !searchTriggered && autoSearch) {
+            const searchBtn = document.querySelector('.new_f-form-submit');
+            if (searchBtn) {
+                searchBtn.click();
+                searchTriggered = true;
+                console.log('🔍 Пошук запущено з однаковими датами!');
+            }
+            step = 6;
+        }
+    }
 
-                setTimeout(setCalendarData, 1000);
-                setTimeout(setCalendarData, 2000);
-                setTimeout(setCalendarData, 3000);
-                setTimeout(setCalendarData, 4000);
-                setTimeout(setCalendarData, 5000);
-            })();
-            </script>
+    // Запускаємо з різними затримками для надійності
+    setTimeout(setCalendarData, 1000);
+    setTimeout(setCalendarData, 2000);
+    setTimeout(setCalendarData, 3000);
+    setTimeout(setCalendarData, 4000);
+    setTimeout(setCalendarData, 5000);
+    setTimeout(setCalendarData, 6000);
+})();
+</script>
         </div>
     </div>
 </div>
@@ -554,100 +552,7 @@ document.addEventListener('click', function(e) {
     setTimeout(fixSearchButton, 2000);
 })();
 </script>
-<!-- ========== ФІКС ДЛЯ МОБІЛЬНОЇ ВЕРСІЇ КАЛЕНДАРЯ НИЗЬКИХ ЦІН ========== -->
-<style>
-/* ТІЛЬКИ ДЛЯ МОБІЛЬНИХ (ширина до 768px) */
-@media (max-width: 768px) {
-    /* Картка - робимо вертикальною */
-    .new_r-item {
-        display: flex !important;
-        flex-direction: column !important;
-        min-height: auto !important;
-        height: auto !important;
-    }
 
-    /* Фото - на всю ширину */
-    .new_r-item-img {
-        position: relative !important;
-        left: auto !important;
-        top: auto !important;
-        width: 100% !important;
-        min-width: 100% !important;
-        height: 180px !important;
-        min-height: 180px !important;
-        max-height: 180px !important;
-    }
-
-    /* Текст - під фото */
-    .new_r-item-body {
-        position: relative !important;
-        margin-left: 0 !important;
-        padding: 12px 15px !important;
-        min-height: auto !important;
-        width: 100% !important;
-    }
-
-    /* Рейтинг - менший */
-    .new_r-item-rating-container {
-        width: 50px !important;
-        height: 50px !important;
-        top: 8px !important;
-        right: 8px !important;
-    }
-
-    .new_r-item-rating-value {
-        font-size: 0.9rem !important;
-    }
-
-    /* Колонки в стовпчик */
-    .new_r-item-col {
-        flex-direction: column !important;
-        gap: 6px !important;
-    }
-
-    /* Ціна - ліворуч */
-    .new_r-item-price {
-        margin-left: 0 !important;
-        text-align: left !important;
-        width: 100% !important;
-        justify-content: flex-start !important;
-    }
-
-    /* Перемикач валюти - по центру */
-    .new_r-currency-switch {
-        float: none !important;
-        margin: 0 auto 15px auto !important;
-        width: fit-content !important;
-    }
-
-    /* Відступи між картками */
-    .new_r-item-wrap {
-        margin-bottom: 30px !important;
-        padding-bottom: 15px !important;
-    }
-}
-
-/* ДЛЯ ДУЖЕ МАЛЕНЬКИХ (до 480px) */
-@media (max-width: 480px) {
-    .new_r-item-img {
-        height: 150px !important;
-        min-height: 150px !important;
-        max-height: 150px !important;
-    }
-
-    .new_r-item-body {
-        padding: 10px 12px !important;
-    }
-
-    .new_r-item-hotel {
-        font-size: 0.95rem !important;
-    }
-
-    .new_price-value {
-        font-size: 0.9rem !important;
-    }
-}
-</style>
 <!-- ========== ПЕРЕМИКАЧ ВАЛЮТИ - ГОРИЗОНТАЛЬНИЙ (ФІКС) ========== -->
 <style>
 /* Основний контейнер */
@@ -930,6 +835,155 @@ document.addEventListener('click', function(e) {
 
     .new_price-value {
         font-size: 1rem !important;
+    }
+}
+</style>
+
+<style>
+    /* ========== МОБІЛЬНА ВЕРСІЯ ========== */
+@media (max-width: 768px) {
+    .new_r-item {
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: auto !important;
+    }
+    .new_r-item-img {
+        position: relative !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 200px !important;
+        min-height: 200px !important;
+        max-height: 200px !important;
+    }
+    .new_r-item-body {
+        margin-left: 0 !important;
+        padding: 15px !important;
+        min-height: auto !important;
+    }
+    .new_r-item-col {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    .new_r-item-wrap {
+        margin-bottom: 30px !important;
+        padding-bottom: 15px !important;
+    }
+    .new_r-currency-switch {
+        float: none !important;
+        margin: 0 auto 15px auto !important;
+        width: fit-content !important;
+    }
+}
+</style>
+<!-- ========== ЕКСТРЕНЕ ВИПРАВЛЕННЯ – ПОКАЗАТИ ТЕКСТ ========== -->
+<style>
+/* Видаляємо обмеження висоти на мобільних */
+@media (max-width: 768px) {
+    /* Картка – висота автоматична */
+    .new_r-item {
+        min-height: auto !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    /* Фото – зверху, фіксована висота, не перекриває текст */
+    .new_r-item-img {
+        position: relative !important;
+        width: 100% !important;
+        height: 200px !important;
+        min-height: 200px !important;
+        max-height: 200px !important;
+        overflow: hidden !important;
+    }
+
+    /* Текст – видимий, під фото */
+    .new_r-item-body {
+        display: block !important;
+        position: relative !important;
+        margin-left: 0 !important;
+        padding: 15px !important;
+        background: white !important;
+        min-height: auto !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    /* Всі текстові елементи – видимі */
+    .new_r-item-hotel,
+    .new_r-item-geo,
+    .new_r-item-food,
+    .new_r-item-table,
+    .new_r-item-col,
+    .new_r-item-from,
+    .new_r-item-date,
+    .new_r-item-price {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+</style>
+<!-- ========== ПЕРЕВИЗНАЧЕННЯ ВИСОТИ ВІД OTPUSK ========== -->
+<style>
+/* ПЕРЕКРИВАЄМО ЗОВНІШНІ СТИЛІ Otpusk */
+.new_r-item {
+    height: auto !important;
+    min-height: 200px !important;
+    max-height: none !important;
+}
+
+/* Для мобільних – точно auto */
+@media (max-width: 768px) {
+    .new_r-item {
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+}
+</style>
+<!-- ========== ФІКС ПЕРЕМИКАЧА ВАЛЮТИ - ЛІВА СТОРОНА ========== -->
+<style>
+/* Перемикач валюти - по лівій стороні */
+.new_r-currency-switch {
+    float: right !important;
+    margin: 0 0 15px 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Для мобільних - залишаємо по центру або теж зліва */
+@media (max-width: 768px) {
+    .new_r-currency-switch {
+        float: right !important;
+        margin: 0 0 15px 0 !important;
+    }
+}
+</style>
+<!-- ========== ФІКС ВІДСТУПІВ ТА ЗАОКРУГЛЕНЬ (БІЛЬШІ) ========== -->
+<style>
+/* ЗАОКРУГЛЕННЯ КАРТОК */
+.new_r-item {
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ВІДСТУПИ МІЖ КАРТКАМИ */
+.new_r-item-wrap {
+    margin-bottom: 40px !important;
+}
+
+/* Для мобільних */
+@media (max-width: 768px) {
+    .new_r-item-wrap {
+        margin-bottom: 25px !important;
+    }
+
+    .new_r-item {
+        border-radius: 18px !important;
     }
 }
 </style>
