@@ -1635,4 +1635,133 @@ document.addEventListener('DOMContentLoaded', function() {
         animation: fadeOutDown 0.5s ease forwards !important;
     }
 </style>
+<!-- ========== БЛОК КАЛЕНДАРЯ ЦІН OTPUSK ========== -->
+<div class="card shadow-sm mt-4" id="otpusk-calendar-section">
+    <div class="card-header" style="background: var(--primary-color); color: white;">
+        <h4 class="mb-0">Календар цін та наявність місць</h4>
+    </div>
+    <div class="card-body">
+        <div id="otpusk-tour-container">
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Завантаження...</span>
+                </div>
+                <p class="mt-2 text-muted">Завантаження актуальних цін...</p>
+            </div>
+        </div>
+
+        <script>
+            (function() {
+                // Отримуємо параметри з URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const hid = urlParams.get('hid');
+                const oid = urlParams.get('oid');
+                const od = urlParams.get('od');
+                const ol = urlParams.get('ol');
+
+                if (!hid || !oid) {
+                    document.getElementById('otpusk-tour-container').innerHTML =
+                        '<div class="alert alert-warning">⚠️ Параметри туру не знайдено. Спробуйте повернутися до результатів пошуку та вибрати тур знову.</div>';
+                    return;
+                }
+
+                console.log('🔄 Завантаження API OTPUSK для туру:', {hid, oid, od, ol});
+
+                // Налаштування для API
+                window.osHotelId = hid;
+                window.osOperatorId = oid;
+                window.osDateFrom = od || '';
+                window.osDuration = ol || '';
+                window.osLang = 'ua';
+                window.osCurrency = 'converted';
+                window.osTarget = '_blank';
+                window.osContainer = 'otpusk-tour-container';
+
+                // Перевіряємо, чи вже завантажені скрипти
+                if (typeof window.otpuskTourLoaded === 'undefined') {
+                    window.otpuskTourLoaded = true;
+
+                    // Додаємо стилі
+                    const links = [
+                        'https://export.otpusk.com/os/onsite/tour.css',
+                        'https://export.otpusk.com/os/onsite/form.css',
+                        'https://export.otpusk.com/os/onsite/result.css'
+                    ];
+                    links.forEach(href => {
+                        if (!document.querySelector(`link[href="${href}"]`)) {
+                            const link = document.createElement('link');
+                            link.rel = 'Stylesheet';
+                            link.href = href;
+                            document.head.appendChild(link);
+                        }
+                    });
+
+                    // Додаємо скрипти
+                    const scripts = [
+                        'https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca',
+                        'https://export.otpusk.com/js/onsite/',
+                        'https://export.otpusk.com/js/order'
+                    ];
+
+                    let scriptIndex = 0;
+                    function loadNextScript() {
+                        if (scriptIndex >= scripts.length) {
+                            console.log('✅ Всі скрипти OTPUSK завантажено');
+                            setTimeout(() => {
+                                const loader = document.querySelector('#otpusk-tour-container .text-center');
+                                if (loader) loader.style.display = 'none';
+                            }, 2000);
+                            return;
+                        }
+                        const script = document.createElement('script');
+                        script.src = scripts[scriptIndex];
+                        script.onload = () => {
+                            scriptIndex++;
+                            loadNextScript();
+                        };
+                        document.head.appendChild(script);
+                    }
+                    loadNextScript();
+                } else {
+                    setTimeout(() => {
+                        const loader = document.querySelector('#otpusk-tour-container .text-center');
+                        if (loader) loader.style.display = 'none';
+                    }, 500);
+                }
+            })();
+        </script>
+    </div>
+</div>
+
+<style>
+#otpusk-tour-container .new_t-tour-tab-table {
+    background: white !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    margin-bottom: 16px !important;
+    padding: 16px !important;
+}
+
+#otpusk-tour-container .new_t-order-price .new_price {
+    color: var(--primary-color) !important;
+    font-weight: 700 !important;
+}
+
+#otpusk-tour-container .new_t-order-btn {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-radius: 8px !important;
+    padding: 8px 20px !important;
+}
+</style>
+def tour_detail(request, pk=None, slug=None):
+    # ... ваш існуючий код ...
+
+    # Додайте параметри з URL для API OTPUSK
+    context['hid'] = request.GET.get('hid')
+    context['oid'] = request.GET.get('oid')
+    context['od'] = request.GET.get('od')
+    context['ol'] = request.GET.get('ol')
+
+    return render(request, 'tours/tour_detail.html', context)
 {% endblock %}
