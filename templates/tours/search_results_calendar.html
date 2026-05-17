@@ -38,7 +38,7 @@
                 <script src="https://export.otpusk.com/js/order"></script>
             </div>
 
-            <!-- ========== СКРИПТ ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН ========== -->
+            <!-- ========== СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ОДНАКОВИХ ДАТ (ДЛЯ КАЛЕНДАРЯ) ========== -->
             <script>
             (function() {
                 if (window.calendarDateSet) return;
@@ -51,11 +51,12 @@
                 let dateTo = urlParams.get('date_to') || '';
                 const autoSearch = urlParams.get('auto_search') === '1';
 
-                console.log('📥 Параметри:', { geo, departureText, dateFrom, dateTo, autoSearch });
+                console.log('📥 Календар отримав параметри:', { geo, departureText, dateFrom, dateTo, autoSearch });
 
-                // ОДНАКОВІ ДАТИ
+                // ПРИМУСОВО ВСТАНОВЛЮЄМО ОДНАКОВІ ДАТИ
                 if (dateFrom && (!dateTo || dateFrom !== dateTo)) {
                     dateTo = dateFrom;
+                    console.log('📅 ПРИМУСОВО ВСТАНОВЛЮЄМО ОДНАКОВІ ДАТИ:', { dateFrom, dateTo });
                     const newUrl = new URL(window.location.href);
                     newUrl.searchParams.set('date_to', dateTo);
                     window.history.replaceState({}, '', newUrl);
@@ -67,7 +68,7 @@
                 let step = 0;
                 let searchTriggered = false;
 
-                function setData() {
+                function setCalendarData() {
                     // Країна
                     if (geo && step === 0) {
                         const input = document.querySelector('#location');
@@ -77,74 +78,103 @@
                             console.log('✅ Країна:', geo);
                         }
                         step = 1;
-                        setTimeout(setData, 500);
+                        setTimeout(setCalendarData, 500);
                     }
                     // Місто вильоту
                     else if (departureText && step === 1) {
-                        const btn = document.querySelector('#new_os-from .new_f-dropdown-btn');
-                        if (btn && !btn.innerText.includes(departureText.replace('з ', ''))) {
-                            btn.click();
-                            setTimeout(() => {
-                                const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                                for (let item of items) {
-                                    if (item.innerText.trim() === departureText) {
-                                        item.click();
-                                        console.log('✅ Місто:', departureText);
-                                        break;
-                                    }
-                                }
-                            }, 200);
+                        const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                        for (let item of items) {
+                            if (item.innerText.trim() === departureText) {
+                                item.click();
+                                console.log('✅ Місто вильоту:', departureText);
+                                break;
+                            }
                         }
                         step = 2;
-                        setTimeout(setData, 800);
+                        setTimeout(setCalendarData, 800);
                     }
-                    // Вибираємо дату
+                    // Дата ПОЧАТКУ - відкриваємо календар
                     else if (step === 2) {
-                        const dateBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
-                        if (dateBtn) {
-                            dateBtn.click();
-                            setTimeout(() => {
-                                const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                                for (let cell of cells) {
-                                    if (cell.innerText === dayNum) {
-                                        cell.click();
-                                        console.log('✅ Дата:', dateFrom);
-                                        break;
-                                    }
-                                }
-                                // Закриваємо календар
-                                setTimeout(() => {
-                                    const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
-                                    if (closeBtn) closeBtn.click();
-                                }, 200);
-                            }, 200);
+                        const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
+                        if (startBtn) {
+                            startBtn.click();
+                            step = 3;
+                            setTimeout(setCalendarData, 200);
+                        } else {
+                            step = 6;
                         }
-                        step = 3;
-                        setTimeout(setData, 1000);
                     }
-                    // Запуск пошуку
-                    else if (step === 3 && !searchTriggered && autoSearch) {
+                    // Вибрати дату ПОЧАТКУ
+                    else if (step === 3) {
+                        const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                        let clicked = false;
+                        for (let cell of cells) {
+                            if (cell.innerText === dayNum) {
+                                cell.click();
+                                clicked = true;
+                                console.log('✅ Дата ПОЧАТКУ вибрана:', dateFrom);
+                                step = 4;
+                                setTimeout(setCalendarData, 300);
+                                break;
+                            }
+                        }
+                        if (!clicked) step = 6;
+                    }
+                    // Дата КІНЦЯ - відкриваємо календар
+                    else if (step === 4) {
+                        const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
+                        if (endBtn) {
+                            endBtn.click();
+                            step = 5;
+                            setTimeout(setCalendarData, 200);
+                        } else {
+                            step = 6;
+                        }
+                    }
+                    // Вибрати ТУ САМУ дату для КІНЦЯ
+                    else if (step === 5) {
+                        const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                        for (let cell of cells) {
+                            if (cell.innerText === dayNum) {
+                                cell.click();
+                                console.log('✅ Дата КІНЦЯ вибрана (ТАКА САМА):', dateTo);
+                                break;
+                            }
+                        }
+                        step = 6;
+                        setTimeout(setCalendarData, 200);
+                    }
+                    // Закрити календар
+                    else if (step === 6) {
+                        const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
+                        if (closeBtn) closeBtn.click();
+                        step = 7;
+                        setTimeout(setCalendarData, 500);
+                    }
+                    // Запустити пошук
+                    else if (step === 7 && !searchTriggered && autoSearch) {
                         const searchBtn = document.querySelector('.new_f-form-submit');
                         if (searchBtn) {
                             searchBtn.click();
                             searchTriggered = true;
-                            console.log('🔍 Пошук запущено!');
+                            console.log('🔍 Пошук запущено з однаковими датами!');
                         }
+                        step = 8;
                     }
                 }
 
-                setTimeout(setData, 1000);
-                setTimeout(setData, 2000);
-                setTimeout(setData, 3000);
-                setTimeout(setData, 4000);
-                setTimeout(setData, 5000);
+                setTimeout(setCalendarData, 1000);
+                setTimeout(setCalendarData, 2000);
+                setTimeout(setCalendarData, 3000);
+                setTimeout(setCalendarData, 4000);
+                setTimeout(setCalendarData, 5000);
             })();
             </script>
         </div>
     </div>
 </div>
 
-<!-- ========== СТИЛІ ========== -->
+<!-- ========== СТИЛІ ДЛЯ СТОРІНКИ РЕЗУЛЬТАТІВ ========== -->
 <style>
 /* Основні стилі */
 #otpusk-search-module {
@@ -176,7 +206,11 @@
     display: none !important;
 }
 
-.new_f-wrapper,
+.new_f-wrapper {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+}
+
 .new_f-container,
 .new_os,
 .new_f-form {
@@ -188,7 +222,7 @@
     font-weight: 700 !important;
 }
 
-/* Картки турів */
+/* ========== КАРТКИ ТУРІВ ========== */
 .new_r-container,
 .new_r-wrapper,
 .new_r-wrapper > div {
@@ -366,7 +400,6 @@
     color: #ffffff !important;
 }
 
-/* Рейтинг */
 .new_r-item-rating-container {
     position: absolute !important;
     top: 12px !important;
@@ -437,7 +470,7 @@
     display: none !important;
 }
 
-/* Мобільна версія */
+/* ========== МОБІЛЬНА ВЕРСІЯ ========== */
 @media (max-width: 768px) {
     .new_r-item {
         display: flex !important;
@@ -466,9 +499,6 @@
         text-align: left !important;
         width: 100% !important;
         justify-content: flex-start !important;
-        position: relative !important;
-        bottom: auto !important;
-        right: auto !important;
     }
     .new_r-item-wrap {
         margin-bottom: 30px !important;
@@ -478,15 +508,6 @@
         float: none !important;
         margin: 0 auto 15px auto !important;
         width: fit-content !important;
-    }
-    .new_r-item-rating-container {
-        width: 50px !important;
-        height: 50px !important;
-        top: 8px !important;
-        right: 8px !important;
-    }
-    .new_r-item-rating-value {
-        font-size: 0.9rem !important;
     }
 }
 </style>
@@ -533,5 +554,384 @@ document.addEventListener('click', function(e) {
     setTimeout(fixSearchButton, 2000);
 })();
 </script>
+<!-- ========== ФІКС ДЛЯ МОБІЛЬНОЇ ВЕРСІЇ КАЛЕНДАРЯ НИЗЬКИХ ЦІН ========== -->
+<style>
+/* ТІЛЬКИ ДЛЯ МОБІЛЬНИХ (ширина до 768px) */
+@media (max-width: 768px) {
+    /* Картка - робимо вертикальною */
+    .new_r-item {
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: auto !important;
+        height: auto !important;
+    }
+
+    /* Фото - на всю ширину */
+    .new_r-item-img {
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 180px !important;
+        min-height: 180px !important;
+        max-height: 180px !important;
+    }
+
+    /* Текст - під фото */
+    .new_r-item-body {
+        position: relative !important;
+        margin-left: 0 !important;
+        padding: 12px 15px !important;
+        min-height: auto !important;
+        width: 100% !important;
+    }
+
+    /* Рейтинг - менший */
+    .new_r-item-rating-container {
+        width: 50px !important;
+        height: 50px !important;
+        top: 8px !important;
+        right: 8px !important;
+    }
+
+    .new_r-item-rating-value {
+        font-size: 0.9rem !important;
+    }
+
+    /* Колонки в стовпчик */
+    .new_r-item-col {
+        flex-direction: column !important;
+        gap: 6px !important;
+    }
+
+    /* Ціна - ліворуч */
+    .new_r-item-price {
+        margin-left: 0 !important;
+        text-align: left !important;
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
+
+    /* Перемикач валюти - по центру */
+    .new_r-currency-switch {
+        float: none !important;
+        margin: 0 auto 15px auto !important;
+        width: fit-content !important;
+    }
+
+    /* Відступи між картками */
+    .new_r-item-wrap {
+        margin-bottom: 30px !important;
+        padding-bottom: 15px !important;
+    }
+}
+
+/* ДЛЯ ДУЖЕ МАЛЕНЬКИХ (до 480px) */
+@media (max-width: 480px) {
+    .new_r-item-img {
+        height: 150px !important;
+        min-height: 150px !important;
+        max-height: 150px !important;
+    }
+
+    .new_r-item-body {
+        padding: 10px 12px !important;
+    }
+
+    .new_r-item-hotel {
+        font-size: 0.95rem !important;
+    }
+
+    .new_price-value {
+        font-size: 0.9rem !important;
+    }
+}
+</style>
+<!-- ========== ПЕРЕМИКАЧ ВАЛЮТИ - ГОРИЗОНТАЛЬНИЙ (ФІКС) ========== -->
+<style>
+/* Основний контейнер */
+.new_r-currency-switch {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    background: var(--primary-color) !important;
+    border-radius: 30px !important;
+    overflow: hidden !important;
+    width: auto !important;
+    min-width: auto !important;
+    max-width: none !important;
+    margin: 0 0 15px auto !important;
+    float: right !important;
+    clear: both !important;
+}
+
+/* Кожен label - горизонтально */
+.new_r-currency-switch label {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    float: none !important;
+    width: auto !important;
+}
+
+/* Прибираємо будь-які вертикальні стилі */
+.new_r-currency-switch label {
+    display: inline-block !important;
+}
+
+/* Стилі для кнопок */
+.new_r-currency-switch span {
+    display: inline-block !important;
+    background: transparent !important;
+    color: white !important;
+    padding: 6px 16px !important;
+    cursor: pointer !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    letter-spacing: normal !important;
+}
+
+/* Активний стан */
+.new_r-currency-switch input[type="radio"]:checked + span {
+    background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Ховер ефект */
+.new_r-currency-switch label:hover span {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Прибираємо радіо-кнопки */
+.new_r-currency-switch input[type="radio"] {
+    display: none !important;
+}
+
+/* Для мобільних */
+@media (max-width: 768px) {
+    .new_r-currency-switch span {
+        padding: 5px 12px !important;
+        font-size: 0.8rem !important;
+    }
+}
+</style>
+<!-- ========== ОРАНЖЕВЕ ПОПЕРЕДЖЕННЯ ДЛЯ ПІДТВЕРДЖЕННЯ КРАЇНИ ========== -->
+<style>
+.orange-warning {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #fff3e0;
+    border-left: 5px solid #f59e0b;
+    border-radius: 12px;
+    padding: 14px 20px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideInRight 0.3s ease;
+    cursor: pointer;
+}
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(100px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+.orange-warning i { font-size: 20px; color: #f59e0b; }
+.orange-warning span { font-size: 14px; color: #92400e; }
+.orange-warning .country-name { font-weight: 700; background: #fffbeb; padding: 3px 8px; border-radius: 20px; margin-left: 5px; }
+</style>
+
+<script>
+(function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
+
+    if (!geo) return;
+
+    const confirmed = localStorage.getItem('country_confirmed_' + encodeURIComponent(geo));
+    if (confirmed === 'true') return;
+
+    function showWarning() {
+        const existingWarning = document.querySelector('.orange-warning');
+        if (existingWarning) existingWarning.remove();
+
+        const warning = document.createElement('div');
+        warning.className = 'orange-warning';
+        warning.innerHTML = `
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Підтвердіть країну <strong class="country-name">${geo}</strong> → натисніть на поле "Країна" або "Пошук"</span>
+        `;
+        document.body.appendChild(warning);
+
+        warning.addEventListener('click', function() {
+            const countryInput = document.querySelector('#location');
+            if (countryInput) {
+                countryInput.style.transition = 'box-shadow 0.2s';
+                countryInput.style.boxShadow = '0 0 0 3px #f59e0b';
+                countryInput.focus();
+                setTimeout(() => { countryInput.style.boxShadow = ''; }, 2000);
+            }
+            warning.remove();
+        });
+
+        setTimeout(() => {
+            if (warning.parentNode) warning.remove();
+        }, 7000);
+    }
+
+    setTimeout(showWarning, 1500);
+})();
+</script>
+
+<!-- ========== ФІКС РЕЙТИНГУ - ТІЛЬКИ КВАДРАТНИЙ ========== -->
+<style>
+/* Основний блок рейтингу - квадратний */
+.new_r-item-rating-container {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    width: 65px !important;
+    height: 65px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 12px !important;
+    border: 2px solid var(--primary-color) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    z-index: 10 !important;
+    /* Видаляємо зайве */
+    float: none !important;
+    font-size: inherit !important;
+    margin: 0 !important;
+}
+
+/* Значення рейтингу */
+.new_r-item-rating-value {
+    font-size: 1.3rem !important;
+    font-weight: 800 !important;
+    color: var(--primary-color) !important;
+    line-height: 1.2 !important;
+}
+
+/* Текст "оцінок" */
+.new_r-item-rating-rev {
+    font-size: 0.55rem !important;
+    color: #666 !important;
+}
+
+.new_r-item-rating-rev span {
+    font-weight: 700 !important;
+    font-size: 0.65rem !important;
+}
+
+/* ХОВАЄМО кругову діаграму (slice, bar, fill) */
+.new_r-item-rating-container .slice,
+.new_r-item-rating-container .bar,
+.new_r-item-rating-container .fill {
+    display: none !important;
+}
+
+/* Для мобільних - менший квадрат */
+@media (max-width: 768px) {
+    .new_r-item-rating-container {
+        width: 60px !important;
+        height: 60px !important;
+        top: 8px !important;
+        right: 8px !important;
+    }
+    .new_r-item-rating-value {
+        font-size: 1rem !important;
+    }
+    .new_r-item-rating-rev {
+        font-size: 0.45rem !important;
+    }
+}
+</style>
+
+
+<!-- ========== ФІКС БЛОКУ ЦІНИ - ВУЗЬКИЙ ТА ПО ПРАВОМУ КРАЮ ========== -->
+<style>
+/* Основний блок ціни */
+.new_r-item-price {
+    width: 150px !important;
+    min-width: 150px !important;
+    max-width: 150px !important;
+    height: 45px !important;
+    padding: 8px 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    position: absolute !important;
+    bottom: 12px !important;
+    right: 12px !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: 2px solid var(--primary-color) !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Значення ціни */
+.new_price-value {
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    color: #000000 !important;
+    white-space: nowrap !important;
+}
+
+.new_price-value .currency {
+    font-size: 0.8rem !important;
+}
+
+/* Опис ціни */
+.new_price-desc {
+    font-size: 0.65rem !important;
+    color: #000000 !important;
+    opacity: 0.7 !important;
+    white-space: nowrap !important;
+}
+
+/* Ховер ефект */
+.new_r-item:hover .new_r-item-price {
+    background: var(--primary-color) !important;
+}
+
+.new_r-item:hover .new_price-value,
+.new_r-item:hover .new_price-value .currency,
+.new_r-item:hover .new_price-desc {
+    color: #ffffff !important;
+}
+
+/* На мобільних - ширина на всю ширину */
+@media (max-width: 768px) {
+    .new_r-item-price {
+        width: calc(100% - 24px) !important;
+        max-width: none !important;
+        position: relative !important;
+        bottom: auto !important;
+        right: auto !important;
+        margin-top: 12px !important;
+        margin-left: 12px !important;
+        margin-right: 12px !important;
+        justify-content: space-between !important;
+        padding: 10px 16px !important;
+    }
+
+    .new_price-value {
+        font-size: 1rem !important;
+    }
+}
+</style>
 
 {% endblock %}
