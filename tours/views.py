@@ -589,54 +589,57 @@ def home(request):
 # ========== ОСНОВНІ ФУНКЦІЇ ДЛЯ АГЕНТСЬКИХ САЙТІВ ==========
 
 def tour_detail(request, pk=None, slug=None):
-    """Деталі туру - використовує дані з Otpusk"""
-    tour = None
+    """Деталі туру - використовує tour_detail_otpusk.html"""
 
-    # Якщо є pk, шукаємо тур в БД
+    # Отримуємо параметри з URL
+    hid = request.GET.get('hid')
+    oid = request.GET.get('oid')
+    od = request.GET.get('od')
+    ol = request.GET.get('ol')
+
+    # Якщо є hid та oid - показуємо OTPUSK шаблон
+    if hid and oid:
+        context = {
+            'hid': hid,
+            'oid': oid,
+            'od': od,
+            'ol': ol,
+            'random_agent': get_random_agent(),
+        }
+        # Додаємо agent_site, якщо є
+        if hasattr(request, 'current_agent_site'):
+            context['agent_site'] = request.current_agent_site
+        elif hasattr(request, 'agent_site'):
+            context['agent_site'] = request.agent_site
+
+        return render(request, 'tours/tour_detail_otpusk.html', context)
+
+    # Інакше шукаємо тур в БД
+    tour = None
     if pk:
         try:
             tour = get_object_or_404(Tour, pk=pk)
         except Http404:
             pass
 
-    # Отримуємо параметри з URL для API OTPUSK
-    hid = request.GET.get('hid')
-    oid = request.GET.get('oid')
-    od = request.GET.get('od')
-    ol = request.GET.get('ol')
-
-    # Ініціалізуємо порожні значення
-    reviews = []
-    avg_rating = None
-    gallery_images = []
-    similar_tours = []
-
-    # Якщо тур знайдено, отримуємо всі дані
-    if tour:
-        reviews = tour.reviews.all()
-        avg_rating = reviews.aggregate(models.Avg('rating'))['rating__avg']
-        gallery_images = tour.gallery.all()
-        similar_tours = Tour.objects.filter(
-            country=tour.country,
-            stars=tour.stars
-        ).exclude(pk=tour.pk)[:8] if tour.pk else []
+    if not tour and slug:
+        tour = get_object_or_404(Tour, slug=slug)
 
     context = {
         'tour': tour,
-        'reviews': reviews,
-        'avg_rating': avg_rating,
-        'gallery_images': gallery_images,
-        'similar_tours': similar_tours,
-        'review_form': ReviewForm(),
-        # Додаємо параметри з URL для API OTPUSK
         'hid': hid,
         'oid': oid,
         'od': od,
         'ol': ol,
-        # ДОДАЙТЕ ЦЕЙ РЯДОК:
         'random_agent': get_random_agent(),
     }
-    return render(request, 'tours/tour_detail.html', context)
+
+    # Якщо є tour з БД - використовуємо звичайний шаблон
+    if tour:
+        return render(request, 'tours/tour_detail.html', context)
+
+    # Якщо немає нічого - помилка
+    raise Http404("Тур не знайдено")
 
 def search_results(request):
     """Результати пошуку - перенаправляємо на Otpusk"""
