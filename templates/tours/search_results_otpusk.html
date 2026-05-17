@@ -1646,11 +1646,11 @@ observer.observe(document.body, { childList: true, subtree: true });
     });
 })();
 </script>
-<!-- ========== ФІКС ВИСОТИ ТА ВІДСТУПІВ (ЦІНА СПРАВА) ========== -->
+<!-- ========== ФІКС ВИСОТИ ТА ВІДСТУПІВ (ЦІНА СПРАВА) - ЗМЕНШЕНА ВЕРСІЯ ========== -->
 <style>
-/* ЗБІЛЬШУЄМО ВИСОТУ КАРТКИ НА ПК */
+/* ЗМЕНШУЄМО ВИСОТУ КАРТКИ НА ПК - 262px */
 .new_r-item {
-    min-height: 453px !important;
+    min-height: 262px !important;
     height: auto !important;
 }
 
@@ -1673,6 +1673,7 @@ observer.observe(document.body, { childList: true, subtree: true });
     justify-content: flex-start !important;
     text-align: left !important;
     white-space: normal !important;
+    font-size: 0.75rem !important;
 }
 
 /* ЦІНА - ПО ПРАВІЙ СТОРОНІ ВНИЗУ */
@@ -1684,22 +1685,31 @@ observer.observe(document.body, { childList: true, subtree: true });
 /* Блок ціни - absolute, знизу справа */
 .new_r-item-price {
     position: absolute !important;
-    bottom: 20px !important;
-    right: 20px !important;
+    bottom: 12px !important;
+    right: 12px !important;
     margin-top: 0 !important;
     width: auto !important;
-    min-width: 140px !important;
+    min-width: 120px !important;
     justify-content: center !important;
+    padding: 4px 10px !important;
+}
+
+.new_price-value {
+    font-size: 0.9rem !important;
+}
+
+.new_price-desc {
+    font-size: 0.6rem !important;
 }
 
 /* ЗБІЛЬШУЄМО ВІДСТУП МІЖ ТЕКСТОМ ТА ЦІНОЮ */
 .new_r-item-table {
-    margin-bottom: 30px !important;
+    margin-bottom: 15px !important;
 }
 
 /* Відступ між рядками в таблиці */
 .new_r-item-col {
-    gap: 15px !important;
+    gap: 8px !important;
 }
 
 /* Для мобільних */
@@ -1713,7 +1723,7 @@ observer.observe(document.body, { childList: true, subtree: true });
         bottom: auto !important;
         right: auto !important;
         width: 100% !important;
-        margin-top: 20px !important;
+        margin-top: 15px !important;
         justify-content: center !important;
     }
 
@@ -1770,4 +1780,5 @@ observer.observe(document.body, { childList: true, subtree: true });
     display: none !important;
 }
 </style>
+
 {% endblock %}
