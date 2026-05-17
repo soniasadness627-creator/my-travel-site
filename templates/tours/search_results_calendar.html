@@ -38,150 +38,45 @@
                 <script src="https://export.otpusk.com/js/order"></script>
             </div>
 
-            <!-- ========== СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ОДНАКОВИХ ДАТ ========== -->
+            <!-- ========== ФІКС КАЛЕНДАРЯ НИЗЬКИХ ЦІН ========== -->
 <script>
 (function() {
-    if (window.calendarDateFixed) return;
-    window.calendarDateFixed = true;
+    // Перевіряємо, чи вже виконувалось
+    if (window.calendarSimpleFix) return;
+    window.calendarSimpleFix = true;
 
     const urlParams = new URLSearchParams(window.location.search);
-    const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
-    const departureText = urlParams.get('departure_text') || '';
-    let dateFrom = urlParams.get('date_from') || '';
-    let dateTo = urlParams.get('date_to') || '';
-    const autoSearch = urlParams.get('auto_search') === '1';
+    let dateFrom = urlParams.get('date_from');
+    let dateTo = urlParams.get('date_to');
+    let geo = urlParams.get('geo');
+    let departureText = urlParams.get('departure_text');
 
-    console.log('📥 Параметри:', { geo, departureText, dateFrom, dateTo, autoSearch });
+    console.log('🔧 Перевірка параметрів:', { dateFrom, dateTo, geo });
 
     // Якщо немає дати - виходимо
     if (!dateFrom) return;
 
-    // Робимо дати однаковими
-    dateTo = dateFrom;
-
-    let attempts = 0;
-    let maxAttempts = 20;
-    let countrySet = false;
-    let departureSet = false;
-
-    function splitDate(dateStr) {
-        if (!dateStr) return { day: '', month: '', year: '' };
-        const parts = dateStr.split('.');
-        return { day: parts[0] || '', month: parts[1] || '', year: parts[2] || '' };
+    // Якщо дати різні - виправляємо
+    if (dateFrom !== dateTo) {
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set('date_to', dateFrom);
+        console.log('📅 Виправляємо дату кінця:', dateTo, '→', dateFrom);
+        window.location.href = newUrl.toString();
+        return;
     }
 
-    const fromDate = splitDate(dateFrom);
-    const toDate = splitDate(dateTo);
+    // Якщо все добре, просто чекаємо завантаження форми
+    console.log('✅ Дати однакові:', dateFrom);
 
-    function applyDateToField(btn, day, month, year) {
-        if (!btn) return false;
-
-        // Змінюємо текст кнопки безпосередньо
-        const daySpan = btn.querySelector('span');
-        if (daySpan) {
-            daySpan.textContent = day;
+    // Додаємо невелику затримку і клікаємо пошук
+    setTimeout(() => {
+        const searchBtn = document.querySelector('.new_f-form-submit');
+        if (searchBtn && geo) {
+            console.log('🔍 Запускаємо пошук...');
+            searchBtn.click();
         }
+    }, 2000);
 
-        // Змінюємо повний текст
-        const monthNames = ['січ', 'лют', 'бер', 'кві', 'тра', 'чер', 'лип', 'сер', 'вер', 'жов', 'лис', 'гру'];
-        const monthName = monthNames[parseInt(month) - 1] || 'тра';
-        btn.childNodes.forEach(node => {
-            if (node.nodeType === 3 && node.textContent) {
-                node.textContent = node.textContent.replace(/\d+/, day);
-            }
-        });
-
-        // Якщо є місяць в тексті
-        if (btn.innerHTML && monthName) {
-            const monthsInText = ['січ', 'лют', 'бер', 'кві', 'тра', 'чер', 'лип', 'сер', 'вер', 'жов', 'лис', 'гру'];
-            for (let m of monthsInText) {
-                if (btn.innerHTML.includes(m)) {
-                    btn.innerHTML = btn.innerHTML.replace(m, monthName);
-                    break;
-                }
-            }
-        }
-
-        console.log(`📅 Встановлено дату: ${day} ${monthName}`);
-        return true;
-    }
-
-    function trySetDates() {
-        attempts++;
-        console.log(`🔄 Спроба ${attempts}...`);
-
-        // Встановлюємо КРАЇНУ
-        if (geo && !countrySet) {
-            const countryInput = document.querySelector('#location');
-            if (countryInput && countryInput.value !== geo) {
-                countryInput.value = geo;
-                countryInput.dispatchEvent(new Event('input', { bubbles: true }));
-                countryInput.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log('✅ Країна:', geo);
-                countrySet = true;
-            } else if (countryInput && countryInput.value === geo) {
-                countrySet = true;
-            }
-        }
-
-        // Встановлюємо МІСТО ВИЛЬОТУ
-        if (departureText && !departureSet) {
-            const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
-            if (departureBtn && !departureBtn.innerText.includes(departureText)) {
-                departureBtn.click();
-                setTimeout(() => {
-                    const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                    for (let item of items) {
-                        if (item.innerText.trim() === departureText) {
-                            item.click();
-                            departureSet = true;
-                            console.log('✅ Місто вильоту:', departureText);
-                            break;
-                        }
-                    }
-                }, 200);
-            } else if (departureBtn && departureBtn.innerText.includes(departureText)) {
-                departureSet = true;
-            }
-        }
-
-        // Встановлюємо ДАТУ ПОЧАТКУ
-        const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
-        if (startBtn && fromDate.day) {
-            applyDateToField(startBtn, fromDate.day, fromDate.month, fromDate.year);
-        }
-
-        // Встановлюємо ДАТУ КІНЦЯ (ТАКУ САМУ)
-        const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
-        if (endBtn && toDate.day) {
-            applyDateToField(endBtn, toDate.day, toDate.month, toDate.year);
-        }
-
-        // Якщо обидві дати встановлені та країна вибрана - запускаємо пошук
-        if (autoSearch && countrySet && attempts > 3 && !window.searchStarted) {
-            window.searchStarted = true;
-            setTimeout(() => {
-                const searchBtn = document.querySelector('.new_f-form-submit');
-                if (searchBtn) {
-                    searchBtn.click();
-                    console.log('🔍 Пошук запущено з датами: початок=' + dateFrom + ', кінець=' + dateTo);
-                }
-            }, 1000);
-        }
-
-        // Повторюємо, поки не встановимо всі значення
-        if (attempts < maxAttempts) {
-            setTimeout(trySetDates, 800);
-        }
-    }
-
-    // Запускаємо спроби
-    setTimeout(trySetDates, 1000);
-    setTimeout(trySetDates, 2000);
-    setTimeout(trySetDates, 3000);
-    setTimeout(trySetDates, 4000);
-    setTimeout(trySetDates, 5000);
-    setTimeout(trySetDates, 6000);
 })();
 </script>
         </div>
