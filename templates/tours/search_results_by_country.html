@@ -1250,33 +1250,65 @@ document.addEventListener('DOMContentLoaded', function() {
     background: #e0e0e0 !important;
 }
 </style>
-<!-- ========== ПЕРЕХІД НА ДЕТАЛІ ТУРУ ========== -->
+<!-- ========== ПРИМУСОВИЙ ПЕРЕХІД НА ОКРЕМУ СТОРІНКУ ========== -->
 <script>
-document.addEventListener('click', function(e) {
-    let target = e.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
-    if (!target) return;
+(function() {
+    // Функція для отримання параметрів туру з URL
+    function getTourParamsFromHash() {
+        const hash = window.location.hash;
+        if (!hash || !hash.includes('page=tour')) return null;
 
-    let url = target.href || '';
-    if (!url && target.closest('.new_r-item')) {
-        let link = target.closest('.new_r-item').querySelector('a');
-        if (link) url = link.href;
+        const hidMatch = hash.match(/hid=(\d+)/);
+        const oidMatch = hash.match(/oid=(\d+)/);
+        const odMatch = hash.match(/od=([\d-]+)/);
+        const olMatch = hash.match(/ol=(\d+)/);
+
+        if (hidMatch && oidMatch) {
+            return {
+                hid: hidMatch[1],
+                oid: oidMatch[1],
+                od: odMatch ? odMatch[1] : '',
+                ol: olMatch ? olMatch[1] : ''
+            };
+        }
+        return null;
     }
 
-    if (!url || !url.includes('hid=')) return;
-
-    e.preventDefault();
-
-    let hid = url.match(/hid=(\d+)/)?.[1];
-    let oid = url.match(/oid=([\d]+)/)?.[1];
-    let od = url.match(/od=([\d-]+)/)?.[1];
-    let ol = url.match(/ol=(\d+)/)?.[1];
-
-    if (hid && oid) {
-        let baseUrl = window.location.pathname.startsWith('/a/')
-            ? `/a/${window.location.pathname.split('/')[2]}/tour-page/`
-            : '/tour-page/';
-        window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}`;
+    // Перевіряємо при завантаженні сторінки
+    function checkAndRedirect() {
+        const params = getTourParamsFromHash();
+        if (params) {
+            console.log('🔄 Виявлено тур у хеші, перенаправляємо:', params);
+            const baseUrl = window.location.pathname.startsWith('/a/')
+                ? `/a/${window.location.pathname.split('/')[2]}/tour-page/`
+                : '/tour-page/';
+            const newUrl = `${baseUrl}?hid=${params.hid}&oid=${params.oid}&od=${params.od}&ol=${params.ol}`;
+            window.location.href = newUrl;
+        }
     }
-});
+
+    // Слідкуємо за зміною хеша (коли Otpusk оновлює URL)
+    let lastHash = window.location.hash;
+    setInterval(() => {
+        if (window.location.hash !== lastHash) {
+            lastHash = window.location.hash;
+            checkAndRedirect();
+        }
+    }, 500);
+
+    // Перевіряємо також при завантаженні
+    setTimeout(checkAndRedirect, 1000);
+    setTimeout(checkAndRedirect, 2000);
+    setTimeout(checkAndRedirect, 3000);
+})();
 </script>
+<style>
+/* Ховаємо оригінальні кнопки Otpusk */
+.new_t-order-btn-true,
+.new_t-order-btn,
+.new_r-item .btn {
+    display: none !important;
+}
+</style>
+
 {% endblock %}
