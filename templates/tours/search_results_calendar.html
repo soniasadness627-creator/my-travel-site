@@ -38,47 +38,138 @@
                 <script src="https://export.otpusk.com/js/order"></script>
             </div>
 
-            <!-- ========== ФІКС КАЛЕНДАРЯ НИЗЬКИХ ЦІН ========== -->
-<script>
-(function() {
-    // Перевіряємо, чи вже виконувалось
-    if (window.calendarSimpleFix) return;
-    window.calendarSimpleFix = true;
+            <!-- ========== СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ОДНАКОВИХ ДАТ (ДЛЯ КАЛЕНДАРЯ) ========== -->
+            <script>
+            (function() {
+                if (window.calendarDateSet) return;
+                window.calendarDateSet = true;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    let dateFrom = urlParams.get('date_from');
-    let dateTo = urlParams.get('date_to');
-    let geo = urlParams.get('geo');
-    let departureText = urlParams.get('departure_text');
+                const urlParams = new URLSearchParams(window.location.search);
+                const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
+                const departureText = urlParams.get('departure_text') || '';
+                let dateFrom = urlParams.get('date_from') || '';
+                let dateTo = urlParams.get('date_to') || '';
+                const autoSearch = urlParams.get('auto_search') === '1';
 
-    console.log('🔧 Перевірка параметрів:', { dateFrom, dateTo, geo });
+                console.log('📥 Календар отримав параметри:', { geo, departureText, dateFrom, dateTo, autoSearch });
 
-    // Якщо немає дати - виходимо
-    if (!dateFrom) return;
+                // ПРИМУСОВО ВСТАНОВЛЮЄМО ОДНАКОВІ ДАТИ
+                if (dateFrom && (!dateTo || dateFrom !== dateTo)) {
+                    dateTo = dateFrom;
+                    console.log('📅 ПРИМУСОВО ВСТАНОВЛЮЄМО ОДНАКОВІ ДАТИ:', { dateFrom, dateTo });
+                    const newUrl = new URL(window.location.href);
+                    newUrl.searchParams.set('date_to', dateTo);
+                    window.history.replaceState({}, '', newUrl);
+                }
 
-    // Якщо дати різні - виправляємо
-    if (dateFrom !== dateTo) {
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.set('date_to', dateFrom);
-        console.log('📅 Виправляємо дату кінця:', dateTo, '→', dateFrom);
-        window.location.href = newUrl.toString();
-        return;
-    }
+                if (!dateFrom) return;
 
-    // Якщо все добре, просто чекаємо завантаження форми
-    console.log('✅ Дати однакові:', dateFrom);
+                const dayNum = dateFrom.split('.')[0];
+                let step = 0;
+                let searchTriggered = false;
 
-    // Додаємо невелику затримку і клікаємо пошук
-    setTimeout(() => {
-        const searchBtn = document.querySelector('.new_f-form-submit');
-        if (searchBtn && geo) {
-            console.log('🔍 Запускаємо пошук...');
-            searchBtn.click();
-        }
-    }, 2000);
+                function setCalendarData() {
+                    // Країна
+                    if (geo && step === 0) {
+                        const input = document.querySelector('#location');
+                        if (input && input.value !== geo) {
+                            input.value = geo;
+                            input.dispatchEvent(new Event('input', { bubbles: true }));
+                            console.log('✅ Країна:', geo);
+                        }
+                        step = 1;
+                        setTimeout(setCalendarData, 500);
+                    }
+                    // Місто вильоту
+                    else if (departureText && step === 1) {
+                        const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                        for (let item of items) {
+                            if (item.innerText.trim() === departureText) {
+                                item.click();
+                                console.log('✅ Місто вильоту:', departureText);
+                                break;
+                            }
+                        }
+                        step = 2;
+                        setTimeout(setCalendarData, 800);
+                    }
+                    // Дата ПОЧАТКУ - відкриваємо календар
+                    else if (step === 2) {
+                        const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
+                        if (startBtn) {
+                            startBtn.click();
+                            step = 3;
+                            setTimeout(setCalendarData, 200);
+                        } else {
+                            step = 6;
+                        }
+                    }
+                    // Вибрати дату ПОЧАТКУ
+                    else if (step === 3) {
+                        const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                        let clicked = false;
+                        for (let cell of cells) {
+                            if (cell.innerText === dayNum) {
+                                cell.click();
+                                clicked = true;
+                                console.log('✅ Дата ПОЧАТКУ вибрана:', dateFrom);
+                                step = 4;
+                                setTimeout(setCalendarData, 300);
+                                break;
+                            }
+                        }
+                        if (!clicked) step = 6;
+                    }
+                    // Дата КІНЦЯ - відкриваємо календар
+                    else if (step === 4) {
+                        const endBtn = document.querySelector('.new_f-datepicker-wrap-2 button');
+                        if (endBtn) {
+                            endBtn.click();
+                            step = 5;
+                            setTimeout(setCalendarData, 200);
+                        } else {
+                            step = 6;
+                        }
+                    }
+                    // Вибрати ТУ САМУ дату для КІНЦЯ
+                    else if (step === 5) {
+                        const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
+                        for (let cell of cells) {
+                            if (cell.innerText === dayNum) {
+                                cell.click();
+                                console.log('✅ Дата КІНЦЯ вибрана (ТАКА САМА):', dateTo);
+                                break;
+                            }
+                        }
+                        step = 6;
+                        setTimeout(setCalendarData, 200);
+                    }
+                    // Закрити календар
+                    else if (step === 6) {
+                        const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
+                        if (closeBtn) closeBtn.click();
+                        step = 7;
+                        setTimeout(setCalendarData, 500);
+                    }
+                    // Запустити пошук
+                    else if (step === 7 && !searchTriggered && autoSearch) {
+                        const searchBtn = document.querySelector('.new_f-form-submit');
+                        if (searchBtn) {
+                            searchBtn.click();
+                            searchTriggered = true;
+                            console.log('🔍 Пошук запущено з однаковими датами!');
+                        }
+                        step = 8;
+                    }
+                }
 
-})();
-</script>
+                setTimeout(setCalendarData, 1000);
+                setTimeout(setCalendarData, 2000);
+                setTimeout(setCalendarData, 3000);
+                setTimeout(setCalendarData, 4000);
+                setTimeout(setCalendarData, 5000);
+            })();
+            </script>
         </div>
     </div>
 </div>
