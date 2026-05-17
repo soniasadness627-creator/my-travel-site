@@ -39,7 +39,6 @@
             </div>
 
             <!-- ========== СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ОДНАКОВИХ ДАТ (ДЛЯ КАЛЕНДАРЯ) ========== -->
-            <!-- ========== СКРИПТ ДЛЯ ПРИМУСОВОГО ВСТАНОВЛЕННЯ ОДНАКОВИХ ДАТ (ДЛЯ КАЛЕНДАРЯ) ========== -->
 <script>
 (function() {
     if (window.calendarDateSet) return;
@@ -66,10 +65,14 @@
     if (!dateFrom) return;
 
     const dayNum = dateFrom.split('.')[0];
+    const month = dateFrom.split('.')[1];
+    const year = dateFrom.split('.')[2];
     let step = 0;
     let searchTriggered = false;
 
     function setCalendarData() {
+        console.log('🔄 Крок:', step);
+
         // Крок 0: Вибір країни
         if (geo && step === 0) {
             const input = document.querySelector('#location');
@@ -99,14 +102,18 @@
             const startBtn = document.querySelector('.new_f-datepicker-wrap-1 button');
             if (startBtn) {
                 startBtn.click();
+                console.log('📅 Відкрито календар початку');
                 step = 3;
-                setTimeout(setCalendarData, 300);
+                setTimeout(setCalendarData, 500);
             } else {
-                step = 5;
+                console.log('❌ Кнопка календаря не знайдена');
+                step = 6;
+                setTimeout(setCalendarData, 500);
             }
         }
-        // Крок 3: Вибираємо дату ПОЧАТКУ
+        // Крок 3: Вибираємо дату в календарі
         else if (step === 3) {
+            // Шукаємо клітинку з потрібним числом
             const cells = document.querySelectorAll('.ui-datepicker-calendar td a');
             let clicked = false;
             for (let cell of cells) {
@@ -120,16 +127,23 @@
                 }
             }
             if (!clicked) {
-                console.log('❌ Дату', dayNum, 'не знайдено');
+                console.log('❌ Не знайдено дату', dayNum);
                 step = 5;
-                setTimeout(setCalendarData, 300);
+                setTimeout(setCalendarData, 500);
             }
         }
-        // Крок 4: Чекаємо закриття календаря і запускаємо пошук
+        // Крок 4: Закриваємо календар
         else if (step === 4) {
-            // Закриваємо календар
-            const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
-            if (closeBtn) closeBtn.click();
+            // Шукаємо кнопку закриття календаря
+            const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child, .ui-datepicker-cancel');
+            if (closeBtn) {
+                closeBtn.click();
+                console.log('📅 Календар закрито');
+            } else {
+                // Якщо кнопки немає, клікаємо поза календарем
+                document.body.click();
+                console.log('📅 Календар закрито (кліком поза)');
+            }
             step = 5;
             setTimeout(setCalendarData, 500);
         }
@@ -145,11 +159,13 @@
         }
     }
 
+    // Запускаємо з різними затримками для надійності
     setTimeout(setCalendarData, 1000);
     setTimeout(setCalendarData, 2000);
     setTimeout(setCalendarData, 3000);
     setTimeout(setCalendarData, 4000);
     setTimeout(setCalendarData, 5000);
+    setTimeout(setCalendarData, 6000);
 })();
 </script>
         </div>
