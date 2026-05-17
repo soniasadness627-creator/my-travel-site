@@ -989,5 +989,92 @@ document.addEventListener('click', function(e) {
     }
 }
 </style>
+<script>
+// ========== ПРИМУСОВИЙ ПЕРЕХІД НА СТОРІНКУ ТУРУ ==========
+(function() {
+    // Функція для отримання параметрів туру з URL
+    function getTourParamsFromHash() {
+        const hash = window.location.hash;
+        if (!hash || !hash.includes('page=tour')) return null;
 
+        const hidMatch = hash.match(/hid=(\d+)/);
+        const oidMatch = hash.match(/oid=(\d+)/);
+        const odMatch = hash.match(/od=([\d-]+)/);
+        const olMatch = hash.match(/ol=(\d+)/);
+
+        if (hidMatch && oidMatch) {
+            return {
+                hid: hidMatch[1],
+                oid: oidMatch[1],
+                od: odMatch ? odMatch[1] : '',
+                ol: olMatch ? olMatch[1] : ''
+            };
+        }
+        return null;
+    }
+
+    // Перевіряємо при завантаженні сторінки
+    function checkAndRedirect() {
+        const params = getTourParamsFromHash();
+        if (params) {
+            console.log('🔄 Виявлено тур у хеші, перенаправляємо:', params);
+            const baseUrl = window.location.pathname.startsWith('/a/')
+                ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
+                : '/tour-detail/';
+            const newUrl = `${baseUrl}?hid=${params.hid}&oid=${params.oid}&od=${params.od}&ol=${params.ol}`;
+            window.location.href = newUrl;
+        }
+    }
+
+    // Слідкуємо за зміною хеша (коли Otpusk оновлює URL)
+    let lastHash = window.location.hash;
+    setInterval(() => {
+        if (window.location.hash !== lastHash) {
+            lastHash = window.location.hash;
+            checkAndRedirect();
+        }
+    }, 500);
+
+    // Перевіряємо також при завантаженні
+    setTimeout(checkAndRedirect, 1000);
+    setTimeout(checkAndRedirect, 2000);
+    setTimeout(checkAndRedirect, 3000);
+})();
+</script>
+<script>
+// ========== ПЕРЕХОПЛЕННЯ КЛІКІВ НА ТУРИ ==========
+document.addEventListener('click', function(e) {
+    // Шукаємо клік на картці туру або посиланні
+    let target = e.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true, .new_r-item');
+    if (!target) return;
+
+    // Отримуємо URL з атрибуту href або data-href
+    let url = target.href || '';
+    if (!url && target.closest('.new_r-item')) {
+        let link = target.closest('.new_r-item').querySelector('a');
+        if (link) url = link.href;
+    }
+
+    // Перевіряємо чи є параметри hid та oid
+    if (!url || !url.includes('hid=')) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Отримуємо параметри з URL
+    let hid = url.match(/hid=(\d+)/)?.[1];
+    let oid = url.match(/oid=([\d]+)/)?.[1];
+    let od = url.match(/od=([\d-]+)/)?.[1];
+    let ol = url.match(/ol=(\d+)/)?.[1];
+
+    if (hid && oid) {
+        let baseUrl = window.location.pathname.startsWith('/a/')
+            ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
+            : '/tour-detail/';
+        let newUrl = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}`;
+        console.log('🔄 Перехід на сторінку туру:', newUrl);
+        window.location.href = newUrl;
+    }
+});
+</script>
 {% endblock %}
