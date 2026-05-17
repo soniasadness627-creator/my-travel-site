@@ -1679,7 +1679,7 @@ observer.observe(document.body, { childList: true, subtree: true });
     height: auto !important;
 }
 
-/* Текст "з Брно / 24 травня" - по лівій стороні */
+/* Текст "з Брно / 24 травня" - ПО ЛІВІЙ СТОРОНІ */
 .new_r-item-table {
     justify-content: flex-start !important;
 }
@@ -1687,14 +1687,26 @@ observer.observe(document.body, { childList: true, subtree: true });
 .new_r-item-col:first-child {
     justify-content: flex-start !important;
     text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
 }
 
-/* ЦІНА - ПО ПРАВІЙ СТОРОНІ */
+/* Текст всередині - по лівій стороні */
+.new_r-item-from,
+.new_r-item-date {
+    justify-content: flex-start !important;
+    text-align: left !important;
+    white-space: normal !important;
+}
+
+/* ЦІНА - ПО ПРАВІЙ СТОРОНІ ВНИЗУ */
 .new_r-item-col:last-child {
     justify-content: flex-end !important;
+    align-items: flex-end !important;
 }
 
-/* Блок ціни - залишаємо absolute, але зміщуємо вниз */
+/* Блок ціни - absolute, знизу справа */
 .new_r-item-price {
     position: absolute !important;
     bottom: 20px !important;
