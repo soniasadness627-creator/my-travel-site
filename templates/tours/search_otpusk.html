@@ -512,8 +512,9 @@ document.addEventListener('click', function(e) {
         if (searchBtn && searchBtn.textContent === 'Знайти') {
             searchBtn.textContent = 'Пошук';
             searchBtn.style.whiteSpace = 'nowrap';
-            searchBtn.style.minWidth = '90px';
+            searchBtn.style.minWidth = '80px';
             searchBtn.style.width = 'auto';
+            searchBtn.style.padding = '10px 20px';
             console.log('✅ Кнопку змінено на "Пошук"');
         } else if (searchBtn) {
             setTimeout(fixSearchButton, 500);
@@ -521,7 +522,21 @@ document.addEventListener('click', function(e) {
     }
     setTimeout(fixSearchButton, 1000);
     setTimeout(fixSearchButton, 2000);
+    setTimeout(fixSearchButton, 3000);
 })();
 </script>
+<!-- ========== ФІКС КОЛЬОРУ ЗАГОЛОВКІВ ФІЛЬТРІВ (ВСЕ ЧОРНЕ) ========== -->
+<style>
+/* Змінюємо голубий колір заголовків фільтрів на чорний */
+.new_f-ext-bl-title,
+.new_f-ext-bl-title span {
+    color: #000000 !important;
+}
 
+/* Додатковий текст робимо сірим */
+.new_f-ext-bl-title span {
+    color: #888888 !important;
+    font-weight: normal !important;
+}
+</style>
 {% endblock %}
