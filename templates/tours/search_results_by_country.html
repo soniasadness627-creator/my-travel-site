@@ -1250,49 +1250,33 @@ document.addEventListener('DOMContentLoaded', function() {
     background: #e0e0e0 !important;
 }
 </style>
-<!-- ========== ПЕРЕХІД НА ДЕТАЛЬНУ СТОРІНКУ ТУРУ ========== -->
+<!-- ========== ПЕРЕХІД НА ДЕТАЛІ ТУРУ ========== -->
 <script>
-(function() {
-    // Отримуємо slug агента з URL
-    function getAgentSlug() {
-        var pathParts = window.location.pathname.split('/');
-        for (var i = 0; i < pathParts.length; i++) {
-            if (pathParts[i] === 'a' && pathParts[i + 1]) {
-                return pathParts[i + 1];
-            }
-        }
-        return null;
+document.addEventListener('click', function(e) {
+    let target = e.target.closest('.new_r-item a, .new_t-order-btn, .new_t-order-btn-true');
+    if (!target) return;
+
+    let url = target.href || '';
+    if (!url && target.closest('.new_r-item')) {
+        let link = target.closest('.new_r-item').querySelector('a');
+        if (link) url = link.href;
     }
 
-    // Перехоплюємо кліки на картках турів
-    document.addEventListener('click', function(e) {
-        // Шукаємо посилання всередині картки туру
-        var link = e.target.closest('.new_r-item a');
-        if (!link) return;
+    if (!url || !url.includes('hid=')) return;
 
-        var url = link.getAttribute('href');
-        if (!url || !url.includes('hid=')) return;
+    e.preventDefault();
 
-        e.preventDefault();
-        e.stopPropagation();
+    let hid = url.match(/hid=(\d+)/)?.[1];
+    let oid = url.match(/oid=([\d]+)/)?.[1];
+    let od = url.match(/od=([\d-]+)/)?.[1];
+    let ol = url.match(/ol=(\d+)/)?.[1];
 
-        // Витягуємо параметри з URL
-        var hid = url.match(/hid=(\d+)/)?.[1];
-        var oid = url.match(/oid=([\d]+)/)?.[1];
-        var od = url.match(/od=([\d-]+)/)?.[1];
-        var ol = url.match(/ol=(\d+)/)?.[1];
-
-        if (hid && oid) {
-            var slug = getAgentSlug();
-            var baseUrl = slug ? '/a/' + slug + '/tour-detail/' : '/tour-detail/';
-            var newUrl = baseUrl + '?hid=' + hid + '&oid=' + oid;
-            if (od) newUrl += '&od=' + od;
-            if (ol) newUrl += '&ol=' + ol;
-
-            console.log('🔄 Перехід на деталі туру:', newUrl);
-            window.location.href = newUrl;
-        }
-    });
-})();
+    if (hid && oid) {
+        let baseUrl = window.location.pathname.startsWith('/a/')
+            ? `/a/${window.location.pathname.split('/')[2]}/tour-detail/`
+            : '/tour-detail/';
+        window.location.href = `${baseUrl}?hid=${hid}&oid=${oid}&od=${od || ''}&ol=${ol || ''}`;
+    }
+});
 </script>
 {% endblock %}
