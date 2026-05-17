@@ -527,79 +527,63 @@ document.addEventListener('click', function(e) {
 </script>
 <!-- ========== ФІКС КОЛЬОРІВ ФІЛЬТРІВ ТА КНОПОК ========== -->
 <style>
-/* Змінюємо голубий колір заголовків фільтрів на чорний */
-.new_f-ext-bl-title,
-.new_f-ext-bl-title span {
+/* Зміна фону блоку пошуку на білий */
+.new_f-container {
+    background: white !important;
+    background-image: none !important;
+    background-color: white !important;
+}
+
+/* Видаляємо градієнтний фон */
+.new_f-container,
+.new_f-wrapper-bg-imgs,
+.new_f-wrapper {
+    background: white !important;
+    background-image: none !important;
+    background-color: white !important;
+}
+
+/* Зміна кольору заголовка "Пошук туру" на чорний */
+.new_f-title {
     color: #000000 !important;
 }
 
-/* Додатковий текст робимо сірим */
+/* Додаткові стилі для всіх текстів у формі пошуку (робляться чорними/темними) */
+.new_f-wrapper * {
+    color: #333333 !important;
+}
+
+/* Але залишаємо посилання та кнопки в їхніх кольорах */
+.new_f-wrapper a,
+.new_f-wrapper button,
+.new_f-wrapper .new_f-form-submit {
+    color: inherit !important;
+}
+
+/* Кнопка пошуку залишається в стилі агента */
+.new_f-wrapper .new_f-form-submit {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Виправлення для місць, де може залишитись блакитний текст */
+.new_f-dropdown-btn,
+.new_f-dropdown-btn-text,
+.new_f-wrapper .new_f-dropdown-item,
+.new_f-wrapper .new_f-ext-bl-title {
+    color: #333333 !important;
+}
+
+/* Підзаголовки фільтрів */
 .new_f-ext-bl-title span {
     color: #666666 !important;
-    font-weight: normal !important;
 }
 
-/* Кнопка "Застосувати" - колір агента */
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply,
-.new_f-dropdown-btn-apply {
-    background: var(--primary-color) !important;
-    border: none !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
-    font-size: 14px !important;
-    cursor: pointer !important;
-    border-radius: 8px !important;
-    text-align: center !important;
-    padding: 10px 20px !important;
-}
-
-/* Ховер ефект для кнопки "Застосувати" */
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply:hover,
-.new_f-dropdown-btn-apply:hover {
-    background: var(--primary-dark) !important;
-    transform: scale(1.02) !important;
-    transition: all 0.3s ease !important;
-}
-
-/* Кнопка "Відміна" - сіра */
-.new_f-dropdown-btn-cancel {
-    background: #f0f0f0 !important;
+/* Поле вводу країни */
+.new_input-mask,
+.new_input-mask-country,
+.new_input-mask-cities {
     color: #333333 !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 10px 20px !important;
-}
-
-.new_f-dropdown-btn-cancel:hover {
-    background: #e0e0e0 !important;
-}
-
-/* Кнопка "Очистити фільтри" */
-.new_f-ext-clear-btn {
-    background: #ff4444 !important;
-    color: white !important;
-    border-radius: 8px !important;
-    padding: 8px 16px !important;
-    font-size: 12px !important;
-    cursor: pointer !important;
-    display: inline-block !important;
-    margin-top: 15px !important;
-}
-
-.new_f-ext-clear-btn:hover {
-    background: #cc0000 !important;
-}
-
-/* Фон контейнера фільтрів - білий або світлий */
-.new_f-ext-container {
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-}
-
-/* Чекбокси та радіо-кнопки - колір агента при виборі */
-.new_f-ext-bl-body input[type="checkbox"]:checked,
-.new_f-ext-bl-body input[type="radio"]:checked {
-    accent-color: var(--primary-color) !important;
 }
 </style>
 <!-- ========== ПРИМУСОВА ЗМІНА ТЕКСТУ КНОПКИ ========== -->
