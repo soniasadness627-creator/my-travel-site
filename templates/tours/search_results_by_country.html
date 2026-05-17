@@ -1120,4 +1120,43 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 </style>
+<!-- ========== ФІКС КНОПКИ "ПОШУК" ========== -->
+<script>
+(function() {
+    function fixButton() {
+        var btn = document.querySelector('.new_f-form-submit');
+        if (btn && btn.textContent !== 'Пошук') {
+            btn.textContent = 'Пошук';
+            btn.style.whiteSpace = 'nowrap';
+            btn.style.width = 'auto';
+            btn.style.minWidth = '80px';
+            btn.style.padding = '10px 20px';
+            console.log('✅ Кнопку змінено на "Пошук" (search_results_by_country)');
+            return true;
+        }
+        return false;
+    }
+
+    fixButton();
+
+    var observer = new MutationObserver(function() {
+        if (fixButton()) observer.disconnect();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    setTimeout(fixButton, 1000);
+    setTimeout(fixButton, 2000);
+    setTimeout(fixButton, 3000);
+    setTimeout(fixButton, 5000);
+})();
+</script>
+
+<style>
+.new_f-form-submit {
+    white-space: nowrap !important;
+    width: auto !important;
+    min-width: 80px !important;
+    overflow: visible !important;
+}
+</style>
 {% endblock %}

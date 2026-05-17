@@ -961,6 +961,29 @@ def chat_api(request):
     return JsonResponse({'error': 'Метод не підтримується'}, status=405)
 
 
+def search_otpusk_new(request, slug=None):
+    """Нова сторінка результатів пошуку турів (оновлена версія)"""
+    geo = request.GET.get('geo', '')
+    departure_text = request.GET.get('departure_text', '')
+    date_from = request.GET.get('date_from', '')
+    date_to = request.GET.get('date_to', '')
+    duration = request.GET.get('duration', '7')
+    auto_search = request.GET.get('auto_search', '1')
+
+    agent_site = getattr(request, 'current_agent_site', None)
+
+    context = {
+        'agent_site': agent_site,
+        'geo': geo,
+        'departure_text': departure_text,
+        'date_from': date_from,
+        'date_to': date_to,
+        'duration': duration,
+        'auto_search': auto_search,
+    }
+    return render(request, 'search_otpusk_new.html', context)
+
+
 def custom_logout(request):
     from django.contrib.auth import logout
     logout(request)

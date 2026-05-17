@@ -123,6 +123,10 @@ urlpatterns = [
     # ========== КОНСТРУКТОР ==========
     path('constructor/', include('constructor.urls')),
 
+    # ========== НОВІ МАРШРУТИ ДЛЯ ОНОВЛЕНОЇ СТОРІНКИ ПОШУКУ ==========
+    path('search-otpusk-new/', tours_views.search_otpusk_new, name='search_otpusk_new'),
+    path('a/<slug:slug>/search-otpusk-new/', tours_views.search_otpusk_new, name='agent_search_otpusk_new'),
+
     # ========== АГЕНТСЬКІ САЙТИ ==========
     path('a/<slug:slug>/', constructor_views.agent_public_site, name='agent_home'),
     path('a/<slug:slug>/tour/<int:pk>/', constructor_views.agent_public_site, name='agent_tour_detail'),
@@ -139,6 +143,7 @@ urlpatterns = [
     path('a/<slug:slug>/api/get-popular-tours/', tours_views.get_popular_tours_api, name='agent_get_popular_tours'),
     path('a/<slug:slug>/api/get-popular-hotels/', tours_views.get_popular_hotels_api, name='agent_get_popular_hotels'),
 ]
+
 # ========== СТАТИЧНІ ТА МЕДІА ФАЙЛИ ==========
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
