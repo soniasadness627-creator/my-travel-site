@@ -1816,4 +1816,40 @@ observer.observe(document.body, { childList: true, subtree: true });
     setTimeout(fixSearchButton, 7000);
 })();
 </script>
+<!-- ========== ТЕСТОВИЙ БЛОК ДЛЯ ПЕРЕВІРКИ ========== -->
+<div style="position: fixed; bottom: 10px; left: 10px; background: red; color: white; padding: 10px; z-index: 99999; font-size: 14px; border-radius: 5px;" id="testBlock">
+    🔍 Тест: Сторінка завантажена
+</div>
+
+<script>
+console.log('🚀 ТЕСТ: Скрипт на сторінці працює!');
+document.getElementById('testBlock').innerHTML = '✅ Скрипт працює! Шукаємо кнопку...';
+
+setTimeout(function() {
+    var btn = document.querySelector('.new_f-form-submit');
+    var testBlock = document.getElementById('testBlock');
+
+    if (btn) {
+        testBlock.innerHTML = '✅ Кнопка ЗНАЙДЕНА! Текст: "' + btn.textContent + '"';
+        testBlock.style.background = 'green';
+        console.log('🔍 Кнопка знайдена:', btn);
+        console.log('📝 Текст кнопки:', btn.textContent);
+
+        // Спроба змінити
+        btn.textContent = 'Пошук';
+        testBlock.innerHTML = '✅ Кнопку змінено на "Пошук"';
+    } else {
+        testBlock.innerHTML = '❌ Кнопка НЕ ЗНАЙДЕНА! Клас .new_f-form-submit відсутній';
+        testBlock.style.background = 'orange';
+        console.log('❌ Кнопка не знайдена');
+
+        // Показуємо всі кнопки на сторінці
+        var allButtons = document.querySelectorAll('button');
+        console.log('📋 Всі кнопки на сторінці:', allButtons.length);
+        for(var i = 0; i < allButtons.length; i++) {
+            console.log('  - Кнопка ' + i + ':', allButtons[i].className, allButtons[i].textContent);
+        }
+    }
+}, 3000);
+</script>
 {% endblock %}
