@@ -951,7 +951,7 @@ document.addEventListener('click', function(e) {
 <style>
 /* Перемикач валюти - по лівій стороні */
 .new_r-currency-switch {
-    float: left !important;
+    float: right !important;
     margin: 0 0 15px 0 !important;
     margin-right: 0 !important;
 }
@@ -959,8 +959,33 @@ document.addEventListener('click', function(e) {
 /* Для мобільних - залишаємо по центру або теж зліва */
 @media (max-width: 768px) {
     .new_r-currency-switch {
-        float: left !important;
+        float: right !important;
         margin: 0 0 15px 0 !important;
+    }
+}
+</style>
+<!-- ========== ФІКС ВІДСТУПІВ ТА ЗАОКРУГЛЕНЬ (БІЛЬШІ) ========== -->
+<style>
+/* ЗАОКРУГЛЕННЯ КАРТОК */
+.new_r-item {
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ВІДСТУПИ МІЖ КАРТКАМИ */
+.new_r-item-wrap {
+    margin-bottom: 40px !important;
+}
+
+/* Для мобільних */
+@media (max-width: 768px) {
+    .new_r-item-wrap {
+        margin-bottom: 25px !important;
+    }
+
+    .new_r-item {
+        border-radius: 18px !important;
     }
 }
 </style>
