@@ -717,8 +717,7 @@ def search_otpusk(request, slug=None):
     }
 
     # ВАЖЛИВО: використовуємо правильний шаблон!
-    return render(request, 'search_otpusk_results.html', context)
-
+    return render(request, 'search_otpusk_new.html', context)
 def search_results_calendar(request, slug=None):
     """Сторінка результатів пошуку для календаря низьких цін"""
     agent_site = getattr(request, 'current_agent_site', None)
