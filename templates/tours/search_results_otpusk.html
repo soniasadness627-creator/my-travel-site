@@ -1734,10 +1734,13 @@ observer.observe(document.body, { childList: true, subtree: true });
 </style>
 <!-- ========== ФІКС ФОНУ ТА КОЛЬОРУ ТЕКСТУ ========== -->
 <style>
-/* Білий фон для кнопки "Розширений пошук" */
+/* Прозорий фон для кнопки "Розширений пошук" */
 .new_f-ext-btn-container,
 .new_f-ext-btn {
-    background: white !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 /* Кнопка "Розширений пошук" - чорний текст */
