@@ -133,3 +133,56 @@
     }
 })();
 </script>
+<!-- ========== ФІКС КНОПКИ "ЗНАЙТИ" -> "ПОШУК" ========== -->
+<script>
+(function() {
+    // Функція зміни кнопки
+    function fixSearchButton() {
+        const btn = document.querySelector('.new_f-form-submit');
+        if (!btn) return false;
+
+        // Якщо текст вже "Пошук" – виходимо
+        if (btn.textContent === 'Пошук') return true;
+
+        // Змінюємо текст і стилі
+        btn.textContent = 'Пошук';
+        btn.style.whiteSpace = 'nowrap';
+        btn.style.minWidth = 'auto';
+        btn.style.width = 'auto';
+        btn.style.padding = '10px 24px';
+        btn.style.overflow = 'visible';
+
+        console.log('✅ Кнопку змінено на "Пошук"');
+        return true;
+    }
+
+    // Спроба змінити зараз
+    if (fixSearchButton()) return;
+
+    // Спостерігаємо за появою кнопки (оскільки вона створюється пізніше)
+    const observer = new MutationObserver(function(mutations, obs) {
+        if (fixSearchButton()) {
+            obs.disconnect();
+        }
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // Додаткова спроба через 2 секунди
+    setTimeout(fixSearchButton, 2000);
+    setTimeout(fixSearchButton, 3000);
+})();
+</script>
+
+<style>
+/* Додатковий CSS для захисту */
+.new_f-form-submit {
+    white-space: nowrap !important;
+    width: auto !important;
+    min-width: 80px !important;
+    overflow: visible !important;
+}
+</style>

@@ -989,30 +989,5 @@ document.addEventListener('click', function(e) {
     }
 }
 </style>
-<!-- ========== ФІКС РОБОТИ КАЛЕНДАРЯ ========== -->
-<style>
-/* Забезпечуємо, щоб календар працював нормально */
-.ui-datepicker {
-    z-index: 1000 !important;
-}
 
-.new_f-datepicker-wrap-1 button,
-.new_f-datepicker-wrap-2 button {
-    pointer-events: auto !important;
-}
-
-/* Прибираємо конфліктні стилі */
-.new_r-item-price {
-    position: absolute !important;
-    bottom: 12px !important;
-    right: 12px !important;
-    z-index: 5 !important;
-}
-
-/* Календар поверх всього */
-.ui-datepicker {
-    position: absolute !important;
-    z-index: 9999 !important;
-}
-</style>
 {% endblock %}
