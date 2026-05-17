@@ -25,6 +25,54 @@
     <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
     <script src="https://export.otpusk.com/js/onsite/"></script>
     <script src="https://export.otpusk.com/js/order"></script>
+<!-- ФІКС КНОПКИ "ПОШУК" -->
+<script>
+(function() {
+    function fixSearchButton() {
+        const btn = document.querySelector('.new_f-form-submit');
+        if (!btn) return false;
+
+        // Змінюємо текст і стилі
+        btn.textContent = 'Пошук';
+        btn.style.whiteSpace = 'nowrap';
+        btn.style.minWidth = 'auto';
+        btn.style.width = 'auto';
+        btn.style.padding = '10px 24px';
+        btn.style.display = 'inline-flex';
+        btn.style.alignItems = 'center';
+        btn.style.justifyContent = 'center';
+        btn.style.overflow = 'visible';
+
+        console.log('✅ Кнопку змінено на "Пошук"');
+        return true;
+    }
+
+    // Спроба зараз
+    if (fixSearchButton()) return;
+
+    // Спостерігаємо за появою кнопки
+    const observer = new MutationObserver(function(mutations, obs) {
+        if (fixSearchButton()) {
+            obs.disconnect();
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Запасний варіант через 2 секунди
+    setTimeout(fixSearchButton, 2000);
+    setTimeout(fixSearchButton, 3000);
+})();
+</script>
+
+<style>
+/* Забороняємо перенос тексту */
+.new_f-form-submit {
+    white-space: nowrap !important;
+    width: auto !important;
+    min-width: 80px !important;
+    overflow: visible !important;
+}
+</style>
 </div>
 
 <!-- ========== СКРИПТ ДЛЯ ПЕРЕДАЧІ ПАРАМЕТРІВ У ФОРМУ ========== -->
