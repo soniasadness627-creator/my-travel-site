@@ -1838,4 +1838,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 </style>
+    <!-- ========== ДІАГНОСТИКА ПОРЯДКУ БЛОКІВ ========== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== ПОРЯДОК БЛОКІВ НА СТОРІНЦІ ===');
+    const activeBlocks = {{ active_blocks|safe }};
+    console.log('active_blocks з сервера:', activeBlocks);
+});
+</script>
 {% endblock %}

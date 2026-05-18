@@ -657,7 +657,7 @@ def agent_public_site(request, slug, **kwargs):
         raise Http404("Сайт не знайдено")
 
     from .models.blocks import AgentBlockSettings
-    from tours.views import get_random_agent  # Додано імпорт
+    from tours.views import get_random_agent
     from django.shortcuts import render
 
     block_settings = AgentBlockSettings.objects.filter(agent=request.current_agent_site.user).first()
@@ -678,11 +678,22 @@ def agent_public_site(request, slug, **kwargs):
     view_name = request.resolver_match.view_name
 
     if view_name == 'agent_home':
-        # Використовуємо home.html замість TourListView
+        # Отримуємо порядок блоків
+        blocks_order = getattr(request, 'blocks_order', [])
+
+        # Фільтруємо тільки активні блоки в правильному порядку
+        active_blocks = getattr(request, 'active_blocks', [])
+        ordered_active_blocks = [b for b in blocks_order if b in active_blocks]
+
+        # ДІАГНОСТИКА
+        print(f"📊 agent_public_site - blocks_order: {blocks_order}")
+        print(f"📊 agent_public_site - active_blocks (raw): {active_blocks}")
+        print(f"📊 agent_public_site - ordered_active_blocks: {ordered_active_blocks}")
+
         return render(request, 'tours/home.html', {
             'agent_site': request.current_agent_site,
-            'blocks_order': getattr(request, 'blocks_order', []),
-            'active_blocks': getattr(request, 'active_blocks', []),
+            'blocks_order': blocks_order,
+            'active_blocks': ordered_active_blocks,  # ← ВІДСОРТОВАНІ АКТИВНІ БЛОКИ
             'banners': getattr(request, 'banners', []),
         })
     elif view_name == 'agent_tour_detail':
@@ -699,7 +710,6 @@ def agent_public_site(request, slug, **kwargs):
     elif view_name == 'agent_news_detail':
         return news_detail(request, pk=kwargs['pk'])
     elif view_name == 'agent_consultation':
-        # ВИПРАВЛЕНО: використовуємо AJAX-форму замість ConsultationCreateView
         return render(request, 'tours/consultation_form.html', {
             'agent_site': request.current_agent_site,
             'random_agent': get_random_agent(),

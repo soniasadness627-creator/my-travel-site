@@ -572,31 +572,41 @@ def get_popular_hotels_api(request, slug=None):
 
 
 def home(request):
-    """Головна сторінка з пошуком Otpusk та календарем низьких цін"""
     agent_site = getattr(request, 'current_agent_site', None)
 
-    # Отримуємо налаштування активних блоків з сесії або запиту
+    # Отримуємо порядок блоків
+    blocks_order = getattr(request, 'blocks_order', [])
     active_blocks = getattr(request, 'active_blocks', [])
 
-    # Якщо active_blocks порожній - показуємо всі блоки за замовчуванням
-    if not active_blocks:
-        active_blocks = [
+    print(f"📊 home - blocks_order: {blocks_order}")
+    print(f"📊 home - active_blocks (raw): {active_blocks}")
+
+    # Якщо blocks_order порожній - використовуємо порядок за замовчуванням
+    if not blocks_order:
+        blocks_order = [
             'price_calendar',
             'popular_destinations',
             'consultation',
             'tours_from_city',
             'about_us',
-            'popular_hotels'
+            'popular_hotels',
+            'banners'
         ]
+
+    # Фільтруємо активні блоки в правильному порядку
+    if active_blocks:
+        ordered_active_blocks = [b for b in blocks_order if b in active_blocks]
+    else:
+        ordered_active_blocks = blocks_order  # всі блоки активні
+
+    print(f"📊 home - ordered_active_blocks: {ordered_active_blocks}")
 
     context = {
         'agent_site': agent_site,
         'random_agent': get_random_agent(),
-        'active_blocks': active_blocks,  # ← ДОДАТИ ЦЕ
-        'blocks_order': getattr(request, 'blocks_order', []),
+        'active_blocks': ordered_active_blocks,
+        'blocks_order': blocks_order,
         'banners': getattr(request, 'banners', []),
-        'custom_css': getattr(request, 'custom_css', ''),
-        'custom_js': getattr(request, 'custom_js', ''),
     }
     return render(request, 'tours/home.html', context)
 

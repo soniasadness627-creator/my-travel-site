@@ -170,56 +170,53 @@
             </div>
 
             <!-- 2. Порядок блоків -->
-            <div class="border rounded p-3 mb-4">
-                <h6 class="fw-bold mb-3">
-                    <i class="fa-solid fa-arrow-up-wide-short me-2"></i>
-                    Порядок блоків:
-                </h6>
-                <div class="blocks-order-list" id="blocks-order-container">
-                    {% for block_id in blocks_order %}
-                        <div class="block-order-item mb-2 p-2 border rounded d-flex justify-content-between align-items-center" data-block="{{ block_id }}">
-                            <div class="d-flex align-items-center">
-                                <i class="
-                                    {% if block_id == 'price_calendar' %}fa-regular fa-calendar me-2
-                                    {% elif block_id == 'recommended_tours' %}fa-regular fa-star me-2
-                                    {% elif block_id == 'consultation' %}fa-regular fa-message me-2
-                                    {% elif block_id == 'popular_hotels' %}fa-regular fa-building me-2
-                                    {% elif block_id == 'about_us' %}fa-regular fa-circle-info me-2
-                                    {% elif block_id == 'popular_destinations' %}fa-regular fa-compass me-2
-                                    {% elif block_id == 'tours_from_city' %}fa-regular fa-city me-2
-                                    {% elif block_id == 'banners' %}fa-regular fa-image me-2
-                                    {% else %}fa-regular fa-square me-2
-                                    {% endif %}"></i>
-                                <strong>
-                                    {% if block_id == 'price_calendar' %} Календар низьких цін
-                                    {% elif block_id == 'recommended_tours' %} Рекомендовані тури
-                                    {% elif block_id == 'consultation' %} Консультація
-                                    {% elif block_id == 'popular_hotels' %} Популярні готелі
-                                    {% elif block_id == 'about_us' %} Про нас
-                                    {% elif block_id == 'popular_destinations' %} Популярні напрямки
-                                    {% elif block_id == 'tours_from_city' %} Тури з вашого міста
-                                    {% elif block_id == 'banners' %} Мої банери
-                                    {% else %}{{ block_id }}
-                                    {% endif %}
-                                </strong>
-                            </div>
-                            <div class="btn-group" style="gap: 5px;">
-                                <button type="button" class="move-up btn btn-sm btn-outline-secondary" style="width: 32px;" title="Перемістити вгору">
-                                    <i class="fa-solid fa-chevron-up"></i>
-                                </button>
-                                <button type="button" class="move-down btn btn-sm btn-outline-secondary" style="width: 32px;" title="Перемістити вниз">
-                                    <i class="fa-solid fa-chevron-down"></i>
-                                </button>
-                            </div>
-                        </div>
-                    {% endfor %}
+<div class="border rounded p-3 mb-4">
+    <h6 class="fw-bold mb-3">
+        <i class="fa-solid fa-arrow-up-wide-short me-2"></i>
+        Порядок блоків:
+    </h6>
+    <div class="blocks-order-list" id="blocks-order-container">
+        {% for block_id in blocks_order %}
+            <div class="block-order-item mb-2 p-2 border rounded d-flex justify-content-between align-items-center" data-block="{{ block_id }}">
+                <div class="d-flex align-items-center">
+                    <i class="
+                        {% if block_id == 'price_calendar' %}fa-regular fa-calendar me-2
+                        {% elif block_id == 'popular_destinations' %}fa-regular fa-compass me-2
+                        {% elif block_id == 'consultation' %}fa-regular fa-message me-2
+                        {% elif block_id == 'tours_from_city' %}fa-regular fa-city me-2
+                        {% elif block_id == 'about_us' %}fa-regular fa-circle-info me-2
+                        {% elif block_id == 'popular_hotels' %}fa-regular fa-building me-2
+                        {% elif block_id == 'banners' %}fa-regular fa-image me-2
+                        {% else %}fa-regular fa-square me-2
+                        {% endif %}"></i>
+                    <strong>
+                        {% if block_id == 'price_calendar' %} 📅 Календар низьких цін
+                        {% elif block_id == 'popular_destinations' %} 🌍 Популярні напрямки
+                        {% elif block_id == 'consultation' %} 📞 Консультація
+                        {% elif block_id == 'tours_from_city' %} 🏙️ Тури з вашого міста
+                        {% elif block_id == 'about_us' %} ℹ️ Про нас
+                        {% elif block_id == 'popular_hotels' %} 🏨 Популярні готелі
+                        {% elif block_id == 'banners' %} 🎯 Мої банери
+                        {% else %}{{ block_id }}
+                        {% endif %}
+                    </strong>
                 </div>
-                <small class="text-muted mt-2 d-block">
-                    <i class="fa-solid fa-arrow-up me-1"></i> <i class="fa-solid fa-arrow-down me-1"></i>
-                    Використовуйте кнопки для зміни порядку відображення блоків на вашому сайті
-                </small>
+                <div class="btn-group" style="gap: 5px;">
+                    <button type="button" class="move-up btn btn-sm btn-outline-secondary" style="width: 32px;" title="Перемістити вгору">
+                        <i class="fa-solid fa-chevron-up"></i>
+                    </button>
+                    <button type="button" class="move-down btn btn-sm btn-outline-secondary" style="width: 32px;" title="Перемістити вниз">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                </div>
             </div>
-
+        {% endfor %}
+    </div>
+    <small class="text-muted mt-2 d-block">
+        <i class="fa-solid fa-arrow-up me-1"></i> <i class="fa-solid fa-arrow-down me-1"></i>
+        Використовуйте кнопки для зміни порядку відображення блоків на вашому сайті
+    </small>
+</div>
             <!-- 3. Мої банери -->
             <div class="border rounded p-3 mb-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
