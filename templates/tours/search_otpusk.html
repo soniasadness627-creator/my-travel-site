@@ -9,143 +9,65 @@
         <div class="card-body p-4">
             <h2 class="mb-4 text-center">Пошук турів</h2>
 
-            <!-- МОДУЛЬ ПОШУКУ OTPUSK -->
-            <div id="otpusk-search-module">
-                <script>
-                    var osGeo = '';
-                    var osDefaultDeparture = '';
-                    var osDefaultDuration = '';
-                    var osDateFrom = '';
-                    var osDateTo = '';
-                    var osHotelCategory = '';
-                    var osFood = '';
-                    var osTransport = '';
-
-                    // Отримуємо параметри з URL
-                    var urlParams = new URLSearchParams(window.location.search);
-                    var geoParam = urlParams.get('geo');
-                    var departureText = urlParams.get('departure_text');
-                    var autoSearch = urlParams.get('auto_search') === '1';
-
-                    if (geoParam) {
-                        var osGeo = geoParam;
-                        console.log('📥 Отримано країну:', osGeo);
-                    }
-                    if (departureText) {
-                        console.log('📥 Отримано місто вильоту:', departureText);
-                    }
-
-                    var osTarget = '{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/{% else %}/search-otpusk/{% endif %}';
-                    var osContainer = null;
-                    var osTourContainer = null;
-                    var osLang = 'ua';
-                    var osTourTargetBlank = false;
-                    var osOrderUrl = null;
-                    var osCurrency = 'converted';
-                    var osAutoStart = autoSearch;  // Автоматичний пошук
-                </script>
-                <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
-                <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
-                <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
-                <script src="https://export.otpusk.com/js/onsite/"></script>
-                <script src="https://export.otpusk.com/js/order"></script>
-            </div>
+            <div id="otpusk-search-module"></div>
         </div>
     </div>
 </div>
 
-<!-- ФІКС КНОПКИ ТА ПАРАМЕТРІВ -->
 <script>
-(function() {
-    // Отримуємо параметри з URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const geo = urlParams.get('geo');
-    const departureText = urlParams.get('departure_text');
+// Отримуємо параметри з URL
+const urlParams = new URLSearchParams(window.location.search);
+const country = urlParams.get('country');
+const departure = urlParams.get('departure');
 
-    if (!geo && !departureText) return;
+console.log('========================================');
+console.log('ПАРАМЕТРИ З URL:', { country, departure });
+console.log('========================================');
 
-    console.log('🔍 Встановлюємо параметри:', { geo, departureText });
+// Налаштування для Otpusk
+var osGeo = country ? decodeURIComponent(country) : '';
+var osDefaultDeparture = departure ? decodeURIComponent(departure) : '';
+var osDefaultDuration = '';
+var osDateFrom = '';
+var osDateTo = '';
+var osHotelCategory = '';
+var osFood = '';
+var osTransport = '';
+var osTarget = '{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/{% else %}/search-otpusk/{% endif %}';
+var osContainer = 'otpusk-search-module';
+var osTourContainer = null;
+var osLang = 'ua';
+var osTourTargetBlank = false;
+var osOrderUrl = null;
+var osCurrency = 'converted';
+var osAutoStart = true;  // ← АВТОМАТИЧНИЙ ПОШУК
 
-    let attempts = 0;
-    let maxAttempts = 15;
+console.log('📤 ВІДПРАВЛЯЄМО В OTPUSK:');
+console.log('  osGeo:', osGeo);
+console.log('  osDefaultDeparture:', osDefaultDeparture);
+console.log('  osAutoStart:', osAutoStart);
+</script>
 
-    function setFormValues() {
-        attempts++;
-        console.log(`🔄 Спроба ${attempts}...`);
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+<script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+<script src="https://export.otpusk.com/js/onsite/"></script>
+<script src="https://export.otpusk.com/js/order"></script>
 
-        // Встановлюємо КРАЇНУ
-        if (geo) {
-            const countryInput = document.querySelector('#location');
-            if (countryInput) {
-                if (countryInput.value !== geo) {
-                    countryInput.value = geo;
-                    countryInput.dispatchEvent(new Event('input', { bubbles: true }));
-                    countryInput.dispatchEvent(new Event('change', { bubbles: true }));
-                    console.log('✅ Встановлено країну:', geo);
-                }
-            } else {
-                console.log('⏳ Поле #location ще не завантажилось');
-                if (attempts < maxAttempts) {
-                    setTimeout(setFormValues, 500);
-                }
-                return;
-            }
-        }
-
-        // Встановлюємо МІСТО ВИЛЬОТУ
-        if (departureText && attempts <= 10) {
-            setTimeout(() => {
-                const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
-                if (departureBtn) {
-                    departureBtn.click();
-                    setTimeout(() => {
-                        const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                        let found = false;
-                        for (let item of items) {
-                            const itemText = item.innerText.trim();
-                            if (itemText === departureText ||
-                                itemText === departureText.replace('з ', '')) {
-                                item.click();
-                                found = true;
-                                console.log('✅ Встановлено місто вильоту:', departureText);
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            console.log('⚠️ Місто вильоту не знайдено:', departureText);
-                        }
-                        // Закриваємо випадаючий список
-                        setTimeout(() => {
-                            const closeBtn = document.querySelector('.new_f-dropdown-body-close');
-                            if (closeBtn) closeBtn.click();
-                        }, 200);
-                    }, 300);
-                }
-            }, 1000);
-        }
-
-        // Запускаємо пошук
-        if (attempts === 3 || attempts === 5) {
-            setTimeout(() => {
-                const searchBtn = document.querySelector('.new_f-form-submit');
-                if (searchBtn) {
-                    searchBtn.click();
-                    console.log('🔍 Пошук запущено!');
-                }
-            }, 1500);
-        }
-
-        if (attempts < maxAttempts && (!document.querySelector('#location') || document.querySelector('#location')?.value !== geo)) {
-            setTimeout(setFormValues, 500);
-        }
+<script>
+// Додаткова перевірка після завантаження
+setTimeout(function() {
+    console.log('🔄 ПЕРЕВІРКА ПІСЛЯ ЗАВАНТАЖЕННЯ');
+    const locationInput = document.querySelector('#location');
+    if (locationInput && locationInput.value !== osGeo) {
+        console.log('⚠️ Країна не встановлена, встановлюємо:', osGeo);
+        locationInput.value = osGeo;
+        locationInput.dispatchEvent(new Event('input', { bubbles: true }));
+        locationInput.dispatchEvent(new Event('change', { bubbles: true }));
     }
-
-    setTimeout(setFormValues, 800);
-    setTimeout(setFormValues, 1500);
-    setTimeout(setFormValues, 2500);
-})();
+}, 2000);
 </script>
 
 <style>
@@ -160,10 +82,6 @@
     .new_f-form-submit {
         background: var(--primary-color) !important;
         color: white !important;
-        white-space: nowrap !important;
-    }
-    .new_f-form-submit:hover {
-        background: var(--primary-dark) !important;
     }
 </style>
 {% endblock %}

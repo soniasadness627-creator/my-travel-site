@@ -270,7 +270,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА ПОШУК (з передачею міста вильоту)
-    window.searchByCountry = function(country, departureText) {
+    // Для популярних напрямків
+window.searchByCountry = function(country, departureText) {
     let baseUrl = '/search-otpusk/';
     const pathParts = window.location.pathname.split('/');
     for (let i = 0; i < pathParts.length; i++) {
@@ -279,8 +280,7 @@ document.addEventListener('DOMContentLoaded', function() {
             break;
         }
     }
-    // Додаємо параметри в URL
-    window.location.href = `${baseUrl}?geo=${encodeURIComponent(country)}&departure_text=${encodeURIComponent(departureText || 'з Кишинева')}&auto_search=1`;
+    window.location.href = `${baseUrl}?country=${encodeURIComponent(country)}&departure=${encodeURIComponent(departureText || 'Кишинів')}`;
 };
 
     // ФУНКЦІЯ ДЛЯ ВІДОБРАЖЕННЯ ТУРІВ
@@ -973,19 +973,19 @@ window.searchByCityAndCountry = function(country, departureCity) {
 
     let departureText = '';
     const departureMap = {
-        'Кишинів': 'з Кишинева',
-        'Київ': 'з Києва',
-        'Одеса': 'з Одеси',
-        'Львів': 'з Львова',
-        'Варшава': 'з Варшави',
-        'Краків': 'з Кракова',
-        'Бухарест': 'з Бухареста',
-        'Прага': 'з Праги',
-        'Берлін': 'з Берліна'
+        'Кишинів': 'Кишинів',
+        'Київ': 'Київ',
+        'Одеса': 'Одеса',
+        'Львів': 'Львів',
+        'Варшава': 'Варшава',
+        'Краків': 'Краків',
+        'Бухарест': 'Бухарест',
+        'Прага': 'Прага',
+        'Берлін': 'Берлін'
     };
-    departureText = departureMap[departureCity] || `з ${departureCity}`;
+    departureText = departureMap[departureCity] || departureCity;
 
-    window.location.href = `${baseUrl}?geo=${encodeURIComponent(country)}&departure_text=${encodeURIComponent(departureText)}&auto_search=1`;
+    window.location.href = `${baseUrl}?country=${encodeURIComponent(country)}&departure=${encodeURIComponent(departureText)}`;
 };
 
     // Функція для відображення країн (без зірок, з вильотом)
