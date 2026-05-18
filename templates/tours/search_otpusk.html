@@ -15,33 +15,28 @@
     </div>
 </div>
 <script>
-// Перевіряємо, чи є збережені параметри
 (function() {
-    const savedGeo = localStorage.getItem('otpusk_geo');
-    const savedDeparture = localStorage.getItem('otpusk_departure');
+    // Отримуємо параметри з URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const country = urlParams.get('country');
+    const departure = urlParams.get('departure');
 
-    if (savedGeo || savedDeparture) {
-        console.log('Знайдено параметри:', { savedGeo, savedDeparture });
+    if (country) {
+        console.log('📥 Отримано параметри:', { country, departure });
 
-        // Очищаємо localStorage після використання
-        localStorage.removeItem('otpusk_geo');
-        localStorage.removeItem('otpusk_departure');
-
-        // Функція для встановлення значень у форму
-        function setFormValues() {
+        // Функція для встановлення значень
+        function setValues() {
             // Встановлюємо країну
-            if (savedGeo) {
-                const countryInput = document.querySelector('#location');
-                if (countryInput) {
-                    countryInput.value = savedGeo;
-                    countryInput.dispatchEvent(new Event('input', { bubbles: true }));
-                    countryInput.dispatchEvent(new Event('change', { bubbles: true }));
-                    console.log('✅ Встановлено країну:', savedGeo);
-                }
+            const countryInput = document.querySelector('#location');
+            if (countryInput && countryInput.value !== country) {
+                countryInput.value = country;
+                countryInput.dispatchEvent(new Event('input', { bubbles: true }));
+                countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+                console.log('✅ Встановлено країну:', country);
             }
 
             // Встановлюємо місто вильоту
-            if (savedDeparture) {
+            if (departure) {
                 setTimeout(() => {
                     const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
                     if (departureBtn) {
@@ -49,13 +44,13 @@
                         setTimeout(() => {
                             const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
                             for (let item of items) {
-                                if (item.innerText.trim() === savedDeparture) {
+                                if (item.innerText.trim() === departure) {
                                     item.click();
-                                    console.log('✅ Встановлено місто вильоту:', savedDeparture);
+                                    console.log('✅ Встановлено місто вильоту:', departure);
                                     break;
                                 }
                             }
-                        }, 200);
+                        }, 300);
                     }
                 }, 500);
             }
@@ -70,10 +65,10 @@
             }, 1500);
         }
 
-        // Запускаємо кілька разів з затримкою (чекаємо завантаження віджета)
-        setTimeout(setFormValues, 1000);
-        setTimeout(setFormValues, 2000);
-        setTimeout(setFormValues, 3000);
+        // Запускаємо кілька разів з затримкою
+        setTimeout(setValues, 1000);
+        setTimeout(setValues, 2000);
+        setTimeout(setValues, 3000);
     }
 })();
 </script>
