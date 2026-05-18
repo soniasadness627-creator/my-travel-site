@@ -1535,4 +1535,13 @@ if (generateBtn) {
     });
 }
 </script>
+// ДІАГНОСТИКА
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== ДІАГНОСТИКА ===');
+    const checkboxes = document.querySelectorAll('.active-blocks-list input[type="checkbox"]');
+    console.log('Всього чекбоксів:', checkboxes.length);
+
+    const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+    console.log('Вибрані блоки:', selected);
+});
 {% endblock %}

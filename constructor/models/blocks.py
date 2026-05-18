@@ -14,6 +14,7 @@ class AgentBlockSettings(models.Model):
         ('tours_from_city', '🏙️ Тури з вашого міста'),
         ('about_us', 'ℹ️ Про нас'),
         ('popular_hotels', '🏨 Популярні готелі'),
+        ('banners', '🎯 Мої банери'),  # якщо потрібен
     ]
 
     POSITION_CHOICES = [
