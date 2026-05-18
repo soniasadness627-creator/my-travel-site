@@ -921,6 +921,13 @@ class NewsListView(ListView):
     paginate_by = 9
     ordering = ['-created_at']
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Додаємо agent_site в контекст
+        if hasattr(self.request, 'current_agent_site'):
+            context['agent_site'] = self.request.current_agent_site
+        return context
+
 
 def consultation_success(request):
     return render(request, 'tours/consultation_success.html')
