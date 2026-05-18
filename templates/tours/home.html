@@ -271,11 +271,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА ПОШУК (з передачею міста вильоту)
    window.searchByCountry = function(country, departureText) {
-    let baseUrl = '/search-otpusk/';  // ← змініть на search-otpusk (без тире)
+    let baseUrl = '/search-results-by-country/';
     const pathParts = window.location.pathname.split('/');
     for (let i = 0; i < pathParts.length; i++) {
         if (pathParts[i] === 'a' && pathParts[i + 1]) {
-            baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
+            baseUrl = `/a/${pathParts[i + 1]}/search-results-by-country/`;
             break;
         }
     }

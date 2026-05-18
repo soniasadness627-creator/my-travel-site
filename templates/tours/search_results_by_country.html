@@ -37,7 +37,10 @@
                     if (countryParam) {
                         var osGeo = countryParam;
                     }
-
+var departureParam = urlParams.get('from');
+if (departureParam) {
+    var osDefaultDeparture = departureParam;
+}
                     var osTarget = '';
                     var osContainer = null;
                     var osTourContainer = null;

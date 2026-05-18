@@ -16,8 +16,9 @@
 <script>
 // Отримуємо параметри з URL
 const urlParams = new URLSearchParams(window.location.search);
-let country = urlParams.get('country');
-let fromCity = urlParams.get('from');
+// ВИДАЛІТЬ ЦЕ з search_otpusk.html:
+// let fromCity = urlParams.get('from');
+// let country = urlParams.get('country');
 
 if (country) country = decodeURIComponent(country);
 if (fromCity) {
