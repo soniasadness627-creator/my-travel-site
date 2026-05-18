@@ -280,7 +280,7 @@ window.searchByCountry = function(country, departureText) {
             break;
         }
     }
-    window.location.href = `${baseUrl}?country=${encodeURIComponent(country)}&departure=${encodeURIComponent(departureText || 'Кишинів')}`;
+    window.location.href = `${baseUrl}?country=${encodeURIComponent(country)}&departure_name=${encodeURIComponent(departureText || 'Кишинів')}`;
 };
 
     // ФУНКЦІЯ ДЛЯ ВІДОБРАЖЕННЯ ТУРІВ
@@ -970,22 +970,7 @@ window.searchByCityAndCountry = function(country, departureCity) {
             break;
         }
     }
-
-    let departureText = '';
-    const departureMap = {
-        'Кишинів': 'Кишинів',
-        'Київ': 'Київ',
-        'Одеса': 'Одеса',
-        'Львів': 'Львів',
-        'Варшава': 'Варшава',
-        'Краків': 'Краків',
-        'Бухарест': 'Бухарест',
-        'Прага': 'Прага',
-        'Берлін': 'Берлін'
-    };
-    departureText = departureMap[departureCity] || departureCity;
-
-    window.location.href = `${baseUrl}?country=${encodeURIComponent(country)}&departure=${encodeURIComponent(departureText)}`;
+    window.location.href = `${baseUrl}?country=${encodeURIComponent(country)}&departure_name=${encodeURIComponent(departureCity)}`;
 };
 
     // Функція для відображення країн (без зірок, з вильотом)
