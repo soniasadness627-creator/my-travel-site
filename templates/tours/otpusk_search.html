@@ -1,237 +1,104 @@
-<!-- МОДУЛЬ ПОШУКУ ТУРІВ (Otpusk.com) -->
-<div id="otpusk-search-module">
-    <script>
-        var osGeo = '';
-        var osDefaultDeparture = '';
-        var osDefaultDuration = '';
-        var osDateFrom = '';
-        var osDateTo = '';
-        var osHotelCategory = '';
-        var osFood = '';
-        var osTransport = '';
-        var osTarget = '{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/{% else %}/search-otpusk/{% endif %}';
-        var osContainer = null;
-        var osTourContainer = null;
-        var osLang = 'ua';
-        var osTourTargetBlank = false;
-        var osOrderUrl = null;
-        var osCurrency = 'converted';
-        var osAutoStart = false;
-    </script>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
-    <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
-    <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
-    <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
-    <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
-    <script src="https://export.otpusk.com/js/onsite/"></script>
-    <script src="https://export.otpusk.com/js/order"></script>
-<!-- ФІКС КНОПКИ "ПОШУК" -->
-<script>
-(function() {
-    function fixSearchButton() {
-        const btn = document.querySelector('.new_f-form-submit');
-        if (!btn) return false;
+{% extends "base.html" %}
+{% load static %}
 
-        // Змінюємо текст і стилі
-        btn.textContent = 'Пошук';
-        btn.style.whiteSpace = 'nowrap';
-        btn.style.minWidth = 'auto';
-        btn.style.width = 'auto';
-        btn.style.padding = '10px 24px';
-        btn.style.display = 'inline-flex';
-        btn.style.alignItems = 'center';
-        btn.style.justifyContent = 'center';
-        btn.style.overflow = 'visible';
+{% block title %}Пошук турів{% endblock %}
 
-        console.log('✅ Кнопку змінено на "Пошук"');
-        return true;
-    }
-
-    // Спроба зараз
-    if (fixSearchButton()) return;
-
-    // Спостерігаємо за появою кнопки
-    const observer = new MutationObserver(function(mutations, obs) {
-        if (fixSearchButton()) {
-            obs.disconnect();
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // Запасний варіант через 2 секунди
-    setTimeout(fixSearchButton, 2000);
-    setTimeout(fixSearchButton, 3000);
-})();
-</script>
-
-<style>
-/* Забороняємо перенос тексту */
-.new_f-form-submit {
-    white-space: nowrap !important;
-    width: auto !important;
-    min-width: 80px !important;
-    overflow: visible !important;
-}
-</style>
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+            <h2 class="mb-4 text-center">Пошук турів</h2>
+            <div id="otpusk-search-module"></div>
+        </div>
+    </div>
 </div>
 
-<!-- ========== СКРИПТ ДЛЯ ПЕРЕДАЧІ ПАРАМЕТРІВ У ФОРМУ ========== -->
 <script>
-(function() {
-    // Захист від повторного виконання
-    if (window.otpuskParamsSet) return;
-    window.otpuskParamsSet = true;
+// Отримуємо параметри з URL
+const urlParams = new URLSearchParams(window.location.search);
+const country = urlParams.get('country');
+const fromCity = urlParams.get('from');
 
-    // Отримуємо параметри з URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
-    const departureText = urlParams.get('departure_text') || '';
-    const dateFrom = urlParams.get('date_from') || '';
-    const duration = urlParams.get('duration') || '7';
+console.log('Отримані параметри:', { country, fromCity });
 
-    console.log('📥 Параметри для форми:', { geo, departureText, dateFrom, duration });
-
-    if (geo || departureText || dateFrom) {
-        let attempts = 0;
-        let searchTriggered = false;
-
-        function setFormValues() {
-            attempts++;
-            console.log(`🔄 Спроба ${attempts} встановлення параметрів...`);
-
-            // Встановлюємо КРАЇНУ
-            if (geo) {
-                const countryInput = document.querySelector('#location');
-                if (countryInput && countryInput.value !== geo) {
-                    countryInput.value = geo;
-                    countryInput.dispatchEvent(new Event('input', { bubbles: true }));
-                    countryInput.dispatchEvent(new Event('change', { bubbles: true }));
-                    console.log('✅ Встановлено країну:', geo);
-                }
-            }
-
-            // Встановлюємо МІСТО ВИЛЬОТУ
-            if (departureText) {
-                setTimeout(() => {
-                    const dropdownBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
-                    if (dropdownBtn && !dropdownBtn.innerText.includes(departureText)) {
-                        dropdownBtn.click();
-                        setTimeout(() => {
-                            const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                            for (let item of items) {
-                                if (item.innerText.trim() === departureText) {
-                                    item.click();
-                                    console.log('✅ Клік по місту вильоту:', departureText);
-                                    break;
-                                }
-                            }
-                        }, 200);
-                    }
-                }, 500);
-            }
-
-            // Встановлюємо ДАТУ (однакова дата початку і кінця)
-            if (dateFrom) {
-                const dayNum = dateFrom.split('.')[0];
-                console.log('📅 Вибрана дата:', dateFrom);
-
-                setTimeout(() => {
-                    const dateButton = document.querySelector('.new_f-datepicker-wrap-1 button');
-                    if (dateButton) {
-                        dateButton.click();
-
-                        setTimeout(() => {
-                            const dateCells = document.querySelectorAll('.ui-datepicker-calendar td a');
-                            for (let cell of dateCells) {
-                                if (cell.innerText === dayNum) {
-                                    cell.click();
-                                    console.log('✅ Клік по даті ПОЧАТКУ:', dateFrom);
-                                    break;
-                                }
-                            }
-
-                            // Закриваємо календар
-                            setTimeout(() => {
-                                const closeBtn = document.querySelector('.ui-datepicker-close, .ui-datepicker-buttonpane button:first-child');
-                                if (closeBtn) closeBtn.click();
-                            }, 100);
-                        }, 200);
-                    }
-                }, 800);
-            }
-
-            // Запускаємо пошук (тільки один раз)
-            if (!searchTriggered && (geo || departureText)) {
-                setTimeout(() => {
-                    const searchBtn = document.querySelector('.new_f-form-submit');
-                    if (searchBtn) {
-                        searchBtn.click();
-                        searchTriggered = true;
-                        console.log('🔍 Пошук запущено!');
-                    }
-                }, 1500);
-            }
-        }
-
-        // Запускаємо кілька разів з затримками
-        setTimeout(setFormValues, 1000);
-        setTimeout(setFormValues, 2000);
-        setTimeout(setFormValues, 3000);
-        setTimeout(setFormValues, 4000);
-    }
-})();
+// Зберігаємо в localStorage, щоб скрипт міг прочитати
+if (country) localStorage.setItem('otpusk_country', decodeURIComponent(country));
+if (fromCity) localStorage.setItem('otpusk_from', decodeURIComponent(fromCity));
 </script>
-<!-- ========== ФІКС КНОПКИ "ЗНАЙТИ" -> "ПОШУК" ========== -->
+
+<!-- Підключаємо Otpusk -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+<script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+<script src="https://export.otpusk.com/js/onsite/"></script>
+<script src="https://export.otpusk.com/js/order"></script>
+
 <script>
-(function() {
-    // Функція зміни кнопки
-    function fixSearchButton() {
-        const btn = document.querySelector('.new_f-form-submit');
-        if (!btn) return false;
+// Мапа міст (назва -> ID для osDefaultDeparture)
+const cityToId = {
+    'кишинів': 1200, 'кишинев': 1200, 'chisinau': 1200,
+    'київ': 1544, 'киев': 1544, 'kyiv': 1544,
+    'одеса': 1545, 'одесса': 1545, 'odessa': 1545,
+    'львів': 1546, 'львов': 1546, 'lviv': 1546,
+    'варшава': 1676, 'warsaw': 1676,
+    'краків': 1677, 'krakow': 1677,
+    'бухарест': 1653, 'bucharest': 1653,
+    'прага': 1682, 'prague': 1682,
+    'берлін': 1636, 'berlin': 1636,
+    'будапешт': 1651, 'budapest': 1651
+};
 
-        // Якщо текст вже "Пошук" – виходимо
-        if (btn.textContent === 'Пошук') return true;
+// Читаємо з localStorage
+let savedCountry = localStorage.getItem('otpusk_country');
+let savedFrom = localStorage.getItem('otpusk_from');
 
-        // Змінюємо текст і стилі
-        btn.textContent = 'Пошук';
-        btn.style.whiteSpace = 'nowrap';
-        btn.style.minWidth = 'auto';
-        btn.style.width = 'auto';
-        btn.style.padding = '10px 24px';
-        btn.style.overflow = 'visible';
-
-        console.log('✅ Кнопку змінено на "Пошук"');
-        return true;
+let departureId = 1200; // Кишинів за замовчуванням
+if (savedFrom) {
+    const key = savedFrom.toLowerCase();
+    if (cityToId[key]) {
+        departureId = cityToId[key];
     }
+}
 
-    // Спроба змінити зараз
-    if (fixSearchButton()) return;
+console.log('Параметри для Otpusk:', { savedCountry, savedFrom, departureId });
 
-    // Спостерігаємо за появою кнопки (оскільки вона створюється пізніше)
-    const observer = new MutationObserver(function(mutations, obs) {
-        if (fixSearchButton()) {
-            obs.disconnect();
-        }
-    });
+// НАЛАШТУВАННЯ OTPUSK
+var osGeo = savedCountry || '';
+var osDefaultDeparture = departureId;
+var osDefaultDuration = '';
+var osDateFrom = '';
+var osDateTo = '';
+var osHotelCategory = '';
+var osFood = '';
+var osTransport = '';
+var osTarget = window.location.pathname;
+var osContainer = 'otpusk-search-module';
+var osTourContainer = null;
+var osLang = 'ua';
+var osTourTargetBlank = false;
+var osOrderUrl = null;
+var osCurrency = 'converted';
+var osAutoStart = true;
 
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-
-    // Додаткова спроба через 2 секунди
-    setTimeout(fixSearchButton, 2000);
-    setTimeout(fixSearchButton, 3000);
-})();
+// Очищаємо localStorage після використання
+localStorage.removeItem('otpusk_country');
+localStorage.removeItem('otpusk_from');
 </script>
 
 <style>
-/* Додатковий CSS для захисту */
-.new_f-form-submit {
-    white-space: nowrap !important;
-    width: auto !important;
-    min-width: 80px !important;
-    overflow: visible !important;
-}
-
+    #otpusk-search-module {
+        background: white !important;
+        border-radius: 24px !important;
+        border: 2px solid var(--primary-color, #0d6efd) !important;
+        padding: 20px 24px !important;
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+    }
+    .new_f-form-submit {
+        background: var(--primary-color, #0d6efd) !important;
+        color: white !important;
+    }
 </style>
+{% endblock %}

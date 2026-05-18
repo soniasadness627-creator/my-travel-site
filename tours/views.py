@@ -1068,3 +1068,12 @@ def custom_logout(request):
     from django.contrib.auth import logout
     logout(request)
     return redirect('/')
+def otpusk_search(request):
+    """Пошук турів через Otpusk"""
+    return render(request, 'tours/otpusk_search.html')
+
+def agent_otpusk_search(request, slug):
+    """Пошук турів через Otpusk для агента"""
+    from agents.models import AgentSite
+    agent_site = get_object_or_404(AgentSite, slug=slug)
+    return render(request, 'tours/otpusk_search.html', {'agent_site': agent_site})

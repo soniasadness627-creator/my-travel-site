@@ -17,6 +17,10 @@ urlpatterns = [
     # Сторінка результатів пошуку Otpusk
     path('search-otpusk/', views.search_otpusk, name='search_otpusk'),
 
+    # 👇 НОВІ МАРШРУТИ ДЛЯ OTPUSK SEARCH 👇
+    path('otpusk-search/', views.otpusk_search, name='otpusk_search'),
+    path('a/<slug:slug>/otpusk-search/', views.agent_otpusk_search, name='agent_otpusk_search'),
+
     # Сторінка результатів пошуку для популярних напрямків
     path('search-otpusk-by-country/', views.search_otpusk_by_country, name='search_otpusk_by_country'),
 
