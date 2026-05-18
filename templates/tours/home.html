@@ -271,10 +271,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА ПОШУК (з передачею міста вильоту)
     window.searchByCountry = function(country, departureText) {
-    // Зберігаємо в localStorage
-    localStorage.setItem('otpusk_search_country', country);
-    localStorage.setItem('otpusk_search_departure', departureText || 'з Кишинева');
-
     let baseUrl = '/search-otpusk/';
     const pathParts = window.location.pathname.split('/');
     for (let i = 0; i < pathParts.length; i++) {
@@ -283,8 +279,10 @@ document.addEventListener('DOMContentLoaded', function() {
             break;
         }
     }
-    console.log('🔗 Перехід на сторінку пошуку');
-    window.location.href = baseUrl;
+    // Використовуємо хеш для передачі параметрів
+    let url = `${baseUrl}#!geo=${encodeURIComponent(country)}&departure_text=${encodeURIComponent(departureText || 'з Кишинева')}&auto_search=1`;
+    console.log('🔗 Перехід за URL:', url);
+    window.location.href = url;
 };
 
     // ФУНКЦІЯ ДЛЯ ВІДОБРАЖЕННЯ ТУРІВ
@@ -965,7 +963,15 @@ const defaultImage = '/static/images/default-tour.jpg';
     const cityBtns = document.querySelectorAll('.city-btn');
 
     window.searchByCityAndCountry = function(country, departureCity) {
-    // Визначаємо правильне відмінювання
+    let baseUrl = '/search-otpusk/';
+    const pathParts = window.location.pathname.split('/');
+    for (let i = 0; i < pathParts.length; i++) {
+        if (pathParts[i] === 'a' && pathParts[i + 1]) {
+            baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
+            break;
+        }
+    }
+
     let departureText = '';
     if (departureCity === 'Кишинів') departureText = 'з Кишинева';
     else if (departureCity === 'Київ') departureText = 'з Києва';
@@ -978,20 +984,9 @@ const defaultImage = '/static/images/default-tour.jpg';
     else if (departureCity === 'Берлін') departureText = 'з Берліна';
     else departureText = `з ${departureCity}`;
 
-    // Зберігаємо в localStorage
-    localStorage.setItem('otpusk_search_country', country);
-    localStorage.setItem('otpusk_search_departure', departureText);
-
-    let baseUrl = '/search-otpusk/';
-    const pathParts = window.location.pathname.split('/');
-    for (let i = 0; i < pathParts.length; i++) {
-        if (pathParts[i] === 'a' && pathParts[i + 1]) {
-            baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
-            break;
-        }
-    }
-    console.log('🔗 Перехід на сторінку пошуку');
-    window.location.href = baseUrl;
+    let url = `${baseUrl}#!geo=${encodeURIComponent(country)}&departure_text=${encodeURIComponent(departureText)}&auto_search=1`;
+    console.log('🔗 Перехід за URL:', url);
+    window.location.href = url;
 };
 
     // Функція для відображення країн (без зірок, з вильотом)

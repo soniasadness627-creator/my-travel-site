@@ -16,82 +16,87 @@
 </div>
 <script>
 (function() {
-    // Отримуємо збережені параметри
-    const savedCountry = localStorage.getItem('otpusk_search_country');
-    const savedDeparture = localStorage.getItem('otpusk_search_departure');
+    // Отримуємо параметри з хеша
+    const hash = window.location.hash;
+    console.log('🔍 Хеш URL:', hash);
 
-    if (savedCountry || savedDeparture) {
-        console.log('📥 Отримано збережені параметри:', { savedCountry, savedDeparture });
+    if (hash && hash.includes('geo')) {
+        // Парсимо параметри з хеша
+        const params = {};
+        hash.replace(/^#!?/, '').split('&').forEach(param => {
+            const [key, value] = param.split('=');
+            if (key && value) {
+                params[key] = decodeURIComponent(value);
+            }
+        });
 
-        // Очищаємо localStorage після використання
-        localStorage.removeItem('otpusk_search_country');
-        localStorage.removeItem('otpusk_search_departure');
+        console.log('📥 Отримано параметри:', params);
 
         let attempts = 0;
         let countrySet = false;
-        let departureSet = false;
 
         function setValues() {
             attempts++;
-            console.log(`🔄 Спроба ${attempts} встановлення параметрів...`);
+            console.log(`🔄 Спроба ${attempts}...`);
 
             // Встановлюємо КРАЇНУ
-            if (savedCountry && !countrySet) {
+            if (params.geo && !countrySet) {
                 const countryInput = document.querySelector('#location');
                 if (countryInput) {
-                    countryInput.value = savedCountry;
+                    countryInput.value = params.geo;
                     countryInput.dispatchEvent(new Event('input', { bubbles: true }));
                     countryInput.dispatchEvent(new Event('change', { bubbles: true }));
                     countrySet = true;
-                    console.log('✅ Встановлено країну:', savedCountry);
+                    console.log('✅ Встановлено країну:', params.geo);
+                } else {
+                    console.log('❌ Поле #location не знайдено');
                 }
             }
 
             // Встановлюємо МІСТО ВИЛЬОТУ
-            if (savedDeparture && !departureSet) {
-                // Шукаємо кнопку вибору міста вильоту
-                const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
-                if (departureBtn) {
-                    departureBtn.click();
-                    setTimeout(() => {
-                        const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                        for (let item of items) {
-                            const itemText = item.innerText.trim();
-                            if (itemText === savedDeparture ||
-                                itemText === savedDeparture.replace('з ', '') ||
-                                itemText.toLowerCase() === savedDeparture.toLowerCase()) {
-                                item.click();
-                                departureSet = true;
-                                console.log('✅ Встановлено місто вильоту:', savedDeparture);
-                                break;
+            if (params.departure_text) {
+                setTimeout(() => {
+                    const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
+                    if (departureBtn) {
+                        departureBtn.click();
+                        setTimeout(() => {
+                            const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                            for (let item of items) {
+                                const itemText = item.innerText.trim();
+                                if (itemText === params.departure_text ||
+                                    itemText === params.departure_text.replace('з ', '')) {
+                                    item.click();
+                                    console.log('✅ Встановлено місто вильоту:', params.departure_text);
+                                    break;
+                                }
                             }
-                        }
-                    }, 300);
-                }
+                        }, 200);
+                    }
+                }, 400);
             }
 
-            // Запускаємо пошук після того, як все встановлено
-            if (countrySet && attempts >= 3) {
+            // Запускаємо пошук
+            if (countrySet && params.auto_search === '1') {
                 setTimeout(() => {
                     const searchBtn = document.querySelector('.new_f-form-submit');
                     if (searchBtn) {
                         searchBtn.click();
                         console.log('🔍 Пошук запущено!');
                     }
-                }, 500);
-            } else if (countrySet && attempts < 10) {
-                setTimeout(setValues, 800);
-            } else if (!countrySet && attempts < 10) {
-                setTimeout(setValues, 800);
+                }, 600);
+            }
+
+            if (attempts < 10 && !countrySet) {
+                setTimeout(setValues, 500);
             }
         }
 
-        // Запускаємо з різними затримками
+        // Запускаємо багаторазово
         setTimeout(setValues, 500);
-        setTimeout(setValues, 1200);
+        setTimeout(setValues, 1000);
+        setTimeout(setValues, 1500);
         setTimeout(setValues, 2000);
         setTimeout(setValues, 3000);
-        setTimeout(setValues, 4000);
     }
 })();
 </script>
