@@ -403,25 +403,25 @@ def get_popular_tours_api(request, slug=None):
         {'country': 'Туреччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},
         {'country': 'ОАЕ', 'departure': 'Варшава', 'departure_text': 'з Варшави'},
         {'country': 'Греція', 'departure': 'Відень', 'departure_text': 'з Відня'},
-        {'country': 'Кіпр', 'departure': 'Ларнака', 'departure_text': 'з Ларнаки'},  # ← змінила
-        {'country': 'Іспанія', 'departure': 'Барселона', 'departure_text': 'з Барселони'},  # ← змінила
-        {'country': 'Таїланд', 'departure': 'Бангкок', 'departure_text': 'з Бангкока'},  # ← змінила
-        {'country': 'Мальдіви', 'departure': 'Мале', 'departure_text': 'з Мале'},  # ← змінила
-        {'country': 'Італія', 'departure': 'Рим', 'departure_text': 'з Рима'},  # ← змінила
-        {'country': 'Хорватія', 'departure': 'Загреб', 'departure_text': 'з Загреба'},  # ← змінила
-        {'country': 'Чорногорія', 'departure': 'Подгориця', 'departure_text': 'з Подгориці'},  # ← змінила
-        {'country': 'Болгарія', 'departure': 'Софія', 'departure_text': 'з Софії'},  # ← змінила
-        {'country': 'Грузія', 'departure': 'Тбілісі', 'departure_text': 'з Тбілісі'},
-        {'country': 'Польща', 'departure': 'Варшава', 'departure_text': 'з Варшави'},
-        {'country': 'Угорщина', 'departure': 'Будапешт', 'departure_text': 'з Будапешта'},
-        {'country': 'Чехія', 'departure': 'Прага', 'departure_text': 'з Праги'},
-        {'country': 'Австрія', 'departure': 'Відень', 'departure_text': 'з Відня'},
-        {'country': 'Франція', 'departure': 'Париж', 'departure_text': 'з Парижа'},
-        {'country': 'Німеччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},
+        {'country': 'Кіпр', 'departure': 'Ларнака', 'departure_text': 'з Ларнаки'},
+        {'country': 'Іспанія', 'departure': 'Барселона', 'departure_text': 'з Барселони'},
+        {'country': 'Таїланд', 'departure': 'Бангкок', 'departure_text': 'з Бангкока'},
+        {'country': 'Мальдіви', 'departure': 'Мале', 'departure_text': 'з Мале'},
+        {'country': 'Італія', 'departure': 'Рим', 'departure_text': 'з Рима'},
+        {'country': 'Хорватія', 'departure': 'Загреб', 'departure_text': 'з Загреба'},
+        {'country': 'Чорногорія', 'departure': 'Подгориця', 'departure_text': 'з Подгориці'},
+        {'country': 'Болгарія', 'departure': 'Софія', 'departure_text': 'з Софії'},
+        {'country': 'Грузія', 'departure': 'Тбілісі', 'departure_text': 'з Тбілісі'},  # ← ОНОВЛЕНО
+        {'country': 'Польща', 'departure': 'Варшава', 'departure_text': 'з Варшави'},  # ← ОНОВЛЕНО
+        {'country': 'Угорщина', 'departure': 'Будапешт', 'departure_text': 'з Будапешта'},  # ← ОНОВЛЕНО
+        {'country': 'Австрія', 'departure': 'Відень', 'departure_text': 'з Відня'},  # ← ОНОВЛЕНО
+        {'country': 'Франція', 'departure': 'Париж', 'departure_text': 'з Парижа'},  # ← ОНОВЛЕНО
+        {'country': 'Німеччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},  # ← ОНОВЛЕНО
     ]
 
-    # ФОТО ДЛЯ КОЖНОЇ КРАЇНИ (ВАШІ ЛОКАЛЬНІ ФОТО)
+    # ========== ФОТО ДЛЯ КОЖНОЇ КРАЇНИ (ОНОВЛЕНО) ==========
     country_images = {
+        # Існуючі фото (без змін)
         'Єгипет': '/static/images/Egypt.jpg',
         'Туреччина': '/static/images/Turkey.jpg',
         'ОАЕ': '/static/images/UAE.jpg',
@@ -434,13 +434,16 @@ def get_popular_tours_api(request, slug=None):
         'Хорватія': '/static/images/Croatia.jpg',
         'Чорногорія': '/static/images/Montenegro.jpg',
         'Болгарія': '/static/images/Bulgaria.jpg',
+
+        # НОВІ ФОТО (додані вами)
         'Грузія': '/static/images/Georgia.jpg',
         'Польща': '/static/images/Poland.jpg',
         'Угорщина': '/static/images/Hungary.jpg',
-        'Чехія': '/static/images/the Czech Republic.jpg',
         'Австрія': '/static/images/Austria.jpg',
         'Франція': '/static/images/France.jpg',
         'Німеччина': '/static/images/Germany.jpg',
+
+        # Інші країни (залишаються як були)
         'Албанія': '/static/images/Albania.jpg',
         'Шрі Ланка': '/static/images/SriLanka.jpg',
         'В\'єтнам': '/static/images/Vietnam.jpg',
@@ -474,7 +477,7 @@ def get_popular_tours_api(request, slug=None):
         first_city = City.objects.filter(country=country).first()
         city_name = first_city.name if first_city else 'популярний курорт'
 
-        # Отримуємо фото (якщо немає в словнику, використовуємо фото за замовчуванням)
+        # Отримуємо фото (оновлений словник)
         image_url = country_images.get(country, default_image)
 
         # Генеруємо дати
@@ -500,7 +503,6 @@ def get_popular_tours_api(request, slug=None):
         })
 
     return JsonResponse({'tours': tours})
-
 
 def add_fallback_tour(tours, country, idx):
     """Додає тур-заглушку якщо API не повернув дані"""
