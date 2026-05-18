@@ -574,6 +574,20 @@ def get_popular_hotels_api(request, slug=None):
 def home(request):
     agent_site = getattr(request, 'current_agent_site', None)
 
+    # Якщо це суперадмін, створюємо фейковий об'єкт для відображення
+    if not agent_site and request.user.is_authenticated and request.user.is_superuser:
+        # Створюємо простий об'єкт з ім'ям користувача
+        class FakeAgentSite:
+            class User:
+                def __init__(self, user):
+                    self.username = user.username
+                    self.get_full_name = lambda: user.get_full_name() or user.username
+
+            def __init__(self, user):
+                self.user = self.User(user)
+
+        agent_site = FakeAgentSite(request.user)
+
     # Отримуємо порядок блоків
     blocks_order = getattr(request, 'blocks_order', [])
     active_blocks = getattr(request, 'active_blocks', [])

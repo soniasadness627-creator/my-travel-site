@@ -375,8 +375,17 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <i class="fa-regular fa-user text-secondary"></i>
                                 </div>
                                 <div>
-                                    <div class="fw-bold" style="font-size: 0.95rem;">{{ agent_site.user.get_full_name|default:agent_site.user.username }}</div>
-                                    <div class="text-muted" style="font-size: 0.8rem;">9 років досвіду в туризмі</div>
+<div class="fw-bold" style="font-size: 0.95rem;">
+    {% if agent_site and agent_site.user %}
+        {{ agent_site.user.get_full_name|default:agent_site.user.username }}
+    {% else %}
+        {% if user.is_authenticated %}
+            {{ user.get_full_name|default:user.username }}
+        {% else %}
+            ТурКонструктор
+        {% endif %}
+    {% endif %}
+</div>                                    <div class="text-muted" style="font-size: 0.8rem;">9 років досвіду в туризмі</div>
                                 </div>
                             </div>
                             <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
