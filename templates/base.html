@@ -488,6 +488,11 @@
     <main class="flex-grow-1 pt-5">
         {% block content %}{% endblock %}
     </main>
+<!-- ========== FAVICON (ІКОНКА ВКЛАДКИ) ========== -->
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+<link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+<link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
 
     <!-- ========== ФУТЕР ========== -->
     <footer class="bg-dark text-white py-4 mt-auto">

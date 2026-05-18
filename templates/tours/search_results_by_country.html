@@ -1310,5 +1310,66 @@ document.addEventListener('DOMContentLoaded', function() {
     display: none !important;
 }
 </style>
+<style>
+/* ========== ЗМІНА БЛОКУ ПОШУКУ НА БІЛИЙ ФОН ========== */
 
+/* Основний блок пошуку - білий фон замість градієнту */
+.new_f-container {
+    background: #ffffff !important;
+    background-image: none !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+/* Заголовок "Пошук туру" - чорний колір */
+.new_f-title {
+    color: #000000 !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 15px 20px !important;
+    height: auto !important;
+    width: auto !important;
+}
+
+/* Всі тексти всередині форми - чорні */
+.new_f-wrapper label,
+.new_f-wrapper .new_f-dropdown-btn,
+.new_f-wrapper .new_f-dropdown-btn *,
+.new_f-wrapper .new_f-people-title,
+.new_f-wrapper .new_f-children-accordion-btn,
+.new_f-wrapper .new_f-ext-btn-text {
+    color: #333333 !important;
+}
+
+/* Кнопка "Знайти" - залишаємо кольоровою */
+.new_f-wrapper .new_f-form-submit {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+.new_f-wrapper .new_f-form-submit:hover {
+    background-color: var(--primary-dark) !important;
+}
+
+/* Іконки в формі - темно-сірі */
+.new_f-wrapper svg,
+.new_f-wrapper .new_f-datepicker-wrap svg,
+.new_f-wrapper .new_f-dropdown-btn svg {
+    filter: none !important;
+    fill: #666666 !important;
+}
+
+/* Випадаючі списки - білий фон */
+.new_f-wrapper .new_f-dropdown-body,
+.new_f-wrapper .new_f-dropdown-body * {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+}
+
+/* Рамки полів */
+.new_f-wrapper .new_f-dropdown-btn {
+    border: 1px solid #e2e8f0 !important;
+    background: #ffffff !important;
+}
+</style>
 {% endblock %}
