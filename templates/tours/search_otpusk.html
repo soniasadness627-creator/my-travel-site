@@ -14,16 +14,22 @@
 </div>
 
 <script>
-// Отримуємо параметри з URL
+// ============================================
+// ОТРИМУЄМО ПАРАМЕТРИ З URL
+// ============================================
 const urlParams = new URLSearchParams(window.location.search);
-const country = urlParams.get('country');
-const fromCity = urlParams.get('from');
+let country = urlParams.get('country');
+let fromCity = urlParams.get('from');
 
-console.log('Отримані параметри:', { country, fromCity });
+// Розкодовуємо
+if (country) country = decodeURIComponent(country);
+if (fromCity) fromCity = decodeURIComponent(fromCity);
 
-// Зберігаємо в localStorage, щоб скрипт міг прочитати
-if (country) localStorage.setItem('otpusk_country', decodeURIComponent(country));
-if (fromCity) localStorage.setItem('otpusk_from', decodeURIComponent(fromCity));
+console.log('📥 Отримані параметри:', { country, fromCity });
+
+// Зберігаємо в глобальні змінні
+window.otpuskCountry = country || '';
+window.otpuskFromCity = fromCity || '';
 </script>
 
 <!-- Підключаємо Otpusk -->
@@ -50,22 +56,23 @@ const cityToId = {
     'будапешт': 1651, 'budapest': 1651
 };
 
-// Читаємо з localStorage
-let savedCountry = localStorage.getItem('otpusk_country');
-let savedFrom = localStorage.getItem('otpusk_from');
-
+// Визначаємо ID міста вильоту
 let departureId = 1200; // Кишинів за замовчуванням
-if (savedFrom) {
-    const key = savedFrom.toLowerCase();
+if (window.otpuskFromCity) {
+    const key = window.otpuskFromCity.toLowerCase();
     if (cityToId[key]) {
         departureId = cityToId[key];
     }
 }
 
-console.log('Параметри для Otpusk:', { savedCountry, savedFrom, departureId });
+console.log('🚀 Параметри для Otpusk:', {
+    osGeo: window.otpuskCountry,
+    fromCity: window.otpuskFromCity,
+    departureId: departureId
+});
 
 // НАЛАШТУВАННЯ OTPUSK
-var osGeo = savedCountry || '';
+var osGeo = window.otpuskCountry;
 var osDefaultDeparture = departureId;
 var osDefaultDuration = '';
 var osDateFrom = '';
@@ -80,11 +87,80 @@ var osLang = 'ua';
 var osTourTargetBlank = false;
 var osOrderUrl = null;
 var osCurrency = 'converted';
-var osAutoStart = true;
+var osAutoStart = true;  // Автозапуск
+</script>
 
-// Очищаємо localStorage після використання
-localStorage.removeItem('otpusk_country');
-localStorage.removeItem('otpusk_from');
+<!-- ========== ДОДАТКОВИЙ СКРИПТ ДЛЯ ГАРАНТОВАНОГО ВСТАНОВЛЕННЯ ========== -->
+<script>
+(function() {
+    let attempts = 0;
+    const maxAttempts = 20;
+    let countrySet = false;
+    let departureSet = false;
+    let searchTriggered = false;
+
+    function setFormValues() {
+        attempts++;
+
+        // Встановлюємо КРАЇНУ
+        if (!countrySet && window.otpuskCountry) {
+            const locationInput = document.querySelector('#location');
+            if (locationInput && locationInput.value !== window.otpuskCountry) {
+                locationInput.value = window.otpuskCountry;
+                locationInput.dispatchEvent(new Event('input', { bubbles: true }));
+                locationInput.dispatchEvent(new Event('change', { bubbles: true }));
+                console.log(`✅ [${attempts}] Встановлено країну: ${window.otpuskCountry}`);
+                countrySet = true;
+            }
+        }
+
+        // Встановлюємо МІСТО ВИЛЬОТУ через клік
+        if (!departureSet && window.otpuskFromCity) {
+            const departureBtn = document.querySelector('.new_f-departure .new_f-dropdown-header');
+            if (departureBtn) {
+                departureBtn.click();
+                setTimeout(() => {
+                    const items = document.querySelectorAll('.new_f-departure .new_f-dropdown-item');
+                    for (let item of items) {
+                        if (item.textContent.trim().toLowerCase() === window.otpuskFromCity.toLowerCase()) {
+                            item.click();
+                            console.log(`✅ [${attempts}] Встановлено місто вильоту: ${window.otpuskFromCity}`);
+                            departureSet = true;
+                            break;
+                        }
+                    }
+                    if (!departureSet) {
+                        departureBtn.click(); // Закриваємо список
+                    }
+                }, 150);
+            }
+        }
+
+        // Запускаємо пошук
+        if (!searchTriggered && (countrySet || !window.otpuskCountry) && (departureSet || !window.otpuskFromCity)) {
+            setTimeout(() => {
+                const searchBtn = document.querySelector('.new_f-form-submit');
+                if (searchBtn) {
+                    searchBtn.click();
+                    searchTriggered = true;
+                    console.log('🔍 ПОШУК ЗАПУЩЕНО!');
+                }
+            }, 500);
+        }
+
+        // Продовжуємо спроби якщо треба
+        if (attempts < maxAttempts && (!countrySet || !departureSet)) {
+            setTimeout(setFormValues, 800);
+        }
+    }
+
+    // Запускаємо після завантаження
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setFormValues);
+    } else {
+        setFormValues();
+    }
+})();
 </script>
 
 <style>
@@ -99,6 +175,11 @@ localStorage.removeItem('otpusk_from');
     .new_f-form-submit {
         background: var(--primary-color, #0d6efd) !important;
         color: white !important;
+        white-space: nowrap !important;
+        padding: 10px 24px !important;
+    }
+    .new_f-form-submit:hover {
+        background: var(--primary-dark, #0b5ed7) !important;
     }
 </style>
 {% endblock %}

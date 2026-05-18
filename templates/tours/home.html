@@ -270,17 +270,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА ПОШУК (з передачею міста вильоту)
-    // Для популярних напрямків
-window.searchByCountry = function(country, departureText) {
-    let baseUrl = '/otpusk-search/';
+   window.searchByCountry = function(country, departureText) {
+    let baseUrl = '/search-otpusk/';  // ← змініть на search-otpusk (без тире)
     const pathParts = window.location.pathname.split('/');
     for (let i = 0; i < pathParts.length; i++) {
         if (pathParts[i] === 'a' && pathParts[i + 1]) {
-            baseUrl = `/a/${pathParts[i + 1]}/otpusk-search/`;
+            baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
             break;
         }
     }
-    // Передаємо параметри в URL
     const params = new URLSearchParams();
     params.set('country', country);
     params.set('from', departureText || 'Кишинів');
@@ -964,13 +962,12 @@ const defaultImage = '/static/images/default-tour.jpg';
     const countriesGrid = document.getElementById('countriesGrid');
     const cityBtns = document.querySelectorAll('.city-btn');
 
-    // Для тури з вашого міста
-window.searchByCityAndCountry = function(country, departureCity) {
-    let baseUrl = '/otpusk-search/';
+    window.searchByCityAndCountry = function(country, departureCity) {
+    let baseUrl = '/search-otpusk/';
     const pathParts = window.location.pathname.split('/');
     for (let i = 0; i < pathParts.length; i++) {
         if (pathParts[i] === 'a' && pathParts[i + 1]) {
-            baseUrl = `/a/${pathParts[i + 1]}/otpusk-search/`;
+            baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
             break;
         }
     }
