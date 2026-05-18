@@ -271,11 +271,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА ПОШУК (з передачею міста вильоту)
     window.searchByCountry = function(country, departureText) {
-    alert('Функція викликана! Країна: ' + country);  // ← ДОДАТИ ЦЕ
+    // Зберігаємо параметри в localStorage
+    localStorage.setItem('otpusk_geo', country);
+    localStorage.setItem('otpusk_departure', departureText);
+
+    // Переходимо на сторінку пошуку
     let baseUrl = '/search-otpusk/';
-    console.log('🔍 searchByCountry викликано з параметрами:', {country, departureText});
-console.log('🔍 Поточний pathname:', window.location.pathname);
-console.log('🔍 Знайдений baseUrl:', baseUrl);
     const pathParts = window.location.pathname.split('/');
     for (let i = 0; i < pathParts.length; i++) {
         if (pathParts[i] === 'a' && pathParts[i + 1]) {
@@ -283,16 +284,7 @@ console.log('🔍 Знайдений baseUrl:', baseUrl);
             break;
         }
     }
-    // Додаємо параметр departure_text обов'язково
-    let url = `${baseUrl}?geo=${encodeURIComponent(country)}&auto_search=1`;
-    if (departureText) {
-        url += `&departure_text=${encodeURIComponent(departureText)}`;
-    } else {
-        // Якщо departureText не передано, додаємо значення за замовчуванням
-        url += `&departure_text=з%20Кишинева`;
-    }
-    console.log('🔗 Перехід за URL:', url);
-    window.location.href = url;
+    window.location.href = baseUrl;
 };
 
     // ФУНКЦІЯ ДЛЯ ВІДОБРАЖЕННЯ ТУРІВ
@@ -973,15 +965,7 @@ const defaultImage = '/static/images/default-tour.jpg';
     const cityBtns = document.querySelectorAll('.city-btn');
 
     window.searchByCityAndCountry = function(country, departureCity) {
-    let baseUrl = '/search-otpusk/';
-    const pathParts = window.location.pathname.split('/');
-    for (let i = 0; i < pathParts.length; i++) {
-        if (pathParts[i] === 'a' && pathParts[i + 1]) {
-            baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
-            break;
-        }
-    }
-    // Використовуємо cityMap для правильного відмінювання
+    // Визначаємо правильне відмінювання
     let departureText = '';
     if (departureCity === 'Кишинів') departureText = 'з Кишинева';
     else if (departureCity === 'Київ') departureText = 'з Києва';
@@ -994,9 +978,20 @@ const defaultImage = '/static/images/default-tour.jpg';
     else if (departureCity === 'Берлін') departureText = 'з Берліна';
     else departureText = `з ${departureCity}`;
 
-    const url = `${baseUrl}?geo=${encodeURIComponent(country)}&auto_search=1&departure_text=${encodeURIComponent(departureText)}`;
-    console.log('🔗 Перехід за URL:', url);
-    window.location.href = url;
+    // Зберігаємо в localStorage
+    localStorage.setItem('otpusk_geo', country);
+    localStorage.setItem('otpusk_departure', departureText);
+
+    // Переходимо на сторінку пошуку
+    let baseUrl = '/search-otpusk/';
+    const pathParts = window.location.pathname.split('/');
+    for (let i = 0; i < pathParts.length; i++) {
+        if (pathParts[i] === 'a' && pathParts[i + 1]) {
+            baseUrl = `/a/${pathParts[i + 1]}/search-otpusk/`;
+            break;
+        }
+    }
+    window.location.href = baseUrl;
 };
 
     // Функція для відображення країн (без зірок, з вильотом)

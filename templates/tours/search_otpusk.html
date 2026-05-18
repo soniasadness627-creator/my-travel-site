@@ -14,7 +14,69 @@
         </div>
     </div>
 </div>
+<script>
+// Перевіряємо, чи є збережені параметри
+(function() {
+    const savedGeo = localStorage.getItem('otpusk_geo');
+    const savedDeparture = localStorage.getItem('otpusk_departure');
 
+    if (savedGeo || savedDeparture) {
+        console.log('Знайдено параметри:', { savedGeo, savedDeparture });
+
+        // Очищаємо localStorage після використання
+        localStorage.removeItem('otpusk_geo');
+        localStorage.removeItem('otpusk_departure');
+
+        // Функція для встановлення значень у форму
+        function setFormValues() {
+            // Встановлюємо країну
+            if (savedGeo) {
+                const countryInput = document.querySelector('#location');
+                if (countryInput) {
+                    countryInput.value = savedGeo;
+                    countryInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('✅ Встановлено країну:', savedGeo);
+                }
+            }
+
+            // Встановлюємо місто вильоту
+            if (savedDeparture) {
+                setTimeout(() => {
+                    const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
+                    if (departureBtn) {
+                        departureBtn.click();
+                        setTimeout(() => {
+                            const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                            for (let item of items) {
+                                if (item.innerText.trim() === savedDeparture) {
+                                    item.click();
+                                    console.log('✅ Встановлено місто вильоту:', savedDeparture);
+                                    break;
+                                }
+                            }
+                        }, 200);
+                    }
+                }, 500);
+            }
+
+            // Запускаємо пошук
+            setTimeout(() => {
+                const searchBtn = document.querySelector('.new_f-form-submit');
+                if (searchBtn) {
+                    searchBtn.click();
+                    console.log('🔍 Пошук запущено');
+                }
+            }, 1500);
+        }
+
+        // Запускаємо кілька разів з затримкою (чекаємо завантаження віджета)
+        setTimeout(setFormValues, 1000);
+        setTimeout(setFormValues, 2000);
+        setTimeout(setFormValues, 3000);
+    }
+})();
+</script>
 <!-- ФІКС КНОПКИ -->
 <script src="{% static 'js/fix_otpusk_button.js' %}"></script>
 {% endblock %}
