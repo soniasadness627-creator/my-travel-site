@@ -271,7 +271,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА ПОШУК (з передачею міста вильоту)
     window.searchByCountry = function(country, departureText) {
+    alert('Функція викликана! Країна: ' + country);  // ← ДОДАТИ ЦЕ
     let baseUrl = '/search-otpusk/';
+    console.log('🔍 searchByCountry викликано з параметрами:', {country, departureText});
+console.log('🔍 Поточний pathname:', window.location.pathname);
+console.log('🔍 Знайдений baseUrl:', baseUrl);
     const pathParts = window.location.pathname.split('/');
     for (let i = 0; i < pathParts.length; i++) {
         if (pathParts[i] === 'a' && pathParts[i + 1]) {
@@ -312,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const departureText = tour.departure_text || tour.departure || '';
 
             html += `
-<div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(countryName)}', '${escapeHtml(departureText)}')">
+            <div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(countryName)}', '${escapeHtml(departureText)}')">
     <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop'">
     <div class="popular-tour-info">
         <div class="popular-tour-hotel">${escapeHtml(hotelName)}</div>
@@ -1889,5 +1893,17 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('active_blocks з сервера:', activeBlocks);
 });
 </script>
+// ========== ТЕСТОВА ДІАГНОСТИКА ДЛЯ БЛОКІВ ==========
+<script>
+// Перевіряємо, чи функції взагалі існують
+console.log('=== ДІАГНОСТИКА ФУНКЦІЙ ===');
+console.log('searchByCountry існує:', typeof window.searchByCountry === 'function');
+console.log('searchByCityAndCountry існує:', typeof window.searchByCityAndCountry === 'function');
 
+// Тестові виклики (розкоментуйте для перевірки)
+// setTimeout(() => {
+//     console.log('🔍 Тестовий виклик searchByCountry');
+//     searchByCountry('Єгипет', 'з Кишинева');
+// }, 3000);
+</script>
 {% endblock %}
