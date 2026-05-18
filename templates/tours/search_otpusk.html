@@ -15,37 +15,23 @@
 
 <script>
 // ============================================
-// ОТРИМУЄМО ПАРАМЕТРИ З URL
+// 1. ОТРИМУЄМО ПАРАМЕТРИ З URL
 // ============================================
 const urlParams = new URLSearchParams(window.location.search);
 let country = urlParams.get('country');
 let fromCity = urlParams.get('from');
 
-// Розкодовуємо
 if (country) country = decodeURIComponent(country);
 if (fromCity) fromCity = decodeURIComponent(fromCity);
 
-console.log('📥 Отримані параметри:', { country, fromCity });
+console.log('🔍 Параметри з URL:', { country, fromCity });
 
-// Зберігаємо в глобальні змінні
-window.otpuskCountry = country || '';
-window.otpuskFromCity = fromCity || '';
-</script>
-
-<!-- Підключаємо Otpusk -->
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
-<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
-<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
-<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
-<script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
-<script src="https://export.otpusk.com/js/onsite/"></script>
-<script src="https://export.otpusk.com/js/order"></script>
-
-<script>
-// Мапа міст (назва -> ID для osDefaultDeparture)
+// ============================================
+// 2. МАПА МІСТ (назва -> ID)
+// ============================================
 const cityToId = {
     'кишинів': 1200, 'кишинев': 1200, 'chisinau': 1200,
-    'київ': 1544, 'киев': 1544, 'kyiv': 1544,
+    'київ': 1544, 'киев': 1544, 'kyiv': 1544, 'kiev': 1544,
     'одеса': 1545, 'одесса': 1545, 'odessa': 1545,
     'львів': 1546, 'львов': 1546, 'lviv': 1546,
     'варшава': 1676, 'warsaw': 1676,
@@ -58,21 +44,17 @@ const cityToId = {
 
 // Визначаємо ID міста вильоту
 let departureId = 1200; // Кишинів за замовчуванням
-if (window.otpuskFromCity) {
-    const key = window.otpuskFromCity.toLowerCase();
+if (fromCity) {
+    const key = fromCity.toLowerCase().replace('з ', '');
     if (cityToId[key]) {
         departureId = cityToId[key];
     }
 }
 
-console.log('🚀 Параметри для Otpusk:', {
-    osGeo: window.otpuskCountry,
-    fromCity: window.otpuskFromCity,
-    departureId: departureId
-});
-
-// НАЛАШТУВАННЯ OTPUSK
-var osGeo = window.otpuskCountry;
+// ============================================
+// 3. НАЛАШТУВАННЯ OTPUSK
+// ============================================
+var osGeo = country || '';
 var osDefaultDeparture = departureId;
 var osDefaultDuration = '';
 var osDateFrom = '';
@@ -87,79 +69,75 @@ var osLang = 'ua';
 var osTourTargetBlank = false;
 var osOrderUrl = null;
 var osCurrency = 'converted';
-var osAutoStart = true;  // Автозапуск
+var osAutoStart = true;
+
+console.log('🚀 Налаштування Otpusk:', { osGeo, osDefaultDeparture });
 </script>
 
-<!-- ========== ДОДАТКОВИЙ СКРИПТ ДЛЯ ГАРАНТОВАНОГО ВСТАНОВЛЕННЯ ========== -->
+<!-- Підключення Otpusk -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+<script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+<script src="https://export.otpusk.com/js/onsite/"></script>
+<script src="https://export.otpusk.com/js/order"></script>
+
+<!-- ========================================== -->
+<!-- 4. ПОВТОРНІ СПРОБИ ВСТАНОВИТИ ЗНАЧЕННЯ -->
+<!-- ========================================== -->
 <script>
 (function() {
     let attempts = 0;
-    const maxAttempts = 20;
     let countrySet = false;
     let departureSet = false;
-    let searchTriggered = false;
 
-    function setFormValues() {
+    function setValues() {
         attempts++;
+        console.log(`🔄 Спроба ${attempts}...`);
 
-        // Встановлюємо КРАЇНУ
-        if (!countrySet && window.otpuskCountry) {
+        // Встановлюємо країну
+        if (!countrySet && country) {
             const locationInput = document.querySelector('#location');
-            if (locationInput && locationInput.value !== window.otpuskCountry) {
-                locationInput.value = window.otpuskCountry;
+            if (locationInput) {
+                locationInput.value = country;
                 locationInput.dispatchEvent(new Event('input', { bubbles: true }));
                 locationInput.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log(`✅ [${attempts}] Встановлено країну: ${window.otpuskCountry}`);
+                console.log(`✅ Встановлено країну: ${country}`);
                 countrySet = true;
             }
         }
 
-        // Встановлюємо МІСТО ВИЛЬОТУ через клік
-        if (!departureSet && window.otpuskFromCity) {
+        // Встановлюємо місто вильоту через клік
+        if (!departureSet && fromCity) {
             const departureBtn = document.querySelector('.new_f-departure .new_f-dropdown-header');
             if (departureBtn) {
                 departureBtn.click();
                 setTimeout(() => {
                     const items = document.querySelectorAll('.new_f-departure .new_f-dropdown-item');
                     for (let item of items) {
-                        if (item.textContent.trim().toLowerCase() === window.otpuskFromCity.toLowerCase()) {
+                        if (item.textContent.trim().toLowerCase() === fromCity.toLowerCase()) {
                             item.click();
-                            console.log(`✅ [${attempts}] Встановлено місто вильоту: ${window.otpuskFromCity}`);
+                            console.log(`✅ Встановлено місто вильоту: ${fromCity}`);
                             departureSet = true;
                             break;
                         }
                     }
                     if (!departureSet) {
-                        departureBtn.click(); // Закриваємо список
+                        departureBtn.click(); // Закриваємо якщо не знайшли
                     }
-                }, 150);
+                }, 200);
             }
         }
 
-        // Запускаємо пошук
-        if (!searchTriggered && (countrySet || !window.otpuskCountry) && (departureSet || !window.otpuskFromCity)) {
-            setTimeout(() => {
-                const searchBtn = document.querySelector('.new_f-form-submit');
-                if (searchBtn) {
-                    searchBtn.click();
-                    searchTriggered = true;
-                    console.log('🔍 ПОШУК ЗАПУЩЕНО!');
-                }
-            }, 500);
-        }
-
-        // Продовжуємо спроби якщо треба
-        if (attempts < maxAttempts && (!countrySet || !departureSet)) {
-            setTimeout(setFormValues, 800);
+        // Продовжуємо спроби
+        if (attempts < 15 && (!countrySet || (fromCity && !departureSet))) {
+            setTimeout(setValues, 500);
         }
     }
 
-    // Запускаємо після завантаження
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setFormValues);
-    } else {
-        setFormValues();
-    }
+    // Запускаємо через 1 секунду після завантаження
+    setTimeout(setValues, 1000);
 })();
 </script>
 
@@ -175,11 +153,6 @@ var osAutoStart = true;  // Автозапуск
     .new_f-form-submit {
         background: var(--primary-color, #0d6efd) !important;
         color: white !important;
-        white-space: nowrap !important;
-        padding: 10px 24px !important;
-    }
-    .new_f-form-submit:hover {
-        background: var(--primary-dark, #0b5ed7) !important;
     }
 </style>
 {% endblock %}
