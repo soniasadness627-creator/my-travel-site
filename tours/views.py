@@ -1026,22 +1026,35 @@ def tours_by_city(request):
 
 
 def chat_api(request):
-    from .gemine_chat import get_gemini_response
+    """API для чат-бота"""
+    from .gemini_chat import get_gemini_response
+
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
             message = data.get('message', '')
+
             if not message:
-                return JsonResponse({'error': 'Порожнє повідомлення'}, status=400)
+                return JsonResponse({'error': 'Empty message'}, status=400)
+
+            # Отримуємо назву агенції
             agency_name = "ТурКонструктор"
             if hasattr(request, 'current_agent_site') and request.current_agent_site:
                 agency_name = request.current_agent_site.agency_name or agency_name
+
             response = get_gemini_response(message, request, agency_name)
             return JsonResponse(response)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Некоректний JSON'}, status=400)
-    return JsonResponse({'error': 'Метод не підтримується'}, status=405)
 
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            print(f"Chat API error: {e}")
+            return JsonResponse({
+                'response': '⚠️ Вибачте, сталася помилка. Спробуйте ще раз пізніше.',
+                'redirect': None
+            }, status=200)
+
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 def search_otpusk_new(request, slug=None):
     """Нова сторінка результатів пошуку турів (оновлена версія)"""

@@ -22,6 +22,23 @@ def get_min_price_for_country(country_name):
         return None
 
 
+def filter_tours_by_agent_site(tours, request):
+    """Фільтрує тури для агентського сайту"""
+    # Отримуємо агентський сайт з запиту
+    agent_site = getattr(request, 'current_agent_site', None)
+
+    if not agent_site:
+        return tours
+
+    # Якщо агент хоче показувати тури суперадміна
+    if agent_site.show_superadmin_tours:
+        # Показуємо всі тури (суперадміна + свої)
+        return tours
+    else:
+        # Показуємо тільки тури цього агента
+        return tours.filter(author=agent_site.user)
+
+
 def get_countries_with_prices(request=None):
     try:
         countries_data = {}
@@ -29,7 +46,6 @@ def get_countries_with_prices(request=None):
 
         # Фільтруємо тури для агента, якщо є агентський сайт
         if request:
-            from tours.views import filter_tours_by_agent_site
             tours = filter_tours_by_agent_site(tours, request)
 
         for tour in tours:
@@ -46,13 +62,16 @@ def get_gemini_response(message, request, agency_name="Моя Агенція"):
     """
     Отримує відповідь від Gemini API з урахуванням агентського контексту
     """
+    # Перевіряємо, чи є сесія
+    if not hasattr(request, 'session'):
+        return {
+            'text': "👋 Вітаю! Чим можу допомогти вам з підбором туру?",
+            'redirect': None
+        }
+
     last_country = request.session.get('chat_last_country', None)
     message_lower = message.lower()
     agent_site = getattr(request, 'current_agent_site', None)
-
-    # Список країн для перевірки
-    countries_list = ['Єгипет', 'Туреччина', 'ОАЕ', 'Таїланд', 'Мальдіви', 'Іспанія', 'Італія', 'Кіпр', 'Греція',
-                      'Чехія']
 
     # Обробка "так" - перенаправлення на пошук
     yes_words = ['так', 'да', 'yes', '+', 'ok', 'звісно', 'так, цікавить']
@@ -109,11 +128,12 @@ def get_gemini_response(message, request, agency_name="Моя Агенція"):
                 break
 
     # Якщо знайшли країну
-    if found_country:
+    if found_country and found_country in countries_prices:
         price = countries_prices[found_country]
         request.session['chat_last_country'] = found_country
+        price_uah = int(price) * 42  # конвертуємо в гривні приблизно
         return {
-            'text': f"🇪🇬 {found_country} - чудовий вибір! Мінімальна ціна туру в {found_country} складає {int(price)} $ за 7 ночей. Хочете дізнатися більше про готелі або конкретні дати? (Так/Ні)",
+            'text': f"🇪🇬 {found_country} - чудовий вибір! Мінімальна ціна туру в {found_country} складає {price_uah} ₴ за 7 ночей. Хочете дізнатися більше про готелі або конкретні дати? (Так/Ні)",
             'redirect': None
         }
 
@@ -123,46 +143,51 @@ def get_gemini_response(message, request, agency_name="Моя Агенція"):
         names = ["Анна", "Олександр", "Марія", "Дмитро", "Олена", "Іван", "Тетяна", "Михайло", "Наталія", "Сергій"]
         bot_name = random.choice(names)
         return {
-            'text': f"👋 Вітаю! Радий вас бачити в {agency_name}. Мене звати {bot_name}. Чим можу допомогти з підбором туру?",
+            'text': f"👋 Вітаю! Радий вас бачити в {agency_name}. Мене звати {bot_name}. Чим можу допомогти з підбором туру?\n\nМожу підказати:\n• Ціни на популярні напрямки\n• Порадити куди поїхати\n• Допомогти вибрати готель",
             'redirect': None
         }
 
     # Ціни
-    price_words = ["ціни", "вартість", "скільки коштує", "прайс", "ціна", "бюджет", "сколько стоит"]
+    price_words = ["ціни", "вартість", "скільки коштує", "прайс", "ціна", "бюджет", "сколько стоит", "скільки"]
     if any(w in message_lower for w in price_words):
         if countries_prices:
-            response_text = "💰 Актуальні мінімальні ціни на тури:\n"
+            response_text = "💰 Актуальні мінімальні ціни на тури:\n\n"
             for country, price in sorted(countries_prices.items(), key=lambda x: x[1])[:10]:
-                response_text += f"• {country}: від {int(price)} $\n"
+                price_uah = int(price) * 42
+                response_text += f"• {country}: від {price_uah} ₴\n"
             response_text += "\nХочете дізнатися деталі по конкретній країні? Напишіть назву країни."
             return {'text': response_text, 'redirect': None}
         else:
             return {
-                'text': "💰 На жаль, зараз немає актуальних турів. Але ви можете залишити заявку, і наш менеджер підбере варіанти: <a href=\"#consultationCard\">👇 Заповнити форму</a>",
+                'text': "💰 На жаль, зараз немає актуальних турів. Але ви можете залишити заявку, і наш менеджер підбере варіанти: 👇",
                 'redirect': None
             }
 
     # Напрямки
-    directions_words = ["куди", "поїхати", "напрямок", "популярні", "рекомендуєте"]
+    directions_words = ["куди", "поїхати", "напрямок", "популярні", "рекомендуєте", "порадьте"]
     if any(w in message_lower for w in directions_words):
         if countries_prices:
             top_countries = sorted(countries_prices.items(), key=lambda x: x[1])[:5]
-            response_text = "🌍 Популярні напрямки з актуальними цінами:\n"
+            response_text = "🌍 Популярні напрямки з актуальними цінами:\n\n"
             for country, price in top_countries:
-                response_text += f"• {country}: від {int(price)} $\n"
-            response_text += "\nЯка країна вас цікавить?"
+                price_uah = int(price) * 42
+                response_text += f"• {country}: від {price_uah} ₴\n"
+            response_text += "\nЯка країна вас цікавить? Напишіть її назву!"
             return {'text': response_text, 'redirect': None}
         else:
-            return {'text': "🌍 Популярні напрямки: Єгипет, Туреччина, ОАЕ, Таїланд, Мальдіви. Який вас цікавить?",
-                    'redirect': None}
+            return {
+                'text': "🌍 Популярні напрямки: Єгипет, Туреччина, ОАЕ, Таїланд, Мальдіви, Іспанія, Італія, Греція. Який вас цікавить?",
+                'redirect': None}
 
     # Прощання
-    bye_words = ["пока", "бувай", "до побачення", "до свидания"]
+    bye_words = ["пока", "бувай", "до побачення", "до свидания", "бувай"]
     if any(w in message_lower for w in bye_words):
-        return {'text': "👋 До побачення! Буду радий допомогти вам з підбором туру. Заходьте ще!", 'redirect': None}
+        return {
+            'text': "👋 До побачення! Буду радий допомогти вам з підбором туру. Заходьте ще! Якщо виникнуть питання - пишіть!",
+            'redirect': None}
 
-    # Якщо нічого не підійшло – пропонуємо консультацію з HTML-посиланням
+    # Якщо нічого не підійшло – пропонуємо консультацію
     return {
-        'text': "🤖 Вибачте, я не зміг знайти відповідь на ваше запитання. Але ви можете залишити заявку, і наш менеджер зв'яжеться з вами для детальної консультації: <a href=\"#consultationCard\">👇 Залишити заявку</a>",
+        'text': "🤖 Вибачте, я не зміг знайти відповідь на ваше запитання. Спробуйте запитати про:\n\n• Ціни на тури в певну країну\n• Популярні напрямки\n• Бюджет для подорожі\n\nАбо залиште заявку, і наш менеджер зв'яжеться з вами для детальної консультації: 👇",
         'redirect': None
     }
