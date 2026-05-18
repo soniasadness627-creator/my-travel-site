@@ -216,25 +216,40 @@ def constructor_dashboard(request):
         agent_site.save()
 
     # Отримуємо налаштування блоків для агента
-    block_settings, _ = AgentBlockSettings.objects.get_or_create(
+    # ВАЖЛИВО: явно вказуємо DEFAULT значення для active_blocks
+    default_active_blocks = [
+        'price_calendar',
+        'popular_destinations',
+        'consultation',
+        'tours_from_city',
+        'about_us',
+        'popular_hotels',
+        'banners'
+    ]
+
+    block_settings, created = AgentBlockSettings.objects.get_or_create(
         agent=request.user,
         defaults={
             'blocks_order': AgentBlockSettings().get_default_order(),
-            'active_blocks': ['price_calendar', 'popular_destinations', 'consultation', 'tours_from_city', 'about_us',
-                              'popular_hotels'],
+            'active_blocks': default_active_blocks,  # ← ВСІ БЛОКИ АКТИВНІ
         }
     )
 
+    # ЯКЩО ЗАПИС ВЖЕ ІСНУЄ, АЛЕ active_blocks ПОРОЖНІЙ - ВИПРАВЛЯЄМО
+    if not created and not block_settings.active_blocks:
+        print("⚠️ active_blocks ПОРОЖНІЙ, ВСТАНОВЛЮЄМО ЗНАЧЕННЯ ЗА ЗАМОВЧУВАННЯМ")
+        block_settings.active_blocks = default_active_blocks
+        block_settings.save()
+
+    print(f"📊 Поточні active_blocks: {block_settings.active_blocks}")
+
     if request.method == 'POST':
         print("=" * 60)
-        print("🚀 ОТРИМАНО POST ЗАПИТ В КОНСТРУКТОРІ")
-        print(f"📋 ВСІ POST ДАНІ: {dict(request.POST)}")
-        print("=" * 60)
+        print("🚀 ОТРИМАНО POST ЗАПИТ")
+        print(f"📋 POST keys: {list(request.POST.keys())}")
 
-        # Обробляємо основну форму
         form = AgentSiteForm(request.POST, request.FILES, instance=agent_site)
 
-        # ========== ОБРОБКА НАЛАШТУВАНЬ БЛОКІВ ==========
         blocks_order = request.POST.getlist('blocks_order')
         active_blocks = request.POST.getlist('active_blocks')
         custom_css = request.POST.get('custom_css', '')
@@ -242,29 +257,18 @@ def constructor_dashboard(request):
 
         print(f"📦 ОТРИМАНО blocks_order: {blocks_order}")
         print(f"📦 ОТРИМАНО active_blocks: {active_blocks}")
-        print(f"📦 ОТРИМАНО custom_css довжина: {len(custom_css)}")
-        print(f"📦 ОТРИМАНО custom_js довжина: {len(custom_js)}")
 
-        # ЗБЕРІГАЄМО НАЛАШТУВАННЯ БЛОКІВ
         if blocks_order:
             block_settings.blocks_order = blocks_order
-            print(f"✅ ЗБЕРЕЖЕНО blocks_order: {block_settings.blocks_order}")
-        else:
-            print("⚠️ blocks_order ПОРОЖНІЙ, використовуємо існуючий")
-
         if active_blocks:
             block_settings.active_blocks = active_blocks
             print(f"✅ ЗБЕРЕЖЕНО active_blocks: {block_settings.active_blocks}")
         else:
-            print("⚠️ active_blocks ПОРОЖНІЙ, зберігаємо як порожній список")
-            block_settings.active_blocks = []
+            print("⚠️ active_blocks ПОРОЖНІЙ, ЗБЕРІГАЄМО ПОТОЧНИЙ")
 
         block_settings.custom_css = custom_css
         block_settings.custom_js = custom_js
         block_settings.save()
-
-        print(f"💾 ПІСЛЯ ЗБЕРЕЖЕННЯ В БД: active_blocks = {block_settings.active_blocks}")
-        print("=" * 60)
 
         if form.is_valid():
             saved_site = form.save()
@@ -276,10 +280,6 @@ def constructor_dashboard(request):
                     messages.error(request, f'{field}: {error}')
     else:
         form = AgentSiteForm(instance=agent_site)
-
-    # ДІАГНОСТИКА - що передається в шаблон
-    print(f"📤 ВІДПРАВЛЯЄМО В ШАБЛОН: active_blocks = {block_settings.active_blocks}")
-    print(f"📤 ВІДПРАВЛЯЄМО В ШАБЛОН: blocks_order = {block_settings.blocks_order}")
 
     context = {
         'form': form,

@@ -90,13 +90,25 @@ class AgentBlockSettings(models.Model):
         return f"Блоки агента {self.agent.username}"
 
     def get_default_order(self):
+        """Повертає порядок блоків за замовчуванням"""
         return [
             'price_calendar',
-            'recommended_tours',
-            'consultation',
-            'popular_hotels',
-            'about_us',
             'popular_destinations',
+            'consultation',
             'tours_from_city',
+            'about_us',
+            'popular_hotels',
+            'banners',
+        ]
+
+    def get_default_active_blocks(self):
+        """Повертає активні блоки за замовчуванням (ВСІ)"""
+        return [
+            'price_calendar',
+            'popular_destinations',
+            'consultation',
+            'tours_from_city',
+            'about_us',
+            'popular_hotels',
             'banners',
         ]
