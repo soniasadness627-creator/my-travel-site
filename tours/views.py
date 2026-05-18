@@ -570,21 +570,35 @@ def get_popular_hotels_api(request, slug=None):
 
     return JsonResponse({'hotels': data})
 
+
 def home(request):
     """Головна сторінка з пошуком Otpusk та календарем низьких цін"""
     agent_site = getattr(request, 'current_agent_site', None)
 
+    # Отримуємо налаштування активних блоків з сесії або запиту
+    active_blocks = getattr(request, 'active_blocks', [])
+
+    # Якщо active_blocks порожній - показуємо всі блоки за замовчуванням
+    if not active_blocks:
+        active_blocks = [
+            'price_calendar',
+            'popular_destinations',
+            'consultation',
+            'tours_from_city',
+            'about_us',
+            'popular_hotels'
+        ]
+
     context = {
         'agent_site': agent_site,
-        'random_agent': get_random_agent(),  # ← ДОДАТИ ЦЕЙ РЯДОК
+        'random_agent': get_random_agent(),
+        'active_blocks': active_blocks,  # ← ДОДАТИ ЦЕ
         'blocks_order': getattr(request, 'blocks_order', []),
-        'active_blocks': getattr(request, 'active_blocks', []),
         'banners': getattr(request, 'banners', []),
         'custom_css': getattr(request, 'custom_css', ''),
         'custom_js': getattr(request, 'custom_js', ''),
     }
     return render(request, 'tours/home.html', context)
-
 
 # ========== ОСНОВНІ ФУНКЦІЇ ДЛЯ АГЕНТСЬКИХ САЙТІВ ==========
 

@@ -123,25 +123,23 @@
                 </div>
 
                 <!-- Вкладка Меню -->
-                <div class="tab-pane" id="tab-menu">
-                    <div class="card-shadow">
-                        <div class="card-header">Меню та налаштування турів</div>
-                        <div class="card-body">
-                            <div class="mb-2">
-                                {{ form.show_news }}
-                                <label for="{{ form.show_news.id_for_label }}">Показувати новини</label>
-                            </div>
-                            <div class="mb-2">
-                                {{ form.show_superadmin_tours }}
-                                <label for="{{ form.show_superadmin_tours.id_for_label }}">Показувати тури суперадміна</label>
-                            </div>
-                            <div class="mb-2">
-                                {{ form.show_operator_logos }}
-                                <label for="{{ form.show_operator_logos.id_for_label }}">Показувати логотипи туроператорів</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="tab-pane" id="tab-menu">
+    <div class="card-shadow">
+        <div class="card-header">Налаштування відображення</div>
+        <div class="card-body">
+            <div class="mb-2">
+                <input type="checkbox" name="show_news" class="form-check-input" id="id_show_news" {% if form.show_news.value %}checked{% endif %}>
+                <label for="id_show_news">Показувати новини</label>
+                <div class="form-text text-muted small">Відображати блок новин на головній сторінці</div>
+            </div>
+            <div class="mb-2">
+                <input type="checkbox" name="show_operator_logos" class="form-check-input" id="id_show_operator_logos" {% if form.show_operator_logos.value %}checked{% endif %}>
+                <label for="id_show_operator_logos">Показувати логотипи туроператорів</label>
+                <div class="form-text text-muted small">Відображати логотипи туроператорів у результатах пошуку</div>
+            </div>
+        </div>
+    </div>
+</div>
 
                <!-- Вкладка Додатково -->
 <div class="tab-pane" id="tab-additional">

@@ -9,13 +9,11 @@ class AgentBlockSettings(models.Model):
 
     MOVABLE_BLOCK_CHOICES = [
         ('price_calendar', '📅 Календар низьких цін'),
-        ('recommended_tours', '⭐ Рекомендовані для вас'),
-        ('consultation', '📞 Довірте вибір спеціалістам'),
-        ('popular_hotels', '🏨 Популярні готелі'),
-        ('about_us', 'ℹ️ Про нас'),
         ('popular_destinations', '🌍 Популярні напрямки'),
+        ('consultation', '📞 Довірте вибір спеціалістам'),
         ('tours_from_city', '🏙️ Тури з вашого міста'),
-        ('banners', '🎯 Мої банери'),
+        ('about_us', 'ℹ️ Про нас'),
+        ('popular_hotels', '🏨 Популярні готелі'),
     ]
 
     POSITION_CHOICES = [

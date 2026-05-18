@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<!-- Hero секція -->
+<!-- Hero секція (завжди показується) -->
 <div class="hero-section" style="background-image: url('{% if agent_site and agent_site.hero_background %}{{ agent_site.hero_background.url }}{% else %}{% static 'images/giau-tran-ZMdXvd6jGww-unsplash.jpg' %}{% endif %}');">
     <div class="hero-overlay"></div>
     <div class="container h-100">
@@ -16,7 +16,7 @@
     </div>
 </div>
 
-<!-- МОДУЛЬ ПОШУКУ ТУРІВ (Otpusk.com) -->
+<!-- МОДУЛЬ ПОШУКУ ТУРІВ (Otpusk.com) - ЗАВЖДИ ПОКАЗУЄТЬСЯ -->
 <div id="otpusk-search-module">
     <script>
         var osGeo = '';
@@ -43,12 +43,10 @@
     <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
     <script src="https://export.otpusk.com/js/onsite/"></script>
     <script src="https://export.otpusk.com/js/order"></script>
-
 </div>
 
-
-
 <!-- ========== КАЛЕНДАР НИЗЬКИХ ЦІН ========== -->
+{% if 'price_calendar' in active_blocks %}
 <div class="container my-5 pt-4">
     <div class="price-calendar-wrapper">
         <h2 class="text-center mb-4">Календар низьких цін</h2>
@@ -97,7 +95,10 @@
         </div>
     </div>
 </div>
-<!-- ========== БЛОК "ПОПУЛЯРНІ ТУРИ" ========== -->
+{% endif %}
+
+<!-- ========== БЛОК "ПОПУЛЯРНІ НАПРЯМКИ" ========== -->
+{% if 'popular_destinations' in active_blocks %}
 <div class="container my-5">
     <div class="popular-tours-wrapper">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -124,6 +125,8 @@
         </div>
     </div>
 </div>
+{% endif %}
+
 <style>
 .popular-slider-container::-webkit-scrollbar {
     display: none;
@@ -370,6 +373,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <!-- ========== БЛОК КОНСУЛЬТАЦІЇ ========== -->
+{% if 'consultation' in active_blocks %}
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
         <div class="card border-0 shadow-sm" id="consultationCard">
@@ -435,6 +439,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </div>
+{% endif %}
 
 <script>
 // ========== ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА СТОРІНКУ РЕЗУЛЬТАТІВ ПРИ КЛІКУ НА ДАТУ ==========
@@ -696,6 +701,7 @@ function selectCalendarDate(dateISO, price, nights) {
     }
 </style>
 <!-- ========== БЛОК "ТУРИ З ВАШОГО МІСТА" ========== -->
+{% if 'tours_from_city' in active_blocks %}
 <div class="container my-5">
     <div class="city-tours-wrapper">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -748,6 +754,7 @@ function selectCalendarDate(dateISO, price, nights) {
         </div>
     </div>
 </div>
+{% endif %}
 
 <style>
 .city-btn {
@@ -1460,8 +1467,8 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 
-<!-- ========== БЛОК "ПРО НАС" (з конструктора) ========== -->
-{% if agent_site and agent_site.about_us_title and agent_site.about_us_text %}
+<!-- ========== БЛОК "ПРО НАС" ========== -->
+{% if 'about_us' in active_blocks and agent_site and agent_site.about_us_title and agent_site.about_us_text %}
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-12 col-md-10">
@@ -1498,6 +1505,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </div>
+{% endif %}
 
 <style>
 /* Стилі для блоку "Про нас" */
@@ -1552,6 +1560,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 {% endif %}
 <!-- ========== БЛОК "ПОПУЛЯРНІ ГОТЕЛІ" ========== -->
+{% if 'popular_hotels' in active_blocks %}
 <div class="container my-5">
     <div class="popular-hotels-wrapper">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -1578,6 +1587,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </div>
+{% endif %}
 
 <script>
 // ========== БЛОК "ПОПУЛЯРНІ ГОТЕЛІ" ==========
