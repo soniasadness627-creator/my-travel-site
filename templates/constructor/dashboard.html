@@ -1552,4 +1552,49 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 </script>
+// ========== ДЕТАЛЬНА ДІАГНОСТИКА ВІДПРАВКИ ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('site-form');
+    if (!form) return;
+
+    // Перехоплюємо відправку форми
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        console.log('🔍 ПОЧАТОК ВІДПРАВКИ ФОРМИ');
+
+        // 1. Перевіряємо, які чекбокси вибрані
+        const checkedBoxes = document.querySelectorAll('.active-blocks-list input[type="checkbox"]:checked');
+        const checkedValues = Array.from(checkedBoxes).map(cb => cb.value);
+        console.log('📌 Вибрані чекбокси:', checkedValues);
+
+        // 2. Видаляємо старі hidden поля
+        const oldHidden = form.querySelectorAll('input[name="active_blocks"][type="hidden"]');
+        console.log('🗑️ Видаляємо старих hidden полів:', oldHidden.length);
+        oldHidden.forEach(el => el.remove());
+
+        // 3. Створюємо нові hidden поля
+        checkedBoxes.forEach(cb => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'active_blocks';
+            input.value = cb.value;
+            form.appendChild(input);
+            console.log('✅ Додано hidden field:', cb.value);
+        });
+
+        // 4. Перевіряємо, чи створилися hidden поля
+        const newHidden = form.querySelectorAll('input[name="active_blocks"][type="hidden"]');
+        console.log('📦 Нових hidden полів:', newHidden.length);
+
+        // 5. Збираємо всі дані форми для відправки
+        const formData = new FormData(form);
+        const allActiveBlocks = formData.getAll('active_blocks');
+        console.log('🚀 ВІДПРАВЛЯЄМО active_blocks:', allActiveBlocks);
+
+        // 6. Відправляємо форму
+        console.log('📤 Відправляємо форму...');
+        form.submit();
+    });
+});
 {% endblock %}
