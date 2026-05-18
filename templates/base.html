@@ -430,8 +430,7 @@
 
                     <!-- ========== ГОЛОВНА ДЛЯ ВСІХ ========== -->
 <li class="nav-item">
-    <a class="nav-link" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/{% else %}/{% endif %}">
-        Головна
+<a class="nav-link" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/{% else %}/{% url 'landing:index' %}{% endif %}">        Головна
     </a>
 </li>
 
