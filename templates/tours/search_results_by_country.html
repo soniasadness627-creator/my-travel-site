@@ -1412,4 +1412,15 @@ document.addEventListener('DOMContentLoaded', function() {
     background: #ffffff !important;
 }
 </style>
+<script>
+    // Декодуємо назву країни в заголовку
+    document.addEventListener('DOMContentLoaded', function() {
+        const titleElement = document.querySelector('.text-center.mb-4');
+        if (titleElement && titleElement.textContent.includes('%')) {
+            // Декодуємо текст
+            const decodedText = decodeURIComponent(titleElement.textContent);
+            titleElement.textContent = decodedText;
+        }
+    });
+</script>
 {% endblock %}

@@ -403,14 +403,14 @@ def get_popular_tours_api(request, slug=None):
         {'country': 'Туреччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},
         {'country': 'ОАЕ', 'departure': 'Варшава', 'departure_text': 'з Варшави'},
         {'country': 'Греція', 'departure': 'Відень', 'departure_text': 'з Відня'},
-        {'country': 'Кіпр', 'departure': 'Кишинів', 'departure_text': 'з Кишинева'},
-        {'country': 'Іспанія', 'departure': 'Кишинів', 'departure_text': 'з Кишинева'},
-        {'country': 'Таїланд', 'departure': 'Київ', 'departure_text': 'з Києва'},
-        {'country': 'Мальдіви', 'departure': 'Кишинів', 'departure_text': 'з Кишинева'},
-        {'country': 'Італія', 'departure': 'Краків', 'departure_text': 'з Кракова'},
-        {'country': 'Хорватія', 'departure': 'Познань', 'departure_text': 'з Познані'},
-        {'country': 'Чорногорія', 'departure': 'Вроцлав', 'departure_text': 'з Вроцлава'},
-        {'country': 'Болгарія', 'departure': 'Київ', 'departure_text': 'з Києва'},
+        {'country': 'Кіпр', 'departure': 'Ларнака', 'departure_text': 'з Ларнаки'},  # ← змінила
+        {'country': 'Іспанія', 'departure': 'Барселона', 'departure_text': 'з Барселони'},  # ← змінила
+        {'country': 'Таїланд', 'departure': 'Бангкок', 'departure_text': 'з Бангкока'},  # ← змінила
+        {'country': 'Мальдіви', 'departure': 'Мале', 'departure_text': 'з Мале'},  # ← змінила
+        {'country': 'Італія', 'departure': 'Рим', 'departure_text': 'з Рима'},  # ← змінила
+        {'country': 'Хорватія', 'departure': 'Загреб', 'departure_text': 'з Загреба'},  # ← змінила
+        {'country': 'Чорногорія', 'departure': 'Подгориця', 'departure_text': 'з Подгориці'},  # ← змінила
+        {'country': 'Болгарія', 'departure': 'Софія', 'departure_text': 'з Софії'},  # ← змінила
         {'country': 'Грузія', 'departure': 'Тбілісі', 'departure_text': 'з Тбілісі'},
         {'country': 'Польща', 'departure': 'Варшава', 'departure_text': 'з Варшави'},
         {'country': 'Угорщина', 'departure': 'Будапешт', 'departure_text': 'з Будапешта'},
