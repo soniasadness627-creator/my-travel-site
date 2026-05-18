@@ -1491,57 +1491,65 @@ document.addEventListener('DOMContentLoaded', function() {
     updatePreview();
 });
 
-    // ========== ГЕНЕРАЦІЯ ШІ (ВИПРАВЛЕНО) ==========
-const generateBtn = document.getElementById('generateAiBtn');
-if (generateBtn) {
-    generateBtn.addEventListener('click', function(e) {
-        e.preventDefault();
+        // ========== ГЕНЕРАЦІЯ ШІ (ВИПРАВЛЕНО) ==========
+    const generateBtn = document.getElementById('generateAiBtn');
+    if (generateBtn) {
+        generateBtn.addEventListener('click', function(e) {
+            e.preventDefault();
 
-        const btn = this;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '🔄 Генерую...';
-        btn.disabled = true;
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '🔄 Генерую...';
+            btn.disabled = true;
 
-        // Отримуємо CSRF токен
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
-        fetch('/constructor/generate-image/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrfToken,
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => {
-            if (response.redirected) {
-                window.location.href = response.url;
-            } else {
-                return response.json();
-            }
-        })
-        .then(data => {
-            if (data && data.error) {
-                alert('Помилка: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Помилка:', error);
-            alert('Помилка при генерації. Спробуйте ще раз.');
-        })
-        .finally(() => {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
+            fetch('/constructor/generate-image/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                if (data && data.error) {
+                    alert('Помилка: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Помилка:', error);
+                alert('Помилка при генерації. Спробуйте ще раз.');
+            })
+            .finally(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
         });
-    });
-}
-</script>
-// ДІАГНОСТИКА
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('=== ДІАГНОСТИКА ===');
+    }
+
+    // ========== ДІАГНОСТИКА ЗБЕРЕЖЕННЯ active_blocks ==========
+    console.log('=== ДІАГНОСТИКА КОНСТРУКТОРА ===');
     const checkboxes = document.querySelectorAll('.active-blocks-list input[type="checkbox"]');
     console.log('Всього чекбоксів:', checkboxes.length);
 
     const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-    console.log('Вибрані блоки:', selected);
-});
+    console.log('Початково вибрані блоки:', selected);
+
+    // Перевірка перед відправкою форми
+    const siteForm = document.getElementById('site-form');
+    if (siteForm) {
+        siteForm.addEventListener('submit', function(e) {
+            const checkedNow = document.querySelectorAll('.active-blocks-list input[type="checkbox"]:checked');
+            const valuesNow = Array.from(checkedNow).map(cb => cb.value);
+            console.log('ВИБРАНІ БЛОКИ ПЕРЕД ВІДПРАВКОЮ:', valuesNow);
+        });
+    }
+</script>
 {% endblock %}
