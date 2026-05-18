@@ -20,73 +20,73 @@
                     Результати пошуку турів
                 {% endif %}
             </h2>
+
             <div id="otpusk-search-module">
-                <div id="otpusk-search-module">
-    <script>
-        // ========== МАПА МІСТ ДЛЯ ID ВИЛЬОТУ ==========
-        const cityToId = {
-            'кишинів': 1831, 'кишинев': 1831, 'chisinau': 1831,
-            'брно': 1343, 'brno': 1343,
-            'київ': 1544, 'киев': 1544, 'kyiv': 1544,
-            'одеса': 1545, 'одесса': 1545,
-            'львів': 1546, 'львов': 1546,
-            'варшава': 1124, 'warsaw': 1124,
-            'краків': 1126, 'krakow': 1126,
-            'бухарест': 1373, 'bucharest': 1373,
-            'прага': 845, 'prague': 845,
-            'берлін': 870, 'berlin': 870,
-            'будапешт': 992, 'budapest': 992,
-            'відень': 790, 'vienna': 790,
-            'познань': 1137, 'poznan': 1137,
-            'вроцлав': 1517, 'wroclaw': 1517,
-            'катовіце': 3032, 'katowice': 3032,
-        };
+                <script>
+                    // ========== МАПА МІСТ ДЛЯ ID ВИЛЬОТУ ==========
+                    const cityToId = {
+                        'кишинів': 1831, 'кишинев': 1831, 'chisinau': 1831,
+                        'брно': 1343, 'brno': 1343,
+                        'київ': 1544, 'киев': 1544, 'kyiv': 1544,
+                        'одеса': 1545, 'одесса': 1545,
+                        'львів': 1546, 'львов': 1546,
+                        'варшава': 1124, 'warsaw': 1124,
+                        'краків': 1126, 'krakow': 1126,
+                        'бухарест': 1373, 'bucharest': 1373,
+                        'прага': 845, 'prague': 845,
+                        'берлін': 870, 'berlin': 870,
+                        'будапешт': 992, 'budapest': 992,
+                        'відень': 790, 'vienna': 790,
+                        'познань': 1137, 'poznan': 1137,
+                        'вроцлав': 1517, 'wroclaw': 1517,
+                        'катовіце': 3032, 'katowice': 3032,
+                    };
 
-        // Отримуємо параметри з URL
-        var urlParams = new URLSearchParams(window.location.search);
-        var countryParam = urlParams.get('country');
-        var fromParam = urlParams.get('from');
+                    // Отримуємо параметри з URL
+                    var urlParams = new URLSearchParams(window.location.search);
+                    var countryParam = urlParams.get('country');
+                    var fromParam = urlParams.get('from');
 
-        // Змінні Otpusk (за замовчуванням)
-        var osGeo = '';
-        var osDefaultDeparture = '';
-        var osDefaultDuration = '';
-        var osDateFrom = '';
-        var osDateTo = '';
-        var osHotelCategory = '';
-        var osFood = '';
-        var osTransport = '';
+                    // Змінні Otpusk (за замовчуванням)
+                    var osGeo = '';
+                    var osDefaultDeparture = '';
+                    var osDefaultDuration = '';
+                    var osDateFrom = '';
+                    var osDateTo = '';
+                    var osHotelCategory = '';
+                    var osFood = '';
+                    var osTransport = '';
 
-        // Встановлюємо країну
-        if (countryParam) {
-            osGeo = countryParam;
-        }
+                    // Встановлюємо країну
+                    if (countryParam) {
+                        osGeo = decodeURIComponent(countryParam);
+                    }
 
-        // Встановлюємо місто вильоту (перетворюємо текст в ID)
-        if (fromParam) {
-            var departureText = decodeURIComponent(fromParam);
-            departureText = departureText.replace(/^з\s+/i, '').trim();
-            var departureId = cityToId[departureText.toLowerCase()];
-            if (departureId) {
-                osDefaultDeparture = departureId;
-                console.log('✅ Виліт з:', departureText, '(ID:', departureId, ')');
-            } else {
-                console.log('⚠️ Невідоме місто:', departureText, ', використовуємо Кишинів');
-                osDefaultDeparture = 1831;
-            }
-        }
+                    // Встановлюємо місто вильоту (перетворюємо текст в ID)
+                    if (fromParam) {
+                        var departureText = decodeURIComponent(fromParam);
+                        departureText = departureText.replace(/^з\s+/i, '').trim();
+                        var departureId = cityToId[departureText.toLowerCase()];
+                        if (departureId) {
+                            osDefaultDeparture = departureId;
+                            console.log('✅ Виліт з:', departureText, '(ID:', departureId, ')');
+                        } else {
+                            console.log('⚠️ Невідоме місто:', departureText, ', використовуємо Кишинів');
+                            osDefaultDeparture = 1831;
+                        }
+                    }
 
-        var osTarget = '';
-        var osContainer = null;
-        var osTourContainer = null;
-        var osLang = 'ua';
-        var osTourTargetBlank = false;
-        var osOrderUrl = null;
-        var osCurrency = 'converted';
-        var osAutoStart = true;
+                    var osTarget = window.location.pathname;
+                    var osContainer = 'otpusk-search-module';
+                    var osTourContainer = null;
+                    var osLang = 'ua';
+                    var osTourTargetBlank = false;
+                    var osOrderUrl = null;
+                    var osCurrency = 'converted';
+                    var osAutoStart = true;
 
-        console.log('🔍 Пошук:', { country: osGeo, departure: osDefaultDeparture });
-    </script>
+                    console.log('🔍 Пошук:', { country: osGeo, departure: osDefaultDeparture });
+                </script>
 
                 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
                 <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
@@ -99,6 +99,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- ========== БЛОК КОНСУЛЬТАЦІЇ ========== -->
 <div class="row justify-content-center my-5">
