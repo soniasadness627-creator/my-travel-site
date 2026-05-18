@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА ПОШУК (з передачею міста вильоту)
    window.searchByCountry = function(country, departureText) {
-    let baseUrl = '/search-results-by-country/';
+    let baseUrl = '/search-results-by-country/';  // ← ВАЖЛИВО!
     const pathParts = window.location.pathname.split('/');
     for (let i = 0; i < pathParts.length; i++) {
         if (pathParts[i] === 'a' && pathParts[i + 1]) {
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     const params = new URLSearchParams();
     params.set('country', country);
-    params.set('from', departureText || 'Кишинів');
+    params.set('from', departureText);
     window.location.href = `${baseUrl}?${params.toString()}`;
 };
 
