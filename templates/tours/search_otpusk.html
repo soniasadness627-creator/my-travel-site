@@ -21,32 +21,47 @@ const urlParams = new URLSearchParams(window.location.search);
 let country = urlParams.get('country');
 let fromCity = urlParams.get('from');
 
-// Розкодовуємо
 if (country) country = decodeURIComponent(country);
 if (fromCity) fromCity = decodeURIComponent(fromCity);
 
-console.log('📥 Отримані параметри:', { country, fromCity });
+// Видаляємо "з " з міста
+if (fromCity) fromCity = fromCity.replace(/^з\s+/i, '').trim();
 
-// Видаляємо "з " з міста вильоту
-let cleanFromCity = fromCity ? fromCity.replace(/^з\s+/i, '').trim() : '';
+console.log('📥 Параметри:', { country, fromCity });
 
-window.otpuskCountry = country || '';
-window.otpuskFromCity = cleanFromCity;
-</script>
+// ============================================
+// МАПА МІСТ (назва -> ID для osDefaultDeparture)
+// ============================================
+const cityToId = {
+    'кишинів': 1200, 'кишинев': 1200, 'chisinau': 1200,
+    'київ': 1544, 'киев': 1544, 'kyiv': 1544, 'kiev': 1544,
+    'одеса': 1545, 'одесса': 1545, 'odessa': 1545,
+    'львів': 1546, 'львов': 1546, 'lviv': 1546,
+    'варшава': 1676, 'warsaw': 1676,
+    'краків': 1677, 'krakow': 1677,
+    'бухарест': 1653, 'bucharest': 1653,
+    'прага': 1682, 'prague': 1682,
+    'берлін': 1636, 'berlin': 1636,
+    'будапешт': 1651, 'budapest': 1651,
+    'брно': 1618, 'brno': 1618,  // Додаємо Брно
+    'відень': 1744, 'vienna': 1744,
+    'братислава': 1619, 'bratislava': 1619
+};
 
-<!-- Підключаємо Otpusk -->
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
-<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
-<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
-<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
-<script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
-<script src="https://export.otpusk.com/js/onsite/"></script>
-<script src="https://export.otpusk.com/js/order"></script>
+// Визначаємо ID міста вильоту
+let departureId = 1200; // Кишинів за замовчуванням
+if (fromCity && cityToId[fromCity.toLowerCase()]) {
+    departureId = cityToId[fromCity.toLowerCase()];
+    console.log(`✅ Знайдено ID для міста "${fromCity}": ${departureId}`);
+} else if (fromCity) {
+    console.log(`⚠️ Місто "${fromCity}" не знайдено в мапі, використовуємо Кишинів (1200)`);
+}
 
-<script>
-// НАЛАШТУВАННЯ OTPUSK - без ID, тільки текст
-var osGeo = window.otpuskCountry;
-var osDefaultDeparture = '';  // Порожнє, будемо встановлювати через клік
+// ============================================
+// НАЛАШТУВАННЯ OTPUSK
+// ============================================
+var osGeo = country || '';
+var osDefaultDeparture = departureId;
 var osDefaultDuration = '';
 var osDateFrom = '';
 var osDateTo = '';
@@ -60,158 +75,34 @@ var osLang = 'ua';
 var osTourTargetBlank = false;
 var osOrderUrl = null;
 var osCurrency = 'converted';
-var osAutoStart = false;  // Не автозапуск, дамо час на встановлення
+var osAutoStart = true;  // Автозапуск
+
+console.log('🚀 Фінальні налаштування:', { osGeo, osDefaultDeparture });
 </script>
 
-<!-- ========== ГОЛОВНИЙ СКРИПТ ДЛЯ ВСТАНОВЛЕННЯ КРАЇНИ ТА МІСТА ========== -->
-<script>
-(function() {
-    let attempts = 0;
-    const maxAttempts = 30;
-    let countrySet = false;
-    let departureSet = false;
-    let searchTriggered = false;
-
-    const targetCountry = window.otpuskCountry;
-    const targetCity = window.otpuskFromCity;
-
-    console.log('🎯 Цільові значення:', { targetCountry, targetCity });
-
-    function setCountry() {
-        if (!targetCountry || countrySet) return false;
-
-        const locationInput = document.querySelector('#location');
-        if (!locationInput) return false;
-
-        if (locationInput.value !== targetCountry) {
-            locationInput.value = targetCountry;
-            locationInput.dispatchEvent(new Event('input', { bubbles: true }));
-            locationInput.dispatchEvent(new Event('change', { bubbles: true }));
-            console.log(`✅ Встановлено країну: ${targetCountry}`);
-        }
-
-        // Намагаємось вибрати з автокомпліту
-        setTimeout(() => {
-            const items = document.querySelectorAll('#cntList .ui-menu-item, .ui-autocomplete li, .autocomplete-suggestion');
-            for (let item of items) {
-                const text = (item.innerText || item.textContent || '').toLowerCase().trim();
-                if (text === targetCountry.toLowerCase().trim() || text.includes(targetCountry.toLowerCase())) {
-                    const link = item.querySelector('a') || item;
-                    link.click();
-                    console.log(`✅ Вибрано країну зі списку: ${targetCountry}`);
-                    break;
-                }
-            }
-        }, 300);
-
-        countrySet = true;
-        return true;
-    }
-
-    function setDeparture() {
-        if (!targetCity || departureSet) return false;
-
-        console.log(`🛫 Шукаємо місто вильоту: "${targetCity}"`);
-
-        // Шукаємо кнопку випадаючого списку
-        const departureBtn = document.querySelector('.new_f-departure .new_f-dropdown-header, .new_f-from .new_f-dropdown-header, #new_os-from .new_f-dropdown-btn');
-        if (!departureBtn) return false;
-
-        // Відкриваємо список
-        departureBtn.click();
-
-        setTimeout(() => {
-            const items = document.querySelectorAll('.new_f-departure .new_f-dropdown-item, .new_f-from .new_f-dropdown-item, #new_os-from .new_f-dropdown-item');
-            let found = false;
-
-            for (let item of items) {
-                const itemText = (item.innerText || item.textContent || '').trim();
-                const itemTextLower = itemText.toLowerCase();
-                const targetCityLower = targetCity.toLowerCase();
-
-                // Перевіряємо різні варіанти співпадіння
-                if (itemTextLower === targetCityLower ||
-                    itemTextLower.includes(targetCityLower) ||
-                    targetCityLower.includes(itemTextLower)) {
-                    item.click();
-                    console.log(`✅ Вибрано місто вильоту: "${itemText}"`);
-                    departureSet = true;
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                // Закриваємо список
-                departureBtn.click();
-                console.log(`⚠️ Місто "${targetCity}" не знайдено у списку. Доступні міста:`,
-                    Array.from(items).map(i => i.innerText).join(', '));
-            }
-        }, 300);
-
-        return true;
-    }
-
-    function triggerSearch() {
-        if (searchTriggered) return;
-
-        // Чекаємо поки все встановиться
-        const needCountry = targetCountry && !countrySet;
-        const needDeparture = targetCity && !departureSet;
-
-        if (!needCountry && !needDeparture) {
-            setTimeout(() => {
-                const searchBtn = document.querySelector('.new_f-form-submit');
-                if (searchBtn) {
-                    searchBtn.click();
-                    searchTriggered = true;
-                    console.log('🔍 ПОШУК ЗАПУЩЕНО!');
-                }
-            }, 500);
-        }
-    }
-
-    function trySetValues() {
-        attempts++;
-        console.log(`🔄 Спроба ${attempts}/${maxAttempts}...`);
-
-        setCountry();
-        setDeparture();
-        triggerSearch();
-
-        if (attempts < maxAttempts && ((targetCountry && !countrySet) || (targetCity && !departureSet))) {
-            setTimeout(trySetValues, 800);
-        } else if (attempts >= maxAttempts) {
-            console.log('⚠️ Час вийшов. Значення не встановлені.');
-        }
-    }
-
-    // Запускаємо через 1 секунду
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => setTimeout(trySetValues, 1000));
-    } else {
-        setTimeout(trySetValues, 1000);
-    }
-})();
-</script>
+<!-- Підключення Otpusk -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+<script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+<script src="https://export.otpusk.com/js/onsite/"></script>
+<script src="https://export.otpusk.com/js/order"></script>
 
 <style>
     #otpusk-search-module {
         background: white !important;
         border-radius: 24px !important;
-        border: 2px solid var(--primary-color, #0d6efd) !important;
+        border: 2px solid var(--primary-color, #9f3c3c) !important;
         padding: 20px 24px !important;
         max-width: 1200px !important;
         margin: 0 auto !important;
     }
     .new_f-form-submit {
-        background: var(--primary-color, #0d6efd) !important;
+        background: var(--primary-color, #9f3c3c) !important;
         color: white !important;
         white-space: nowrap !important;
         padding: 10px 24px !important;
-    }
-    .new_f-form-submit:hover {
-        background: var(--primary-dark, #0b5ed7) !important;
     }
 </style>
 {% endblock %}
