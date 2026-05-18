@@ -1796,6 +1796,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 </style>
+
     <!-- ========== ДІАГНОСТИКА ПОРЯДКУ БЛОКІВ ========== -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -1804,4 +1805,116 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('active_blocks з сервера:', activeBlocks);
 });
 </script>
+    {% elif block == 'banners' %}
+        <!-- Блок банерів -->
+        {% if banners %}
+        <div class="container my-5">
+            <div class="banners-section">
+                {% for banner in banners %}
+                    {% if banner.active %}
+                    <div class="banner-wrapper mb-4" data-position="{{ banner.position|default:'full' }}">
+                        <a href="{{ banner.link|default:'#' }}" {% if banner.link %}target="_blank" rel="noopener noreferrer"{% endif %} class="banner-link">
+                            <div class="banner-container position-relative rounded-4 overflow-hidden" style="background-image: url('{{ banner.image }}'); background-size: cover; background-position: center;">
+                                <!-- Затемнення -->
+                                <div class="banner-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, {{ banner.overlay_opacity|default:0.4 }}); z-index: 1;"></div>
+
+                                <!-- Текстові блоки -->
+                                <div class="banner-content position-relative" style="z-index: 2; min-height: 300px; display: flex; flex-direction: column; justify-content: center; padding: 3rem 2rem;">
+                                    {% for text_block in banner.text_blocks %}
+                                    <div class="text-block text-block-{{ text_block.id }}"
+                                         style="text-align:
+                                             {% if text_block.position == 'left' or text_block.position == 'top-left' or text_block.position == 'bottom-left' or text_block.position == 'center-left' %}left
+                                             {% elif text_block.position == 'right' or text_block.position == 'top-right' or text_block.position == 'bottom-right' or text_block.position == 'center-right' %}right
+                                             {% else %}center{% endif %};
+                                             {% if text_block.position == 'center' or text_block.position == 'center-left' or text_block.position == 'center-right' %}display: flex; flex-direction: column; justify-content: center; min-height: 250px;{% endif %}">
+
+                                        {% if text_block.heading %}
+                                        <h2 class="banner-heading" style="color: {{ text_block.heading_color|default:'#ffffff' }}; font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                                            {{ text_block.heading }}
+                                        </h2>
+                                        {% endif %}
+
+                                        {% if text_block.text %}
+                                        <p class="banner-text" style="color: {{ text_block.text_color|default:'#ffffff' }}; font-size: 1rem; margin-bottom: 1rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                                            {{ text_block.text }}
+                                        </p>
+                                        {% endif %}
+
+                                        {% if text_block.button_text and text_block.button_link %}
+                                        <a href="{{ text_block.button_link }}" class="banner-btn btn" style="background: {{ text_block.button_color|default:'#086745' }}; color: white; padding: 0.6rem 1.5rem; border-radius: 30px; text-decoration: none; display: inline-block; width: fit-content; {% if text_block.position == 'center' %}margin-left: auto; margin-right: auto;{% elif text_block.position == 'right' %}margin-left: auto;{% endif %}">
+                                            {{ text_block.button_text }}
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <style>
+        .banner-container {
+            position: relative;
+            min-height: 300px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .banner-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .banner-wrapper[data-position="full"] .banner-container {
+            width: 100%;
+        }
+        .banner-wrapper[data-position="left"] .banner-container {
+            width: 75%;
+            margin-right: auto;
+        }
+        .banner-wrapper[data-position="center"] .banner-container {
+            width: 85%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .banner-wrapper[data-position="right"] .banner-container {
+            width: 75%;
+            margin-left: auto;
+        }
+        .banner-heading {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .banner-text {
+            font-size: 1rem;
+        }
+        .banner-btn {
+            transition: all 0.3s ease;
+        }
+        .banner-btn:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+        @media (max-width: 768px) {
+            .banner-heading {
+                font-size: 1.3rem;
+            }
+            .banner-text {
+                font-size: 0.8rem;
+            }
+            .banner-content {
+                padding: 1.5rem 1rem !important;
+                min-height: 200px !important;
+            }
+            .banner-wrapper[data-position="left"] .banner-container,
+            .banner-wrapper[data-position="right"] .banner-container {
+                width: 100%;
+            }
+            .banner-wrapper[data-position="center"] .banner-container {
+                width: 95%;
+            }
+        }
+        </style>
+        {% endif %}
 {% endblock %}
