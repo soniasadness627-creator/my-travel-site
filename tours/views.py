@@ -578,13 +578,16 @@ def home(request):
     if not agent_site and request.user.is_authenticated and request.user.is_superuser:
         # Створюємо простий об'єкт з ім'ям користувача
         class FakeAgentSite:
-            class User:
-                def __init__(self, user):
-                    self.username = user.username
-                    self.get_full_name = lambda: user.get_full_name() or user.username
+            class FakeAgentSite:
+                class User:
+                    def __init__(self, user):
+                        self.username = user.username
+                        self.get_full_name = lambda: user.get_full_name() or user.username
 
-            def __init__(self, user):
-                self.user = self.User(user)
+                def __init__(self, user):
+                    self.user = self.User(user)
+                    self.slug = None  # ← ДОДАТИ ЦЕ
+                    self.agency_name = None  # ← ДОДАТИ ЦЕ (опціонально)
 
         agent_site = FakeAgentSite(request.user)
 

@@ -480,7 +480,7 @@
                     {% endif %}
 
                     <li class="nav-item">
-                        <a class="btn btn-primary ms-lg-2 px-3" href="{% if agent_site %}{% url 'agent_consultation' agent_site.slug %}{% else %}{% url 'consultation' %}{% endif %}">
+<a class="btn btn-primary ms-lg-2 px-3" href="{% if agent_site and agent_site.slug %}{% url 'agent_consultation' agent_site.slug %}{% else %}{% url 'consultation' %}{% endif %}">
                             Підібрати тур
                         </a>
                     </li>
