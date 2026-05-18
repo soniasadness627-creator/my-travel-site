@@ -972,7 +972,6 @@ const defaultImage = '/static/images/default-tour.jpg';
         }
     }
 
-    // Визначаємо правильне відмінювання
     let departureText = '';
     if (departureCity === 'Кишинів') departureText = 'з Кишинева';
     else if (departureCity === 'Київ') departureText = 'з Києва';
@@ -985,8 +984,7 @@ const defaultImage = '/static/images/default-tour.jpg';
     else if (departureCity === 'Берлін') departureText = 'з Берліна';
     else departureText = `з ${departureCity}`;
 
-    // Додаємо параметри в URL
-    let url = `${baseUrl}?country=${encodeURIComponent(country)}&departure=${encodeURIComponent(departureText)}`;
+    let url = `${baseUrl}?geo=${encodeURIComponent(country)}&auto_search=1&country=${encodeURIComponent(country)}&departure=${encodeURIComponent(departureText)}`;
     console.log('🔗 Перехід за URL:', url);
     window.location.href = url;
 };

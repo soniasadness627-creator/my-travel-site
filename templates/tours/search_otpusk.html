@@ -16,7 +16,6 @@
 </div>
 <script>
 (function() {
-    // Отримуємо параметри з URL
     const urlParams = new URLSearchParams(window.location.search);
     const country = urlParams.get('country');
     const departure = urlParams.get('departure');
@@ -24,9 +23,7 @@
     if (country) {
         console.log('📥 Отримано параметри:', { country, departure });
 
-        // Функція для встановлення значень
         function setValues() {
-            // Встановлюємо країну
             const countryInput = document.querySelector('#location');
             if (countryInput && countryInput.value !== country) {
                 countryInput.value = country;
@@ -34,38 +31,8 @@
                 countryInput.dispatchEvent(new Event('change', { bubbles: true }));
                 console.log('✅ Встановлено країну:', country);
             }
-
-            // Встановлюємо місто вильоту
-            if (departure) {
-                setTimeout(() => {
-                    const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
-                    if (departureBtn) {
-                        departureBtn.click();
-                        setTimeout(() => {
-                            const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                            for (let item of items) {
-                                if (item.innerText.trim() === departure) {
-                                    item.click();
-                                    console.log('✅ Встановлено місто вильоту:', departure);
-                                    break;
-                                }
-                            }
-                        }, 300);
-                    }
-                }, 500);
-            }
-
-            // Запускаємо пошук
-            setTimeout(() => {
-                const searchBtn = document.querySelector('.new_f-form-submit');
-                if (searchBtn) {
-                    searchBtn.click();
-                    console.log('🔍 Пошук запущено');
-                }
-            }, 1500);
         }
 
-        // Запускаємо кілька разів з затримкою
         setTimeout(setValues, 1000);
         setTimeout(setValues, 2000);
         setTimeout(setValues, 3000);
