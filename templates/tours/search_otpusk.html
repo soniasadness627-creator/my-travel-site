@@ -16,26 +16,82 @@
 </div>
 <script>
 (function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const country = urlParams.get('country');
-    const departure = urlParams.get('departure');
+    // Отримуємо збережені параметри
+    const savedCountry = localStorage.getItem('otpusk_search_country');
+    const savedDeparture = localStorage.getItem('otpusk_search_departure');
 
-    if (country) {
-        console.log('📥 Отримано параметри:', { country, departure });
+    if (savedCountry || savedDeparture) {
+        console.log('📥 Отримано збережені параметри:', { savedCountry, savedDeparture });
+
+        // Очищаємо localStorage після використання
+        localStorage.removeItem('otpusk_search_country');
+        localStorage.removeItem('otpusk_search_departure');
+
+        let attempts = 0;
+        let countrySet = false;
+        let departureSet = false;
 
         function setValues() {
-            const countryInput = document.querySelector('#location');
-            if (countryInput && countryInput.value !== country) {
-                countryInput.value = country;
-                countryInput.dispatchEvent(new Event('input', { bubbles: true }));
-                countryInput.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log('✅ Встановлено країну:', country);
+            attempts++;
+            console.log(`🔄 Спроба ${attempts} встановлення параметрів...`);
+
+            // Встановлюємо КРАЇНУ
+            if (savedCountry && !countrySet) {
+                const countryInput = document.querySelector('#location');
+                if (countryInput) {
+                    countryInput.value = savedCountry;
+                    countryInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    countrySet = true;
+                    console.log('✅ Встановлено країну:', savedCountry);
+                }
+            }
+
+            // Встановлюємо МІСТО ВИЛЬОТУ
+            if (savedDeparture && !departureSet) {
+                // Шукаємо кнопку вибору міста вильоту
+                const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
+                if (departureBtn) {
+                    departureBtn.click();
+                    setTimeout(() => {
+                        const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                        for (let item of items) {
+                            const itemText = item.innerText.trim();
+                            if (itemText === savedDeparture ||
+                                itemText === savedDeparture.replace('з ', '') ||
+                                itemText.toLowerCase() === savedDeparture.toLowerCase()) {
+                                item.click();
+                                departureSet = true;
+                                console.log('✅ Встановлено місто вильоту:', savedDeparture);
+                                break;
+                            }
+                        }
+                    }, 300);
+                }
+            }
+
+            // Запускаємо пошук після того, як все встановлено
+            if (countrySet && attempts >= 3) {
+                setTimeout(() => {
+                    const searchBtn = document.querySelector('.new_f-form-submit');
+                    if (searchBtn) {
+                        searchBtn.click();
+                        console.log('🔍 Пошук запущено!');
+                    }
+                }, 500);
+            } else if (countrySet && attempts < 10) {
+                setTimeout(setValues, 800);
+            } else if (!countrySet && attempts < 10) {
+                setTimeout(setValues, 800);
             }
         }
 
-        setTimeout(setValues, 1000);
+        // Запускаємо з різними затримками
+        setTimeout(setValues, 500);
+        setTimeout(setValues, 1200);
         setTimeout(setValues, 2000);
         setTimeout(setValues, 3000);
+        setTimeout(setValues, 4000);
     }
 })();
 </script>
