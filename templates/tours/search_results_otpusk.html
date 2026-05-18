@@ -365,13 +365,12 @@ document.addEventListener('click', function(e) {
 });
 </script>
 <style>
-/* ========== ЗМІНА КОЛЬОРУ БЛОКУ ПОШУКУ НА БІЛИЙ ========== */
+/* ========== ЗМІНА БЛОКУ ПОШУКУ НА БІЛИЙ ФОН ========== */
 
-/* Основний блок пошуку - білий фон */
+/* Основний блок пошуку - білий фон замість градієнту */
 .new_f-container {
     background: #ffffff !important;
-    background-color: #ffffff !important;
-    border-radius: 16px !important;
+    background-image: none !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
     border: 1px solid #e2e8f0 !important;
 }
@@ -379,11 +378,11 @@ document.addEventListener('click', function(e) {
 /* Заголовок "Пошук туру" - чорний колір */
 .new_f-title {
     color: #000000 !important;
-    font-weight: 600 !important;
-    font-size: 18px !important;
     background: #ffffff !important;
     border-bottom: 1px solid #e2e8f0 !important;
     padding: 15px 20px !important;
+    height: auto !important;
+    width: auto !important;
 }
 
 /* Всі тексти всередині форми - чорні */
@@ -414,73 +413,17 @@ document.addEventListener('click', function(e) {
     fill: #666666 !important;
 }
 
-/* Випадаючі списки */
+/* Випадаючі списки - білий фон */
 .new_f-wrapper .new_f-dropdown-body,
 .new_f-wrapper .new_f-dropdown-body * {
     background-color: #ffffff !important;
     color: #333333 !important;
 }
 
-/* Заголовок випадаючого списку */
-.new_f-wrapper .new_f-dropdown-body-top {
-    background-color: #f8f9fa !important;
-    color: #333333 !important;
-    border-bottom: 1px solid #e2e8f0 !important;
-}
-
-/* Активний елемент в списку */
-.new_f-people-item.active {
-    background: var(--primary-color) !important;
-    color: white !important;
-}
-
 /* Рамки полів */
 .new_f-wrapper .new_f-dropdown-btn {
     border: 1px solid #e2e8f0 !important;
     background: #ffffff !important;
-    border-radius: 8px !important;
-}
-
-/* Контейнер з датами */
-.new_f-dates-container .new_f-search-dates-wrap {
-    border: 1px solid #e2e8f0 !important;
-    background: #ffffff !important;
-    border-radius: 8px !important;
-}
-
-/* Кнопка "Застосувати" */
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-apply {
-    background: var(--primary-color) !important;
-    color: white !important;
-}
-
-/* Кнопка "Скасувати" */
-.new_f-dropdown-bottom-btn.new_f-dropdown-btn-cancel {
-    background: #f1f5f9 !important;
-    color: #333333 !important;
-}
-
-/* Розширений пошук - фон білий */
-.new_f-ext-container {
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-}
-
-/* Заголовки фільтрів - чорні */
-.new_f-ext-bl-title {
-    color: #000000 !important;
-}
-
-/* Текст в фільтрах - чорний */
-.new_f-ext-bl-body label span {
-    color: #333333 !important;
-}
-
-/* Повідомлення про помилку (якщо є) */
-.new_os-date-check .new_f-dropdown-body {
-    background: #ffffff !important;
-    color: #333333 !important;
-    border: 1px solid #e2e8f0 !important;
 }
 </style>
 {% endblock %}
