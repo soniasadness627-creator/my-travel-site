@@ -8,62 +8,57 @@
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-4">
             <h2 class="mb-4 text-center">Пошук турів</h2>
+
             <div id="otpusk-search-module"></div>
         </div>
     </div>
 </div>
 
 <script>
-// ============================================
-// 1. МАПА МІСТ (назва -> ID)
-// ============================================
-const departureCityMap = {
-    'кишинів': 1200, 'кишинев': 1200, 'chisinau': 1200,
-    'київ': 1544, 'киев': 1544, 'kyiv': 1544, 'kiev': 1544,
-    'одеса': 1545, 'одесса': 1545, 'odessa': 1545,
-    'львів': 1546, 'львов': 1546, 'lviv': 1546, 'lviv': 1546,
-    'варшава': 1676, 'warsaw': 1676,
-    'краків': 1677, 'krakow': 1677,
-    'бухарест': 1653, 'bucharest': 1653,
-    'прага': 1682, 'prague': 1682,
-    'берлін': 1636, 'berlin': 1636,
-    'будапешт': 1651, 'budapest': 1651
+// Мапа відповідності назв міст до ID
+const departureCityIds = {
+    'Кишинів': 1200,
+    'Кишинев': 1200,
+    'Київ': 1544,
+    'Киев': 1544,
+    'Одеса': 1545,
+    'Одесса': 1545,
+    'Львів': 1546,
+    'Львов': 1546,
+    'Варшава': 1676,
+    'Варшава': 1676,
+    'Краків': 1677,
+    'Краков': 1677,
+    'Бухарест': 1653,
+    'Бухарест': 1653,
+    'Прага': 1682,
+    'Прага': 1682,
+    'Берлін': 1636,
+    'Берлин': 1636,
+    'Будапешт': 1651,
+    'Будапешт': 1651
 };
 
-// ============================================
-// 2. ОТРИМУЄМО ПАРАМЕТРИ З URL
-// ============================================
+// Отримуємо параметри з URL
 const urlParams = new URLSearchParams(window.location.search);
-let countryFromUrl = urlParams.get('country');
-let departureFromUrl = urlParams.get('departure_name');
+const country = urlParams.get('country');
+const departureName = urlParams.get('departure_name');
+const departureId = departureCityIds[departureName] || 1200;
 
-// Розкодовуємо та нормалізуємо
-if (countryFromUrl) countryFromUrl = decodeURIComponent(countryFromUrl);
-if (departureFromUrl) departureFromUrl = decodeURIComponent(departureFromUrl);
+console.log('========================================');
+console.log('ПАРАМЕТРИ З URL:', { country, departureName, departureId });
+console.log('========================================');
 
-// Визначаємо ID міста вильоту
-let departureId = 1200; // Кишинів за замовчуванням
-if (departureFromUrl) {
-    const key = departureFromUrl.toLowerCase();
-    if (departureCityMap[key]) {
-        departureId = departureCityMap[key];
-    }
-}
-
-console.log('🔍 ПАРАМЕТРИ:', { countryFromUrl, departureFromUrl, departureId });
-
-// ============================================
-// 3. НАЛАШТУВАННЯ ДЛЯ OTPUSK
-// ============================================
-var osGeo = countryFromUrl || '';
-var osDefaultDeparture = departureId;
+// НАЛАШТУВАННЯ ДЛЯ OTPUSK
+var osGeo = country ? decodeURIComponent(country) : '';
+var osDefaultDeparture = departureId;  // ← ID, а не текст!
 var osDefaultDuration = '';
 var osDateFrom = '';
 var osDateTo = '';
 var osHotelCategory = '';
 var osFood = '';
 var osTransport = '';
-var osTarget = window.location.pathname;
+var osTarget = '{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/{% else %}/search-otpusk/{% endif %}';
 var osContainer = 'otpusk-search-module';
 var osTourContainer = null;
 var osLang = 'ua';
@@ -71,9 +66,13 @@ var osTourTargetBlank = false;
 var osOrderUrl = null;
 var osCurrency = 'converted';
 var osAutoStart = true;
+
+console.log('📤 ВІДПРАВЛЯЄМО В OTPUSK:');
+console.log('  osGeo:', osGeo);
+console.log('  osDefaultDeparture (ID):', osDefaultDeparture);
+console.log('  osAutoStart:', osAutoStart);
 </script>
 
-<!-- Підключення скриптів Otpusk -->
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
 <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
 <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
@@ -82,113 +81,49 @@ var osAutoStart = true;
 <script src="https://export.otpusk.com/js/onsite/"></script>
 <script src="https://export.otpusk.com/js/order"></script>
 
-<!--
-    ============================================
-    4. ГОЛОВНИЙ МЕХАНІЗМ - повторні спроби встановити значення
-    ============================================
--->
 <script>
-(function() {
-    let attempts = 0;
-    const maxAttempts = 30; // 30 спроб * 500ms = 15 секунд
-    let countrySet = false;
-    let departureSet = false;
+// Додаткова перевірка після завантаження
+setTimeout(function() {
+    console.log('🔄 ПЕРЕВІРКА ПІСЛЯ ЗАВАНТАЖЕННЯ');
 
-    function setValues() {
-        attempts++;
-
-        // ВСТАНОВЛЕННЯ КРАЇНИ
-        if (!countrySet && osGeo && osGeo.length > 0) {
-            const locationInput = document.querySelector('#location');
-            if (locationInput && locationInput.value !== osGeo) {
-                locationInput.value = osGeo;
-                locationInput.dispatchEvent(new Event('input', { bubbles: true }));
-                locationInput.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log(`✅ [Спроба ${attempts}] Встановлено країну: ${osGeo}`);
-                countrySet = true;
-            }
-        }
-
-        // ВСТАНОВЛЕННЯ МІСТА ВИЛЬОТУ - через клік по елементу з data-id
-        if (!departureSet && departureId) {
-            // Шукаємо випадаючий список міст
-            const departureBtn = document.querySelector('.new_f-departure .new_f-dropdown-header');
-            if (departureBtn) {
-                // Відкриваємо випадаючий список
-                departureBtn.click();
-
-                // Шукаємо потрібне місто
-                setTimeout(() => {
-                    const targetItem = document.querySelector(`.new_f-departure .new_f-dropdown-item[data-id="${departureId}"]`);
-                    if (targetItem) {
-                        targetItem.click();
-                        console.log(`✅ [Спроба ${attempts}] Встановлено місто вильоту ID: ${departureId}`);
-                        departureSet = true;
-                    } else {
-                        // Якщо не знайшли по data-id, пробуємо по тексту
-                        const items = document.querySelectorAll('.new_f-departure .new_f-dropdown-item');
-                        for (let item of items) {
-                            if (item.textContent.trim().toLowerCase() === (departureFromUrl || '').toLowerCase()) {
-                                item.click();
-                                console.log(`✅ [Спроба ${attempts}] Встановлено місто вильоту (по тексту): ${departureFromUrl}`);
-                                departureSet = true;
-                                break;
-                            }
-                        }
-                        // Закриваємо список якщо не вибрали
-                        if (!departureSet) {
-                            departureBtn.click();
-                        }
-                    }
-                }, 100);
-            }
-        }
-
-        // Якщо обидва встановлені - запускаємо пошук
-        if (countrySet && departureSet) {
-            console.log('🚀 ВСЕ ВСТАНОВЛЕНО! Шукаємо кнопку пошуку...');
-            setTimeout(() => {
-                const submitBtn = document.querySelector('.new_f-form-submit');
-                if (submitBtn) {
-                    submitBtn.click();
-                    console.log('🔍 ПОШУК ЗАПУЩЕНО!');
-                }
-            }, 300);
-            return;
-        }
-
-        // Якщо ще не все встановлено і не перевищили спроби - пробуємо знову
-        if (attempts < maxAttempts && (!countrySet || !departureSet)) {
-            setTimeout(setValues, 500);
-        } else if (attempts >= maxAttempts) {
-            console.warn('⚠️ Час вийшов. Значення не встановлені.');
-        }
+    // Перевіряємо країну
+    const locationInput = document.querySelector('#location');
+    if (locationInput && locationInput.value !== osGeo && osGeo) {
+        console.log('⚠️ Країна не встановлена, встановлюємо:', osGeo);
+        locationInput.value = osGeo;
+        locationInput.dispatchEvent(new Event('input', { bubbles: true }));
+        locationInput.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
-    // Запускаємо після завантаження DOM
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setValues);
-    } else {
-        setValues();
+    // Перевіряємо місто вильоту за ID
+    if (departureId) {
+        // Шукаємо елемент з потрібним ID
+        const departureOption = document.querySelector(`.new_f-dropdown-item[data-id="${departureId}"]`);
+        if (departureOption) {
+            departureOption.click();
+            console.log('✅ Вибрано місто вильоту за ID:', departureId);
+        } else {
+            console.log('⚠️ Місто вильоту з ID', departureId, 'не знайдено');
+        }
     }
-})();
+}, 2000);
 </script>
 
 <style>
     #otpusk-search-module {
         background: white !important;
         border-radius: 24px !important;
-        border: 2px solid var(--primary-color, #0d6efd) !important;
+        border: 2px solid var(--primary-color) !important;
         padding: 20px 24px !important;
         max-width: 1200px !important;
         margin: 0 auto !important;
     }
     .new_f-form-submit {
-        background: var(--primary-color, #0d6efd) !important;
+        background: var(--primary-color) !important;
         color: white !important;
     }
     .new_f-form-submit:hover {
-        background: var(--primary-dark, #0b5ed7) !important;
+        background: var(--primary-dark) !important;
     }
 </style>
 {% endblock %}
