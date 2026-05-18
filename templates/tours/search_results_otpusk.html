@@ -9,47 +9,7 @@
         <div class="card-body p-4">
             <h2 class="mb-4" style="color: #000000; text-align: left;">Результати пошуку турів</h2>
 
-            <!-- ========== ФОРМА ПОШУКУ OTPUSK ========== -->
-            <div id="otpusk-search-module"></div>
-
-            <!-- ========== НАЛАШТУВАННЯ OTPUSK ========== -->
-            <script>
-            // Отримуємо параметри з URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const geo = urlParams.get('geo') ? decodeURIComponent(urlParams.get('geo')) : '';
-            const departureText = urlParams.get('departure_text') || '';
-
-            console.log('📥 Параметри для Otpusk:', { geo, departureText });
-
-            // Налаштування для Otpusk
-            var osGeo = geo;
-            var osDefaultDeparture = '';
-            var osDefaultDuration = '';
-            var osDateFrom = '';
-            var osDateTo = '';
-            var osHotelCategory = '';
-            var osFood = '';
-            var osTransport = '';
-            var osTarget = window.location.pathname;
-            var osContainer = 'otpusk-search-module';
-            var osTourContainer = null;
-            var osLang = 'ua';
-            var osTourTargetBlank = false;
-            var osOrderUrl = null;
-            var osCurrency = 'converted';
-            var osAutoStart = false;
-            </script>
-
-            <!-- Підключення скриптів Otpusk -->
-            <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
-            <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
-            <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
-            <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
-            <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
-            <script src="https://export.otpusk.com/js/onsite/"></script>
-            <script src="https://export.otpusk.com/js/order"></script>
-
-            <!-- ========== СКРИПТ ДЛЯ АВТОМАТИЧНОГО ВИБОРУ КРАЇНИ ТА МІСТА ========== -->
+            <!-- ========== СКРИПТ ДЛЯ АВТОМАТИЧНОГО ВИБОРУ ========== -->
             <script>
             (function() {
                 if (window.searchResultsDateSet) return;
@@ -171,7 +131,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- ========== СТИЛІ ДЛЯ КАРТОК ТУРІВ ========== -->
 <style>

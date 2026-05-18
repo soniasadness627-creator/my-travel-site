@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Пошук турів{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+            <h2 class="mb-4 text-center">Пошук турів</h2>
+            <div id="otpusk-search-module"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================
+// ОТРИМУЄМО ПАРАМЕТРИ З URL
+// ============================================
+const urlParams = new URLSearchParams(window.location.search);
+let country = urlParams.get('country');
+let fromCity = urlParams.get('from');
+let geo = urlParams.get('geo');  // альтернативний параметр
+let departure_text = urlParams.get('departure_text');  // альтернативний параметр
+
+// Якщо є geo/departure_text - використовуємо їх
+if (geo && !country) country = decodeURIComponent(geo);
+if (departure_text && !fromCity) fromCity = decodeURIComponent(departure_text);
+
+// Розкодовуємо
+if (country) country = decodeURIComponent(country);
+if (fromCity) fromCity = decodeURIComponent(fromCity);
+
+console.log('📥 Отримані параметри:', { country, fromCity });
+
+// Зберігаємо в глобальні змінні
+window.otpuskCountry = country || '';
+window.otpuskFromCity = fromCity || '';
+</script>
+
+<!-- Підключаємо Otpusk -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
+<link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
+<script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
+<script src="https://export.otpusk.com/js/onsite/"></script>
+<script src="https://export.otpusk.com/js/order"></script>
+
+<script>
+// Мапа міст (назва -> ID для osDefaultDeparture)
+const cityToId = {
+    'кишинів': 1200, 'кишинев': 1200, 'chisinau': 1200,
+    'київ': 1544, 'киев': 1544, 'kyiv': 1544, 'kiev': 1544,
+    'одеса': 1545, 'одесса': 1545, 'odessa': 1545,
+    'львів': 1546, 'львов': 1546, 'lviv': 1546,
+    'варшава': 1676, 'warsaw': 1676,
+    'краків': 1677, 'krakow': 1677,
+    'бухарест': 1653, 'bucharest': 1653,
+    'прага': 1682, 'prague': 1682,
+    'берлін': 1636, 'berlin': 1636,
+    'будапешт': 1651, 'budapest': 1651
+};
+
+// Визначаємо ID міста вильоту
+let departureId = 1200; // Кишинів за замовчуванням
+if (window.otpuskFromCity) {
+    const cleanCity = window.otpuskFromCity.replace(/^з\s+/i, '').toLowerCase();
+    if (cityToId[cleanCity]) {
+        departureId = cityToId[cleanCity];
+    }
+}
+
+console.log('🚀 Параметри для Otpusk:', {
+    osGeo: window.otpuskCountry,
+    fromCity: window.otpuskFromCity,
+    departureId: departureId
+});
+
+// НАЛАШТУВАННЯ OTPUSK
+var osGeo = window.otpuskCountry;
+var osDefaultDeparture = departureId;
+var osDefaultDuration = '';
+var osDateFrom = '';
+var osDateTo = '';
+var osHotelCategory = '';
+var osFood = '';
+var osTransport = '';
+var osTarget = window.location.pathname;
+var osContainer = 'otpusk-search-module';
+var osTourContainer = null;
+var osLang = 'ua';
+var osTourTargetBlank = false;
+var osOrderUrl = null;
+var osCurrency = 'converted';
+var osAutoStart = true;  // Автозапуск
+</script>
+
+<!-- ========== СКРИПТ ДЛЯ АВТОМАТИЧНОГО ВИБОРУ (ЯК У search-results-calendar) ========== -->
+<script>
+(function() {
+    if (window.searchResultsDateSet) return;
+    window.searchResultsDateSet = true;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const geo = urlParams.get('geo') || urlParams.get('country');
+    const departureText = urlParams.get('departure_text') || urlParams.get('from');
+    const autoSearch = true;
+
+    let finalGeo = geo ? decodeURIComponent(geo) : window.otpuskCountry;
+    let finalDeparture = departureText ? decodeURIComponent(departureText) : window.otpuskFromCity;
+
+    console.log('📥 Параметри для вибору:', { finalGeo, finalDeparture, autoSearch });
+
+    let searchTriggered = false;
+    let countrySelected = false;
+    let departureSelected = false;
+
+    function setCountry() {
+        if (!finalGeo || countrySelected) return;
+        console.log('🌍 Шукаємо країну:', finalGeo);
+
+        const countryInput = document.querySelector('#location');
+        if (!countryInput) {
+            setTimeout(setCountry, 300);
+            return;
+        }
+
+        countryInput.value = finalGeo;
+        countryInput.dispatchEvent(new Event('input', { bubbles: true }));
+        countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        setTimeout(() => {
+            const items = document.querySelectorAll('#cntList .ui-menu-item, .ui-autocomplete li');
+            for (let item of items) {
+                const text = item.innerText || item.textContent;
+                if (text && text.toLowerCase().trim() === finalGeo.toLowerCase().trim()) {
+                    const link = item.querySelector('a') || item;
+                    link.click();
+                    countrySelected = true;
+                    console.log('✅ Вибрано країну:', finalGeo);
+                    if (finalDeparture && !departureSelected) {
+                        setTimeout(setDeparture, 500);
+                    }
+                    return;
+                }
+            }
+            if (!countrySelected) {
+                setTimeout(setCountry, 500);
+            }
+        }, 400);
+    }
+
+    function setDeparture() {
+        if (!finalDeparture || departureSelected) return;
+        console.log('🛫 Шукаємо місто вильоту:', finalDeparture);
+
+        const searchCity = finalDeparture.replace('з ', '').trim();
+
+        function trySelect() {
+            const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
+            if (!departureBtn) {
+                setTimeout(trySelect, 300);
+                return;
+            }
+
+            const currentText = departureBtn.innerText;
+            if (currentText.includes(searchCity) || currentText === finalDeparture) {
+                departureSelected = true;
+                console.log('✅ Місто вже вибрано:', currentText);
+                return;
+            }
+
+            departureBtn.click();
+
+            setTimeout(() => {
+                const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
+                for (let item of items) {
+                    const itemText = item.innerText.trim();
+                    if (itemText === finalDeparture ||
+                        itemText === searchCity ||
+                        itemText.toLowerCase() === searchCity.toLowerCase()) {
+                        item.click();
+                        departureSelected = true;
+                        console.log('✅ Вибрано місто вильоту:', itemText);
+                        break;
+                    }
+                }
+                if (!departureSelected) {
+                    console.log('⚠️ Місто не знайдено:', searchCity);
+                }
+            }, 400);
+        }
+        trySelect();
+    }
+
+    function triggerSearch() {
+        if (searchTriggered) return;
+        if (autoSearch && countrySelected) {
+            setTimeout(() => {
+                const searchBtn = document.querySelector('.new_f-form-submit');
+                if (searchBtn) {
+                    searchBtn.click();
+                    searchTriggered = true;
+                    console.log('🔍 Пошук запущено!');
+                }
+            }, 800);
+        } else if (autoSearch && !countrySelected && finalGeo) {
+            setTimeout(triggerSearch, 500);
+        }
+    }
+
+    function init() {
+        setCountry();
+        if (autoSearch) {
+            setTimeout(triggerSearch, 1500);
+            setTimeout(triggerSearch, 2500);
+            setTimeout(triggerSearch, 3500);
+        }
+    }
+
+    setTimeout(init, 500);
+})();
+</script>
+
+<style>
+    #otpusk-search-module {
+        background: white !important;
+        border-radius: 24px !important;
+        border: 2px solid var(--primary-color, #0d6efd) !important;
+        padding: 20px 24px !important;
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+    }
+    .new_f-form-submit {
+        background: var(--primary-color, #0d6efd) !important;
+        color: white !important;
+        white-space: nowrap !important;
+        padding: 10px 24px !important;
+    }
+    .new_f-form-submit:hover {
+        background: var(--primary-dark, #0b5ed7) !important;
+    }
+</style>
+{% endblock %}
