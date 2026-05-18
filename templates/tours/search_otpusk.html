@@ -14,52 +14,59 @@
 </div>
 
 <script>
-// ============================================
-// ОТРИМУЄМО ПАРАМЕТРИ З URL
-// ============================================
+// Отримуємо параметри з URL
 const urlParams = new URLSearchParams(window.location.search);
 let country = urlParams.get('country');
 let fromCity = urlParams.get('from');
 
 if (country) country = decodeURIComponent(country);
-if (fromCity) fromCity = decodeURIComponent(fromCity);
+if (fromCity) {
+    fromCity = decodeURIComponent(fromCity);
+    fromCity = fromCity.replace(/^з\s+/i, '').trim();
+}
 
-// Видаляємо "з " з міста
-if (fromCity) fromCity = fromCity.replace(/^з\s+/i, '').trim();
+console.log('📥 Параметри URL:', { country, fromCity });
 
-console.log('📥 Параметри:', { country, fromCity });
-
-// ============================================
-// МАПА МІСТ (назва -> ID для osDefaultDeparture)
-// ============================================
+// МАПА ID МІСТ (оновлюйте за результатами з консолі)
 const cityToId = {
-    'кишинів': 1831, 'кишинев': 1831, 'chisinau': 1831,
-    'київ': 1544, 'киев': 1544, 'kyiv': 1544, 'kiev': 1544,
-    'одеса': 1545, 'одесса': 1545, 'odessa': 1545,
-    'львів': 1546, 'львов': 1546, 'lviv': 1546,
-    'варшава': 1124, 'warsaw': 1124,
-    'краків': 1126, 'krakow': 1126,
-    'бухарест': 1373, 'bucharest': 1373,
-    'прага': 845, 'prague': 845,
-    'берлін': 870, 'berlin': 870,
-    'будапешт': 992, 'budapest': 992,
-    'брно': 1343, 'brno': 1343,  // ← ПРАВИЛЬНИЙ ID
-    'відень': 790, 'vienna': 790,
-    'братислава': 1516, 'bratislava': 1516
+    'кишинів': 1831,
+    'кишинев': 1831,
+    'chisinau': 1831,
+    'брно': 1343,
+    'brno': 1343,
+    'київ': 1544,
+    'киев': 1544,
+    'kyiv': 1544,
+    'одеса': 1545,
+    'одесса': 1545,
+    'львів': 1546,
+    'львов': 1546,
+    'варшава': 1124,
+    'warsaw': 1124,
+    'краків': 1126,
+    'krakow': 1126,
+    'бухарест': 1373,
+    'bucharest': 1373,
+    'прага': 845,
+    'prague': 845,
+    'берлін': 870,
+    'berlin': 870,
+    'будапешт': 992,
+    'budapest': 992,
+    'відень': 790,
+    'vienna': 790
 };
 
 // Визначаємо ID міста вильоту
-let departureId = 1200; // Кишинів за замовчуванням
+let departureId = 1831; // Кишинів за замовчуванням
 if (fromCity && cityToId[fromCity.toLowerCase()]) {
     departureId = cityToId[fromCity.toLowerCase()];
-    console.log(`✅ Знайдено ID для міста "${fromCity}": ${departureId}`);
+    console.log(`✅ Знайдено ID для "${fromCity}": ${departureId}`);
 } else if (fromCity) {
-    console.log(`⚠️ Місто "${fromCity}" не знайдено в мапі, використовуємо Кишинів (1200)`);
+    console.log(`⚠️ ID для "${fromCity}" не знайдено. Використовуємо Кишинів (1831)`);
 }
 
-// ============================================
 // НАЛАШТУВАННЯ OTPUSK
-// ============================================
 var osGeo = country || '';
 var osDefaultDeparture = departureId;
 var osDefaultDuration = '';
@@ -75,12 +82,13 @@ var osLang = 'ua';
 var osTourTargetBlank = false;
 var osOrderUrl = null;
 var osCurrency = 'converted';
-var osAutoStart = true;  // Автозапуск
+var osAutoStart = true;
 
 console.log('🚀 Фінальні налаштування:', { osGeo, osDefaultDeparture });
+console.log('🔗 URL пошуку буде:', osTarget);
 </script>
 
-<!-- Підключення Otpusk -->
+<!-- Підключення скриптів Otpusk -->
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&subset=cyrillic" rel="stylesheet">
 <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
 <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
@@ -88,6 +96,17 @@ console.log('🚀 Фінальні налаштування:', { osGeo, osDefaul
 <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
 <script src="https://export.otpusk.com/js/onsite/"></script>
 <script src="https://export.otpusk.com/js/order"></script>
+
+<!-- Додатковий скрипт для гарантії -->
+<script>
+setTimeout(function() {
+    console.log('🔄 Додаткова перевірка через 3 секунди...');
+    const selectedCity = document.querySelector('#new_os-from .new_f-dropdown-btn .new_f-dropdown-btn-text');
+    if (selectedCity) {
+        console.log('Поточне вибране місто:', selectedCity.innerText);
+    }
+}, 3000);
+</script>
 
 <style>
     #otpusk-search-module {
@@ -101,8 +120,6 @@ console.log('🚀 Фінальні налаштування:', { osGeo, osDefaul
     .new_f-form-submit {
         background: var(--primary-color, #9f3c3c) !important;
         color: white !important;
-        white-space: nowrap !important;
-        padding: 10px 24px !important;
     }
 </style>
 {% endblock %}
