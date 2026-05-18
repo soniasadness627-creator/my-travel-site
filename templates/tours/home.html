@@ -279,10 +279,8 @@ document.addEventListener('DOMContentLoaded', function() {
             break;
         }
     }
-    // Використовуємо хеш для передачі параметрів
-    let url = `${baseUrl}#!geo=${encodeURIComponent(country)}&departure_text=${encodeURIComponent(departureText || 'з Кишинева')}&auto_search=1`;
-    console.log('🔗 Перехід за URL:', url);
-    window.location.href = url;
+    // Додаємо параметри в URL
+    window.location.href = `${baseUrl}?geo=${encodeURIComponent(country)}&departure_text=${encodeURIComponent(departureText || 'з Кишинева')}&auto_search=1`;
 };
 
     // ФУНКЦІЯ ДЛЯ ВІДОБРАЖЕННЯ ТУРІВ
@@ -962,7 +960,8 @@ const defaultImage = '/static/images/default-tour.jpg';
     const countriesGrid = document.getElementById('countriesGrid');
     const cityBtns = document.querySelectorAll('.city-btn');
 
-    window.searchByCityAndCountry = function(country, departureCity) {
+    // Для тури з вашого міста
+window.searchByCityAndCountry = function(country, departureCity) {
     let baseUrl = '/search-otpusk/';
     const pathParts = window.location.pathname.split('/');
     for (let i = 0; i < pathParts.length; i++) {
@@ -973,20 +972,20 @@ const defaultImage = '/static/images/default-tour.jpg';
     }
 
     let departureText = '';
-    if (departureCity === 'Кишинів') departureText = 'з Кишинева';
-    else if (departureCity === 'Київ') departureText = 'з Києва';
-    else if (departureCity === 'Одеса') departureText = 'з Одеси';
-    else if (departureCity === 'Львів') departureText = 'з Львова';
-    else if (departureCity === 'Варшава') departureText = 'з Варшави';
-    else if (departureCity === 'Краків') departureText = 'з Кракова';
-    else if (departureCity === 'Бухарест') departureText = 'з Бухареста';
-    else if (departureCity === 'Прага') departureText = 'з Праги';
-    else if (departureCity === 'Берлін') departureText = 'з Берліна';
-    else departureText = `з ${departureCity}`;
+    const departureMap = {
+        'Кишинів': 'з Кишинева',
+        'Київ': 'з Києва',
+        'Одеса': 'з Одеси',
+        'Львів': 'з Львова',
+        'Варшава': 'з Варшави',
+        'Краків': 'з Кракова',
+        'Бухарест': 'з Бухареста',
+        'Прага': 'з Праги',
+        'Берлін': 'з Берліна'
+    };
+    departureText = departureMap[departureCity] || `з ${departureCity}`;
 
-    let url = `${baseUrl}#!geo=${encodeURIComponent(country)}&departure_text=${encodeURIComponent(departureText)}&auto_search=1`;
-    console.log('🔗 Перехід за URL:', url);
-    window.location.href = url;
+    window.location.href = `${baseUrl}?geo=${encodeURIComponent(country)}&departure_text=${encodeURIComponent(departureText)}&auto_search=1`;
 };
 
     // Функція для відображення країн (без зірок, з вильотом)
