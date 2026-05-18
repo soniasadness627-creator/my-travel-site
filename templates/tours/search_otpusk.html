@@ -20,12 +20,6 @@
 const urlParams = new URLSearchParams(window.location.search);
 let country = urlParams.get('country');
 let fromCity = urlParams.get('from');
-let geo = urlParams.get('geo');  // альтернативний параметр
-let departure_text = urlParams.get('departure_text');  // альтернативний параметр
-
-// Якщо є geo/departure_text - використовуємо їх
-if (geo && !country) country = decodeURIComponent(geo);
-if (departure_text && !fromCity) fromCity = decodeURIComponent(departure_text);
 
 // Розкодовуємо
 if (country) country = decodeURIComponent(country);
@@ -33,9 +27,11 @@ if (fromCity) fromCity = decodeURIComponent(fromCity);
 
 console.log('📥 Отримані параметри:', { country, fromCity });
 
-// Зберігаємо в глобальні змінні
+// Видаляємо "з " з міста вильоту
+let cleanFromCity = fromCity ? fromCity.replace(/^з\s+/i, '').trim() : '';
+
 window.otpuskCountry = country || '';
-window.otpuskFromCity = fromCity || '';
+window.otpuskFromCity = cleanFromCity;
 </script>
 
 <!-- Підключаємо Otpusk -->
@@ -48,38 +44,9 @@ window.otpuskFromCity = fromCity || '';
 <script src="https://export.otpusk.com/js/order"></script>
 
 <script>
-// Мапа міст (назва -> ID для osDefaultDeparture)
-const cityToId = {
-    'кишинів': 1200, 'кишинев': 1200, 'chisinau': 1200,
-    'київ': 1544, 'киев': 1544, 'kyiv': 1544, 'kiev': 1544,
-    'одеса': 1545, 'одесса': 1545, 'odessa': 1545,
-    'львів': 1546, 'львов': 1546, 'lviv': 1546,
-    'варшава': 1676, 'warsaw': 1676,
-    'краків': 1677, 'krakow': 1677,
-    'бухарест': 1653, 'bucharest': 1653,
-    'прага': 1682, 'prague': 1682,
-    'берлін': 1636, 'berlin': 1636,
-    'будапешт': 1651, 'budapest': 1651
-};
-
-// Визначаємо ID міста вильоту
-let departureId = 1200; // Кишинів за замовчуванням
-if (window.otpuskFromCity) {
-    const cleanCity = window.otpuskFromCity.replace(/^з\s+/i, '').toLowerCase();
-    if (cityToId[cleanCity]) {
-        departureId = cityToId[cleanCity];
-    }
-}
-
-console.log('🚀 Параметри для Otpusk:', {
-    osGeo: window.otpuskCountry,
-    fromCity: window.otpuskFromCity,
-    departureId: departureId
-});
-
-// НАЛАШТУВАННЯ OTPUSK
+// НАЛАШТУВАННЯ OTPUSK - без ID, тільки текст
 var osGeo = window.otpuskCountry;
-var osDefaultDeparture = departureId;
+var osDefaultDeparture = '';  // Порожнє, будемо встановлювати через клік
 var osDefaultDuration = '';
 var osDateFrom = '';
 var osDateTo = '';
@@ -93,133 +60,138 @@ var osLang = 'ua';
 var osTourTargetBlank = false;
 var osOrderUrl = null;
 var osCurrency = 'converted';
-var osAutoStart = true;  // Автозапуск
+var osAutoStart = false;  // Не автозапуск, дамо час на встановлення
 </script>
 
-<!-- ========== СКРИПТ ДЛЯ АВТОМАТИЧНОГО ВИБОРУ (ЯК У search-results-calendar) ========== -->
+<!-- ========== ГОЛОВНИЙ СКРИПТ ДЛЯ ВСТАНОВЛЕННЯ КРАЇНИ ТА МІСТА ========== -->
 <script>
 (function() {
-    if (window.searchResultsDateSet) return;
-    window.searchResultsDateSet = true;
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const geo = urlParams.get('geo') || urlParams.get('country');
-    const departureText = urlParams.get('departure_text') || urlParams.get('from');
-    const autoSearch = true;
-
-    let finalGeo = geo ? decodeURIComponent(geo) : window.otpuskCountry;
-    let finalDeparture = departureText ? decodeURIComponent(departureText) : window.otpuskFromCity;
-
-    console.log('📥 Параметри для вибору:', { finalGeo, finalDeparture, autoSearch });
-
+    let attempts = 0;
+    const maxAttempts = 30;
+    let countrySet = false;
+    let departureSet = false;
     let searchTriggered = false;
-    let countrySelected = false;
-    let departureSelected = false;
+
+    const targetCountry = window.otpuskCountry;
+    const targetCity = window.otpuskFromCity;
+
+    console.log('🎯 Цільові значення:', { targetCountry, targetCity });
 
     function setCountry() {
-        if (!finalGeo || countrySelected) return;
-        console.log('🌍 Шукаємо країну:', finalGeo);
+        if (!targetCountry || countrySet) return false;
 
-        const countryInput = document.querySelector('#location');
-        if (!countryInput) {
-            setTimeout(setCountry, 300);
-            return;
+        const locationInput = document.querySelector('#location');
+        if (!locationInput) return false;
+
+        if (locationInput.value !== targetCountry) {
+            locationInput.value = targetCountry;
+            locationInput.dispatchEvent(new Event('input', { bubbles: true }));
+            locationInput.dispatchEvent(new Event('change', { bubbles: true }));
+            console.log(`✅ Встановлено країну: ${targetCountry}`);
         }
 
-        countryInput.value = finalGeo;
-        countryInput.dispatchEvent(new Event('input', { bubbles: true }));
-        countryInput.dispatchEvent(new Event('change', { bubbles: true }));
-
+        // Намагаємось вибрати з автокомпліту
         setTimeout(() => {
-            const items = document.querySelectorAll('#cntList .ui-menu-item, .ui-autocomplete li');
+            const items = document.querySelectorAll('#cntList .ui-menu-item, .ui-autocomplete li, .autocomplete-suggestion');
             for (let item of items) {
-                const text = item.innerText || item.textContent;
-                if (text && text.toLowerCase().trim() === finalGeo.toLowerCase().trim()) {
+                const text = (item.innerText || item.textContent || '').toLowerCase().trim();
+                if (text === targetCountry.toLowerCase().trim() || text.includes(targetCountry.toLowerCase())) {
                     const link = item.querySelector('a') || item;
                     link.click();
-                    countrySelected = true;
-                    console.log('✅ Вибрано країну:', finalGeo);
-                    if (finalDeparture && !departureSelected) {
-                        setTimeout(setDeparture, 500);
-                    }
-                    return;
+                    console.log(`✅ Вибрано країну зі списку: ${targetCountry}`);
+                    break;
                 }
             }
-            if (!countrySelected) {
-                setTimeout(setCountry, 500);
-            }
-        }, 400);
+        }, 300);
+
+        countrySet = true;
+        return true;
     }
 
     function setDeparture() {
-        if (!finalDeparture || departureSelected) return;
-        console.log('🛫 Шукаємо місто вильоту:', finalDeparture);
+        if (!targetCity || departureSet) return false;
 
-        const searchCity = finalDeparture.replace('з ', '').trim();
+        console.log(`🛫 Шукаємо місто вильоту: "${targetCity}"`);
 
-        function trySelect() {
-            const departureBtn = document.querySelector('#new_os-from .new_f-dropdown-btn');
-            if (!departureBtn) {
-                setTimeout(trySelect, 300);
-                return;
+        // Шукаємо кнопку випадаючого списку
+        const departureBtn = document.querySelector('.new_f-departure .new_f-dropdown-header, .new_f-from .new_f-dropdown-header, #new_os-from .new_f-dropdown-btn');
+        if (!departureBtn) return false;
+
+        // Відкриваємо список
+        departureBtn.click();
+
+        setTimeout(() => {
+            const items = document.querySelectorAll('.new_f-departure .new_f-dropdown-item, .new_f-from .new_f-dropdown-item, #new_os-from .new_f-dropdown-item');
+            let found = false;
+
+            for (let item of items) {
+                const itemText = (item.innerText || item.textContent || '').trim();
+                const itemTextLower = itemText.toLowerCase();
+                const targetCityLower = targetCity.toLowerCase();
+
+                // Перевіряємо різні варіанти співпадіння
+                if (itemTextLower === targetCityLower ||
+                    itemTextLower.includes(targetCityLower) ||
+                    targetCityLower.includes(itemTextLower)) {
+                    item.click();
+                    console.log(`✅ Вибрано місто вильоту: "${itemText}"`);
+                    departureSet = true;
+                    found = true;
+                    break;
+                }
             }
 
-            const currentText = departureBtn.innerText;
-            if (currentText.includes(searchCity) || currentText === finalDeparture) {
-                departureSelected = true;
-                console.log('✅ Місто вже вибрано:', currentText);
-                return;
+            if (!found) {
+                // Закриваємо список
+                departureBtn.click();
+                console.log(`⚠️ Місто "${targetCity}" не знайдено у списку. Доступні міста:`,
+                    Array.from(items).map(i => i.innerText).join(', '));
             }
+        }, 300);
 
-            departureBtn.click();
-
-            setTimeout(() => {
-                const items = document.querySelectorAll('#new_os-from .new_f-dropdown-item');
-                for (let item of items) {
-                    const itemText = item.innerText.trim();
-                    if (itemText === finalDeparture ||
-                        itemText === searchCity ||
-                        itemText.toLowerCase() === searchCity.toLowerCase()) {
-                        item.click();
-                        departureSelected = true;
-                        console.log('✅ Вибрано місто вильоту:', itemText);
-                        break;
-                    }
-                }
-                if (!departureSelected) {
-                    console.log('⚠️ Місто не знайдено:', searchCity);
-                }
-            }, 400);
-        }
-        trySelect();
+        return true;
     }
 
     function triggerSearch() {
         if (searchTriggered) return;
-        if (autoSearch && countrySelected) {
+
+        // Чекаємо поки все встановиться
+        const needCountry = targetCountry && !countrySet;
+        const needDeparture = targetCity && !departureSet;
+
+        if (!needCountry && !needDeparture) {
             setTimeout(() => {
                 const searchBtn = document.querySelector('.new_f-form-submit');
                 if (searchBtn) {
                     searchBtn.click();
                     searchTriggered = true;
-                    console.log('🔍 Пошук запущено!');
+                    console.log('🔍 ПОШУК ЗАПУЩЕНО!');
                 }
-            }, 800);
-        } else if (autoSearch && !countrySelected && finalGeo) {
-            setTimeout(triggerSearch, 500);
+            }, 500);
         }
     }
 
-    function init() {
+    function trySetValues() {
+        attempts++;
+        console.log(`🔄 Спроба ${attempts}/${maxAttempts}...`);
+
         setCountry();
-        if (autoSearch) {
-            setTimeout(triggerSearch, 1500);
-            setTimeout(triggerSearch, 2500);
-            setTimeout(triggerSearch, 3500);
+        setDeparture();
+        triggerSearch();
+
+        if (attempts < maxAttempts && ((targetCountry && !countrySet) || (targetCity && !departureSet))) {
+            setTimeout(trySetValues, 800);
+        } else if (attempts >= maxAttempts) {
+            console.log('⚠️ Час вийшов. Значення не встановлені.');
         }
     }
 
-    setTimeout(init, 500);
+    // Запускаємо через 1 секунду
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => setTimeout(trySetValues, 1000));
+    } else {
+        setTimeout(trySetValues, 1000);
+    }
 })();
 </script>
 
