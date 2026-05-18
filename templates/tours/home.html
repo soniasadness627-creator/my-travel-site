@@ -271,17 +271,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА ПОШУК (з передачею міста вильоту)
    window.searchByCountry = function(country, departureText) {
-    let baseUrl = '/search-otpusk-by-country/';  // ← ВИПРАВЛЕНО!
+    let baseUrl = '/search-results-by-country/';
     const pathParts = window.location.pathname.split('/');
     for (let i = 0; i < pathParts.length; i++) {
         if (pathParts[i] === 'a' && pathParts[i + 1]) {
-            baseUrl = `/a/${pathParts[i + 1]}/search-otpusk-by-country/`;  // ← ВИПРАВЛЕНО!
+            baseUrl = `/a/${pathParts[i + 1]}/search-results-by-country/`;
             break;
         }
     }
     const params = new URLSearchParams();
     params.set('country', country);
-    params.set('from', departureText);
+    params.set('from', departureText || 'Кишинів');
     window.location.href = `${baseUrl}?${params.toString()}`;
 };
 
