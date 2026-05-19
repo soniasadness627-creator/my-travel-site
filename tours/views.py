@@ -178,9 +178,9 @@ def calendar_prices_cached(request):
     cache_key = f"calendar_prices_{country}_{year}_{month}_{departure_normalized}_{slug}"
 
     # Перевіряємо, чи є дані в кеші
-    cached_data = cache.get(cache_key)
-    if cached_data:
-        return JsonResponse(cached_data)
+    # cached_data = cache.get(cache_key)
+    # if cached_data:
+    #     return JsonResponse(cached_data)
 
     # ========== ШУКАЄМО В БАЗІ ДАНИХ (з нормалізованою назвою) ==========
     from datetime import date
@@ -224,7 +224,7 @@ def calendar_prices_cached(request):
         result = get_realistic_prices(month, year, country, departure_normalized)
 
     # Зберігаємо в кеш на 24 години
-    cache.set(cache_key, result, 86400)
+    # cache.set(cache_key, result, 86400)
     return JsonResponse(result)
 
 # ========== ІНШІ API ФУНКЦІЇ ==========
