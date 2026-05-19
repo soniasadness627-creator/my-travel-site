@@ -149,7 +149,6 @@ def calendar_prices_otpusk(request):
     return JsonResponse(result)
 
 
-# ========== API З КЕШУВАННЯМ ДЛЯ КАЛЕНДАРЯ (ГОЛОВНИЙ) ==========
 def calendar_prices_cached(request):
     """
     API для календаря низьких цін з кешуванням та БД
@@ -169,12 +168,21 @@ def calendar_prices_cached(request):
     except ValueError:
         return JsonResponse({'error': 'Invalid year/month'}, status=400)
 
-    cache_key = f"calendar_prices_{country}_{year}_{month}_{departure}_{slug}"
+    # ========== НОРМАЛІЗАЦІЯ НАЗВИ МІСТА ВИЛЬОТУ ==========
+    # Приводимо всі варіанти до єдиного формату "Кишинів"
+    departure_normalized = departure
+    if departure in ['Кишинев', 'Chisinau', 'Кишинёв', 'chisinau', 'Kishinev']:
+        departure_normalized = 'Кишинів'
+
+    # Формуємо ключ для кешу (використовуємо нормалізоване значення)
+    cache_key = f"calendar_prices_{country}_{year}_{month}_{departure_normalized}_{slug}"
+
+    # Перевіряємо, чи є дані в кеші
     cached_data = cache.get(cache_key)
     if cached_data:
         return JsonResponse(cached_data)
 
-    # ========== ШУКАЄМО В БАЗІ ДАНИХ (НОВА ПРОСТА ТАБЛИЦЯ) ==========
+    # ========== ШУКАЄМО В БАЗІ ДАНИХ (з нормалізованою назвою) ==========
     from datetime import date
     from .models import PriceCalendar
 
@@ -184,11 +192,11 @@ def calendar_prices_cached(request):
     else:
         end_date = date(year, month + 1, 1)
 
-    # Отримуємо ціни з таблиці (без прив'язки до турів)
+    # Отримуємо ціни з таблиці (шукаємо по нормалізованій назві)
     db_prices = {}
     price_options = PriceCalendar.objects.filter(
         country__icontains=country,
-        departure_city__icontains=departure,
+        departure_city__icontains=departure_normalized,
         date__gte=start_date,
         date__lt=end_date
     )
@@ -212,11 +220,12 @@ def calendar_prices_cached(request):
         max_price = max([p for p in prices if p is not None], default=50000)
         result = {'prices': prices, 'max_price': max_price}
     else:
-        result = get_realistic_prices(month, year, country, departure)
+        # Якщо немає - генеруємо реалістичні ціни
+        result = get_realistic_prices(month, year, country, departure_normalized)
 
+    # Зберігаємо в кеш на 24 години
     cache.set(cache_key, result, 86400)
     return JsonResponse(result)
-
 
 # ========== ІНШІ API ФУНКЦІЇ ==========
 def calendar_prices_from_otpusk(request):
