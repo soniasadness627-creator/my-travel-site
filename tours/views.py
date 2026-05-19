@@ -193,27 +193,34 @@ def calendar_prices_cached(request):
         end_date = date(year, month + 1, 1)
 
     # Отримуємо ціни з таблиці (шукаємо по нормалізованій назві)
-    db_prices = {}
-    price_options = PriceCalendar.objects.filter(
-        country__icontains=country,
-        departure_city__icontains=departure_normalized,
-        date__gte=start_date,
-        date__lt=end_date
-    )
+    def calendar_prices_cached(request):
+        # ... попередній код ...
 
-    for option in price_options:
-        day = option.date.day
-        price = option.price
-        if price and (day not in db_prices or price < db_prices[day]):
-            db_prices[day] = int(price)
+        # Отримуємо ціни з таблиці
+        db_prices = {}
+        price_options = PriceCalendar.objects.filter(
+            country__icontains=country,
+            departure_city__icontains=departure_normalized,
+            date__gte=start_date,
+            date__lt=end_date
+        )
 
-    days_in_month = (end_date - start_date).days
-    prices = []
-    for day in range(1, days_in_month + 1):
-        if day in db_prices:
-            prices.append(db_prices[day])
-        else:
-            prices.append(None)
+        for option in price_options:
+            day = option.date.day
+            # ЯКЩО ТУРІВ НЕМАЄ (is_available = False) - ПОЗНАЧАЄМО ЯК None
+            if not option.is_available:
+                db_prices[day] = None  # ← буде показувати "немає"
+            elif option.price:
+                if day not in db_prices or (db_prices[day] is not None and option.price < db_prices[day]):
+                    db_prices[day] = int(option.price)
+
+        days_in_month = (end_date - start_date).days
+        prices = []
+        for day in range(1, days_in_month + 1):
+            if day in db_prices:
+                prices.append(db_prices[day])  # може бути None (немає турів)
+            else:
+                prices.append(None)
 
     # Якщо є хоч одна ціна в БД - використовуємо їх
     if any(prices):

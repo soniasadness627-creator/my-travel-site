@@ -410,6 +410,12 @@ class PriceCalendar(models.Model):
         blank=True,
         help_text="Вкажіть ціну в гривнях (наприклад: 15000). Залиште порожнім, якщо немає пропозиції"
     )
+    # НОВЕ ПОЛЕ: позначка, що турів немає
+    is_available = models.BooleanField(
+        default=True,
+        verbose_name="Тури доступні",
+        help_text="Зніміть галочку, якщо на цю дату турів немає"
+    )
 
     class Meta:
         verbose_name = "Календар цін"
@@ -418,6 +424,8 @@ class PriceCalendar(models.Model):
         unique_together = ('country', 'departure_city', 'date', 'duration')
 
     def __str__(self):
+        if not self.is_available:
+            return f"{self.country} - {self.date} - НЕМАЄ ТУРІВ"
         return f"{self.country} - {self.date} - {self.duration} ночей: {self.price} грн"
 
 class AmenityCategory(models.Model):

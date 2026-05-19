@@ -1106,30 +1106,28 @@ document.addEventListener('DOMContentLoaded', function() {
         updateCalendar();
     }
 
-    // ========== ВИКОРИСТОВУЄМО ПРОСТИЙ API З РЕАЛІСТИЧНИМИ ЦІНАМИ ==========
     async function fetchPriceData(country, month, departure) {
-    const year = month.getFullYear();
-    const monthIndex = month.getMonth() + 1;
+        const year = month.getFullYear();
+        const monthIndex = month.getMonth() + 1;
 
-    // ВИКОРИСТОВУЄМО КЕШОВАНИЙ API (як у старому коді)
-let url = `/api/calendar-prices-cached/?country=${encodeURIComponent(country)}&year=${year}&month=${monthIndex}&departure=${encodeURIComponent(departure)}`;
+        let url = `/api/calendar-prices-cached/?country=${encodeURIComponent(country)}&year=${year}&month=${monthIndex}&departure=${encodeURIComponent(departure)}`;
 
-    {% if agent_site %}
-    url += `&slug={{ agent_site.slug }}`;
-    {% endif %}
+        {% if agent_site %}
+        url += `&slug={{ agent_site.slug }}`;
+        {% endif %}
 
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        console.log('✅ Отримано ціни для календаря:', data.prices?.length, 'днів');
-        return { prices: data.prices, maxPrice: data.max_price };
-    } catch (error) {
-        console.error('❌ Помилка завантаження цін:', error);
-        const daysInMonth = new Date(year, monthIndex, 0).getDate();
-        return { prices: new Array(daysInMonth).fill(null), maxPrice: null };
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
+            console.log('✅ Отримано ціни для календаря:', data.prices?.length, 'днів');
+            return { prices: data.prices, maxPrice: data.max_price };
+        } catch (error) {
+            console.error('❌ Помилка завантаження цін:', error);
+            const daysInMonth = new Date(year, monthIndex, 0).getDate();
+            return { prices: new Array(daysInMonth).fill(null), maxPrice: null };
+        }
     }
-}
 
     function getColorForPrice(price, minPrice, maxPrice) {
         if (price === null) return 'gray';
@@ -1149,6 +1147,19 @@ let url = `/api/calendar-prices-cached/?country=${encodeURIComponent(country)}&y
         return 20 + (ratio * 80);
     }
 
+    function getCurrentNights() {
+        // Функція для отримання поточної кількості ночей (можна налаштувати)
+        const nightsSelect = document.getElementById('searchNights');
+        if (nightsSelect) {
+            const val = nightsSelect.value;
+            if (val.includes('-')) {
+                return parseInt(val.split('-')[0]) + 1;
+            }
+            return parseInt(val);
+        }
+        return 7;
+    }
+
     function renderCalendar(prices) {
         if (!calendarDays) return;
 
@@ -1157,7 +1168,7 @@ let url = `/api/calendar-prices-cached/?country=${encodeURIComponent(country)}&y
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         calendarDays.innerHTML = '';
 
-        const validPrices = prices.filter(p => p !== null);
+        const validPrices = prices.filter(p => p !== null && p !== undefined);
         let globalMin = null;
         let globalMax = null;
 
@@ -1192,15 +1203,31 @@ let url = `/api/calendar-prices-cached/?country=${encodeURIComponent(country)}&y
             col.className = 'day-column' + (isPastDate ? ' past-date' : '');
 
             if (isPastDate) {
-                col.innerHTML = `<div class="day-week">${dayOfWeek}</div><div class="day-date">${day}</div><div class="price-bar-container"><div class="price-column past" style="height: 20%;"></div></div><div class="price-value-text past">минула</div>`;
-            } else if (price !== null) {
+                col.innerHTML = `<div class="day-week">${dayOfWeek}</div>
+                                 <div class="day-date">${day}</div>
+                                 <div class="price-bar-container">
+                                     <div class="price-column past" style="height: 20%;"></div>
+                                 </div>
+                                 <div class="price-value-text past">минула</div>`;
+            } else if (price !== null && price !== undefined) {
                 const barClass = getColorForPrice(price, globalMin, globalMax);
                 const barHeight = getHeightForPrice(price, globalMin, globalMax);
                 col.setAttribute('onclick', `selectCalendarDate('${dateISO}', ${price}, ${getCurrentNights()})`);
                 col.style.cursor = 'pointer';
-                col.innerHTML = `<div class="day-week">${dayOfWeek}</div><div class="day-date">${day}</div><div class="price-bar-container"><div class="price-column ${barClass}" style="height: ${barHeight}%;"></div></div><div class="price-value-text" style="color: ${barClass === 'low' ? '#28a745' : (barClass === 'red' ? '#dc3545' : '#ffc107')}">${Math.round(price).toLocaleString('uk-UA')} ₴</div>`;
+                col.innerHTML = `<div class="day-week">${dayOfWeek}</div>
+                                 <div class="day-date">${day}</div>
+                                 <div class="price-bar-container">
+                                     <div class="price-column ${barClass}" style="height: ${barHeight}%;"></div>
+                                 </div>
+                                 <div class="price-value-text" style="color: ${barClass === 'low' ? '#28a745' : (barClass === 'red' ? '#dc3545' : '#ffc107')}">${Math.round(price).toLocaleString('uk-UA')} ₴</div>`;
             } else {
-                col.innerHTML = `<div class="day-week">${dayOfWeek}</div><div class="day-date">${day}</div><div class="price-bar-container"><div class="price-column gray" style="height: 20%;"></div></div><div class="price-value-text" style="color: #adb5bd;">немає</div>`;
+                // ТУТ ПОКАЗУЄМО "НЕМАЄ" ЗАМІСТЬ РАНДОМНОЇ ЦІНИ
+                col.innerHTML = `<div class="day-week">${dayOfWeek}</div>
+                                 <div class="day-date">${day}</div>
+                                 <div class="price-bar-container">
+                                     <div class="price-column gray" style="height: 20%;"></div>
+                                 </div>
+                                 <div class="price-value-text" style="color: #adb5bd;">немає</div>`;
             }
             calendarDays.appendChild(col);
         }

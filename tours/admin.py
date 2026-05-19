@@ -394,15 +394,15 @@ class TourPriceByTouristsAdmin(admin.ModelAdmin):
 
 @admin.register(PriceCalendar)
 class PriceCalendarAdmin(admin.ModelAdmin):
-    list_display = ('country', 'departure_city', 'date', 'duration', 'price')
-    list_filter = ('country', 'departure_city')
+    list_display = ('country', 'departure_city', 'date', 'duration', 'price', 'is_available')
+    list_filter = ('country', 'departure_city', 'is_available')
     search_fields = ('country', 'departure_city')
-    list_editable = ('price',)
+    list_editable = ('price', 'is_available')
     list_per_page = 50
 
     fieldsets = (
         ('Інформація про тур', {
-            'fields': ('country', 'departure_city', 'date', 'duration', 'price')
+            'fields': ('country', 'departure_city', 'date', 'duration', 'price', 'is_available')
         }),
     )
 
