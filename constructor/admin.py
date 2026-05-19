@@ -1,5 +1,7 @@
 from django.contrib import admin
 from .models import AgentSite
+from .admin_emails import MassEmailAdmin  # ← ДОДАНО ДЛЯ РОЗСИЛКИ
+
 
 @admin.register(AgentSite)
 class AgentSiteAdmin(admin.ModelAdmin):
@@ -25,3 +27,8 @@ class AgentSiteAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+
+# ========== МАСОВА EMAIL-РОЗСИЛКА ==========
+# Створюємо окремий admin site для розсилки
+mass_email_admin_site = MassEmailAdmin(name='mass_email_admin')
