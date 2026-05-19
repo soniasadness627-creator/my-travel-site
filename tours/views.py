@@ -169,20 +169,19 @@ def calendar_prices_cached(request):
         return JsonResponse({'error': 'Invalid year/month'}, status=400)
 
     # ========== НОРМАЛІЗАЦІЯ НАЗВИ МІСТА ВИЛЬОТУ ==========
-    # Приводимо всі варіанти до єдиного формату "Кишинів"
     departure_normalized = departure
     if departure in ['Кишинев', 'Chisinau', 'Кишинёв', 'chisinau', 'Kishinev']:
         departure_normalized = 'Кишинів'
 
-    # Формуємо ключ для кешу (використовуємо нормалізоване значення)
+    # Формуємо ключ для кешу
     cache_key = f"calendar_prices_{country}_{year}_{month}_{departure_normalized}_{slug}"
 
-    # Перевіряємо, чи є дані в кеші
+    # Перевіряємо кеш (розкоментуй для продакшену)
     # cached_data = cache.get(cache_key)
     # if cached_data:
     #     return JsonResponse(cached_data)
 
-    # ========== ШУКАЄМО В БАЗІ ДАНИХ (з нормалізованою назвою) ==========
+    # ========== ШУКАЄМО В БАЗІ ДАНИХ ==========
     from datetime import date
     from .models import PriceCalendar
 
@@ -192,47 +191,46 @@ def calendar_prices_cached(request):
     else:
         end_date = date(year, month + 1, 1)
 
-    # Отримуємо ціни з таблиці (шукаємо по нормалізованій назві)
-    def calendar_prices_cached(request):
-        # ... попередній код ...
+    # Отримуємо ціни з таблиці
+    db_prices = {}
+    price_options = PriceCalendar.objects.filter(
+        country__icontains=country,
+        departure_city__icontains=departure_normalized,
+        date__gte=start_date,
+        date__lt=end_date
+    )
 
-        # Отримуємо ціни з таблиці
-        db_prices = {}
-        price_options = PriceCalendar.objects.filter(
-            country__icontains=country,
-            departure_city__icontains=departure_normalized,
-            date__gte=start_date,
-            date__lt=end_date
-        )
+    for option in price_options:
+        day = option.date.day
+        # Якщо тури недоступні - позначаємо як None
+        if not option.is_available:
+            db_prices[day] = None
+        elif option.price:
+            price_val = int(option.price)
+            if day not in db_prices or (db_prices[day] is not None and price_val < db_prices[day]):
+                db_prices[day] = price_val
 
-        for option in price_options:
-            day = option.date.day
-            # ЯКЩО ТУРІВ НЕМАЄ (is_available = False) - ПОЗНАЧАЄМО ЯК None
-            if not option.is_available:
-                db_prices[day] = None  # ← буде показувати "немає"
-            elif option.price:
-                if day not in db_prices or (db_prices[day] is not None and option.price < db_prices[day]):
-                    db_prices[day] = int(option.price)
+    days_in_month = (end_date - start_date).days
+    prices = []
+    for day in range(1, days_in_month + 1):
+        if day in db_prices:
+            prices.append(db_prices[day])
+        else:
+            prices.append(None)
 
-        days_in_month = (end_date - start_date).days
-        prices = []
-        for day in range(1, days_in_month + 1):
-            if day in db_prices:
-                prices.append(db_prices[day])  # може бути None (немає турів)
-            else:
-                prices.append(None)
-
-    # Якщо є хоч одна ціна в БД - використовуємо їх
-    if any(prices):
-        max_price = max([p for p in prices if p is not None], default=50000)
+    # Визначаємо результат
+    valid_prices = [p for p in prices if p is not None]
+    if valid_prices:
+        max_price = max(valid_prices)
         result = {'prices': prices, 'max_price': max_price}
     else:
-        # Якщо немає - генеруємо реалістичні ціни
+        # Генеруємо реалістичні ціни
         result = get_realistic_prices(month, year, country, departure_normalized)
 
-    # Зберігаємо в кеш на 24 години
+    # Зберігаємо в кеш (розкоментуй для продакшену)
     # cache.set(cache_key, result, 86400)
     return JsonResponse(result)
+
 
 # ========== ІНШІ API ФУНКЦІЇ ==========
 def calendar_prices_from_otpusk(request):
@@ -362,9 +360,12 @@ def calendar_prices_from_db(request):
 
     for option in price_options:
         day = option.date.day
-        price = option.price
-        if price and (day not in db_prices or price < db_prices[day]):
-            db_prices[day] = int(price)
+        if not option.is_available:
+            db_prices[day] = None
+        elif option.price:
+            price_val = int(option.price)
+            if day not in db_prices or (db_prices[day] is not None and price_val < db_prices[day]):
+                db_prices[day] = price_val
 
     days_in_month = (end_date - start_date).days
     prices = []
