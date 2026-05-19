@@ -1,0 +1,60 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 20px auto;">
+    <div style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h2 style="color: #086745;">📧 Масова email-розсилка</h2>
+        
+        <div style="background: #e8f5e9; padding: 10px; border-radius: 5px; margin: 15px 0;">
+            📊 Всього агентів: <strong>{{ agents_count }}</strong>
+        </div>
+        
+        <form method="post" action="/admin/send-mass-email/" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: bold;">📝 Тема листа:</label>
+                <input type="text" name="subject" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: bold;">📄 Текст листа (HTML):</label>
+                <textarea name="message" rows="10" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                <small>Можна використовувати HTML теги: &lt;b&gt;, &lt;i&gt;, &lt;a href="..."&gt;</small>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: bold;">👥 Отримувачі:</label>
+                <label><input type="radio" name="recipient_type" value="all_agents" checked> Всі агенти ({{ agents_count }})</label><br>
+                <label><input type="radio" name="recipient_type" value="upload_file"> Завантажити список з файлу</label>
+            </div>
+            
+            <div id="file_upload_block" style="display: none; margin-bottom: 15px;">
+                <label>📎 Файл з email (TXT або CSV):</label>
+                <input type="file" name="email_file" accept=".txt,.csv">
+            </div>
+            
+            <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 15px 0;">
+                ⚠️ <strong>Увага!</strong><br>
+                - Розсилка на {{ agents_count }} адрес може зайняти кілька хвилин<br>
+                - Не закривайте сторінку до завершення
+            </div>
+            
+            <button type="submit" style="background: #086745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                🚀 Почати розсилку
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const radios = document.querySelectorAll('input[name="recipient_type"]');
+    const fileBlock = document.getElementById('file_upload_block');
+    
+    radios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            fileBlock.style.display = this.value === 'upload_file' ? 'block' : 'none';
+        });
+    });
+</script>
+{% endblock %}
