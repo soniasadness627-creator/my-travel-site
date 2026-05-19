@@ -218,14 +218,14 @@ def calendar_prices_cached(request):
         else:
             prices.append(None)
 
-    # Визначаємо результат
+    # Визначаємо результат - ТІЛЬКИ ЦІНИ З БД, БЕЗ РАНДОМУ
     valid_prices = [p for p in prices if p is not None]
     if valid_prices:
         max_price = max(valid_prices)
         result = {'prices': prices, 'max_price': max_price}
     else:
-        # Генеруємо реалістичні ціни
-        result = get_realistic_prices(month, year, country, departure_normalized)
+        # Якщо немає жодної ціни - всі дні "немає"
+        result = {'prices': [None] * len(prices), 'max_price': None}
 
     # Зберігаємо в кеш (розкоментуй для продакшену)
     # cache.set(cache_key, result, 86400)
