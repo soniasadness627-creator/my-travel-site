@@ -259,6 +259,5 @@ else:
     TELEGRAM_ADMIN_IDS = []
 
 # ========== КІНЕЦЬ НАЛАШТУВАНЬ TELEGRAM ==========
-
 print("✅ Cloudinary ініціалізовано")
 print(f"✅ Telegram бот налаштовано. Адмінів: {len(TELEGRAM_ADMIN_IDS)}")
