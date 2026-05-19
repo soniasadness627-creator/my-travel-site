@@ -8,7 +8,7 @@ from django.views.decorators.http import require_GET
 
 from tours.models import (
     Tour, Booking, PriceOption, Review, Consultation, News,
-    TourPriceByTourists, CountryInfo, PriceCalendar, PopularDestination,
+    TourPriceByTourists, CountryInfo, PopularDestination,
     City, DepartureCity, HotelReview
 )
 from django.contrib.auth import get_user_model
@@ -321,19 +321,8 @@ class AgentCountryInfoAdmin(admin.ModelAdmin):
         return False
 
 
-class AgentPriceCalendarAdmin(admin.ModelAdmin):
-    list_display = ('tour', 'date', 'duration', 'price')
-    list_filter = ('tour', 'date')
-    search_fields = ('tour__title',)
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        return qs.filter(tour__author=request.user)
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "tour":
-            kwargs["queryset"] = Tour.objects.filter(author=request.user)
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+# ========== КЛАС ДЛЯ КАЛЕНДАРЯ ЦІН - ВИДАЛЕНО (більше не потрібен агентам) ==========
+# AgentPriceCalendarAdmin - ВИДАЛЕНО, оскільки PriceCalendar тепер без прив'язки до Tour
 
 
 class AgentPopularDestinationAdmin(admin.ModelAdmin):
@@ -406,17 +395,18 @@ class AgentAdminSite(admin.AdminSite):
 agent_admin_site = AgentAdminSite(name='agent_admin')
 
 # ========== РЕЄСТРАЦІЯ ВСІХ МОДЕЛЕЙ ==========
+agent_admin_site.register(Tour, AgentTourAdmin)
 agent_admin_site.register(Booking, AgentBookingAdmin)
 agent_admin_site.register(PriceOption, AgentPriceOptionAdmin)
 agent_admin_site.register(Review, AgentReviewAdmin)
 agent_admin_site.register(Consultation, AgentConsultationAdmin)
 agent_admin_site.register(News, AgentNewsAdmin)
 agent_admin_site.register(CountryInfo, AgentCountryInfoAdmin)
-agent_admin_site.register(PriceCalendar, AgentPriceCalendarAdmin)
+# agent_admin_site.register(PriceCalendar, AgentPriceCalendarAdmin)  # ВИДАЛЕНО - не потрібно агентам
 agent_admin_site.register(PopularDestination, AgentPopularDestinationAdmin)
 agent_admin_site.register(TourPriceByTourists, AgentTourPriceByTouristsAdmin)
 agent_admin_site.register(City, AgentCityAdmin)
-agent_admin_site.register(HotelReview, AgentHotelReviewAdmin)  # РЕЄСТРАЦІЯ НОВОЇ МОДЕЛІ
+agent_admin_site.register(HotelReview, AgentHotelReviewAdmin)  # РЕЄСТРАЦІЯ ВІДГУКІВ
 
 # ========== ДІАГНОСТИКА ==========
 print("=" * 50)

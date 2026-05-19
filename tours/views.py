@@ -48,7 +48,6 @@ def get_realistic_prices(month, year, country, departure):
     """
     Генерує реалістичні ціни на основі країни та міста вильоту
     """
-    # БЕЗПЕЧНЕ ВИЗНАЧЕННЯ КІЛЬКОСТІ ДНІВ У МІСЯЦІ
     days_in_month = get_days_in_month(year, month)
 
     # ========== БАЗОВІ ЦІНИ ДЛЯ КРАЇН ==========
@@ -91,66 +90,46 @@ def get_realistic_prices(month, year, country, departure):
         'Харків': 0.96,
     }
 
-    # Отримуємо діапазон цін для країни
     if country and country in country_prices:
         min_price, max_price = country_prices[country]
     else:
         min_price, max_price = 30000, 70000
 
-    # Отримуємо коефіцієнт для міста вильоту
     factor = departure_factors.get(departure, 1.00)
-
-    # Застосовуємо коефіцієнт до діапазону
     min_price = int(min_price * factor)
     max_price = int(max_price * factor)
 
-    # Сезонні коефіцієнти
     seasonal_factor = 1.0
-    if month in [6, 7, 8]:  # літо
+    if month in [6, 7, 8]:
         seasonal_factor = 1.15
-    elif month in [1, 2, 12]:  # зима
+    elif month in [1, 2, 12]:
         seasonal_factor = 0.9
 
-    # Використовуємо стабільний seed для однакових даних
     seed_value = year * 12 + month
     random.seed(seed_value)
 
     prices = []
     for day in range(1, days_in_month + 1):
-        # Генеруємо ціну в заданому діапазоні
         price_range = max_price - min_price
         price = min_price + (price_range * random.random())
-
-        # Додаємо сезонний коефіцієнт
         price = price * seasonal_factor
 
-        # Вихідні дорожчі на 10-20%
         is_weekend = (day % 7 in [0, 1, 6])
         if is_weekend:
             price = price * random.uniform(1.1, 1.2)
 
-        # Додаємо випадкову варіацію для різних днів
         day_variation = random.uniform(0.95, 1.05)
         price = price * day_variation
-
-        # Округлюємо до 50 гривень
         price = int(round(price / 50) * 50)
-
-        # Обмежуємо діапазон
         price = max(20000, min(250000, price))
-
         prices.append(price)
 
     max_price = max(prices)
-
     return {'prices': prices, 'max_price': max_price}
 
 
 # ========== API ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН ==========
 def calendar_prices_otpusk(request):
-    """
-    API для календаря низьких цін (демо-дані з реалістичними цінами)
-    """
     country = request.GET.get('country')
     year = request.GET.get('year')
     month = request.GET.get('month')
@@ -190,42 +169,35 @@ def calendar_prices_cached(request):
     except ValueError:
         return JsonResponse({'error': 'Invalid year/month'}, status=400)
 
-    # Формуємо ключ для кешу
     cache_key = f"calendar_prices_{country}_{year}_{month}_{departure}_{slug}"
-
-    # Перевіряємо, чи є дані в кеші
     cached_data = cache.get(cache_key)
     if cached_data:
         return JsonResponse(cached_data)
 
-    # ========== СПОЧАТКУ ШУКАЄМО В БАЗІ ДАНИХ ==========
-    from .models import Tour, PriceCalendar
+    # ========== ШУКАЄМО В БАЗІ ДАНИХ (НОВА ПРОСТА ТАБЛИЦЯ) ==========
     from datetime import date
+    from .models import PriceCalendar
 
-    # Знаходимо тури в цій країні
-    tours = Tour.objects.filter(country__icontains=country)
-
-    # Збираємо ціни з бази даних
     start_date = date(year, month, 1)
     if month == 12:
         end_date = date(year + 1, 1, 1)
     else:
         end_date = date(year, month + 1, 1)
 
-    # Отримуємо ціни з календаря
+    # Отримуємо ціни з таблиці (без прив'язки до турів)
     db_prices = {}
-    for tour in tours:
-        price_options = PriceCalendar.objects.filter(
-            tour=tour,
-            date__gte=start_date,
-            date__lt=end_date
-        ).values('date').annotate(min_price=models.Min('price'))
+    price_options = PriceCalendar.objects.filter(
+        country__icontains=country,
+        departure_city__icontains=departure,
+        date__gte=start_date,
+        date__lt=end_date
+    )
 
-        for option in price_options:
-            day = option['date'].day
-            price = option['min_price']
-            if price and (day not in db_prices or price < db_prices[day]):
-                db_prices[day] = int(price)
+    for option in price_options:
+        day = option.date.day
+        price = option.price
+        if price and (day not in db_prices or price < db_prices[day]):
+            db_prices[day] = int(price)
 
     days_in_month = (end_date - start_date).days
     prices = []
@@ -240,18 +212,15 @@ def calendar_prices_cached(request):
         max_price = max([p for p in prices if p is not None], default=50000)
         result = {'prices': prices, 'max_price': max_price}
     else:
-        # Якщо немає - генеруємо реалістичні ціни
         result = get_realistic_prices(month, year, country, departure)
 
-    # Зберігаємо в кеш на 24 години
     cache.set(cache_key, result, 86400)
     return JsonResponse(result)
 
-# ========== API ДЛЯ РЕАЛЬНИХ ЦІН З OTPUSK ==========
+
+# ========== ІНШІ API ФУНКЦІЇ ==========
 def calendar_prices_from_otpusk(request):
-    """
-    API для отримання реальних цін безпосередньо з Otpusk.com
-    """
+    """API для отримання реальних цін з Otpusk.com"""
     country = request.GET.get('country')
     year = request.GET.get('year')
     month = request.GET.get('month')
@@ -267,48 +236,25 @@ def calendar_prices_from_otpusk(request):
     except ValueError:
         return JsonResponse({'error': 'Invalid year/month'}, status=400)
 
-    # ПОВНА МАПА КРАЇН ДЛЯ OTPUSK API
     country_map = {
-        'Єгипет': 'Egypt',
-        'Туреччина': 'Turkey',
-        'ОАЕ': 'UAE',
-        'Шрі-Ланка': 'Sri Lanka',
-        'Іспанія': 'Spain',
-        'Мальдіви': 'Maldives',
-        'Кіпр': 'Cyprus',
-        'Чорногорія': 'Montenegro',
-        'Хорватія': 'Croatia',
-        'Греція': 'Greece',
-        'Туніс': 'Tunisia',
-        'Таїланд': 'Thailand',
-        'Грузія': 'Georgia',
-        'Італія': 'Italy',
-        'Португалія': 'Portugal',
+        'Єгипет': 'Egypt', 'Туреччина': 'Turkey', 'ОАЕ': 'UAE',
+        'Шрі-Ланка': 'Sri Lanka', 'Іспанія': 'Spain', 'Мальдіви': 'Maldives',
+        'Кіпр': 'Cyprus', 'Чорногорія': 'Montenegro', 'Хорватія': 'Croatia',
+        'Греція': 'Greece', 'Туніс': 'Tunisia', 'Таїланд': 'Thailand',
+        'Грузія': 'Georgia', 'Італія': 'Italy', 'Португалія': 'Portugal',
     }
 
-    # ПОВНА МАПА МІСТ ВИЛЬОТУ
     departure_map = {
-        'Кишинів': 'Chisinau',
-        'Кишинев': 'Chisinau',
-        'Варшава': 'Warsaw',
-        'Краків': 'Krakow',
-        'Бухарест': 'Bucharest',
-        'Будапешт': 'Budapest',
-        'Берлін': 'Berlin',
-        'Прага': 'Prague',
-        'Тбілісі': 'Tbilisi',
-        'Стамбул': 'Istanbul',
-        'Київ': 'Kyiv',
-        'Одеса': 'Odessa',
-        'Львів': 'Lviv',
-        'Харків': 'Kharkiv',
+        'Кишинів': 'Chisinau', 'Кишинев': 'Chisinau', 'Варшава': 'Warsaw',
+        'Краків': 'Krakow', 'Бухарест': 'Bucharest', 'Будапешт': 'Budapest',
+        'Берлін': 'Berlin', 'Прага': 'Prague', 'Тбілісі': 'Tbilisi',
+        'Стамбул': 'Istanbul', 'Київ': 'Kyiv', 'Одеса': 'Odessa',
+        'Львів': 'Lviv', 'Харків': 'Kharkiv',
     }
 
-    # Конвертуємо назви
     api_country = country_map.get(country, country)
     api_departure = departure_map.get(departure, departure or 'Chisinau')
 
-    # Визначаємо діапазон дат
     if month == 12:
         start_date = f"{year}-12-01"
         end_date = f"{year + 1}-01-01"
@@ -367,9 +313,8 @@ def calendar_prices_from_otpusk(request):
         return JsonResponse(get_realistic_prices(month, year, country, departure))
 
 
-# ========== API ДЛЯ КАЛЕНДАРЯ НИЗЬКИХ ЦІН (З БАЗИ ДАНИХ) ==========
 def calendar_prices_from_db(request):
-    """API для отримання реальних цін з бази даних"""
+    """API для отримання цін з бази даних"""
     country = request.GET.get('country')
     year = request.GET.get('year')
     month = request.GET.get('month')
@@ -391,29 +336,24 @@ def calendar_prices_from_db(request):
     else:
         end_date = date(year, month + 1, 1)
 
-    tours = Tour.objects.filter(
+    db_prices = {}
+    price_options = PriceCalendar.objects.filter(
         country__icontains=country,
-        departure_city__icontains=departure
+        departure_city__icontains=departure,
+        date__gte=start_date,
+        date__lt=end_date
     )
 
-    prices_by_day = {}
-    for tour in tours:
-        price_options = PriceCalendar.objects.filter(
-            tour=tour,
-            date__gte=start_date,
-            date__lt=end_date
-        ).values('date').annotate(min_price=models.Min('price'))
-
-        for option in price_options:
-            day = option['date'].day
-            price = option['min_price']
-            if price and (day not in prices_by_day or price < prices_by_day[day]):
-                prices_by_day[day] = int(price) if price else 0
+    for option in price_options:
+        day = option.date.day
+        price = option.price
+        if price and (day not in db_prices or price < db_prices[day]):
+            db_prices[day] = int(price)
 
     days_in_month = (end_date - start_date).days
     prices = []
     for day in range(1, days_in_month + 1):
-        prices.append(prices_by_day.get(day, None))
+        prices.append(db_prices.get(day, None))
 
     max_price = max([p for p in prices if p is not None], default=50000)
     return JsonResponse({'prices': prices, 'max_price': max_price})
@@ -424,13 +364,9 @@ from datetime import datetime, timedelta
 
 
 def get_popular_tours_api(request, slug=None):
-    """
-    API для отримання популярних турів з індивідуальними містами вильоту та фото
-    """
+    """API для отримання популярних турів"""
     from .models import City
-    from datetime import timedelta
 
-    # Список країн з індивідуальними містами вильоту
     countries_config = [
         {'country': 'Єгипет', 'departure': 'Брно', 'departure_text': 'з Брно'},
         {'country': 'Туреччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},
@@ -444,17 +380,15 @@ def get_popular_tours_api(request, slug=None):
         {'country': 'Хорватія', 'departure': 'Загреб', 'departure_text': 'з Загреба'},
         {'country': 'Чорногорія', 'departure': 'Подгориця', 'departure_text': 'з Подгориці'},
         {'country': 'Болгарія', 'departure': 'Софія', 'departure_text': 'з Софії'},
-        {'country': 'Грузія', 'departure': 'Тбілісі', 'departure_text': 'з Тбілісі'},  # ← ОНОВЛЕНО
-        {'country': 'Польща', 'departure': 'Варшава', 'departure_text': 'з Варшави'},  # ← ОНОВЛЕНО
-        {'country': 'Угорщина', 'departure': 'Будапешт', 'departure_text': 'з Будапешта'},  # ← ОНОВЛЕНО
-        {'country': 'Австрія', 'departure': 'Відень', 'departure_text': 'з Відня'},  # ← ОНОВЛЕНО
-        {'country': 'Франція', 'departure': 'Париж', 'departure_text': 'з Парижа'},  # ← ОНОВЛЕНО
-        {'country': 'Німеччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},  # ← ОНОВЛЕНО
+        {'country': 'Грузія', 'departure': 'Тбілісі', 'departure_text': 'з Тбілісі'},
+        {'country': 'Польща', 'departure': 'Варшава', 'departure_text': 'з Варшави'},
+        {'country': 'Угорщина', 'departure': 'Будапешт', 'departure_text': 'з Будапешта'},
+        {'country': 'Австрія', 'departure': 'Відень', 'departure_text': 'з Відня'},
+        {'country': 'Франція', 'departure': 'Париж', 'departure_text': 'з Парижа'},
+        {'country': 'Німеччина', 'departure': 'Берлін', 'departure_text': 'з Берліна'},
     ]
 
-    # ========== ФОТО ДЛЯ КОЖНОЇ КРАЇНИ (ОНОВЛЕНО) ==========
     country_images = {
-        # Існуючі фото (без змін)
         'Єгипет': '/static/images/Egypt.jpg',
         'Туреччина': '/static/images/Turkey.jpg',
         'ОАЕ': '/static/images/UAE.jpg',
@@ -467,16 +401,12 @@ def get_popular_tours_api(request, slug=None):
         'Хорватія': '/static/images/Croatia.jpg',
         'Чорногорія': '/static/images/Montenegro.jpg',
         'Болгарія': '/static/images/Bulgaria.jpg',
-
-        # НОВІ ФОТО (додані вами)
         'Грузія': '/static/images/Georgia.jpg',
         'Польща': '/static/images/Poland.jpg',
         'Угорщина': '/static/images/Hungary.jpg',
         'Австрія': '/static/images/Austria.jpg',
         'Франція': '/static/images/France.jpg',
         'Німеччина': '/static/images/Germany.jpg',
-
-        # Інші країни (залишаються як були)
         'Албанія': '/static/images/Albania.jpg',
         'Шрі Ланка': '/static/images/SriLanka.jpg',
         'В\'єтнам': '/static/images/Vietnam.jpg',
@@ -486,9 +416,7 @@ def get_popular_tours_api(request, slug=None):
         'Маврикій': '/static/images/mauritius.jpg',
     }
 
-    # Фото за замовчуванням (якщо якоїсь країни немає в списку)
     default_image = '/static/images/default-tour.jpg'
-
     tours = []
     current_month = datetime.now()
 
@@ -497,23 +425,16 @@ def get_popular_tours_api(request, slug=None):
         departure_city = config['departure']
         departure_text = config['departure_text']
 
-        # Отримуємо ціну
         price_data = get_realistic_prices(current_month.month, current_month.year, country, departure_city)
-
         if price_data and price_data.get('prices'):
             valid_prices = [p for p in price_data['prices'] if p is not None]
             price = min(valid_prices) if valid_prices else 50000
         else:
             price = 50000
 
-        # Отримуємо перше місто для цієї країни
         first_city = City.objects.filter(country=country).first()
         city_name = first_city.name if first_city else 'популярний курорт'
-
-        # Отримуємо фото (оновлений словник)
         image_url = country_images.get(country, default_image)
-
-        # Генеруємо дати
         start_date = (datetime.now() + timedelta(days=14 + idx)).strftime('%Y-%m-%d')
         nights = str(7 + (idx % 4))
         hid = str(8000 + idx)
@@ -537,50 +458,20 @@ def get_popular_tours_api(request, slug=None):
 
     return JsonResponse({'tours': tours})
 
-def add_fallback_tour(tours, country, idx):
-    """Додає тур-заглушку якщо API не повернув дані"""
-    from datetime import timedelta
-    tours.append({
-        'id': str(8000 + idx),
-        'hid': str(8000 + idx),
-        'oid': str(1000000000000000000 + idx),
-        'od': (datetime.now() + timedelta(days=14 + idx)).strftime('%Y-%m-%d'),
-        'ol': str(7 + (idx % 4)),
-        'hotel': f"Подорож до {country}",
-        'country': country,
-        'city': 'популярний курорт',
-        'price': 50000,
-        'stars': 4,
-        'image': f"https://images.pexels.com/photos/1268855/pexels-photo-1268855.jpeg?w=400&h=250&fit=crop",
-        'departure': 'Кишинів'
-    })
 
-
-# ========== НОВИЙ API ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ ==========
 def get_popular_hotels_api(request, slug=None):
-    """
-    API для отримання випадкових 10 популярних готелів з бази даних
-    (якщо в адмінці додано 30 - показує 10 випадкових)
-    """
-    # Отримуємо всі активні готелі
+    """API для отримання популярних готелів з бази даних"""
     all_hotels = list(PopularHotel.objects.filter(is_active=True))
 
-    print(f"📊 Всього активних готелів в БД: {len(all_hotels)}")
-
-    # Якщо готелів більше ніж 10, вибираємо випадкові 10
     if len(all_hotels) > 10:
         selected_hotels = random.sample(all_hotels, 10)
-        print(f"🎲 Вибрано {len(selected_hotels)} випадкових готелів із {len(all_hotels)}")
     else:
         selected_hotels = all_hotels
-        print(f"📋 Показано всі {len(selected_hotels)} готелі (менше або дорівнює 10)")
 
-    # Перемішуємо для додаткового рандому порядку
     random.shuffle(selected_hotels)
-
     data = []
+
     for hotel in selected_hotels:
-        # Отримуємо фото
         if hotel.image:
             image_url = hotel.image.url
         elif hotel.image_url:
@@ -606,12 +497,11 @@ def get_popular_hotels_api(request, slug=None):
     return JsonResponse({'hotels': data})
 
 
+# ========== ОСНОВНІ VIEWS ==========
 def home(request):
     agent_site = getattr(request, 'current_agent_site', None)
 
-    # Якщо це суперадмін, створюємо фейковий об'єкт для відображення
     if not agent_site and request.user.is_authenticated and request.user.is_superuser:
-        # Створюємо простий об'єкт з ім'ям користувача
         class FakeAgentSite:
             class User:
                 def __init__(self, user):
@@ -632,32 +522,19 @@ def home(request):
 
         agent_site = FakeAgentSite(request.user)
 
-    # Отримуємо порядок блоків
     blocks_order = getattr(request, 'blocks_order', [])
     active_blocks = getattr(request, 'active_blocks', [])
 
-    print(f"📊 home - blocks_order: {blocks_order}")
-    print(f"📊 home - active_blocks (raw): {active_blocks}")
-
-    # Якщо blocks_order порожній - використовуємо порядок за замовчуванням
     if not blocks_order:
         blocks_order = [
-            'price_calendar',
-            'popular_destinations',
-            'consultation',
-            'tours_from_city',
-            'about_us',
-            'popular_hotels',
-            'banners'
+            'price_calendar', 'popular_destinations', 'consultation',
+            'tours_from_city', 'about_us', 'popular_hotels', 'banners'
         ]
 
-    # Фільтруємо активні блоки в правильному порядку
     if active_blocks:
         ordered_active_blocks = [b for b in blocks_order if b in active_blocks]
     else:
-        ordered_active_blocks = blocks_order  # всі блоки активні
-
-    print(f"📊 home - ordered_active_blocks: {ordered_active_blocks}")
+        ordered_active_blocks = blocks_order
 
     context = {
         'agent_site': agent_site,
@@ -668,18 +545,13 @@ def home(request):
     }
     return render(request, 'tours/home.html', context)
 
-# ========== ОСНОВНІ ФУНКЦІЇ ДЛЯ АГЕНТСЬКИХ САЙТІВ ==========
 
 def tour_detail(request, pk=None, slug=None):
-    """Деталі туру - використовує tour_detail_otpusk.html"""
-
-    # Отримуємо параметри з URL
     hid = request.GET.get('hid')
     oid = request.GET.get('oid')
     od = request.GET.get('od')
     ol = request.GET.get('ol')
 
-    # Якщо є hid та oid - показуємо OTPUSK шаблон
     if hid and oid:
         context = {
             'hid': hid,
@@ -688,7 +560,6 @@ def tour_detail(request, pk=None, slug=None):
             'ol': ol,
             'random_agent': get_random_agent(),
         }
-        # Додаємо agent_site, якщо є
         if hasattr(request, 'current_agent_site'):
             context['agent_site'] = request.current_agent_site
         elif hasattr(request, 'agent_site'):
@@ -696,7 +567,6 @@ def tour_detail(request, pk=None, slug=None):
 
         return render(request, 'tours/tour_detail_otpusk.html', context)
 
-    # Інакше шукаємо тур в БД
     tour = None
     if pk:
         try:
@@ -716,15 +586,13 @@ def tour_detail(request, pk=None, slug=None):
         'random_agent': get_random_agent(),
     }
 
-    # Якщо є tour з БД - використовуємо звичайний шаблон
     if tour:
         return render(request, 'tours/tour_detail.html', context)
 
-    # Якщо немає нічого - помилка
     raise Http404("Тур не знайдено")
 
+
 def search_results(request):
-    """Результати пошуку - перенаправляємо на Otpusk"""
     query_params = request.GET.urlencode()
     if query_params:
         return redirect(f'/search-otpusk/?{query_params}')
@@ -732,7 +600,6 @@ def search_results(request):
 
 
 def city_detail(request, city_id):
-    """Деталі міста - перенаправляємо на пошук Otpusk"""
     from .models import City
     try:
         city = get_object_or_404(City, pk=city_id)
@@ -742,7 +609,6 @@ def city_detail(request, city_id):
 
 
 def news_detail(request, pk):
-    """Деталі новини"""
     news_item = get_object_or_404(News, pk=pk)
     recommended = News.objects.exclude(pk=pk).order_by('-created_at')[:4]
 
@@ -754,7 +620,6 @@ def news_detail(request, pk):
 
 
 def get_agent_colors(request):
-    """Отримання кольорів агента"""
     if hasattr(request, 'agent_colors'):
         return request.agent_colors
     return {
@@ -766,7 +631,6 @@ def get_agent_colors(request):
 
 
 def tour_reviews(request, pk):
-    """Всі відгуки про тур"""
     tour = get_object_or_404(Tour, pk=pk)
     reviews_list = tour.reviews.all()
     paginator = Paginator(reviews_list, 10)
@@ -780,10 +644,6 @@ def tour_reviews(request, pk):
 
 
 def search_otpusk(request, slug=None):
-    """
-    Сторінка результатів пошуку турів через Otpusk API
-    """
-    # Отримуємо параметри з URL
     geo = request.GET.get('geo', '')
     departure_text = request.GET.get('departure_text', '')
     date_from = request.GET.get('date_from', '')
@@ -792,14 +652,11 @@ def search_otpusk(request, slug=None):
     auto_search = request.GET.get('auto_search', '1')
 
     agent_site = getattr(request, 'current_agent_site', None)
-
-    # Додаємо random_agent в контекст
-    from .views import get_random_agent
     random_agent = get_random_agent()
 
     context = {
         'agent_site': agent_site,
-        'random_agent': random_agent,  # ← ДОДАТИ ЦЕЙ РЯДОК
+        'random_agent': random_agent,
         'geo': geo,
         'departure_text': departure_text,
         'date_from': date_from,
@@ -810,15 +667,14 @@ def search_otpusk(request, slug=None):
 
     return render(request, 'tours/search_results_by_country.html', context)
 
+
 def search_results_calendar(request, slug=None):
-    """Сторінка результатів пошуку для календаря низьких цін"""
     agent_site = getattr(request, 'current_agent_site', None)
     context = {'agent_site': agent_site}
     return render(request, 'tours/search_results_calendar.html', context)
 
 
 def search_otpusk_by_country(request, slug=None):
-    """Сторінка результатів пошуку для популярних напрямків (З БЛОКОМ КОНСУЛЬТАЦІЇ)"""
     agent_site = getattr(request, 'current_agent_site', None)
     country = request.GET.get('country', '')
 
@@ -834,7 +690,6 @@ def search_otpusk_by_country(request, slug=None):
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
 def hotel_reviews_api(request, slug=None):
-    """API для відгуків про готелі"""
     if request.method == 'GET':
         hid = request.GET.get('hid')
         if not hid:
@@ -903,7 +758,6 @@ def hotel_reviews_api(request, slug=None):
 
 
 def tour_detail_otpusk(request, slug=None):
-    """Сторінка детального перегляду туру"""
     agent_site = getattr(request, 'current_agent_site', None)
     hid = request.GET.get('hid', '')
     oid = request.GET.get('oid', '')
@@ -1009,7 +863,6 @@ class NewsListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Додаємо agent_site в контекст
         if hasattr(self.request, 'current_agent_site'):
             context['agent_site'] = self.request.current_agent_site
         return context
@@ -1063,7 +916,6 @@ def tours_by_city(request):
 
 
 def chat_api(request):
-    """API для чат-бота"""
     from .gemini_chat import get_gemini_response
 
     if request.method == 'POST':
@@ -1074,7 +926,6 @@ def chat_api(request):
             if not message:
                 return JsonResponse({'error': 'Empty message'}, status=400)
 
-            # Отримуємо назву агенції
             agency_name = "ТурКонструктор"
             if hasattr(request, 'current_agent_site') and request.current_agent_site:
                 agency_name = request.current_agent_site.agency_name or agency_name
@@ -1093,8 +944,8 @@ def chat_api(request):
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
+
 def search_otpusk_new(request, slug=None):
-    """Нова сторінка результатів пошуку турів (оновлена версія)"""
     geo = request.GET.get('geo', '')
     departure_text = request.GET.get('departure_text', '')
     date_from = request.GET.get('date_from', '')
@@ -1113,19 +964,20 @@ def search_otpusk_new(request, slug=None):
         'duration': duration,
         'auto_search': auto_search,
     }
-    return render(request, 'search_otpusk_new.html', context)
+    return render(request, 'tours/search_otpusk_new.html', context)
 
 
 def custom_logout(request):
     from django.contrib.auth import logout
     logout(request)
     return redirect('/')
+
+
 def otpusk_search(request):
-    """Пошук турів через Otpusk"""
     return render(request, 'tours/otpusk_search.html')
 
+
 def agent_otpusk_search(request, slug):
-    """Пошук турів через Otpusk для агента"""
-    from agents.models import AgentSite
+    from constructor.models.agent_site import AgentSite
     agent_site = get_object_or_404(AgentSite, slug=slug)
     return render(request, 'tours/otpusk_search.html', {'agent_site': agent_site})

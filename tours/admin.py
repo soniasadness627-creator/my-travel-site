@@ -394,16 +394,21 @@ class TourPriceByTouristsAdmin(admin.ModelAdmin):
 
 @admin.register(PriceCalendar)
 class PriceCalendarAdmin(admin.ModelAdmin):
-    list_display = ('tour', 'date', 'duration', 'price')
-    list_filter = ('tour', 'date')
-    search_fields = ('tour__title',)
+    list_display = ('country', 'departure_city', 'date', 'duration', 'price')
+    list_filter = ('country', 'departure_city')
+    search_fields = ('country', 'departure_city')
     list_editable = ('price',)
     list_per_page = 50
+
+    fieldsets = (
+        ('Інформація про тур', {
+            'fields': ('country', 'departure_city', 'date', 'duration', 'price')
+        }),
+    )
 
     actions = ['export_as_csv']
 
     def export_as_csv(self, request, queryset):
-        """Експортує вибрані ціни в CSV файл"""
         import csv
         from django.http import HttpResponse
 
@@ -411,28 +416,15 @@ class PriceCalendarAdmin(admin.ModelAdmin):
         response['Content-Disposition'] = 'attachment; filename="price_calendar_export.csv"'
 
         writer = csv.writer(response)
-        writer.writerow(['tour_title', 'date', 'duration', 'price'])
+        writer.writerow(['country', 'departure_city', 'date', 'duration', 'price'])
 
         for item in queryset:
-            writer.writerow([item.tour.title, item.date, item.duration, item.price])
+            writer.writerow([item.country, item.departure_city, item.date, item.duration, item.price])
 
         self.message_user(request, f"Експортовано {queryset.count()} записів")
         return response
 
     export_as_csv.short_description = "📥 Експортувати вибрані ціни в CSV"
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        return qs.filter(tour__author=request.user)
-
-    def has_change_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if obj and obj.tour and obj.tour.author != request.user:
-            return False
-        return True
 
 
 @admin.register(PopularDestination)

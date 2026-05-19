@@ -393,30 +393,32 @@ class TourPriceByTourists(models.Model):
 
 
 class PriceCalendar(models.Model):
-    tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='price_calendar', verbose_name="Тур")
-    date = models.DateField(verbose_name="Дата")
+    """Календар цін без прив'язки до турів"""
+    country = models.CharField(max_length=100, verbose_name="Країна")
+    departure_city = models.CharField(max_length=100, verbose_name="Місто вильоту", default="Кишинів")
+    date = models.DateField(verbose_name="Дата вильоту")
     duration = models.PositiveSmallIntegerField(
         verbose_name="Тривалість (ночей)",
-        help_text="Кількість ночей"
+        help_text="Кількість ночей",
+        default=7
     )
     price = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=0,
         verbose_name="Ціна (грн)",
         null=True,
         blank=True,
-        help_text="Вкажіть ціну в гривнях (наприклад: 15000.00). Залиште порожнім, якщо немає пропозиції"
+        help_text="Вкажіть ціну в гривнях (наприклад: 15000). Залиште порожнім, якщо немає пропозиції"
     )
 
     class Meta:
         verbose_name = "Календар цін"
         verbose_name_plural = "Календарі цін"
         ordering = ['date', 'duration']
-        unique_together = ('tour', 'date', 'duration')
+        unique_together = ('country', 'departure_city', 'date', 'duration')
 
     def __str__(self):
-        return f"{self.tour.title} – {self.date} ({self.duration} ночей) – {self.price if self.price else 'н/д'}"
-
+        return f"{self.country} - {self.date} - {self.duration} ночей: {self.price} грн"
 
 class AmenityCategory(models.Model):
     name = models.CharField(max_length=100, verbose_name="Назва категорії")
