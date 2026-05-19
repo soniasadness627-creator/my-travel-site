@@ -406,7 +406,6 @@ class AgentAdminSite(admin.AdminSite):
 agent_admin_site = AgentAdminSite(name='agent_admin')
 
 # ========== РЕЄСТРАЦІЯ ВСІХ МОДЕЛЕЙ ==========
-agent_admin_site.register(Tour, AgentTourAdmin)
 agent_admin_site.register(Booking, AgentBookingAdmin)
 agent_admin_site.register(PriceOption, AgentPriceOptionAdmin)
 agent_admin_site.register(Review, AgentReviewAdmin)
