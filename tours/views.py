@@ -25,6 +25,8 @@ User = get_user_model()
 # ========== ДОПОМІЖНА ФУНКЦІЯ ДЛЯ ОТРИМАННЯ ВИПАДКОВОГО АГЕНТА ==========
 def get_random_agent():
     """Повертає випадкового агента для блоку консультації"""
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
     agents = User.objects.filter(is_agent=True)
     if agents.exists():
         return random.choice(agents)
@@ -760,8 +762,13 @@ def search_otpusk(request, slug=None):
 
     agent_site = getattr(request, 'current_agent_site', None)
 
+    # Додаємо random_agent в контекст
+    from .views import get_random_agent
+    random_agent = get_random_agent()
+
     context = {
         'agent_site': agent_site,
+        'random_agent': random_agent,  # ← ДОДАТИ ЦЕЙ РЯДОК
         'geo': geo,
         'departure_text': departure_text,
         'date_from': date_from,
@@ -770,7 +777,6 @@ def search_otpusk(request, slug=None):
         'auto_search': auto_search,
     }
 
-    # ЗМІНІТЬ ЦЕ: використовуйте ваш існуючий шаблон!
     return render(request, 'tours/search_results_by_country.html', context)
 
 def search_results_calendar(request, slug=None):
