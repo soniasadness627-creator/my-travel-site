@@ -397,6 +397,29 @@ class PriceCalendarAdmin(admin.ModelAdmin):
     list_display = ('tour', 'date', 'duration', 'price')
     list_filter = ('tour', 'date')
     search_fields = ('tour__title',)
+    list_editable = ('price',)
+    list_per_page = 50
+
+    actions = ['export_as_csv']
+
+    def export_as_csv(self, request, queryset):
+        """Експортує вибрані ціни в CSV файл"""
+        import csv
+        from django.http import HttpResponse
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="price_calendar_export.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['tour_title', 'date', 'duration', 'price'])
+
+        for item in queryset:
+            writer.writerow([item.tour.title, item.date, item.duration, item.price])
+
+        self.message_user(request, f"Експортовано {queryset.count()} записів")
+        return response
+
+    export_as_csv.short_description = "📥 Експортувати вибрані ціни в CSV"
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -542,7 +565,8 @@ class AmenityNameAdmin(admin.ModelAdmin):
 # ========== АДМІНКА ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ (ТІЛЬКИ СУПЕРАДМІН) ==========
 @admin.register(PopularHotel)
 class PopularHotelAdmin(admin.ModelAdmin):
-    list_display = ('hotel_name', 'country', 'city', 'rating', 'reviews_count', 'price', 'od', 'ol', 'order', 'is_active')
+    list_display = ('hotel_name', 'country', 'city', 'rating', 'reviews_count', 'price', 'od', 'ol', 'order',
+                    'is_active')
     list_editable = ('order', 'is_active')
     list_filter = ('country', 'is_active')
     search_fields = ('hotel_name', 'country', 'city', 'hid', 'oid')
@@ -555,7 +579,7 @@ class PopularHotelAdmin(admin.ModelAdmin):
         ('Рейтинг та ціна', {
             'fields': ('rating', 'reviews_count', 'price')
         }),
-        ('Дати та тривалість', {          # ← ДОДАЙТЕ ЦЕЙ РОЗДІЛ
+        ('Дати та тривалість', {
             'fields': ('od', 'ol')
         }),
         ('Фото', {

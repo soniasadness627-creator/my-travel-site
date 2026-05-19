@@ -173,7 +173,7 @@ def calendar_prices_otpusk(request):
 # ========== API З КЕШУВАННЯМ ДЛЯ КАЛЕНДАРЯ (ГОЛОВНИЙ) ==========
 def calendar_prices_cached(request):
     """
-    API для календаря низьких цін з кешуванням
+    API для календаря низьких цін з кешуванням та БД
     """
     country = request.GET.get('country')
     year = request.GET.get('year')
@@ -196,25 +196,56 @@ def calendar_prices_cached(request):
     # Перевіряємо, чи є дані в кеші
     cached_data = cache.get(cache_key)
     if cached_data:
-        print(f"✅ Дані з кешу для {country} ({year}-{month})")
         return JsonResponse(cached_data)
 
-    # Якщо немає в кеші – отримуємо ціни
-    print(f"🔄 Отримуємо ціни для {country} ({year}-{month})")
+    # ========== СПОЧАТКУ ШУКАЄМО В БАЗІ ДАНИХ ==========
+    from .models import Tour, PriceCalendar
+    from datetime import date
 
-    try:
+    # Знаходимо тури в цій країні
+    tours = Tour.objects.filter(country__icontains=country)
+
+    # Збираємо ціни з бази даних
+    start_date = date(year, month, 1)
+    if month == 12:
+        end_date = date(year + 1, 1, 1)
+    else:
+        end_date = date(year, month + 1, 1)
+
+    # Отримуємо ціни з календаря
+    db_prices = {}
+    for tour in tours:
+        price_options = PriceCalendar.objects.filter(
+            tour=tour,
+            date__gte=start_date,
+            date__lt=end_date
+        ).values('date').annotate(min_price=models.Min('price'))
+
+        for option in price_options:
+            day = option['date'].day
+            price = option['min_price']
+            if price and (day not in db_prices or price < db_prices[day]):
+                db_prices[day] = int(price)
+
+    days_in_month = (end_date - start_date).days
+    prices = []
+    for day in range(1, days_in_month + 1):
+        if day in db_prices:
+            prices.append(db_prices[day])
+        else:
+            prices.append(None)
+
+    # Якщо є хоч одна ціна в БД - використовуємо їх
+    if any(prices):
+        max_price = max([p for p in prices if p is not None], default=50000)
+        result = {'prices': prices, 'max_price': max_price}
+    else:
+        # Якщо немає - генеруємо реалістичні ціни
         result = get_realistic_prices(month, year, country, departure)
-        # Зберігаємо в кеш на 24 години
-        cache.set(cache_key, result, 86400)
-        print(f"💾 Збережено в кеш для {country} ({year}-{month})")
-        return JsonResponse(result)
-    except Exception as e:
-        print(f"❌ Помилка генерації цін: {e}")
-        # Повертаємо пусті дані, але без помилки 500
-        days_in_month = get_days_in_month(year, month)
-        empty_prices = [None] * days_in_month
-        return JsonResponse({'prices': empty_prices, 'max_price': None})
 
+    # Зберігаємо в кеш на 24 години
+    cache.set(cache_key, result, 86400)
+    return JsonResponse(result)
 
 # ========== API ДЛЯ РЕАЛЬНИХ ЦІН З OTPUSK ==========
 def calendar_prices_from_otpusk(request):
