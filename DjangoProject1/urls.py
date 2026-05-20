@@ -9,6 +9,7 @@ from constructor import views as constructor_views
 from constructor.agent_admin import agent_admin_site
 from landing import views as landing_views
 from django.views.generic import TemplateView
+from tours.admin import mass_email_admin  # ← ДОДАНО ДЛЯ МАСОВОЇ РОЗСИЛКИ
 
 # ========== ОБРОБНИК ПОМИЛКИ CSRF ==========
 from django.views.csrf import csrf_failure
@@ -41,6 +42,9 @@ def custom_csrf_failure(request, reason=""):
 handler403 = custom_csrf_failure
 
 urlpatterns = [
+    # ========== МАСОВА EMAIL-РОЗСИЛКА ==========
+    path('admin/mass-email/', mass_email_admin.urls, name='mass_email'),  # ← НОВИЙ РЯДОК
+
     # ========== МАРШРУТ ДЛЯ СТВОРЕННЯ СУПЕРАДМІНА ==========
     path('create-admin/', constructor_views.create_admin_direct, name='create_admin'),
 
