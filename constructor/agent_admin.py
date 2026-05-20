@@ -154,19 +154,22 @@ class AgentTourAdmin(admin.ModelAdmin):
 
 class AgentBookingAdmin(admin.ModelAdmin):
     """Адмінка для бронювань - показує ТІЛЬКИ бронювання поточного агента"""
-    list_display = ('id', 'name', 'phone', 'email', 'created_at', 'get_tour_info')
+    list_display = ('id', 'name', 'phone', 'email', 'get_tour_info', 'created_at')
     list_filter = ('created_at',)
     search_fields = ('name', 'phone', 'email', 'message')
     readonly_fields = ('created_at',)
     list_per_page = 20
 
     def get_queryset(self, request):
-        """Фільтрує бронювання - показує ТІЛЬКИ ті, що належать поточному агенту"""
+        """
+        Фільтрує бронювання - показує ТІЛЬКИ ті, що належать поточному агенту.
+        Оскільки Booking не має прямого зв'язку з агентом, ми фільтруємо через тур.
+        """
         qs = super().get_queryset(request)
 
-        # Якщо агент - показуємо тільки його бронювання
+        # Якщо агент (не суперадмін) - показуємо тільки його бронювання
         if request.user.is_agent and not request.user.is_superuser:
-            # Фільтруємо за туром, який належить агенту
+            # Фільтруємо бронювання, де тур належить агенту
             return qs.filter(tour__author=request.user)
 
         # Для суперадміна - всі бронювання
@@ -175,7 +178,6 @@ class AgentBookingAdmin(admin.ModelAdmin):
     def get_tour_info(self, obj):
         """Показує інформацію про тур з повідомлення"""
         if obj.message:
-            # Парсимо назву туру з повідомлення
             for line in obj.message.split('\n'):
                 if line.startswith('Тур:'):
                     return line.replace('Тур:', '').strip()[:50]
@@ -195,6 +197,32 @@ class AgentBookingAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         """Дозволяє видаляти тільки суперадміну"""
+        return request.user.is_superuser
+
+
+class AgentConsultationAdmin(admin.ModelAdmin):
+    """Адмінка для консультацій - показує ТІЛЬКИ заявки поточного агента"""
+    list_display = ('id', 'name', 'phone', 'email', 'created_at', 'is_processed')
+    list_filter = ('is_processed', 'created_at')
+    search_fields = ('name', 'phone', 'email', 'comment')
+    readonly_fields = ('created_at',)
+    list_editable = ('is_processed',)
+    list_per_page = 20
+
+    def get_queryset(self, request):
+        """Фільтрує заявки тільки для поточного агента"""
+        qs = super().get_queryset(request)
+        if request.user.is_agent and not request.user.is_superuser:
+            return qs.filter(agent=request.user)
+        return qs
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return True
+
+    def has_delete_permission(self, request, obj=None):
         return request.user.is_superuser
 
 
@@ -249,13 +277,11 @@ class AgentHotelReviewAdmin(admin.ModelAdmin):
     readonly_fields = ('hid', 'oid', 'guest_name', 'rating', 'comment', 'created_at', 'agent')
 
     def get_hotel_info(self, obj):
-        """Показує інформацію про готель"""
         return f"Готель ID: {obj.hid}"
 
     get_hotel_info.short_description = 'Готель'
 
     def get_rating_stars(self, obj):
-        """Показує зірки замість цифри"""
         stars = ''
         for i in range(5):
             if i < obj.rating:
@@ -267,54 +293,18 @@ class AgentHotelReviewAdmin(admin.ModelAdmin):
     get_rating_stars.short_description = 'Оцінка'
 
     def get_queryset(self, request):
-        """Фільтрує відгуки - показує тільки ті, що належать поточному агенту"""
         qs = super().get_queryset(request)
-        return qs.filter(agent=request.user)
+        if request.user.is_agent and not request.user.is_superuser:
+            return qs.filter(agent=request.user)
+        return qs
 
     def has_add_permission(self, request):
-        """Забороняє додавати відгуки вручну"""
         return False
 
     def has_change_permission(self, request, obj=None):
-        """Дозволяє змінювати тільки статус публікації"""
         return True
 
     def has_delete_permission(self, request, obj=None):
-        """Дозволяє видаляти відгуки"""
-        return True
-
-
-class AgentConsultationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone', 'get_comment_preview', 'created_at', 'is_processed')
-    list_filter = ('is_processed', 'created_at')
-    search_fields = ('name', 'phone', 'comment')
-    list_editable = ('is_processed',)
-    readonly_fields = ('created_at',)
-    list_per_page = 20
-
-    def get_comment_preview(self, obj):
-        """Показує перші 50 символів коментаря"""
-        if obj.comment:
-            return obj.comment[:50] + '...' if len(obj.comment) > 50 else obj.comment
-        return '—'
-
-    get_comment_preview.short_description = 'Коментар'
-
-    def get_queryset(self, request):
-        """Фільтрує заявки тільки для поточного агента"""
-        qs = super().get_queryset(request)
-        return qs.filter(agent=request.user)
-
-    def has_add_permission(self, request):
-        """Забороняє додавати заявки вручну"""
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        """Дозволяє змінювати тільки статус is_processed"""
-        return True
-
-    def has_delete_permission(self, request, obj=None):
-        """Дозволяє видаляти заявки"""
         return True
 
 
@@ -419,10 +409,10 @@ agent_admin_site = AgentAdminSite(name='agent_admin')
 
 # ========== РЕЄСТРАЦІЯ ВСІХ МОДЕЛЕЙ ==========
 agent_admin_site.register(Tour, AgentTourAdmin)
-agent_admin_site.register(Booking, AgentBookingAdmin)  # ← ДОДАНО Booking
+agent_admin_site.register(Booking, AgentBookingAdmin)  # ← ДОДАНО для агентів
 agent_admin_site.register(PriceOption, AgentPriceOptionAdmin)
 agent_admin_site.register(Review, AgentReviewAdmin)
-agent_admin_site.register(Consultation, AgentConsultationAdmin)
+agent_admin_site.register(Consultation, AgentConsultationAdmin)  # ← ДОДАНО для агентів
 agent_admin_site.register(News, AgentNewsAdmin)
 agent_admin_site.register(CountryInfo, AgentCountryInfoAdmin)
 agent_admin_site.register(PopularDestination, AgentPopularDestinationAdmin)
