@@ -666,7 +666,8 @@ class MassEmailAdminSite(AdminSite):
             success_count = 0
             fail_count = 0
 
-            for email in emails[:50]:
+            # ← ВИДАЛИТИ [:50], ОСЬ ТУТ!
+            for email in emails:  # ← БЕЗ [:50]
                 result = self.send_via_mailgun(email, subject, message)
                 if result:
                     success_count += 1
