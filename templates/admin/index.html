@@ -1,0 +1,27 @@
+{% extends "admin/index.html" %}
+
+{% block sidebar %}
+    {{ block.super }}
+    
+    <div class="module" style="margin-top: 20px;">
+        <table style="width: 100%;">
+            <caption>
+                <a href="#" class="section" style="background: #086745; color: white; padding: 8px; display: block; text-decoration: none; text-align: center;">
+                    📧 Додаткові інструменти
+                </a>
+            </caption>
+            <tbody>
+                <tr>
+                    <th scope="row">
+                        <a href="/admin/mass-email/" style="display: block; padding: 8px; text-decoration: none; font-weight: bold;">
+                            📧 Масова email-розсилка
+                        </a>
+                    </th>
+                    <td>
+                        <a href="/admin/mass-email/" class="addlink" style="float: right;">Перейти</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
