@@ -149,10 +149,12 @@ class CountryInfoAdmin(admin.ModelAdmin):
 
 @admin.register(Consultation)
 class ConsultationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone', 'created_at', 'agent', 'is_processed')
-    list_filter = ('created_at', 'is_processed')
-    search_fields = ('name', 'phone', 'comment')
+    list_display = ('id', 'name', 'phone', 'email', 'created_at', 'is_processed', 'agent')
+    list_filter = ('is_processed', 'created_at')
+    search_fields = ('name', 'phone', 'email', 'comment')
     readonly_fields = ('created_at',)
+    list_editable = ('is_processed',)
+    list_per_page = 20
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -174,6 +176,9 @@ class ConsultationAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return request.user.is_superuser
+
+    def has_add_permission(self, request):
+        return False
 
 
 @admin.register(Tour)
@@ -280,7 +285,7 @@ class NewsAdmin(admin.ModelAdmin):
         return request.user.is_superuser
 
 
-# ========== РЕЄСТРАЦІЯ ДЛЯ СУПЕРАДМІНА (БРОНЮВАННЯ ТА КОНСУЛЬТАЦІЇ) ==========
+# ========== РЕЄСТРАЦІЯ БРОНЮВАНЬ (ТІЛЬКИ ДЛЯ СУПЕРАДМІНА) ==========
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
@@ -303,19 +308,12 @@ class BookingAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
 
-# Якщо Consultation ще не зареєстрований, додайте:
-@admin.register(Consultation)
-class ConsultationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'phone', 'email', 'created_at', 'is_processed', 'agent')
-    list_filter = ('is_processed', 'created_at')
-    search_fields = ('name', 'phone', 'email', 'comment')
-    readonly_fields = ('created_at',)
-    list_editable = ('is_processed',)
-    list_per_page = 20
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
 
-    def has_add_permission(self, request):
-        return False
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
@@ -673,8 +671,7 @@ class MassEmailAdminSite(AdminSite):
             success_count = 0
             fail_count = 0
 
-            # ← ВИДАЛИТИ [:50], ОСЬ ТУТ!
-            for email in emails:  # ← БЕЗ [:50]
+            for email in emails:
                 result = self.send_via_mailgun(email, subject, message)
                 if result:
                     success_count += 1
