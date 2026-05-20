@@ -9,8 +9,7 @@
             📊 Всього агентів: <strong>{{ agents_count }}</strong>
         </div>
         
-        <form method="post" action="/admin/send-mass-email/" enctype="multipart/form-data">
-            {% csrf_token %}
+<form method="post" action="/admin/mass-email/send/" enctype="multipart/form-data">            {% csrf_token %}
             
             <div style="margin-bottom: 15px;">
                 <label style="display: block; font-weight: bold;">📝 Тема листа:</label>
