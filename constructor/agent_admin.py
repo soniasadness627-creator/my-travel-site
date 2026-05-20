@@ -153,21 +153,49 @@ class AgentTourAdmin(admin.ModelAdmin):
 
 
 class AgentBookingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'get_tour_title', 'name', 'phone', 'email', 'created_at')
+    """Адмінка для бронювань - показує ТІЛЬКИ бронювання поточного агента"""
+    list_display = ('id', 'name', 'phone', 'email', 'created_at', 'get_tour_info')
     list_filter = ('created_at',)
-    search_fields = ('name', 'phone', 'email')
+    search_fields = ('name', 'phone', 'email', 'message')
+    readonly_fields = ('created_at',)
+    list_per_page = 20
 
     def get_queryset(self, request):
+        """Фільтрує бронювання - показує ТІЛЬКИ ті, що належать поточному агенту"""
         qs = super().get_queryset(request)
-        return qs.filter(tour__author=request.user)
 
-    def get_tour_title(self, obj):
-        return obj.tour.title
+        # Якщо агент - показуємо тільки його бронювання
+        if request.user.is_agent and not request.user.is_superuser:
+            # Фільтруємо за туром, який належить агенту
+            return qs.filter(tour__author=request.user)
 
-    get_tour_title.short_description = 'Тур'
+        # Для суперадміна - всі бронювання
+        return qs
+
+    def get_tour_info(self, obj):
+        """Показує інформацію про тур з повідомлення"""
+        if obj.message:
+            # Парсимо назву туру з повідомлення
+            for line in obj.message.split('\n'):
+                if line.startswith('Тур:'):
+                    return line.replace('Тур:', '').strip()[:50]
+        return '—'
+
+    get_tour_info.short_description = 'Тур'
 
     def has_add_permission(self, request):
+        """Забороняє додавати бронювання вручну"""
         return False
+
+    def has_change_permission(self, request, obj=None):
+        """Дозволяє змінювати тільки суперадміну"""
+        if request.user.is_superuser:
+            return True
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        """Дозволяє видаляти тільки суперадміну"""
+        return request.user.is_superuser
 
 
 class AgentPriceOptionAdmin(admin.ModelAdmin):
@@ -211,7 +239,6 @@ class AgentReviewAdmin(admin.ModelAdmin):
         return False
 
 
-# ========== НОВИЙ КЛАС ДЛЯ ВІДГУКІВ ПРО ГОТЕЛІ ==========
 class AgentHotelReviewAdmin(admin.ModelAdmin):
     """Адмінка для відгуків про готелі в кабінеті агента"""
     list_display = ('id', 'get_hotel_info', 'guest_name', 'rating', 'get_rating_stars', 'created_at', 'is_approved')
@@ -321,10 +348,6 @@ class AgentCountryInfoAdmin(admin.ModelAdmin):
         return False
 
 
-# ========== КЛАС ДЛЯ КАЛЕНДАРЯ ЦІН - ВИДАЛЕНО (більше не потрібен агентам) ==========
-# AgentPriceCalendarAdmin - ВИДАЛЕНО, оскільки PriceCalendar тепер без прив'язки до Tour
-
-
 class AgentPopularDestinationAdmin(admin.ModelAdmin):
     list_display = ('country', 'order')
     list_editable = ('order',)
@@ -396,17 +419,16 @@ agent_admin_site = AgentAdminSite(name='agent_admin')
 
 # ========== РЕЄСТРАЦІЯ ВСІХ МОДЕЛЕЙ ==========
 agent_admin_site.register(Tour, AgentTourAdmin)
-agent_admin_site.register(Booking, AgentBookingAdmin)
+agent_admin_site.register(Booking, AgentBookingAdmin)  # ← ДОДАНО Booking
 agent_admin_site.register(PriceOption, AgentPriceOptionAdmin)
 agent_admin_site.register(Review, AgentReviewAdmin)
 agent_admin_site.register(Consultation, AgentConsultationAdmin)
 agent_admin_site.register(News, AgentNewsAdmin)
 agent_admin_site.register(CountryInfo, AgentCountryInfoAdmin)
-# agent_admin_site.register(PriceCalendar, AgentPriceCalendarAdmin)  # ВИДАЛЕНО - не потрібно агентам
 agent_admin_site.register(PopularDestination, AgentPopularDestinationAdmin)
 agent_admin_site.register(TourPriceByTourists, AgentTourPriceByTouristsAdmin)
 agent_admin_site.register(City, AgentCityAdmin)
-agent_admin_site.register(HotelReview, AgentHotelReviewAdmin)  # РЕЄСТРАЦІЯ ВІДГУКІВ
+agent_admin_site.register(HotelReview, AgentHotelReviewAdmin)
 
 # ========== ДІАГНОСТИКА ==========
 print("=" * 50)

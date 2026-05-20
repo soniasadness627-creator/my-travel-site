@@ -1023,11 +1023,13 @@ def banner_reorder(request):
 # ========== ФУНКЦІЯ ДЛЯ БРОНЮВАННЯ ТУРІВ ==========
 # Додайте цю функцію після banner_reorder або перед нею
 
+# ========== ФУНКЦІЯ ДЛЯ БРОНЮВАННЯ ТУРІВ (ВИПРАВЛЕНА) ==========
+
 @csrf_exempt
 @require_POST
-def booking_api(request, slug=None):  # ← ДОДАЙТЕ slug=None
+def booking_api(request, slug=None):
     """
-    API для створення бронювання турів
+    API для створення бронювання турів - сповіщення ТІЛЬКИ агенту
     """
     try:
         # Спробуємо отримати дані з JSON або з POST
@@ -1083,41 +1085,61 @@ def booking_api(request, slug=None):  # ← ДОДАЙТЕ slug=None
             message=full_message
         )
 
-        # Якщо є slug - знаходимо агента
+        # ========== ВІДПРАВЛЯЄМО ТЕЛЕГРАМ СПОВІЩЕННЯ ТІЛЬКИ АГЕНТУ ==========
+        agent_telegram_id = None
+
+        # Знаходимо агента за slug
         if slug:
             try:
                 from constructor.models.agent_site import AgentSite
                 agent_site = AgentSite.objects.filter(slug=slug).first()
-                if agent_site:
-                    # Можна зберегти інформацію про агента, якщо додати поле в Booking
-                    pass
-            except:
-                pass
+                if agent_site and agent_site.user:
+                    # Тут потрібно отримати Telegram ID агента
+                    # Якщо у вас немає поля telegram_id в моделі User - сповіщення не відправляємо
+                    # Або можна відправляти на email агента
 
-        # Відправляємо Telegram сповіщення
-        try:
-            from tours.telegram_notifier import send_telegram_notification
-            notification = f"""
-<b>🏨 НОВЕ БРОНЮВАННЯ ТУРУ!</b>
+                    # ВАРІАНТ 1: Якщо є поле telegram_id в User
+                    # agent_telegram_id = agent_site.user.telegram_id
 
-<b>👤 Клієнт:</b> {name}
-<b>📞 Телефон:</b> {full_phone}
-<b>📧 Email:</b> {email if email else 'Не вказано'}
+                    # ВАРІАНТ 2: Тимчасово - не відправляємо Telegram, тільки зберігаємо в БД
+                    print(f"📧 Бронювання для агента: {agent_site.user.email}")
 
-<b>✈️ Деталі туру:</b>
-{tour_name if tour_name else 'Не вказано'}
+                    # Можна відправити email агенту
+                    # send_mail(
+                    #     subject='Нове бронювання туру',
+                    #     message=full_message,
+                    #     from_email=settings.DEFAULT_FROM_EMAIL,
+                    #     recipient_list=[agent_site.user.email],
+                    #     fail_silently=True,
+                    # )
+            except Exception as e:
+                print(f"Помилка пошуку агента: {e}")
 
-<b>💰 Ціна:</b> {tour_price if tour_price else 'Не вказана'}
-<b>📅 Дати:</b> {tour_dates if tour_dates else 'Не вказані'}
-
-<b>💬 Побажання:</b>
-{comment if comment else 'Немає'}
-
-🔗 Посилання на тур: {tour_url}
-"""
-            send_telegram_notification(notification)
-        except Exception as e:
-            print(f"Telegram помилка: {e}")
+        # ВАРІАНТ 3: Відправляємо ТІЛЬКИ якщо є telegram_id
+        # if agent_telegram_id:
+        #     try:
+        #         from tours.telegram_notifier import send_telegram_message_to_user
+        #         notification = f"""
+        # <b>🏨 НОВЕ БРОНЮВАННЯ ТУРУ!</b>
+        #
+        # <b>👤 Клієнт:</b> {name}
+        # <b>📞 Телефон:</b> {full_phone}
+        # <b>📧 Email:</b> {email if email else 'Не вказано'}
+        #
+        # <b>✈️ Деталі туру:</b>
+        # {tour_name if tour_name else 'Не вказано'}
+        #
+        # <b>💰 Ціна:</b> {tour_price if tour_price else 'Не вказана'}
+        # <b>📅 Дати:</b> {tour_dates if tour_dates else 'Не вказані'}
+        #
+        # <b>💬 Побажання:</b>
+        # {comment if comment else 'Немає'}
+        #
+        # 🔗 Посилання на тур: {tour_url}
+        # """
+        #         send_telegram_message_to_user(agent_telegram_id, notification)
+        #     except Exception as e:
+        #         print(f"Telegram помилка: {e}")
 
         return JsonResponse({
             'success': True,
@@ -1127,5 +1149,4 @@ def booking_api(request, slug=None):  # ← ДОДАЙТЕ slug=None
     except Exception as e:
         print(f"Помилка бронювання: {e}")
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
-
 # ========== КІНЕЦЬ НОВИХ ФУНКЦІЙ ==========
