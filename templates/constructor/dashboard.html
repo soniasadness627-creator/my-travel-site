@@ -53,74 +53,101 @@
                 </div>
 
                 <!-- Вкладка Дизайн -->
-                <div class="tab-pane" id="tab-design">
-                    <div class="card-shadow">
-                        <div class="card-header">Герой-секція та логотипи</div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label for="{{ form.hero_title.id_for_label }}">Заголовок</label>
-                                {{ form.hero_title }}
-                            </div>
-                            <div class="mb-3">
-                                <label for="{{ form.hero_subtitle.id_for_label }}">Підтекст</label>
-                                {{ form.hero_subtitle }}
-                            </div>
-                            <div class="mb-3">
-                                <label>Фонова картинка</label>
-                                <div class="custom-file-input">
-                                    <input type="file" name="hero_background" id="id_hero_background" accept="image/*">
-                                    <label for="id_hero_background">Обрати файл</label>
-                                    <span class="file-name-display" id="hero_file_name">
-                                        {% if agent_site.hero_background %}{{ agent_site.hero_background.name|slice:"12:" }}{% else %}Файл не вибрано{% endif %}
-                                    </span>
-                                </div>
-                                <button type="button" id="generateAiBtn" class="btn-generate-ai mt-2">Згенерувати ШІ</button>
-                                {% if agent_site.hero_background %}
-                                <div class="mt-3" id="hero_preview_container">
-                                    <img src="{{ agent_site.hero_background.url }}" id="hero_preview" style="max-height: 100px;">
-                                    <button type="button" id="clearHeroBtn">Очистити</button>
-                                </div>
-                                {% endif %}
-                            </div>
-                            <div class="pt-3 border-top">
-                                <label>Логотипи</label>
-                                <div class="mt-2">
-                                    <label>Верхній логотип</label>
-                                    <div class="custom-file-input">
-                                        <input type="file" name="top_logo" id="id_top_logo" accept="image/png,image/svg+xml">
-                                        <label for="id_top_logo">Обрати файл</label>
-                                        <span id="top_logo_display">{% if agent_site.top_logo %}{{ agent_site.top_logo.name }}{% else %}Файл не вибрано{% endif %}</span>
-                                    </div>
-                                    <button type="button" class="clear-logo-btn" data-field="top_logo">Очистити</button>
-                                </div>
-                                <div class="mt-2">
-                                    <label>Нижній логотип</label>
-                                    <div class="custom-file-input">
-                                        <input type="file" name="bottom_logo" id="id_bottom_logo" accept="image/png,image/svg+xml">
-                                        <label for="id_bottom_logo">Обрати файл</label>
-                                        <span id="bottom_logo_display">{% if agent_site.bottom_logo %}{{ agent_site.bottom_logo.name }}{% else %}Файл не вибрано{% endif %}</span>
-                                    </div>
-                                    <button type="button" class="clear-logo-btn" data-field="bottom_logo">Очистити</button>
-                                </div>
-                                <div class="mt-2">
-                                    {{ form.enlarge_logo }}
-                                    <label for="{{ form.enlarge_logo.id_for_label }}">Збільшити логотип на 25%</label>
-                                </div>
-                            </div>
-                            <div class="pt-3 border-top">
-                                <label>Кольорова схема</label>
-                                <div class="mt-2">
-                                    <label>Головний колір</label>
-                                    {{ form.primary_color }}
-                                </div>
-                                <div class="mt-2">
-                                    <label>Додатковий колір</label>
-                                    {{ form.secondary_color }}
-                                </div>
-                            </div>
-                        </div>
+<div class="tab-pane" id="tab-design">
+    <div class="card-shadow">
+        <div class="card-header">Герой-секція та логотипи</div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="{{ form.hero_title.id_for_label }}">Заголовок</label>
+                {{ form.hero_title }}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.hero_subtitle.id_for_label }}">Підтекст</label>
+                {{ form.hero_subtitle }}
+            </div>
+            <div class="mb-3">
+                <label>Фонова картинка</label>
+                <div class="custom-file-input">
+                    <input type="file" name="hero_background" id="id_hero_background" accept="image/*">
+                    <label for="id_hero_background">Обрати файл</label>
+                    <span class="file-name-display" id="hero_file_name">
+                        {% if agent_site.hero_background %}{{ agent_site.hero_background.name|slice:"12:" }}{% else %}Файл не вибрано{% endif %}
+                    </span>
+                </div>
+                <button type="button" id="generateAiBtn" class="btn-generate-ai mt-2">Згенерувати ШІ</button>
+                {% if agent_site.hero_background %}
+                <div class="mt-3" id="hero_preview_container">
+                    <img src="{{ agent_site.hero_background.url }}" id="hero_preview" style="max-height: 100px;">
+                    <button type="button" id="clearHeroBtn">Очистити</button>
+                </div>
+                {% endif %}
+            </div>
+            <div class="pt-3 border-top">
+                <label>Логотипи</label>
+                <div class="mt-2">
+                    <label>Верхній логотип</label>
+                    <div class="custom-file-input">
+                        <input type="file" name="top_logo" id="id_top_logo" accept="image/png,image/svg+xml">
+                        <label for="id_top_logo">Обрати файл</label>
+                        <span id="top_logo_display">{% if agent_site.top_logo %}{{ agent_site.top_logo.name }}{% else %}Файл не вибрано{% endif %}</span>
+                    </div>
+                    <button type="button" class="clear-logo-btn" data-field="top_logo">Очистити</button>
+                </div>
+                <div class="mt-2">
+                    <label>Нижній логотип</label>
+                    <div class="custom-file-input">
+                        <input type="file" name="bottom_logo" id="id_bottom_logo" accept="image/png,image/svg+xml">
+                        <label for="id_bottom_logo">Обрати файл</label>
+                        <span id="bottom_logo_display">{% if agent_site.bottom_logo %}{{ agent_site.bottom_logo.name }}{% else %}Файл не вибрано{% endif %}</span>
+                    </div>
+                    <button type="button" class="clear-logo-btn" data-field="bottom_logo">Очистити</button>
+                </div>
+                <div class="mt-2">
+                    {{ form.enlarge_logo }}
+                    <label for="{{ form.enlarge_logo.id_for_label }}">Збільшити логотип на 25%</label>
+                </div>
+            </div>
+            <div class="pt-3 border-top">
+                <label>Кольорова схема</label>
+                <div class="mt-2">
+                    <label>Головний колір</label>
+                    {{ form.primary_color }}
+                </div>
+                <div class="mt-2">
+                    <label>Додатковий колір</label>
+                    {{ form.secondary_color }}
+                </div>
+            </div>
+
+            <!-- ========== БЛОК ДЛЯ FAVICON (ДОДАНО ПІСЛЯ КОЛЬОРІВ) ========== -->
+            <div class="pt-3 border-top">
+                <label>Іконка сайту (favicon)</label>
+                <div class="mt-2">
+                    <div class="custom-file-input">
+                        <input type="file" name="favicon" id="id_favicon" accept="image/png,image/svg+xml,image/x-icon">
+                        <label for="id_favicon">Обрати файл</label>
+                        <span id="favicon_display">
+                            {% if agent_site.favicon %}{{ agent_site.favicon.name }}{% else %}Файл не вибрано{% endif %}
+                        </span>
+                    </div>
+                    <button type="button" class="clear-logo-btn mt-1" data-field="favicon">Очистити</button>
+                    {% if agent_site.favicon %}
+                    <div class="mt-2">
+                        <img src="{{ agent_site.favicon.url }}" style="max-height: 32px; width: auto; border: 1px solid #ddd; border-radius: 4px;">
+                        <small class="text-muted ms-2">Поточний favicon</small>
+                    </div>
+                    {% endif %}
+                    <div class="form-text text-muted small mt-1">
+                        <i class="fa-regular fa-circle-info"></i> Іконка відображається у вкладці браузера поряд з назвою сайту.
+                        Рекомендований розмір: 32×32px або 64×64px. Формати: PNG, ICO, SVG, GIF.
                     </div>
                 </div>
+            </div>
+            <!-- ========== КІНЕЦЬ БЛОКУ FAVICON ========== -->
+
+        </div>
+    </div>
+</div>
 
                 <!-- Вкладка Меню -->
 <div class="tab-pane" id="tab-menu">

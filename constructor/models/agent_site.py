@@ -53,6 +53,15 @@ class AgentSite(models.Model):
         verbose_name="Фото для блоку 'Про нас'"
     )
 
+    # ========== FAVICON (ІКОНКА САЙТУ) ==========
+    favicon = models.ImageField(
+        upload_to='agent_favicons/',
+        blank=True,
+        null=True,
+        verbose_name="Іконка сайту (favicon)",
+        help_text="Рекомендований розмір: 32×32px, 64×64px або 128×128px. Формати: PNG, ICO, SVG, GIF"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -28,9 +28,9 @@ class AgentSiteForm(forms.ModelForm):
         fields = [
             'slug', 'agency_name', 'hero_title', 'hero_subtitle', 'hero_background',
             'top_logo', 'bottom_logo', 'enlarge_logo', 'show_news', 'show_operator_logos',
-            # 'show_superadmin_tours',  ← ВИДАЛЕНО
             'primary_color', 'secondary_color',
-            'about_us_title', 'about_us_text', 'about_us_image'
+            'about_us_title', 'about_us_text', 'about_us_image',
+            'favicon',  # ← ДОДАНО favicon
         ]
         widgets = {
             'slug': forms.TextInput(attrs={
@@ -67,9 +67,6 @@ class AgentSiteForm(forms.ModelForm):
             'show_operator_logos': forms.CheckboxInput(attrs={
                 'class': 'form-check-input'
             }),
-            # 'show_superadmin_tours': forms.CheckboxInput(attrs={  ← ВИДАЛІТЬ ЦЕЙ ВЕСЬ БЛОК
-            #     'class': 'form-check-input'
-            # }),
             'primary_color': forms.TextInput(attrs={
                 'type': 'color',
                 'class': 'form-control form-control-color',
@@ -94,6 +91,11 @@ class AgentSiteForm(forms.ModelForm):
                 'class': 'form-control',
                 'accept': 'image/*'
             }),
+            # ДОДАНО ДЛЯ FAVICON
+            'favicon': forms.ClearableFileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/png,image/svg+xml,image/x-icon,image/vnd.microsoft.icon'
+            }),
         }
         labels = {
             'slug': 'Адреса сайту (slug)',
@@ -106,13 +108,14 @@ class AgentSiteForm(forms.ModelForm):
             'enlarge_logo': 'Збільшити логотип на 25%',
             'show_news': 'Показувати новини',
             'show_operator_logos': 'Показувати логотипи туроператорів',
-            # 'show_superadmin_tours': 'Показувати тури суперадміна',  ← ВИДАЛІТЬ ЦЕЙ РЯДОК
             'primary_color': 'Головний колір',
             'secondary_color': 'Додатковий колір (hover)',
             # ДОДАНІ ЛЕЙБЛИ ДЛЯ БЛОКУ "ПРО НАС"
             'about_us_title': 'Заголовок блоку "Про нас"',
             'about_us_text': 'Текст блоку "Про нас"',
             'about_us_image': 'Фото для блоку "Про нас"',
+            # ДОДАНО ДЛЯ FAVICON
+            'favicon': 'Іконка сайту (favicon)',
         }
         help_texts = {
             'slug': 'Унікальна адреса вашого сайту (тільки латиниця, дефіси)',
@@ -124,6 +127,8 @@ class AgentSiteForm(forms.ModelForm):
             # ДОДАНІ ПІДКАЗКИ ДЛЯ БЛОКУ "ПРО НАС"
             'about_us_text': 'Розкажіть клієнтам про вашу компанію, ваш досвід та переваги',
             'about_us_image': 'Рекомендований розмір: 800×600px. Формати: JPG, PNG',
+            # ДОДАНО ДЛЯ FAVICON
+            'favicon': 'Іконка, яка відображається у вкладці браузера. Рекомендований розмір: 32×32px, 64×64px або 128×128px. Формати: PNG, ICO, SVG, GIF',
         }
 
     def clean_slug(self):
