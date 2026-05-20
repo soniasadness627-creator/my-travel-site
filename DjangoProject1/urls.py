@@ -11,7 +11,6 @@ from landing import views as landing_views
 from django.views.generic import TemplateView
 from tours.admin import mass_email_admin  # ← ІМПОРТ ПРАВИЛЬНИЙ
 
-
 # ========== ОБРОБНИК ПОМИЛКИ CSRF ==========
 from django.views.csrf import csrf_failure
 
@@ -85,9 +84,11 @@ urlpatterns = [
     path('search-otpusk/', tours_views.search_otpusk, name='search_otpusk'),
     path('a/<slug:slug>/search-otpusk/', tours_views.search_otpusk, name='agent_search_otpusk'),
     path('search-results-calendar/', tours_views.search_results_calendar, name='search_results_calendar'),
-    path('a/<slug:slug>/search-results-calendar/', tours_views.search_results_calendar, name='agent_search_results_calendar'),
+    path('a/<slug:slug>/search-results-calendar/', tours_views.search_results_calendar,
+         name='agent_search_results_calendar'),
     path('search-otpusk-by-country/', tours_views.search_otpusk_by_country, name='search_otpusk_by_country'),
-    path('a/<slug:slug>/search-otpusk-by-country/', tours_views.search_otpusk_by_country, name='agent_search_otpusk_by_country'),
+    path('a/<slug:slug>/search-otpusk-by-country/', tours_views.search_otpusk_by_country,
+         name='agent_search_otpusk_by_country'),
     path('search-otpusk-new/', tours_views.search_otpusk_new, name='search_otpusk_new'),
     path('a/<slug:slug>/search-otpusk-new/', tours_views.search_otpusk_new, name='agent_search_otpusk_new'),
 
@@ -126,6 +127,9 @@ urlpatterns = [
     # ========== АГЕНТСЬКІ API ==========
     path('a/<slug:slug>/api/get-popular-tours/', tours_views.get_popular_tours_api, name='agent_get_popular_tours'),
     path('a/<slug:slug>/api/get-popular-hotels/', tours_views.get_popular_hotels_api, name='agent_get_popular_hotels'),
+
+    # ========== API ДЛЯ БРОНЮВАННЯ (ДОДАНО) ==========
+    path('a/<slug:slug>/api/booking/', constructor_views.booking_api, name='agent_booking_api_direct'),
 ]
 
 # ========== СТАТИЧНІ ТА МЕДІА ФАЙЛИ ==========
