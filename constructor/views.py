@@ -1025,7 +1025,7 @@ def banner_reorder(request):
 
 @csrf_exempt
 @require_POST
-def booking_api(request):
+def booking_api(request, slug=None):  # ← ДОДАЙТЕ slug=None
     """
     API для створення бронювання турів
     """
@@ -1083,10 +1083,16 @@ def booking_api(request):
             message=full_message
         )
 
-        # Якщо є агентський сайт - зберігаємо інформацію про агента
-        if hasattr(request, 'current_agent_site') and request.current_agent_site:
-            # Можна додати поле agent в Booking, якщо потрібно
-            pass
+        # Якщо є slug - знаходимо агента
+        if slug:
+            try:
+                from constructor.models.agent_site import AgentSite
+                agent_site = AgentSite.objects.filter(slug=slug).first()
+                if agent_site:
+                    # Можна зберегти інформацію про агента, якщо додати поле в Booking
+                    pass
+            except:
+                pass
 
         # Відправляємо Telegram сповіщення
         try:
