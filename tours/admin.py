@@ -597,6 +597,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
 from django.http import JsonResponse
+from django.urls import reverse
+from django.utils.html import format_html
 import requests
 import csv
 import io
@@ -698,3 +700,45 @@ class MassEmailMixin:
 
 # Застосовуємо міксин до стандартної адмінки
 admin.site.__class__ = type('CustomAdminSite', (MassEmailMixin, admin.site.__class__), {})
+
+# ========== ДОДАЄМО ПУНКТ В МЕНЮ АДМІНКИ ==========
+from django.contrib.admin import AdminSite
+
+
+# Створюємо кастомний сайт з додатковим розділом в меню
+class CustomAdminSiteWithMenu(AdminSite):
+    site_header = "Django адміністрування"
+    site_title = "Django адміністрування"
+
+    def get_app_list(self, request):
+        """
+        Додає кастомний розділ в меню адмінки
+        """
+        app_list = super().get_app_list(request)
+
+        # Додаємо розділ "Email розсилка" в меню
+        email_section = {
+            'name': 'Email розсилка',
+            'app_label': 'email_campaign',
+            'app_url': '/admin/mass-email/',
+            'models': [
+                {
+                    'name': 'Масова email-розсилка',
+                    'object_name': 'EmailCampaign',
+                    'admin_url': '/admin/mass-email/',
+                    'view_only': True,
+                    'perms': {'add': False, 'change': False, 'delete': False, 'view': True},
+                }
+            ]
+        }
+
+        # Додаємо секцію на початок або в кінець
+        app_list.append(email_section)
+        return app_list
+
+
+# Замінюємо адмінку на кастомну
+if not isinstance(admin.site, CustomAdminSiteWithMenu):
+    old_registry = admin.site._registry
+    admin.site = CustomAdminSiteWithMenu(name='myadmin')
+    admin.site._registry = old_registry
