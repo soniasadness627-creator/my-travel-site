@@ -280,35 +280,42 @@ class NewsAdmin(admin.ModelAdmin):
         return request.user.is_superuser
 
 
+# ========== РЕЄСТРАЦІЯ ДЛЯ СУПЕРАДМІНА (БРОНЮВАННЯ ТА КОНСУЛЬТАЦІЇ) ==========
+
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'get_tour_title', 'name', 'phone', 'email', 'created_at')
-    list_filter = ('created_at', 'tour')
-    search_fields = ('name', 'phone', 'email', 'tour__title')
+    list_display = ('id', 'name', 'phone', 'email', 'get_tour_info', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('name', 'phone', 'email', 'message')
     readonly_fields = ('created_at',)
     list_per_page = 20
 
-    def get_tour_title(self, obj):
-        return obj.tour.title if obj.tour else 'Немає туру'
+    def get_tour_info(self, obj):
+        """Показує інформацію про тур з повідомлення"""
+        if obj.message:
+            for line in obj.message.split('\n'):
+                if line.startswith('Тур:'):
+                    return line.replace('Тур:', '').strip()[:50]
+        return '—'
 
-    get_tour_title.short_description = 'Тур'
+    get_tour_info.short_description = 'Тур'
 
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        return qs.filter(tour__author=request.user)
+    def has_add_permission(self, request):
+        return False
 
-    def has_change_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if obj and obj.tour and obj.tour.author != request.user:
-            return False
-        return True
 
-    def has_delete_permission(self, request, obj=None):
-        return request.user.is_superuser
+# Якщо Consultation ще не зареєстрований, додайте:
+@admin.register(Consultation)
+class ConsultationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'phone', 'email', 'created_at', 'is_processed', 'agent')
+    list_filter = ('is_processed', 'created_at')
+    search_fields = ('name', 'phone', 'email', 'comment')
+    readonly_fields = ('created_at',)
+    list_editable = ('is_processed',)
+    list_per_page = 20
 
+    def has_add_permission(self, request):
+        return False
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
