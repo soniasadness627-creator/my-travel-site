@@ -1,7 +1,6 @@
 from django.urls import path, include
 from django.views.generic import TemplateView
 from . import views
-from .admin_emails import mass_email_admin
 
 app_name = 'constructor'
 
@@ -19,9 +18,6 @@ urlpatterns = [
     path('banner/get/<int:banner_id>/', views.banner_get, name='banner_get'),
     path('banner/delete/<int:banner_id>/', views.banner_delete, name='banner_delete'),
     path('banner/reorder/', views.banner_reorder, name='banner_reorder'),
-
-    # ========== НОВИЙ URL ДЛЯ МАСОВОЇ РОЗСИЛКИ ==========
-    path('admin/mass-email/', mass_email_admin.urls, name='mass_email_admin'),
 ]
 
 # окремий конфіг для агентських сайтів
