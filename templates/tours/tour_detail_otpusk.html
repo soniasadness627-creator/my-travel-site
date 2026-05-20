@@ -901,14 +901,16 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.disabled = true;
 
             // Визначаємо правильний URL для API бронювання
-            let bookingUrl = '/constructor/api/booking/';
-            const pathParts = window.location.pathname.split('/');
-            for (let i = 0; i < pathParts.length; i++) {
-                if (pathParts[i] === 'a' && pathParts[i + 1]) {
-                    bookingUrl = `/a/${pathParts[i + 1]}/constructor/api/booking/`;
-                    break;
-                }
-            }
+let bookingUrl = '/constructor/api/booking/';
+const pathParts = window.location.pathname.split('/');
+for (let i = 0; i < pathParts.length; i++) {
+    if (pathParts[i] === 'a' && pathParts[i + 1]) {
+        // ВАЖЛИВО: без /constructor/ в шляху!
+        bookingUrl = `/a/${pathParts[i + 1]}/api/booking/`;
+        break;
+    }
+}
+console.log('📡 URL для бронювання:', bookingUrl);
 
             fetch(bookingUrl, {
                 method: 'POST',
