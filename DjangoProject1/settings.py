@@ -167,28 +167,6 @@ STORAGES = {
 MEDIA_URL = '/media/'
 APPEND_SLASH = True
 
-# ========== EMAIL НАЛАШТУВАННЯ ==========
-USE_AWS_SES = os.getenv('USE_AWS_SES', 'False') == 'True'
-
-if USE_AWS_SES:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = os.getenv('AWS_SES_HOST', 'email-smtp.eu-north-1.amazonaws.com')
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = os.getenv('AWS_SES_USERNAME', '')
-    EMAIL_HOST_PASSWORD = os.getenv('AWS_SES_PASSWORD', '')
-    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@clubdatour.com.ua')
-    print("✅ AWS SES для відправки email")
-else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = os.getenv('GMAIL_USER', 'soniasadness627@gmail.com')
-    EMAIL_HOST_PASSWORD = os.getenv('GMAIL_PASSWORD', '')
-    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-    print("✅ Gmail для відправки email")
-
 # ========== НАЛАШТУВАННЯ ДЛЯ RENDER ==========
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
@@ -262,8 +240,49 @@ else:
 print("✅ Cloudinary ініціалізовано")
 print(f"✅ Telegram бот налаштовано. Адмінів: {len(TELEGRAM_ADMIN_IDS)}")
 
+# ==============================================
+# ========== EMAIL НАЛАШТУВАННЯ (ОНОВЛЕНІ) ==========
+# ==============================================
 
-# ========== MAILGUN НАЛАШТУВАННЯ ==========
+# Який спосіб відправки використовувати?
+# True - всі листи через Mailgun
+# False - використовувати стару логіку (AWS SES або Gmail)
+USE_MAILGUN_FOR_ALL = os.getenv('USE_MAILGUN_FOR_ALL', 'True') == 'True'
+
+if USE_MAILGUN_FOR_ALL:
+    # ========== ВСІ ЛИСТИ ЧЕРЕЗ MAILGUN ==========
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.mailgun.org'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = 'postmaster@clubdatour.com.ua'
+    EMAIL_HOST_PASSWORD = os.getenv('MAILGUN_API_KEY', '')
+    DEFAULT_FROM_EMAIL = 'postmaster@clubdatour.com.ua'
+    print("✅ ВСІ листи надсилаються через MAILGUN (postmaster@clubdatour.com.ua)")
+
+elif USE_AWS_SES:
+    # ========== AWS SES ==========
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.getenv('AWS_SES_HOST', 'email-smtp.eu-north-1.amazonaws.com')
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.getenv('AWS_SES_USERNAME', '')
+    EMAIL_HOST_PASSWORD = os.getenv('AWS_SES_PASSWORD', '')
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@clubdatour.com.ua')
+    print("✅ AWS SES для відправки email")
+
+else:
+    # ========== GMAIL (СТАРИЙ ВАРІАНТ) ==========
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.getenv('GMAIL_USER', 'soniasadness627@gmail.com')
+    EMAIL_HOST_PASSWORD = os.getenv('GMAIL_PASSWORD', '')
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+    print("✅ Gmail для відправки email")
+
+# ========== MAILGUN API НАЛАШТУВАННЯ (ДЛЯ МАСОВОЇ РОЗСИЛКИ) ==========
 MAILGUN_API_KEY = os.getenv('MAILGUN_API_KEY', '')
-MAILGUN_DOMAIN = os.getenv('MAILGUN_DOMAIN', '')
-MAILGUN_FROM_EMAIL = os.getenv('MAILGUN_FROM_EMAIL', '')
+MAILGUN_DOMAIN = os.getenv('MAILGUN_DOMAIN', 'clubdatour.com.ua')
+MAILGUN_FROM_EMAIL = os.getenv('MAILGUN_FROM_EMAIL', 'postmaster@clubdatour.com.ua')
