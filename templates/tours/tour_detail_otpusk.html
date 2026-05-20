@@ -2094,36 +2094,66 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getAllToursForRating() {
-        const tours = [];
-        const viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item');
-        viewedItems.forEach((item, idx) => {
-            const hotelName = item.querySelector('.new_r-item-hotel')?.innerText?.trim() || '';
-            let priceText = item.querySelector('.new_price-value')?.innerText?.trim() || '';
-            let price = 0;
-            const priceMatch = priceText.match(/\d+/g);
-            if (priceMatch) price = parseInt(priceMatch.join('').replace(/\s/g, ''));
-            let link = '';
-            const linkElement = item.querySelector('a');
-            if (linkElement) link = linkElement.getAttribute('href');
-            const location = item.querySelector('.new_r-item-geo')?.innerText?.trim() || '';
-            const nights = item.querySelector('.new_r-item-nights')?.innerText?.replace(/[^0-9]/g, '') || '7';
-            let rating = 0;
-            const ratingElement = item.querySelector('.new_r-item-rating-value');
-            if (ratingElement && ratingElement.innerText) {
-                const ratingMatch = ratingElement.innerText.match(/\d+(?:\.\d+)?/);
-                if (ratingMatch) rating = parseFloat(ratingMatch[0]);
-            }
-            if (rating === 0 && price > 0) {
-                rating = 5 + (price % 50) / 10;
-                if (rating > 9) rating = 9;
-                rating = Math.round(rating * 10) / 10;
-            }
-            if (hotelName && price > 0 && link) {
-                tours.push({ hotelName, price, priceText, link, location, nights, rating, imageIndex: idx });
-            }
-        });
-        return tours;
+    const tours = [];
+
+    // Шукаємо тури в різних місцях DOM
+    let viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item');
+
+    // Якщо не знайшли в .new_t-similar-viewed, шукаємо в результатах пошуку
+    if (viewedItems.length === 0) {
+        viewedItems = document.querySelectorAll('.new_r-item-wrap');
     }
+
+    // Якщо все ще немає, шукаємо будь-які картки турів
+    if (viewedItems.length === 0) {
+        viewedItems = document.querySelectorAll('[class*="new_r-item"]');
+    }
+
+    console.log(`🔍 Знайдено карток турів: ${viewedItems.length}`);
+
+    viewedItems.forEach((item, idx) => {
+        const hotelName = item.querySelector('.new_r-item-hotel')?.innerText?.trim() || '';
+        let priceText = item.querySelector('.new_price-value')?.innerText?.trim() || '';
+
+        // Альтернативний пошук ціни
+        if (!priceText) {
+            const priceElement = item.querySelector('.new_price');
+            if (priceElement) priceText = priceElement.innerText.trim();
+        }
+
+        let price = 0;
+        const priceMatch = priceText.match(/\d+/g);
+        if (priceMatch) price = parseInt(priceMatch.join('').replace(/\s/g, ''));
+
+        let link = '';
+        const linkElement = item.querySelector('a');
+        if (linkElement) link = linkElement.getAttribute('href');
+
+        const location = item.querySelector('.new_r-item-geo')?.innerText?.trim() || '';
+        const nights = item.querySelector('.new_r-item-nights')?.innerText?.replace(/[^0-9]/g, '') || '7';
+
+        let rating = 0;
+        const ratingElement = item.querySelector('.new_r-item-rating-value');
+        if (ratingElement && ratingElement.innerText) {
+            const ratingMatch = ratingElement.innerText.match(/\d+(?:\.\d+)?/);
+            if (ratingMatch) rating = parseFloat(ratingMatch[0]);
+        }
+
+        // Якщо рейтингу немає, але є ціна - генеруємо приблизний рейтинг
+        if (rating === 0 && price > 0) {
+            rating = 5 + (price % 50) / 10;
+            if (rating > 9) rating = 9;
+            rating = Math.round(rating * 10) / 10;
+        }
+
+        if (hotelName && price > 0 && link) {
+            tours.push({ hotelName, price, priceText, link, location, nights, rating, imageIndex: idx });
+        }
+    });
+
+    console.log(`📊 Зібрано турів для каруселі: ${tours.length}`);
+    return tours;
+}
 
     function getCurrentTourRating() {
         let rating = 0;
@@ -2256,39 +2286,58 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function loadSimilarRatingTours() {
-        try {
-            const section = document.getElementById('similarRatingSection');
-            const track = document.getElementById('ratingTrack');
-            const messageDiv = document.getElementById('ratingMessage');
-            if (!section || !track) return;
-            const currentRating = getCurrentTourRating();
-            const allTours = getAllToursForRating();
-            if (allTours.length === 0) {
-                if (messageDiv) {
-                    messageDiv.innerHTML = '⏳ Зачекайте, тури завантажуються...';
-                    messageDiv.style.display = 'block';
-                }
-                section.style.display = 'block';
-                setTimeout(loadSimilarRatingTours, 2000);
-                return;
-            }
-            const filteredTours = allTours.filter(tour => {
-                return tour.rating >= currentRating - 1 && tour.rating <= currentRating + 1 && Math.abs(tour.rating - currentRating) > 0.1;
-            }).sort((a, b) => b.rating - a.rating);
-            console.log(`Поточний рейтинг: ${currentRating}, Знайдено турів: ${filteredTours.length}`);
-            if (filteredTours.length === 0) {
-                if (messageDiv) {
-                    messageDiv.innerHTML = `😔 Не знайдено готелів зі схожим рейтингом (±1)<br><small>Поточний рейтинг: ${currentRating.toFixed(1)}</small>`;
-                    messageDiv.style.display = 'block';
-                }
-                section.style.display = 'block';
-                return;
-            }
-            renderRatingCarousel(filteredTours);
-        } catch(e) {
-            console.error('Помилка завантаження рейтингу:', e);
+    try {
+        const section = document.getElementById('similarRatingSection');
+        const track = document.getElementById('ratingTrack');
+        const messageDiv = document.getElementById('ratingMessage');
+
+        if (!section || !track) {
+            console.log('❌ Елементи каруселі не знайдено');
+            return;
         }
+
+        const currentRating = getCurrentTourRating();
+        console.log(`⭐ Поточний рейтинг: ${currentRating}`);
+
+        let allTours = getAllToursForRating();
+
+        // Якщо турів немає, чекаємо ще і пробуємо знову
+        if (allTours.length === 0) {
+            console.log('⏳ Турів ще немає, чекаємо завантаження...');
+            if (messageDiv) {
+                messageDiv.innerHTML = '⏳ Зачекайте, тури завантажуються...';
+                messageDiv.style.display = 'block';
+            }
+            section.style.display = 'block';
+            setTimeout(loadSimilarRatingTours, 2000);
+            return;
+        }
+
+        // Фільтруємо тури з рейтингом ±1 від поточного
+        const filteredTours = allTours.filter(tour => {
+            return tour.rating >= currentRating - 1 &&
+                   tour.rating <= currentRating + 1 &&
+                   Math.abs(tour.rating - currentRating) > 0.1;
+        }).sort((a, b) => b.rating - a.rating);
+
+        console.log(`🎯 Знайдено турів зі схожим рейтингом: ${filteredTours.length}`);
+
+        if (filteredTours.length === 0) {
+            if (messageDiv) {
+                messageDiv.innerHTML = `😔 Не знайдено готелів зі схожим рейтингом (±1)<br><small>Поточний рейтинг: ${currentRating.toFixed(1)}</small>`;
+                messageDiv.style.display = 'block';
+            }
+            section.style.display = 'block';
+            return;
+        }
+
+        renderRatingCarousel(filteredTours);
+        if (messageDiv) messageDiv.style.display = 'none';
+
+    } catch(e) {
+        console.error('❌ Помилка завантаження рейтингу:', e);
     }
+}
 
     function escapeHtml(text) {
         if (!text) return '';
@@ -2328,6 +2377,37 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     ratingObserver.observe(document.body, { childList: true, subtree: true });
     setTimeout(() => ratingObserver.disconnect(), 15000);
+})();
+    // ========== СПОСТЕРІГАЧ ДЛЯ КАРУСЕЛІВ З ТУРАМИ ==========
+(function() {
+    console.log('🔄 Запуск спостерігача для турів...');
+
+    const toursObserver = new MutationObserver(function(mutations) {
+        const viewedItems = document.querySelectorAll('.new_t-similar-viewed .new_r-item, .new_r-item-wrap');
+        if (viewedItems.length > 0) {
+            console.log(`✅ Знайдено ${viewedItems.length} турів, завантажуємо каруселі...`);
+            loadSimilarRatingTours();
+            if (typeof loadSimilarTours === 'function') {
+                loadSimilarTours();
+            }
+            toursObserver.disconnect();
+        }
+    });
+
+    toursObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // Тайм-аут на випадок, якщо тури так і не з'являться (через помилку або відсутність даних)
+    setTimeout(() => {
+        toursObserver.disconnect();
+        console.log('⏰ Тайм-аут спостерігача, примусове завантаження каруселей...');
+        loadSimilarRatingTours();
+        if (typeof loadSimilarTours === 'function') {
+            loadSimilarTours();
+        }
+    }, 15000);
 })();
 </script>
 <script>
