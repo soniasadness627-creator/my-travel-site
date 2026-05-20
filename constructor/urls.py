@@ -29,7 +29,8 @@ agent_urlpatterns = [
     path('search-otpusk/', TemplateView.as_view(template_name='tours/search_results_otpusk.html'),
          name='agent_search_otpusk'),
 
-    # API для бронювання на агентських сайтах
+    # ========== API ДЛЯ БРОНЮВАННЯ НА АГЕНТСЬКИХ САЙТАХ ==========
+    # ВАЖЛИВО: цей URL має бути ДО основного маршруту '', щоб не перехоплюватися
     path('api/booking/', views.booking_api, name='agent_booking_api'),
 
     # Основні маршрути агента - використовують agent_public_site
