@@ -23,17 +23,17 @@ urlpatterns = [
     path('api/booking/', views.booking_api, name='booking_api'),
 ]
 
-# окремий конфіг для агентських сайтів
+# ========== ОКРЕМИЙ КОНФІГ ДЛЯ АГЕНТСЬКИХ САЙТІВ ==========
+# ВАЖЛИВО: ці URL будуть доступні за шаблоном /a/<slug>/...
 agent_urlpatterns = [
-    # Сторінка результатів пошуку Otpusk - використовуємо TemplateView напряму (без логіки)
+    # API для бронювання - ПОВИНЕН БУТИ ПЕРШИМ!
+    path('api/booking/', views.booking_api, name='agent_booking_api'),
+
+    # Сторінка результатів пошуку Otpusk
     path('search-otpusk/', TemplateView.as_view(template_name='tours/search_results_otpusk.html'),
          name='agent_search_otpusk'),
 
-    # ========== API ДЛЯ БРОНЮВАННЯ НА АГЕНТСЬКИХ САЙТАХ ==========
-    # ВАЖЛИВО: цей URL має бути ДО основного маршруту '', щоб не перехоплюватися
-    path('api/booking/', views.booking_api, name='agent_booking_api'),
-
-    # Основні маршрути агента - використовують agent_public_site
+    # Основні маршрути агента
     path('', views.agent_public_site, name='agent_home'),
     path('tour/<int:pk>/', views.agent_public_site, name='agent_tour_detail'),
     path('tour/<int:pk>/reviews/', views.agent_public_site, name='agent_tour_reviews'),
