@@ -161,18 +161,10 @@ class AgentBookingAdmin(admin.ModelAdmin):
     list_per_page = 20
 
     def get_queryset(self, request):
-        """
-        Фільтрує бронювання - показує ТІЛЬКИ ті, що належать поточному агенту.
-        Оскільки Booking не має прямого зв'язку з агентом, ми фільтруємо через тур.
-        """
+        """Фільтрує бронювання тільки для поточного агента"""
         qs = super().get_queryset(request)
-
-        # Якщо агент (не суперадмін) - показуємо тільки його бронювання
         if request.user.is_agent and not request.user.is_superuser:
-            # Фільтруємо бронювання, де тур належить агенту
-            return qs.filter(tour__author=request.user)
-
-        # Для суперадміна - всі бронювання
+            return qs.filter(agent=request.user)
         return qs
 
     def get_tour_info(self, obj):
@@ -409,10 +401,10 @@ agent_admin_site = AgentAdminSite(name='agent_admin')
 
 # ========== РЕЄСТРАЦІЯ ВСІХ МОДЕЛЕЙ ==========
 agent_admin_site.register(Tour, AgentTourAdmin)
-agent_admin_site.register(Booking, AgentBookingAdmin)  # ← ДОДАНО для агентів
+agent_admin_site.register(Booking, AgentBookingAdmin)
 agent_admin_site.register(PriceOption, AgentPriceOptionAdmin)
 agent_admin_site.register(Review, AgentReviewAdmin)
-agent_admin_site.register(Consultation, AgentConsultationAdmin)  # ← ДОДАНО для агентів
+agent_admin_site.register(Consultation, AgentConsultationAdmin)
 agent_admin_site.register(News, AgentNewsAdmin)
 agent_admin_site.register(CountryInfo, AgentCountryInfoAdmin)
 agent_admin_site.register(PopularDestination, AgentPopularDestinationAdmin)

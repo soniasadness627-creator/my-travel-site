@@ -1078,12 +1078,22 @@ def booking_api(request, slug=None):
         # Створюємо бронювання в моделі Booking
         from tours.models import Booking
 
+        # Створюємо бронювання
         booking = Booking.objects.create(
             name=name,
             phone=full_phone,
             email=email,
             message=full_message
         )
+
+        # ========== ДОДАЙТЕ ЦЕ - ЗБЕРІГАЄМО АГЕНТА ==========
+        if slug:
+            from constructor.models.agent_site import AgentSite
+            agent_site = AgentSite.objects.filter(slug=slug).first()
+            if agent_site:
+                booking.agent = agent_site.user
+                booking.save(update_fields=['agent'])
+                print(f"✅ Агент призначений: {agent_site.user.email}")
 
         # ========== ВІДПРАВЛЯЄМО ТЕЛЕГРАМ СПОВІЩЕННЯ ТІЛЬКИ АГЕНТУ ==========
         agent_telegram_id = None

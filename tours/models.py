@@ -213,6 +213,16 @@ class Booking(models.Model):
     message = models.TextField(blank=True, verbose_name="Повідомлення")
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # ========== ДОДАЙТЕ ЦЕ ПОЛЕ ==========
+    agent = models.ForeignKey(
+        'users.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Агент",
+        related_name="bookings"
+    )
+
     def __str__(self):
         if self.tour:
             return f"Заявка на {self.tour.title} від {self.name}"
