@@ -38,14 +38,12 @@ class AgentBookingAdmin(admin.ModelAdmin):
     list_per_page = 20
 
     def get_queryset(self, request):
-        """Фільтрує бронювання тільки для поточного агента"""
         qs = super().get_queryset(request)
         if request.user.is_agent and not request.user.is_superuser:
             return qs.filter(agent=request.user)
         return qs
 
     def get_tour_info(self, obj):
-        """Показує інформацію про тур з повідомлення"""
         if obj.message:
             for line in obj.message.split('\n'):
                 if line.startswith('Тур:'):
@@ -55,17 +53,14 @@ class AgentBookingAdmin(admin.ModelAdmin):
     get_tour_info.short_description = 'Тур'
 
     def has_add_permission(self, request):
-        """Забороняє додавати бронювання вручну"""
         return False
 
     def has_change_permission(self, request, obj=None):
-        """Дозволяє змінювати тільки суперадміну"""
         if request.user.is_superuser:
             return True
         return False
 
     def has_delete_permission(self, request, obj=None):
-        """Дозволяє видаляти тільки суперадміну"""
         return request.user.is_superuser
 
 
@@ -79,7 +74,6 @@ class AgentConsultationAdmin(admin.ModelAdmin):
     list_per_page = 20
 
     def get_queryset(self, request):
-        """Фільтрує заявки тільки для поточного агента"""
         qs = super().get_queryset(request)
         if request.user.is_agent and not request.user.is_superuser:
             return qs.filter(agent=request.user)
