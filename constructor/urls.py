@@ -12,12 +12,15 @@ urlpatterns = [
     path('generate-image/', views.generate_image, name='generate_image'),
     path('agent-login-redirect/', views.agent_login_redirect, name='agent_login_redirect'),
 
-    # ========== НОВІ URL ДЛЯ НАЛАШТУВАНЬ БЛОКІВ ==========
+    # ========== НАЛАШТУВАННЯ БЛОКІВ ТА БАНЕРІВ ==========
     path('blocks-settings/', views.blocks_settings, name='blocks_settings'),
     path('banner/create/', views.banner_create, name='banner_create'),
     path('banner/get/<int:banner_id>/', views.banner_get, name='banner_get'),
     path('banner/delete/<int:banner_id>/', views.banner_delete, name='banner_delete'),
     path('banner/reorder/', views.banner_reorder, name='banner_reorder'),
+
+    # ========== API ДЛЯ БРОНЮВАННЯ ТУРІВ ==========
+    path('api/booking/', views.booking_api, name='booking_api'),
 ]
 
 # окремий конфіг для агентських сайтів
@@ -25,6 +28,9 @@ agent_urlpatterns = [
     # Сторінка результатів пошуку Otpusk - використовуємо TemplateView напряму (без логіки)
     path('search-otpusk/', TemplateView.as_view(template_name='tours/search_results_otpusk.html'),
          name='agent_search_otpusk'),
+
+    # API для бронювання на агентських сайтах
+    path('api/booking/', views.booking_api, name='agent_booking_api'),
 
     # Основні маршрути агента - використовують agent_public_site
     path('', views.agent_public_site, name='agent_home'),

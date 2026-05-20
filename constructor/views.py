@@ -2,6 +2,7 @@ import random
 import uuid
 import requests
 import json
+import re
 import cloudinary.uploader
 from PIL import Image
 import io
@@ -15,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import TemplateView, UpdateView
 from django.conf import settings
-from django.http import Http404, JsonResponse, HttpResponse
+from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
 from django.views.decorators.cache import never_cache
@@ -1018,5 +1019,107 @@ def banner_reorder(request):
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+
+# ========== ФУНКЦІЯ ДЛЯ БРОНЮВАННЯ ТУРІВ ==========
+# Додайте цю функцію після banner_reorder або перед нею
+
+@csrf_exempt
+@require_POST
+def booking_api(request):
+    """
+    API для створення бронювання турів
+    """
+    try:
+        # Спробуємо отримати дані з JSON або з POST
+        if request.body:
+            try:
+                data = json.loads(request.body)
+            except json.JSONDecodeError:
+                data = request.POST.dict()
+        else:
+            data = request.POST.dict()
+
+        name = data.get('name', '').strip()
+        phone = data.get('phone', '').strip()
+        email = data.get('email', '').strip()
+        comment = data.get('comment', '').strip()
+        country_code = data.get('country_code', '+380')
+
+        # Отримуємо дані туру
+        tour_hid = data.get('tour_hid', '')
+        tour_oid = data.get('tour_oid', '')
+        tour_name = data.get('tour_name', '')
+        tour_price = data.get('tour_price', '')
+        tour_dates = data.get('tour_dates', '')
+        tour_url = data.get('tour_url', '')
+
+        # Валідація
+        if not name:
+            return JsonResponse({'success': False, 'error': "Введіть ваше ім'я"})
+        if not phone:
+            return JsonResponse({'success': False, 'error': "Введіть номер телефону"})
+
+        # Очищуємо телефон
+        phone_clean = re.sub(r'[^0-9]', '', phone)
+        full_phone = f"{country_code}{phone_clean}"
+
+        # Формуємо повідомлення з деталями туру
+        full_message = f"Тур: {tour_name}\n"
+        if tour_price:
+            full_message += f"Ціна: {tour_price}\n"
+        if tour_dates:
+            full_message += f"Дати: {tour_dates}\n"
+        if comment:
+            full_message += f"Побажання: {comment}\n"
+        full_message += f"Посилання на тур: {tour_url}"
+
+        # Створюємо бронювання в моделі Booking
+        from tours.models import Booking
+
+        booking = Booking.objects.create(
+            name=name,
+            phone=full_phone,
+            email=email,
+            message=full_message
+        )
+
+        # Якщо є агентський сайт - зберігаємо інформацію про агента
+        if hasattr(request, 'current_agent_site') and request.current_agent_site:
+            # Можна додати поле agent в Booking, якщо потрібно
+            pass
+
+        # Відправляємо Telegram сповіщення
+        try:
+            from tours.telegram_notifier import send_telegram_notification
+            notification = f"""
+<b>🏨 НОВЕ БРОНЮВАННЯ ТУРУ!</b>
+
+<b>👤 Клієнт:</b> {name}
+<b>📞 Телефон:</b> {full_phone}
+<b>📧 Email:</b> {email if email else 'Не вказано'}
+
+<b>✈️ Деталі туру:</b>
+{tour_name if tour_name else 'Не вказано'}
+
+<b>💰 Ціна:</b> {tour_price if tour_price else 'Не вказана'}
+<b>📅 Дати:</b> {tour_dates if tour_dates else 'Не вказані'}
+
+<b>💬 Побажання:</b>
+{comment if comment else 'Немає'}
+
+🔗 Посилання на тур: {tour_url}
+"""
+            send_telegram_notification(notification)
+        except Exception as e:
+            print(f"Telegram помилка: {e}")
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом для підтвердження бронювання.'
+        })
+
+    except Exception as e:
+        print(f"Помилка бронювання: {e}")
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 # ========== КІНЕЦЬ НОВИХ ФУНКЦІЙ ==========

@@ -900,7 +900,17 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.innerHTML = '<i class="fa-regular fa-spinner fa-spin me-2"></i> Відправка...';
             btn.disabled = true;
 
-            fetch(window.location.href, {
+            // Визначаємо правильний URL для API бронювання
+            let bookingUrl = '/constructor/api/booking/';
+            const pathParts = window.location.pathname.split('/');
+            for (let i = 0; i < pathParts.length; i++) {
+                if (pathParts[i] === 'a' && pathParts[i + 1]) {
+                    bookingUrl = `/a/${pathParts[i + 1]}/constructor/api/booking/`;
+                    break;
+                }
+            }
+
+            fetch(bookingUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -943,16 +953,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-
-    // setTimeout(function findAndClick() {
-//     const btn = document.querySelector('.new_t-change-people');
-//     if (btn) {
-//         btn.click();
-//         console.log('Клік по кнопці "Ще" виконано');
-//     } else {
-//         setTimeout(findAndClick, 1000);
-//     }
-// }, 2000);
 });
 
 function initLightbox() {
