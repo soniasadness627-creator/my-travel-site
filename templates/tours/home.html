@@ -504,24 +504,30 @@ document.addEventListener('DOMContentLoaded', function() {
     color: #666;
 }
 
-/* Кнопка детальніше */
+/* Кнопка детальніше - ВИРІВНЯНА СТРІЛКА */
 .popular-tour-btn {
     background: transparent;
     border: 1px solid #e0e0e0;
     border-radius: 30px;
-    padding: 6px 14px;
+    line-height: 1;
+    padding: 6px 14px;  /* ЗМІНЕНО: ВЕРНІТЬ 6px 14px */
     font-size: 11px;
     font-weight: 600;
     color: #555;
     transition: all 0.3s;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;  /* ЗМІНЕНО: inline-flex замість flex */
     align-items: center;
+    justify-content: center;
     gap: 6px;
+    vertical-align: middle;
 }
 
 .popular-tour-btn i {
-    font-size: 10px;
+    font-size: 11px;  /* ЗБІЛЬШЕНО З 10px ДО 11px */
+    line-height: 1;   /* ДОДАНО */
+    display: inline-block;
+    vertical-align: middle;
     transition: transform 0.2s;
 }
 
@@ -618,7 +624,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let html = '';
         tours.forEach(tour => {
-            const starsHtml = renderStars(5);
             const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
             const hotelName = tour.hotel || `${tour.country} - ${tour.city}`;
             const countryName = tour.country;
@@ -643,19 +648,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span class="popular-tour-country">${escapeHtml(countryName)}</span>
                     <h4 class="popular-tour-title">${escapeHtml(hotelName)}</h4>
                     <div class="popular-tour-location">
-                        <i class="fa-regular fa-location-dot"></i>
-                        <span>${escapeHtml(cityName)}</span>
-                    </div>
-                    <div class="popular-tour-details">
-                        <div class="popular-tour-detail-item">
-                            <i class="fa-regular fa-plane"></i>
-                            <span>Виліт: ${escapeHtml(departureText)}</span>
-                        </div>
-                        <div class="popular-tour-detail-item">
-                            <i class="fa-regular fa-moon"></i>
-                            <span>${nights} ночей</span>
-                        </div>
-                    </div>
+    <span style="font-size: 12px;">📍</span>
+    <span>${escapeHtml(cityName)}</span>
+</div>
+<div class="popular-tour-details">
+    <div class="popular-tour-detail-item">
+        <span style="font-size: 12px;">✈️</span>
+        <span>Виліт: ${escapeHtml(departureText)}</span>
+    </div>
+    <div class="popular-tour-detail-item">
+        <span style="font-size: 12px;">🌙</span>
+        <span>${nights} ночей</span>
+    </div>
+</div>
                     <div class="popular-tour-price-section">
                         <div>
                             <div class="popular-tour-price-label">Вартість від</div>
