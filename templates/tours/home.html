@@ -2024,38 +2024,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function renderStars(rating) {
-        let fullStars = Math.floor(rating);
-        let hasHalf = rating % 1 >= 0.5;
-        let starsHtml = '';
-        for (let i = 0; i < fullStars; i++) {
-            starsHtml += '<i class="fa-solid fa-star"></i>';
-        }
-        if (hasHalf) {
-            starsHtml += '<i class="fa-solid fa-star-half-alt"></i>';
-        }
-        for (let i = Math.ceil(rating); i < 5; i++) {
-            starsHtml += '<i class="fa-regular fa-star"></i>';
-        }
-        return starsHtml;
-    }
-
     // Функція для переходу на деталі туру
     window.goToHotelDetail = function(hid, oid, od, ol) {
-    let baseUrl = '/tour-detail/';
-    const pathParts = window.location.pathname.split('/');
-    for (let i = 0; i < pathParts.length; i++) {
-        if (pathParts[i] === 'a' && pathParts[i + 1]) {
-            baseUrl = `/a/${pathParts[i + 1]}/tour-detail/`;
-            break;
+        let baseUrl = '/tour-detail/';
+        const pathParts = window.location.pathname.split('/');
+        for (let i = 0; i < pathParts.length; i++) {
+            if (pathParts[i] === 'a' && pathParts[i + 1]) {
+                baseUrl = `/a/${pathParts[i + 1]}/tour-detail/`;
+                break;
+            }
         }
-    }
-    // Додаємо параметри od та ol
-    let url = `${baseUrl}?hid=${hid}&oid=${oid}`;
-    if (od) url += `&od=${od}`;
-    if (ol) url += `&ol=${ol}`;
-    window.location.href = url;
-};
+        let url = `${baseUrl}?hid=${hid}&oid=${oid}`;
+        if (od) url += `&od=${od}`;
+        if (ol) url += `&ol=${ol}`;
+        window.location.href = url;
+    };
 
     function renderHotels(hotels) {
         if (!track) return;
@@ -2067,33 +2050,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let html = '';
         hotels.forEach(hotel => {
-            const starsHtml = renderStars(hotel.rating || 8);
             const priceFormatted = Math.round(hotel.price).toLocaleString('uk-UA');
+            const ratingValue = hotel.rating || 9.8;
+            const fullStars = Math.floor(ratingValue);
+
+            // Генеруємо тільки жовті зірки (без пустих)
+            let starsHtml = '';
+            for (let i = 0; i < fullStars; i++) {
+                starsHtml += '<i class="fa-solid fa-star"></i>';
+            }
 
             html += `
-<div class="popular-hotel-card" onclick="goToHotelDetail('${hotel.hid}', '${hotel.oid}', '${hotel.od || ''}', '${hotel.ol || ''}')">                    <img class="popular-hotel-img" src="${hotel.image}" alt="${hotel.hotel_name}" onerror="this.src='/static/images/default-hotel.jpg'">
-                    <div class="popular-hotel-info">
-                        <div class="popular-hotel-name">${hotel.hotel_name}</div>
-                        <div class="popular-hotel-location">
-                            <i class="fa-regular fa-location-dot"></i> ${hotel.country}${hotel.city ? ', ' + hotel.city : ''}
-                        </div>
-                        <div class="popular-hotel-rating">
-                            <div class="popular-hotel-stars">${starsHtml}</div>
-                            <span class="popular-hotel-score">${hotel.rating.toFixed(1)}</span>
-                            ${hotel.reviews_count > 0 ? `<span class="popular-hotel-reviews">(${hotel.reviews_count} відгуків)</span>` : ''}
-                        </div>
-                        <div class="popular-hotel-footer">
-                            <div class="popular-hotel-price">
-                                ${priceFormatted} ₴
-                                <small>за тур</small>
-                            </div>
-<button class="popular-hotel-btn" onclick="event.stopPropagation(); goToHotelDetail('${hotel.hid}', '${hotel.oid}', '${hotel.od || ''}', '${hotel.ol || ''}')">
-
-                                Детальніше →
-                            </button>
-                        </div>
+            <div class="popular-hotel-card" onclick="goToHotelDetail('${hotel.hid}', '${hotel.oid}', '${hotel.od || ''}', '${hotel.ol || ''}')">
+                <div class="popular-hotel-img-wrapper">
+                    <img class="popular-hotel-img" src="${hotel.image}" alt="${hotel.hotel_name}" onerror="this.src='/static/images/default-hotel.jpg'">
+                    <div class="popular-hotel-gradient"></div>
+                    <div class="popular-hotel-rating-badge">
+                        <span>${ratingValue.toFixed(1)}</span>
+                        <span>Оцінка</span>
+                    </div>
+                    <div class="popular-hotel-overlay-info">
+                        <span class="popular-hotel-country">${hotel.country}</span>
+                        <h4 class="popular-hotel-title">${hotel.hotel_name}</h4>
                     </div>
                 </div>
+                <div class="popular-hotel-info">
+                    <div>
+                        <div class="popular-hotel-stars">
+                            ${starsHtml}
+                            <span>${ratingValue.toFixed(1)}★ ${hotel.city || hotel.country}</span>
+                        </div>
+                        <div class="popular-hotel-details">
+                            <div class="popular-hotel-detail-item">
+                                <span class="dot"></span>
+                                <span>Харчування: <strong>${hotel.food || 'All Inclusive'}</strong></span>
+                            </div>
+                            <div class="popular-hotel-detail-item">
+                                <span class="dot"></span>
+                                <span>Виліт: <strong>${hotel.departure || 'з Кишинева'} • ${hotel.nights || '7'} ночей</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="popular-hotel-footer">
+                        <div class="popular-hotel-price">
+                            <span class="popular-hotel-price-label">Вартість туру (2 дорослих)</span>
+                            <span class="popular-hotel-price-value">${priceFormatted} ₴ <small>за тур</small></span>
+                        </div>
+                        <button class="popular-hotel-btn" onclick="event.stopPropagation(); goToHotelDetail('${hotel.hid}', '${hotel.oid}', '${hotel.od || ''}', '${hotel.ol || ''}')">
+                            Забронювати <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
             `;
         });
 
@@ -2122,129 +2130,256 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
+/* ========== НОВА СТИЛІСТИКА ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ ========== */
 .hotels-slider-container::-webkit-scrollbar {
     display: none;
 }
 
+/* Картка готелю - новий дизайн */
 .popular-hotel-card {
     flex: 0 0 auto;
     width: 300px;
     background: white;
     border-radius: 16px;
     overflow: hidden;
-    border: 1px solid #e9ecef;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .popular-hotel-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+/* Контейнер зображення */
+.popular-hotel-img-wrapper {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+    background-color: #f5f5f5;
 }
 
 .popular-hotel-img {
     width: 100%;
-    height: 180px;
+    height: 100%;
     object-fit: cover;
+    transition: transform 0.6s ease-out;
 }
 
-.popular-hotel-info {
-    padding: 15px;
+.popular-hotel-card:hover .popular-hotel-img {
+    transform: scale(1.03);
 }
 
-.popular-hotel-name {
+/* Градієнт поверх зображення */
+.popular-hotel-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.1) 100%);
+    z-index: 1;
+}
+
+/* Бейджик рейтингу */
+.popular-hotel-rating-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    height: 48px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.popular-hotel-rating-badge span:first-child {
+    font-size: 14px;
     font-weight: 700;
-    font-size: 1rem;
-    color: #1e293b;
-    margin-bottom: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    color: #bf9b30;
+    line-height: 1.2;
 }
 
-.popular-hotel-location {
-    font-size: 0.7rem;
-    color: #64748b;
-    margin-bottom: 8px;
+.popular-hotel-rating-badge span:last-child {
+    font-size: 7.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 4px;
+}
+
+/* Інформація на зображенні знизу */
+.popular-hotel-overlay-info {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    z-index: 2;
+    color: white;
+}
+
+.popular-hotel-country {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #bf9b30;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.popular-hotel-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0;
+    transition: color 0.2s;
+    font-family: serif;
+}
+
+.popular-hotel-card:hover .popular-hotel-title {
+    color: #bf9b30;
+}
+
+/* Інформація про готель */
+.popular-hotel-info {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Зірки */
+.popular-hotel-stars {
     display: flex;
     align-items: center;
     gap: 4px;
-}
-
-.popular-hotel-rating {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
-    flex-wrap: wrap;
-}
-
-.popular-hotel-stars {
-    display: flex;
-    gap: 2px;
+    margin-bottom: 16px;
 }
 
 .popular-hotel-stars i {
+    font-size: 12px;
+    color: #bf9b30;
+}
+
+.popular-hotel-stars span {
     font-size: 11px;
-    color: #f59e0b;
+    color: #888;
+    font-weight: 500;
+    margin-left: 6px;
 }
 
-.popular-hotel-score {
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: #1e293b;
+/* Деталі */
+.popular-hotel-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
-.popular-hotel-reviews {
-    font-size: 0.7rem;
-    color: #64748b;
+.popular-hotel-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #555;
 }
 
+.popular-hotel-detail-item .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: #bbb;
+}
+
+.popular-hotel-detail-item strong {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Ціна і кнопка */
 .popular-hotel-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #e9ecef;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
 }
 
 .popular-hotel-price {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--primary-color);
+    display: flex;
+    flex-direction: column;
 }
 
-.popular-hotel-price small {
-    font-size: 0.7rem;
+.popular-hotel-price-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #999;
+}
+
+.popular-hotel-price-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    font-family: serif;
+}
+
+.popular-hotel-price-value small {
+    font-size: 10px;
     font-weight: 400;
-    color: #64748b;
+    color: #888;
 }
 
 .popular-hotel-btn {
     background: transparent;
-    border: 1px solid var(--primary-color);
-    color: var(--primary-color);
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 500;
-    transition: all 0.2s;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #555;
+    transition: all 0.3s;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.popular-hotel-btn:hover {
+.popular-hotel-btn i {
+    font-size: 11px;
+    transition: transform 0.2s;
+}
+
+.popular-hotel-card:hover .popular-hotel-btn {
     background: var(--primary-color);
+    border-color: var(--primary-color);
     color: white;
+}
+
+.popular-hotel-card:hover .popular-hotel-btn i {
+    transform: translate(2px, -2px);
 }
 
 @media (max-width: 768px) {
     .popular-hotel-card {
-        width: 260px;
+        width: 280px;
     }
-    .popular-hotel-img {
-        height: 150px;
+    .popular-hotel-img-wrapper {
+        height: 220px;
     }
 }
 </style>
