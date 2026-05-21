@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.2);  /* ТОНКА ЧОРНА РАМОЧКА - ЗМІНЕНО з 0.05 на 0.2 */
     flex: 0 0 auto;
     width: 280px;
 }
@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #d9bf8c;
+    color: var(--primary-color);  /* ЗМІНЕНО - колір агента замість #d9bf8c */
     margin-bottom: 6px;
     display: block;
 }
@@ -494,7 +494,7 @@ document.addEventListener('DOMContentLoaded', function() {
 .popular-tour-price {
     font-size: 1.2rem;
     font-weight: 800;
-    color: #d9bf8c;
+    color: var(--primary-color);  /* ЗМІНЕНО - тепер колір агента */
 }
 
 .popular-tour-price small {
@@ -525,8 +525,8 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .popular-tour-card:hover .popular-tour-btn {
-    background: #d9bf8c;
-    border-color: #d9bf8c;
+    background: var(--primary-color);  /* ВЖЕ ВИКОРИСТОВУЄ змінну агента */
+    border-color: var(--primary-color);
     color: white;
 }
 
