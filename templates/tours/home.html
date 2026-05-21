@@ -1969,5 +1969,58 @@ console.log('searchByCityAndCountry існує:', typeof window.searchByCityAndC
         gap: 15px !important;
     }
 }
+    /* ========== ВИДАЛЕННЯ РАМКИ БЛОКУ ГАРЯЧИХ ТУРІВ ========== */
+/* Прибираємо фон, рамку та тінь у картки */
+.hot-card .card,
+.container.my-5 .card,
+.container.my-5 .card.shadow-sm,
+.container.my-5 .card.border-0,
+.container.my-5 .card.rounded-4 {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Прибираємо фон у заголовка картки */
+.container.my-5 .card-header {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 0 15px 0 !important;
+}
+
+/* Прибираємо фон у тіла картки */
+.container.my-5 .card-body {
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+/* Вирівнюємо заголовок ліворуч */
+.container.my-5 .card-header h3 {
+    text-align: left !important;
+    margin-bottom: 20px !important;
+}
+    /* ========== СВІТЛО-ОЛИВКОВИЙ ФОН ДЛЯ БЛОКУ "ТУРИ З ВАШОГО МІСТА" ========== */
+/* Розтягуємо фон на всю ширину екрану */
+.city-tours-wrapper {
+    position: relative;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding: 40px 0;
+    background-color: #e8f0e3;  /* Світло-оливковий колір */
+}
+
+/* Повертаємо контент всередину */
+.city-tours-wrapper .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Для кращого вигляду на мобільних */
+@media (max-width: 768px) {
+    .city-tours-wrapper {
+        padding: 30px 0;
+    }
+}
 </style>
 {% endblock %}
