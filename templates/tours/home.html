@@ -125,6 +125,55 @@
 .consult-promo-block p {
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
+    /* ========== ЗБІЛЬШЕННЯ БЛОКУ З КНОПКОЮ ========== */
+.consult-promo-block {
+    min-height: 320px !important;
+    border-radius: 24px !important;
+}
+
+/* Збільшуємо внутрішні відступи */
+.consult-promo-block .relative.z-20 {
+    padding: 48px 40px !important;
+}
+
+/* Збільшуємо заголовок */
+.consult-promo-block h3 {
+    font-size: 2rem !important;
+    margin-bottom: 12px !important;
+}
+
+/* Збільшуємо опис */
+.consult-promo-block p {
+    font-size: 1.1rem !important;
+    max-width: 500px !important;
+}
+
+/* Збільшуємо кнопку */
+.consult-promo-btn {
+    padding: 14px 32px !important;
+    font-size: 1rem !important;
+    border-radius: 50px !important;
+}
+
+/* Для мобільних пристроїв */
+@media (max-width: 768px) {
+    .consult-promo-block {
+        min-height: 280px !important;
+    }
+    .consult-promo-block .relative.z-20 {
+        padding: 32px 24px !important;
+    }
+    .consult-promo-block h3 {
+        font-size: 1.5rem !important;
+    }
+    .consult-promo-block p {
+        font-size: 0.9rem !important;
+    }
+    .consult-promo-btn {
+        padding: 12px 24px !important;
+        font-size: 0.9rem !important;
+    }
+}
 </style>
 
 <script>
