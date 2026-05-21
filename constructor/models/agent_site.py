@@ -62,6 +62,13 @@ class AgentSite(models.Model):
         help_text="Рекомендований розмір: 32×32px, 64×64px або 128×128px. Формати: PNG, ICO, SVG, GIF"
     )
 
+    # ========== ЛОГОТИПИ ==========
+    hide_logo = models.BooleanField(
+        default=False,
+        verbose_name="Без логотипу (немає логотипу)",
+        help_text="Якщо увімкнути, логотип не відображатиметься на сайті (ні свій, ні наш)"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

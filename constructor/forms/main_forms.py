@@ -30,7 +30,8 @@ class AgentSiteForm(forms.ModelForm):
             'top_logo', 'bottom_logo', 'enlarge_logo', 'show_news', 'show_operator_logos',
             'primary_color', 'secondary_color',
             'about_us_title', 'about_us_text', 'about_us_image',
-            'favicon',  # ← ДОДАНО favicon
+            'favicon',
+            'hide_logo',  # ← ДОДАНО hide_logo
         ]
         widgets = {
             'slug': forms.TextInput(attrs={
@@ -96,6 +97,10 @@ class AgentSiteForm(forms.ModelForm):
                 'class': 'form-control',
                 'accept': 'image/png,image/svg+xml,image/x-icon,image/vnd.microsoft.icon'
             }),
+            # ДОДАНО ДЛЯ HIDE_LOGO
+            'hide_logo': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
         }
         labels = {
             'slug': 'Адреса сайту (slug)',
@@ -116,6 +121,8 @@ class AgentSiteForm(forms.ModelForm):
             'about_us_image': 'Фото для блоку "Про нас"',
             # ДОДАНО ДЛЯ FAVICON
             'favicon': 'Іконка сайту (favicon)',
+            # ДОДАНО ДЛЯ HIDE_LOGO
+            'hide_logo': 'Без логотипу (немає логотипу)',
         }
         help_texts = {
             'slug': 'Унікальна адреса вашого сайту (тільки латиниця, дефіси)',
@@ -129,6 +136,8 @@ class AgentSiteForm(forms.ModelForm):
             'about_us_image': 'Рекомендований розмір: 800×600px. Формати: JPG, PNG',
             # ДОДАНО ДЛЯ FAVICON
             'favicon': 'Іконка, яка відображається у вкладці браузера. Рекомендований розмір: 32×32px, 64×64px або 128×128px. Формати: PNG, ICO, SVG, GIF',
+            # ДОДАНО ДЛЯ HIDE_LOGO
+            'hide_logo': 'Якщо увімкнути, логотип не відображатиметься на сайті (ні свій, ні наш)',
         }
 
     def clean_slug(self):

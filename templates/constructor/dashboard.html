@@ -83,30 +83,42 @@
                 {% endif %}
             </div>
             <div class="pt-3 border-top">
-                <label>Логотипи</label>
-                <div class="mt-2">
-                    <label>Верхній логотип</label>
-                    <div class="custom-file-input">
-                        <input type="file" name="top_logo" id="id_top_logo" accept="image/png,image/svg+xml">
-                        <label for="id_top_logo">Обрати файл</label>
-                        <span id="top_logo_display">{% if agent_site.top_logo %}{{ agent_site.top_logo.name }}{% else %}Файл не вибрано{% endif %}</span>
-                    </div>
-                    <button type="button" class="clear-logo-btn" data-field="top_logo">Очистити</button>
-                </div>
-                <div class="mt-2">
-                    <label>Нижній логотип</label>
-                    <div class="custom-file-input">
-                        <input type="file" name="bottom_logo" id="id_bottom_logo" accept="image/png,image/svg+xml">
-                        <label for="id_bottom_logo">Обрати файл</label>
-                        <span id="bottom_logo_display">{% if agent_site.bottom_logo %}{{ agent_site.bottom_logo.name }}{% else %}Файл не вибрано{% endif %}</span>
-                    </div>
-                    <button type="button" class="clear-logo-btn" data-field="bottom_logo">Очистити</button>
-                </div>
-                <div class="mt-2">
-                    {{ form.enlarge_logo }}
-                    <label for="{{ form.enlarge_logo.id_for_label }}">Збільшити логотип на 25%</label>
-                </div>
-            </div>
+    <label>Логотипи</label>
+    <div class="mt-2">
+        <label>Верхній логотип</label>
+        <div class="custom-file-input">
+            <input type="file" name="top_logo" id="id_top_logo" accept="image/png,image/svg+xml">
+            <label for="id_top_logo">Обрати файл</label>
+            <span id="top_logo_display">{% if agent_site.top_logo %}{{ agent_site.top_logo.name }}{% else %}Файл не вибрано{% endif %}</span>
+        </div>
+        <button type="button" class="clear-logo-btn" data-field="top_logo">Очистити</button>
+    </div>
+    <div class="mt-2">
+        <label>Нижній логотип</label>
+        <div class="custom-file-input">
+            <input type="file" name="bottom_logo" id="id_bottom_logo" accept="image/png,image/svg+xml">
+            <label for="id_bottom_logo">Обрати файл</label>
+            <span id="bottom_logo_display">{% if agent_site.bottom_logo %}{{ agent_site.bottom_logo.name }}{% else %}Файл не вибрано{% endif %}</span>
+        </div>
+        <button type="button" class="clear-logo-btn" data-field="bottom_logo">Очистити</button>
+    </div>
+    <div class="mt-2">
+        {{ form.enlarge_logo }}
+        <label for="{{ form.enlarge_logo.id_for_label }}">Збільшити логотип на 25%</label>
+    </div>
+</div>
+            <!-- ========== БЛОК "БЕЗ ЛОГОТИПУ" (ДОДАНО ПІСЛЯ ЛОГОТИПІВ) ========== -->
+<div class="pt-3 border-top">
+    <div class="mt-2">
+        {{ form.hide_logo }}
+        <label for="{{ form.hide_logo.id_for_label }}" class="fw-semibold ms-1">Без логотипу (немає логотипу)</label>
+        <div class="form-text text-muted small mt-1">
+            <i class="fa-regular fa-circle-info"></i> Якщо увімкнути, логотип не відображатиметься на сайті (ні свій, ні наш)
+        </div>
+    </div>
+</div>
+<!-- ========== КІНЕЦЬ БЛОКУ "БЕЗ ЛОГОТИПУ" ========== -->
+
             <div class="pt-3 border-top">
                 <label>Кольорова схема</label>
                 <div class="mt-2">
