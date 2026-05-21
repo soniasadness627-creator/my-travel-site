@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <style>
 /* ========== НОВА СТИЛІСТИКА ДЛЯ ПОПУЛЯРНИХ НАПРЯМКІВ ========== */
 
-/* Оновлений стиль картки */
+/* Оновлений стиль картки - БЕЗ ПІДЙОМУ ПРИ НАВЕДЕННІ */
 .popular-tour-card {
     background: white;
     border-radius: 20px;
@@ -347,20 +347,21 @@ document.addEventListener('DOMContentLoaded', function() {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(0, 0, 0, 0.2);  /* ТОНКА ЧОРНА РАМОЧКА - ЗМІНЕНО з 0.05 на 0.2 */
+    border: 1px solid rgba(0, 0, 0, 0.2);
     flex: 0 0 auto;
     width: 280px;
+}
+
+/* ВИДАЛЯЄМО translateY - блок залишається на місці */
+.popular-tour-card:hover {
+    /* transform: translateY(-8px);  - ВИДАЛИТИ АБО ЗАКОМЕНТУВАТИ ЦЕЙ РЯДОК */
+    box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
 }
 
 @media (max-width: 768px) {
     .popular-tour-card {
         width: 260px;
     }
-}
-
-.popular-tour-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
 }
 
 /* Контейнер зображення */
@@ -437,7 +438,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .popular-tour-card:hover .popular-tour-title {
-    color: #d9bf8c;
+    color: #1a1a1a;
 }
 
 .popular-tour-location {
@@ -488,19 +489,19 @@ document.addEventListener('DOMContentLoaded', function() {
     font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #999;
+    font-weight: normal;
 }
 
 .popular-tour-price {
     font-size: 1.2rem;
-    font-weight: 800;
-    color: var(--primary-color);  /* ЗМІНЕНО - тепер колір агента */
+    font-weight: normal;
+    color: #000000;
 }
 
 .popular-tour-price small {
     font-size: 9px;
-    font-weight: 400;
-    color: #aaa;
+    font-weight: normal;
+    color: #666;
 }
 
 /* Кнопка детальніше */
