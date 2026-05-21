@@ -2052,13 +2052,14 @@ document.addEventListener('DOMContentLoaded', function() {
         hotels.forEach(hotel => {
             const priceFormatted = Math.round(hotel.price).toLocaleString('uk-UA');
             const ratingValue = hotel.rating || 9.8;
-            const fullStars = Math.floor(ratingValue);
+// Перетворюємо рейтинг з 10-бальної шкали в 5-зіркову
+const starsCount = Math.min(5, Math.floor(ratingValue / 2));  // 9.8 → 4 зірки
 
-            // Генеруємо тільки жовті зірки (без пустих)
-            let starsHtml = '';
-            for (let i = 0; i < fullStars; i++) {
-                starsHtml += '<i class="fa-solid fa-star"></i>';
-            }
+// Генеруємо тільки жовті зірки (без пустих)
+let starsHtml = '';
+for (let i = 0; i < starsCount; i++) {  // ✅ ВИПРАВЛЕНО: starsCount
+    starsHtml += '<i class="fa-solid fa-star"></i>';
+}
 
             html += `
             <div class="popular-hotel-card" onclick="goToHotelDetail('${hotel.hid}', '${hotel.oid}', '${hotel.od || ''}', '${hotel.ol || ''}')">
@@ -2142,7 +2143,7 @@ document.addEventListener('DOMContentLoaded', function() {
     background: white;
     border-radius: 16px;
     overflow: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid #000000;  /* ← ТОНЕНЬКА ЧОРНА РАМКА */
     transition: all 0.3s ease;
     cursor: pointer;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
@@ -2326,22 +2327,23 @@ document.addEventListener('DOMContentLoaded', function() {
     font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #999;
+    color: #999;  /* Світло-сірий, залишаємо */
+    font-weight: normal;
 }
 
 .popular-hotel-price-value {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #1a1a1a;
-    font-family: serif;
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: #000000;
 }
 
 .popular-hotel-price-value small {
-    font-size: 10px;
-    font-weight: 400;
-    color: #888;
+    font-size: 9px;
+    font-weight: normal;
+    color: #666;
 }
 
+/* Кнопка - змінює колір при наведенні на КАРТКУ */
 .popular-hotel-btn {
     background: transparent;
     border: 1px solid #e0e0e0;
@@ -2364,6 +2366,7 @@ document.addEventListener('DOMContentLoaded', function() {
     transition: transform 0.2s;
 }
 
+/* ЗМІНА: кнопка змінює колір при наведенні на КАРТКУ, а не на кнопку */
 .popular-hotel-card:hover .popular-hotel-btn {
     background: var(--primary-color);
     border-color: var(--primary-color);
