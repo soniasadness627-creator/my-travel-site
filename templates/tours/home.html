@@ -47,19 +47,24 @@
 
 <!-- ========== БЛОК З КНОПКОЮ ДЛЯ ПЕРЕХОДУ ДО ФОРМИ КОНСУЛЬТАЦІЇ ========== -->
 <div class="container my-5">
-    <div class="bg-gradient-to-r from-stone-900 to-stone-800 text-white rounded-3xl p-8 sm:p-12 shadow-xl relative overflow-hidden">
-        <!-- Декоративний фоновий елемент -->
-        <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
-        <div class="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl -ml-32 -mb-32"></div>
+    <div class="consult-promo-block rounded-3xl shadow-xl relative overflow-hidden cursor-pointer group">
+        <!-- Фонове зображення з ефектом збільшення при наведенні -->
+        <div class="consult-promo-bg">
+            <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&auto=format&fit=crop&q=80" alt="Travel background" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+        </div>
 
-        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+        <!-- Темне затемнення -->
+        <div class="absolute inset-0 bg-black/50 z-10"></div>
+
+        <!-- Контент -->
+        <div class="relative z-20 flex flex-col md:flex-row items-center justify-between gap-8 p-8 sm:p-12">
             <div class="text-center md:text-left">
                 <span class="text-amber-400 text-sm font-semibold uppercase tracking-wider">Потрібна допомога?</span>
-                <h3 class="text-2xl md:text-3xl font-bold mt-2 font-serif">Важко обрати тур самостійно?</h3>
-                <p class="text-stone-400 mt-2 max-w-md">Наші експерти безкоштовно підберуть для вас найкращі варіанти</p>
+                <h3 class="text-2xl md:text-3xl font-bold mt-2 font-serif text-white">Важко обрати тур самостійно?</h3>
+                <p class="text-stone-300 mt-2 max-w-md">Наші експерти безкоштовно підберуть для вас найкращі варіанти</p>
             </div>
-            <button id="scrollToConsultationBtn" class="group px-8 py-4 bg-amber-500 hover:bg-amber-600 text-stone-900 font-bold rounded-xl transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl hover:-translate-y-1 cursor-pointer">
-                Отримати консультацію
+            <button id="scrollToConsultationBtn" class="consult-promo-btn group px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl cursor-pointer">
+                Скласти індивідуальний маршрут
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform">
                     <path d="M5 12h14"></path>
                     <path d="m12 5 7 7-7 7"></path>
@@ -69,29 +74,77 @@
     </div>
 </div>
 
+<style>
+/* Стилі для блоку */
+.consult-promo-block {
+    position: relative;
+    min-height: 240px;
+    overflow: hidden;
+}
+
+.consult-promo-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.consult-promo-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s ease-out;
+}
+
+.consult-promo-block:hover .consult-promo-bg img {
+    transform: scale(1.05);
+}
+
+/* Стилі для кнопки */
+.consult-promo-btn {
+    background-color: #e0c285;
+    color: #1a1a1a;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.consult-promo-btn:hover {
+    transform: scale(1.02);
+    background-color: #d4b570;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+.consult-promo-btn:active {
+    transform: scale(0.98);
+}
+
+/* Текст на білому фоні тепер видно */
+.consult-promo-block h3,
+.consult-promo-block p {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+</style>
+
 <script>
 // Плавний скрол до форми консультації
 document.addEventListener('DOMContentLoaded', function() {
     const scrollBtn = document.getElementById('scrollToConsultationBtn');
     if (scrollBtn) {
-        scrollBtn.addEventListener('click', function(e) {
+        // Прибираємо старий обробник, якщо був
+        const newBtn = scrollBtn.cloneNode(true);
+        scrollBtn.parentNode.replaceChild(newBtn, scrollBtn);
+
+        newBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            // Шукаємо блок консультації за ID
+            e.stopPropagation();
             const consultationSection = document.getElementById('consultationCard');
             if (consultationSection) {
                 consultationSection.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'
                 });
-            } else {
-                // Якщо не знайшли за ID, шукаємо за класом
-                const consultationSectionAlt = document.querySelector('#consultationCard, .consultation-block, .row.justify-content-center.my-5');
-                if (consultationSectionAlt) {
-                    consultationSectionAlt.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
             }
         });
     }
