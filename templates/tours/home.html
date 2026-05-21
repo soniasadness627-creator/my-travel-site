@@ -2071,5 +2071,15 @@ console.log('searchByCityAndCountry існує:', typeof window.searchByCityAndC
 .city-slider-container::-webkit-scrollbar {
     display: none;
 }
+    /* Прибираємо обмеження висоти */
+.city-buttons-wrapper {
+    overflow: visible !important;
+}
+
+.city-slider-container {
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    padding: 5px 0 15px 0 !important;
+}
 </style>
 {% endblock %}
