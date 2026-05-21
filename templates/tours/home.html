@@ -56,21 +56,22 @@
                 <img src="https://export.otpusk.com/os/ajax-loader.gif"/><span></span>
             </div>
             <script>
-var osTarget28113 = "{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/{% else %}/search-otpusk/{% endif %}";                var osLang = "uk"; /* мова інтерфейсу (uk|ru|en) */
-                var osCurrency = "converted"; /* валюта в турах: original для гривны, converted для долларов или евро  */
-                var osTargetBlank28113 = false; /* true для открытия тура в новом окне  */
+    var osTarget28113 = "/search-otpusk/";  // ← ВИПРАВЛЕНО!
+    var osLang = "uk";
+    var osCurrency = "converted";
+    var osTargetBlank28113 = false;
 
-                (function (d, s) {
-                    function loadScript(src, id, callback) {if (d.getElementById(id)) {if (typeof callback === "function") callback();return;}var js = d.createElement(s);js.id = id;js.src = src;js.defer = true;js.onload = function () {if (typeof callback === "function") callback();};d.head.appendChild(js);}
-                    if (!window._otpuskApiLoaded) {window._otpuskApiLoaded = true;
-                        loadScript("https://export.otpusk.com/api/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca", "OShotApi28113", function () {
-                            loadScript("https://export.otpusk.com/js/view?id=28113", "OShotGetData28113");
-                        });
-                    } else {
-                        loadScript("https://export.otpusk.com/js/view?id=28113", "OShotGetData28113");
-                    }
-                }(document, "script"));
-            </script>
+    (function (d, s) {
+        function loadScript(src, id, callback) {if (d.getElementById(id)) {if (typeof callback === "function") callback();return;}var js = d.createElement(s);js.id = id;js.src = src;js.defer = true;js.onload = function () {if (typeof callback === "function") callback();};d.head.appendChild(js);}
+        if (!window._otpuskApiLoaded) {window._otpuskApiLoaded = true;
+            loadScript("https://export.otpusk.com/api/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca", "OShotApi28113", function () {
+                loadScript("https://export.otpusk.com/js/view?id=28113", "OShotGetData28113");
+            });
+        } else {
+            loadScript("https://export.otpusk.com/js/view?id=28113", "OShotGetData28113");
+        }
+    }(document, "script"));
+</script>
         </div>
     </div>
 </div>
