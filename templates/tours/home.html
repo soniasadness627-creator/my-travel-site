@@ -1940,4 +1940,33 @@ console.log('searchByCityAndCountry існує:', typeof window.searchByCityAndC
 //     searchByCountry('Єгипет', 'з Кишинева');
 // }, 3000);
 </script>
+<style>
+/* ========== ЦЕНТРУВАННЯ БЛОКУ ГАРЯЧИХ ТУРІВ ========== */
+.hot-block_tiles .hot-wrapper {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 20px !important;
+    margin: 0 auto !important;
+}
+
+.hot-block_tiles .hot-otp-form-wrap {
+    margin: 0 !important;
+    flex: 0 0 auto !important;
+}
+
+/* Для більш рівномірного відображення на різних екранах */
+@media (min-width: 1200px) {
+    .hot-block_tiles .hot-wrapper {
+        justify-content: center !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .hot-block_tiles .hot-wrapper {
+        justify-content: center !important;
+        gap: 15px !important;
+    }
+}
+</style>
 {% endblock %}
