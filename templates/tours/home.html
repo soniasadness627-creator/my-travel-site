@@ -2023,5 +2023,53 @@ console.log('searchByCityAndCountry існує:', typeof window.searchByCityAndC
     box-shadow: 0 0 0 100vmax #e8f0e3;
     clip-path: inset(0 -100vmax);
 }
+    /* ========== ВИПРАВЛЕННЯ ФОНУ ТА КНОПОК МІСТ ========== */
+
+/* 1. Збільшуємо відступи для фону блоку "Тури з вашого міста" */
+.city-tours-wrapper {
+    background-color: #e8f0e3;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding: 60px 0 !important;  /* Збільшено з 40px до 60px */
+}
+
+/* Додаткові відступи для мобільних */
+@media (max-width: 768px) {
+    .city-tours-wrapper {
+        padding: 40px 0 !important;
+    }
+}
+
+/* 2. Виправляємо обрізання кнопок міст при наведенні */
+.city-btn {
+    transition: all 0.3s ease;
+    overflow: visible !important;  /* Дозволяє елементу виходити за межі */
+    position: relative;
+    z-index: 10;
+}
+
+.city-btn:hover {
+    transform: translateY(-3px);  /* Зменшуємо підйом з -5px до -3px */
+    background: var(--primary-light);
+    border-color: var(--primary-color);
+}
+
+/* Контейнер кнопок - не обрізаємо */
+.city-buttons-wrapper {
+    overflow: visible !important;
+    padding-bottom: 5px;
+}
+
+/* Карусель міст - дозволяє видимість при наведенні */
+.city-slider-container {
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    padding-bottom: 10px;
+}
+
+/* Додатковий простір для кнопок */
+.city-slider-container::-webkit-scrollbar {
+    display: none;
+}
 </style>
 {% endblock %}
