@@ -1123,14 +1123,14 @@ function selectCalendarDate(dateISO, price, nights) {
     background: white;
     border-radius: 16px;
     overflow: hidden;
-    border: 1px solid #e9ecef;
+    border: 1px solid #000000;  /* ← ТОНЕНЬКА ЧОРНА РАМКА (було #e9ecef) */
     transition: all 0.3s ease;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .country-card:hover {
-    transform: translateY(-5px);
+    /* transform: translateY(-5px); - ВИДАЛИТИ АБО ЗАКОМЕНТУВАТИ */
     box-shadow: 0 12px 24px rgba(0,0,0,0.1);
 }
 
@@ -1138,6 +1138,15 @@ function selectCalendarDate(dateISO, price, nights) {
     width: 100%;
     height: 160px;
     object-fit: cover;
+    transition: transform 0.5s ease-out;
+}
+
+.country-card {
+    overflow: hidden;  /* ДОДАТИ, щоб фото не виходило за межі */
+}
+
+.country-card:hover .country-img {
+    transform: scale(1.08);
 }
 
 .country-info {
@@ -1167,15 +1176,15 @@ function selectCalendarDate(dateISO, price, nights) {
 }
 
 .country-price {
-    font-weight: 700;
+    font-weight: normal;
     font-size: 1rem;
-    color: var(--primary-color);
+    color: #000000;
 }
 
 .country-price small {
     font-size: 0.7rem;
-    font-weight: 400;
-    color: #64748b;
+    font-weight: normal;
+    color: #888;
 }
 
 /* Стилі для каруселі міст */
