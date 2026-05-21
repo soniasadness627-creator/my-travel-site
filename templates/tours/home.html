@@ -44,7 +44,37 @@
     <script src="https://export.otpusk.com/js/onsite/"></script>
     <script src="https://export.otpusk.com/js/order"></script>
 </div>
+<!-- ========== БЛОК ГАРЯЧИХ ТУРІВ ВІД OTPUSK (ДОДАНО) ========== -->
+<div class="container my-5">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-white py-3 px-4 border-0">
+            <h3 class="fw-bold mb-0" style="color: #000000;">Гарячі тури</h3>
+        </div>
+        <div class="card-body p-4">
+            <!-- ТУТ ВСТАВИТИ ВЕСЬ КОД, ЯКИЙ ВИ НАДАЛИ -->
+            <div class="hot-size-checker" id="otpusk_onsite_hot28113">
+                <img src="https://export.otpusk.com/os/ajax-loader.gif"/><span></span>
+            </div>
+            <script>
+var osTarget28113 = "{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/{% else %}/search-otpusk/{% endif %}";                var osLang = "uk"; /* мова інтерфейсу (uk|ru|en) */
+                var osCurrency = "converted"; /* валюта в турах: original для гривны, converted для долларов или евро  */
+                var osTargetBlank28113 = false; /* true для открытия тура в новом окне  */
 
+                (function (d, s) {
+                    function loadScript(src, id, callback) {if (d.getElementById(id)) {if (typeof callback === "function") callback();return;}var js = d.createElement(s);js.id = id;js.src = src;js.defer = true;js.onload = function () {if (typeof callback === "function") callback();};d.head.appendChild(js);}
+                    if (!window._otpuskApiLoaded) {window._otpuskApiLoaded = true;
+                        loadScript("https://export.otpusk.com/api/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca", "OShotApi28113", function () {
+                            loadScript("https://export.otpusk.com/js/view?id=28113", "OShotGetData28113");
+                        });
+                    } else {
+                        loadScript("https://export.otpusk.com/js/view?id=28113", "OShotGetData28113");
+                    }
+                }(document, "script"));
+            </script>
+        </div>
+    </div>
+</div>
+<!-- ========== КІНЕЦЬ БЛОКУ ГАРЯЧИХ ТУРІВ ========== -->
 <!-- ========== ВСІ БЛОКИ В ПОРЯДКУ (згідно з налаштуваннями конструктора) ========== -->
 {% for block in active_blocks %}
     {% if block == 'price_calendar' %}
