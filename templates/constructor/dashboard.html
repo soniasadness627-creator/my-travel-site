@@ -118,7 +118,42 @@
     </div>
 </div>
 <!-- ========== КІНЕЦЬ БЛОКУ "БЕЗ ЛОГОТИПУ" ========== -->
+<!-- ========== БЛОК СОЦІАЛЬНИХ МЕРЕЖ (ДОДАНО ПІСЛЯ БЕЗ ЛОГОТИПУ) ========== -->
+<div class="pt-3 border-top">
+    <label class="fw-bold mb-2">Соціальні мережі</label>
+    <p class="text-muted small mb-3">Додайте посилання на ваші соціальні мережі. Вони відображатимуться у футері сайту.</p>
 
+    <div class="mb-3">
+        <label class="form-label small fw-bold"><i class="fa-brands fa-youtube me-1"></i> YouTube</label>
+        {{ form.social_youtube }}
+        <div class="form-text text-muted small">{{ form.social_youtube.help_text }}</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label small fw-bold"><i class="fa-brands fa-tiktok me-1"></i> TikTok</label>
+        {{ form.social_tiktok }}
+        <div class="form-text text-muted small">{{ form.social_tiktok.help_text }}</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label small fw-bold"><i class="fa-brands fa-instagram me-1"></i> Instagram</label>
+        {{ form.social_instagram }}
+        <div class="form-text text-muted small">{{ form.social_instagram.help_text }}</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label small fw-bold"><i class="fa-brands fa-facebook me-1"></i> Facebook</label>
+        {{ form.social_facebook }}
+        <div class="form-text text-muted small">{{ form.social_facebook.help_text }}</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label small fw-bold"><i class="fa-brands fa-telegram me-1"></i> Telegram</label>
+        {{ form.social_telegram }}
+        <div class="form-text text-muted small">{{ form.social_telegram.help_text }}</div>
+    </div>
+</div>
+<!-- ========== КІНЕЦЬ БЛОКУ СОЦІАЛЬНИХ МЕРЕЖ ========== -->
             <div class="pt-3 border-top">
                 <label>Кольорова схема</label>
                 <div class="mt-2">

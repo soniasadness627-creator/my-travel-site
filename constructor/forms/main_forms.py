@@ -31,7 +31,8 @@ class AgentSiteForm(forms.ModelForm):
             'primary_color', 'secondary_color',
             'about_us_title', 'about_us_text', 'about_us_image',
             'favicon',
-            'hide_logo',  # ← ДОДАНО hide_logo
+            'hide_logo',
+            'social_youtube', 'social_tiktok', 'social_instagram', 'social_facebook', 'social_telegram',
         ]
         widgets = {
             'slug': forms.TextInput(attrs={
@@ -101,6 +102,27 @@ class AgentSiteForm(forms.ModelForm):
             'hide_logo': forms.CheckboxInput(attrs={
                 'class': 'form-check-input'
             }),
+            # ДОДАНО ДЛЯ СОЦІАЛЬНИХ МЕРЕЖ
+            'social_youtube': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://youtube.com/...'
+            }),
+            'social_tiktok': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://tiktok.com/...'
+            }),
+            'social_instagram': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://instagram.com/...'
+            }),
+            'social_facebook': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://facebook.com/...'
+            }),
+            'social_telegram': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://t.me/...'
+            }),
         }
         labels = {
             'slug': 'Адреса сайту (slug)',
@@ -123,6 +145,12 @@ class AgentSiteForm(forms.ModelForm):
             'favicon': 'Іконка сайту (favicon)',
             # ДОДАНО ДЛЯ HIDE_LOGO
             'hide_logo': 'Без логотипу (немає логотипу)',
+            # ДОДАНО ДЛЯ СОЦІАЛЬНИХ МЕРЕЖ
+            'social_youtube': 'YouTube',
+            'social_tiktok': 'TikTok',
+            'social_instagram': 'Instagram',
+            'social_facebook': 'Facebook',
+            'social_telegram': 'Telegram',
         }
         help_texts = {
             'slug': 'Унікальна адреса вашого сайту (тільки латиниця, дефіси)',
@@ -138,6 +166,12 @@ class AgentSiteForm(forms.ModelForm):
             'favicon': 'Іконка, яка відображається у вкладці браузера. Рекомендований розмір: 32×32px, 64×64px або 128×128px. Формати: PNG, ICO, SVG, GIF',
             # ДОДАНО ДЛЯ HIDE_LOGO
             'hide_logo': 'Якщо увімкнути, логотип не відображатиметься на сайті (ні свій, ні наш)',
+            # ДОДАНО ДЛЯ СОЦІАЛЬНИХ МЕРЕЖ
+            'social_youtube': 'Вставте повне посилання на ваш YouTube канал',
+            'social_tiktok': 'Вставте повне посилання на ваш TikTok',
+            'social_instagram': 'Вставте повне посилання на ваш Instagram',
+            'social_facebook': 'Вставте повне посилання на вашу Facebook сторінку',
+            'social_telegram': 'Вставте повне посилання на ваш Telegram канал або чат',
         }
 
     def clean_slug(self):

@@ -531,19 +531,32 @@
                                 </p>
                                 <div class="mt-auto">
                                     <div class="d-flex gap-3 mt-3">
-                                        <a href="https://www.youtube.com/@Enjoy-World" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
-                                            <i class="fa-brands fa-youtube fa-lg"></i>
-                                        </a>
-                                        <a href="https://www.tiktok.com/@kozlovskyi_official" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
-                                            <i class="fa-brands fa-tiktok fa-lg"></i>
-                                        </a>
-                                        <a href="https://www.instagram.com/kozlovsky_official/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
-                                            <i class="fa-brands fa-instagram fa-lg"></i>
-                                        </a>
-                                        <a href="https://www.facebook.com/Kozlovskyi/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
-                                            <i class="fa-brands fa-facebook fa-lg"></i>
-                                        </a>
-                                    </div>
+    {% if agent_site.social_youtube %}
+        <a href="{{ agent_site.social_youtube }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+            <i class="fa-brands fa-youtube fa-lg"></i>
+        </a>
+    {% endif %}
+    {% if agent_site.social_tiktok %}
+        <a href="{{ agent_site.social_tiktok }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+            <i class="fa-brands fa-tiktok fa-lg"></i>
+        </a>
+    {% endif %}
+    {% if agent_site.social_instagram %}
+        <a href="{{ agent_site.social_instagram }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+            <i class="fa-brands fa-instagram fa-lg"></i>
+        </a>
+    {% endif %}
+    {% if agent_site.social_facebook %}
+        <a href="{{ agent_site.social_facebook }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+            <i class="fa-brands fa-facebook fa-lg"></i>
+        </a>
+    {% endif %}
+    {% if agent_site.social_telegram %}
+        <a href="{{ agent_site.social_telegram }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+            <i class="fa-brands fa-telegram fa-lg"></i>
+        </a>
+    {% endif %}
+</div>
                                 </div>
                             </div>
                             <div class="col-md-6">

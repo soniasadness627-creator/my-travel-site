@@ -69,6 +69,38 @@ class AgentSite(models.Model):
         help_text="Якщо увімкнути, логотип не відображатиметься на сайті (ні свій, ні наш)"
     )
 
+    # ========== СОЦІАЛЬНІ МЕРЕЖІ ==========
+    social_youtube = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="YouTube",
+        help_text="Посилання на YouTube канал"
+    )
+    social_tiktok = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="TikTok",
+        help_text="Посилання на TikTok"
+    )
+    social_instagram = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Instagram",
+        help_text="Посилання на Instagram"
+    )
+    social_facebook = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Facebook",
+        help_text="Посилання на Facebook сторінку"
+    )
+    social_telegram = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Telegram",
+        help_text="Посилання на Telegram канал або чат"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
