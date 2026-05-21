@@ -731,6 +731,68 @@
         padding: 0 15px;
     }
 }
+    /* ========== ВІДГУКИ - АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ ========== */
+@media (max-width: 768px) {
+    /* Контейнер відгуків - на всю ширину */
+    .reviews-list {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Кожна картка відгуку - на всю ширину */
+    .review-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: auto !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Внутрішній контейнер */
+    #reviews-section .card-body.p-4 {
+        padding: 1rem !important;
+    }
+
+    /* Сітка відгуків */
+    .reviews-list {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+
+    /* Заголовок відгуку - гнучке розташування */
+    .review-header {
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+    }
+
+    /* Ім'я автора */
+    .reviewer-name {
+        font-size: 1rem !important;
+    }
+
+    /* Дата */
+    .review-date {
+        font-size: 0.7rem !important;
+    }
+
+    /* Текст відгуку */
+    .review-comment {
+        font-size: 0.85rem !important;
+        line-height: 1.4 !important;
+    }
+
+    /* Зірки */
+    .review-rating {
+        margin-bottom: 8px !important;
+    }
+    .review-rating i {
+        font-size: 0.8rem !important;
+    }
+}
 </style>
 </body>
 </html>
