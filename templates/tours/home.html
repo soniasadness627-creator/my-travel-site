@@ -56,16 +56,15 @@
         <!-- Темне затемнення для читабельності тексту -->
         <div class="absolute inset-0 bg-black/50 z-10"></div>
 
-        <!-- Контент поверх фото -->
-        <div class="relative z-20 flex flex-col md:flex-row items-center justify-between gap-8 p-8 sm:p-12 min-h-[300px]">
-            <div class="text-center md:text-left">
-                <span class="text-amber-400 text-sm font-semibold uppercase tracking-wider">Потрібна допомога?</span>
-                <h3 class="text-2xl md:text-3xl font-bold mt-2 font-serif text-white">Важко обрати тур самостійно?</h3>
-                <p class="text-white/80 mt-2 max-w-md">Наші експерти безкоштовно підберуть для вас найкращі варіанти</p>
-            </div>
-            <button id="scrollToConsultationBtn" class="consult-promo-btn group px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl cursor-pointer">
+        <!-- Контент поверх фото - все вертикально по центру -->
+        <div class="relative z-20 flex flex-col items-center justify-center text-center p-8 sm:p-12 min-h-[350px]">
+            <span class="text-amber-400 text-sm font-semibold uppercase tracking-wider mb-3">Потрібна допомога?</span>
+            <h3 class="text-2xl md:text-3xl font-bold font-serif text-white mb-4">Важко обрати тур самостійно?</h3>
+            <p class="text-white/80 text-base max-w-md mx-auto mb-8">Наші експерти безкоштовно підберуть для вас найкращі варіанти</p>
+
+            <button id="scrollToConsultationBtn" class="consult-promo-btn inline-flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer">
                 Скласти індивідуальний маршрут
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon transition-transform duration-300 group-hover:translate-x-1">
                     <path d="M5 12h14"></path>
                     <path d="m12 5 7 7-7 7"></path>
                 </svg>
@@ -78,8 +77,8 @@
 /* Стилі для блоку */
 .consult-promo-block {
     position: relative;
-    min-height: 350px;
-    border-radius: 24px;
+    min-height: 380px;
+    border-radius: 28px;
     overflow: hidden;
     box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.2);
 }
@@ -113,18 +112,55 @@
     z-index: 10;
 }
 
-/* Контент поверх фото */
+/* Контент поверх фото - центруємо */
 .consult-promo-block .relative.z-20 {
     position: relative;
     z-index: 20;
-    min-height: 350px;
+    min-height: 380px;
     display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+}
+
+/* Кнопка - нові кольори */
+.consult-promo-btn {
+    background-color: #d9bf8c;
+    color: #ffffff;
+    border: none;
+    padding: 12px 32px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: auto;
+    min-width: 265px;
+    height: 44px;
+}
+
+/* Стрілочка всередині кнопки */
+.consult-promo-btn .arrow-icon {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Ефект при наведенні на кнопку */
+.consult-promo-btn:hover {
+    transform: scale(1.02);
+    background-color: #c9ad7a;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* Ефект при натисканні */
+.consult-promo-btn:active {
+    transform: scale(0.98);
 }
 
 /* Текст */
 .consult-promo-block h3 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 12px;
     color: white;
@@ -135,56 +171,48 @@
     font-size: 1rem;
     color: rgba(255, 255, 255, 0.9);
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
 }
 
 .consult-promo-block span {
-    color: #e0c285;
+    color: #d9bf8c;
     font-size: 0.85rem;
     letter-spacing: 2px;
-}
-
-/* Кнопка */
-.consult-promo-btn {
-    background-color: #e0c285;
-    color: #1a1a1a;
-    border: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.consult-promo-btn:hover {
-    transform: scale(1.02);
-    background-color: #d4b570;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
 }
 
 /* Для мобільних */
 @media (max-width: 768px) {
     .consult-promo-block {
-        min-height: 280px;
+        min-height: 320px;
+        border-radius: 20px;
     }
     .consult-promo-block .relative.z-20 {
-        min-height: 280px;
+        min-height: 320px;
         padding: 30px 20px !important;
-        flex-direction: column !important;
-        text-align: center !important;
     }
     .consult-promo-block h3 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
     .consult-promo-block p {
         font-size: 0.85rem;
+        padding: 0 10px;
     }
     .consult-promo-btn {
         padding: 10px 20px;
         font-size: 0.85rem;
+        min-width: 240px;
+        height: 42px;
+    }
+    .consult-promo-btn .arrow-icon {
+        width: 16px;
+        height: 16px;
     }
 }
 
 /* Для планшетів */
 @media (min-width: 768px) and (max-width: 1024px) {
     .consult-promo-block {
-        min-height: 300px;
+        min-height: 340px;
     }
     .consult-promo-block h3 {
         font-size: 1.6rem;
