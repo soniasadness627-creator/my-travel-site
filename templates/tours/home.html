@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function() {
     z-index: 1;
 }
 
-/* Бейджик рейтингу */
+/* Оновлений бейджик рейтингу - БЕЗ ЗІРОЧОК */
 .popular-tour-rating {
     position: absolute;
     top: 12px;
@@ -639,9 +639,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop'">
                     <div class="popular-tour-gradient"></div>
                     <div class="popular-tour-rating">
-                        <i class="fa-solid fa-star"></i>
-                        <span>${rating.toFixed(1)} / 10</span>
-                    </div>
+    <span>${rating.toFixed(1)} / 10</span>
+</div>
                 </div>
                 <!-- Інформація про тур -->
                 <div class="popular-tour-info">
