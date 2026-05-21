@@ -330,129 +330,224 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <div class="popular-slider-container" style="position: relative; overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
                     <div class="popular-slider-track d-flex gap-3" id="popularToursTrack">
-                        <div class="text-center py-5 w-100">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Завантаження...</span>
-                            </div>
-                            <p class="mt-3 text-muted">Завантаження популярних напрямків...</p>
-                        </div>
+                        <!-- Картки будуть генеруватися JavaScript -->
                     </div>
                 </div>
             </div>
         </div>
 
 <style>
-.popular-slider-container::-webkit-scrollbar {
-    display: none;
-}
+/* ========== НОВА СТИЛІСТИКА ДЛЯ ПОПУЛЯРНИХ НАПРЯМКІВ ========== */
 
+/* Оновлений стиль картки */
 .popular-tour-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.05);
     flex: 0 0 auto;
     width: 280px;
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid #e9ecef;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-
-.popular-tour-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
-}
-
-.popular-tour-img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-}
-
-.popular-tour-info {
-    padding: 15px;
-}
-
-.popular-tour-hotel {
-    font-weight: 700;
-    font-size: 1rem;
-    color: #1e293b;
-    margin-bottom: 8px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.popular-tour-location {
-    font-size: 0.75rem;
-    color: #64748b;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.popular-tour-stars {
-    display: flex;
-    gap: 2px;
-    margin-bottom: 10px;
-}
-
-.popular-tour-stars i {
-    font-size: 11px;
-    color: #f59e0b;
-}
-
-.popular-tour-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #e9ecef;
-}
-
-.popular-tour-price {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--primary-color);
-}
-
-.popular-tour-price small {
-    font-size: 0.7rem;
-    font-weight: 400;
-    color: #64748b;
-}
-
-.popular-tour-btn {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-
-.popular-tour-btn:hover {
-    background: var(--primary-dark);
-    transform: scale(1.02);
 }
 
 @media (max-width: 768px) {
     .popular-tour-card {
         width: 260px;
     }
-    .popular-tour-img {
-        height: 150px;
-    }
+}
+
+.popular-tour-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+}
+
+/* Контейнер зображення */
+.popular-tour-img-wrapper {
+    position: relative;
+    overflow: hidden;
+    height: 220px;
+}
+
+.popular-tour-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease-out;
+}
+
+.popular-tour-card:hover .popular-tour-img {
+    transform: scale(1.08);
+}
+
+/* Градієнт поверх зображення */
+.popular-tour-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.1) 100%);
+    z-index: 1;
+}
+
+/* Бейджик рейтингу */
+.popular-tour-rating {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    padding: 4px 10px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #1a1a1a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.popular-tour-rating i {
+    color: #f5a623;
+    font-size: 11px;
+}
+
+/* Інформація про тур */
+.popular-tour-info {
+    padding: 16px;
+}
+
+.popular-tour-country {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #d9bf8c;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.popular-tour-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+    transition: color 0.2s;
+}
+
+.popular-tour-card:hover .popular-tour-title {
+    color: #d9bf8c;
+}
+
+.popular-tour-location {
+    font-size: 11px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.popular-tour-location i {
+    font-size: 10px;
+}
+
+/* Деталі туру */
+.popular-tour-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.popular-tour-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    color: #666;
+}
+
+.popular-tour-detail-item i {
+    font-size: 10px;
+    color: #bbb;
+}
+
+/* Ціна */
+.popular-tour-price-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.popular-tour-price-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #999;
+}
+
+.popular-tour-price {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #d9bf8c;
+}
+
+.popular-tour-price small {
+    font-size: 9px;
+    font-weight: 400;
+    color: #aaa;
+}
+
+/* Кнопка детальніше */
+.popular-tour-btn {
+    background: transparent;
+    border: 1px solid #e0e0e0;
+    border-radius: 30px;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #555;
+    transition: all 0.3s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.popular-tour-btn i {
+    font-size: 10px;
+    transition: transform 0.2s;
+}
+
+.popular-tour-card:hover .popular-tour-btn {
+    background: #d9bf8c;
+    border-color: #d9bf8c;
+    color: white;
+}
+
+.popular-tour-card:hover .popular-tour-btn i {
+    transform: translateX(3px);
+}
+
+/* Слайдер */
+.popular-slider-container::-webkit-scrollbar {
+    display: none;
+}
+
+.popular-slider-track {
+    display: flex;
+    gap: 20px;
+    transition: transform 0.3s ease;
 }
 </style>
 
 <script>
-// ========== БЛОК ПОПУЛЯРНИХ ТУРІВ ==========
+// ========== ОНОВЛЕНИЙ БЛОК ПОПУЛЯРНИХ ТУРІВ З НОВОЮ СТИЛІСТИКОЮ ==========
 document.addEventListener('DOMContentLoaded', function() {
     const track = document.getElementById('popularToursTrack');
     if (!track) return;
@@ -479,11 +574,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function renderStars(rating) {
         let starsHtml = '';
-        for (let i = 0; i < rating; i++) {
-            starsHtml += '<i class="fa-solid fa-star"></i>';
-        }
-        for (let i = rating; i < 5; i++) {
-            starsHtml += '<i class="fa-regular fa-star"></i>';
+        for (let i = 0; i < 5; i++) {
+            if (i < rating) {
+                starsHtml += '<i class="fa-solid fa-star"></i>';
+            } else {
+                starsHtml += '<i class="fa-regular fa-star"></i>';
+            }
         }
         return starsHtml;
     }
@@ -495,23 +591,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return div.innerHTML;
     }
 
-    // ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА ПОШУК (з передачею міста вильоту)
-   window.searchByCountry = function(country, departureText) {
-    let baseUrl = '/search-otpusk-by-country/';  // ← ВИПРАВЛЕНО!
-    const pathParts = window.location.pathname.split('/');
-    for (let i = 0; i < pathParts.length; i++) {
-        if (pathParts[i] === 'a' && pathParts[i + 1]) {
-            baseUrl = `/a/${pathParts[i + 1]}/search-otpusk-by-country/`;  // ← ВИПРАВЛЕНО!
-            break;
-        }
-    }
-    const params = new URLSearchParams();
-    params.set('country', country);
-    params.set('from', departureText || 'Кишинів');
-    window.location.href = `${baseUrl}?${params.toString()}`;
-};
-
-    // ФУНКЦІЯ ДЛЯ ВІДОБРАЖЕННЯ ТУРІВ
     function renderTours(tours) {
         if (!track) return;
 
@@ -521,42 +600,54 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         let html = '';
-        tours.forEach(tour => {
-            const starsHtml = renderStars(5);
+        tours.forEach((tour, index) => {
+            const rating = tour.rating || 9.8;
+            const starsHtml = renderStars(Math.floor(rating / 2));
             const priceFormatted = Math.round(tour.price).toLocaleString('uk-UA');
-            const hotelName = tour.hotel || `${tour.country} - ${tour.city}`;
+            const hotelName = tour.hotel || tour.country;
             const countryName = tour.country;
             const cityName = tour.city || 'популярний курорт';
-
-            // Отримуємо місто вильоту з API
-            const departureText = tour.departure_text || tour.departure || '';
+            const departureText = tour.departure_text || tour.departure || 'з Кишинева';
+            const nights = tour.nights || '7-9';
 
             html += `
-            <div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(countryName)}', '${escapeHtml(departureText)}')">
-    <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='https://images.pexels.com/photos/1464703/pexels-photo-1464703.jpeg?w=400&h=250&fit=crop'">
-    <div class="popular-tour-info">
-        <div class="popular-tour-hotel">${escapeHtml(hotelName)}</div>
-        <div class="popular-tour-location">
-            <i class="fa-regular fa-location-dot"></i>
-            ${escapeHtml(countryName)}, ${escapeHtml(cityName)}
-        </div>
-        <div class="popular-tour-departure" style="font-size: 0.7rem; color: #64748b; margin-bottom: 8px;">
-            <i class="fa-regular fa-plane"></i> Виліт: ${escapeHtml(departureText || 'з Кишинева')}
-        </div>
-        <div class="popular-tour-stars">
-            ${starsHtml}
-        </div>
-        <div class="popular-tour-footer">
-            <div class="popular-tour-price">
-                ${priceFormatted} ₴
-                <small>за тур</small>
-            </div>
-            <button class="popular-tour-btn" onclick="event.stopPropagation(); searchByCountry('${encodeURIComponent(countryName)}', '${escapeHtml(departureText)}')">
-                Дивитись
-            </button>
-        </div>
-    </div>
-</div>
+                <div class="popular-tour-card" onclick="searchByCountry('${encodeURIComponent(countryName)}', '${escapeHtml(departureText)}')">
+                    <div class="popular-tour-img-wrapper">
+                        <img class="popular-tour-img" src="${tour.image}" alt="${escapeHtml(countryName)}" onerror="this.src='/static/images/default-tour.jpg'">
+                        <div class="popular-tour-gradient"></div>
+                        <div class="popular-tour-rating">
+                            <i class="fa-solid fa-star"></i>
+                            <span>${rating.toFixed(1)} / 10</span>
+                        </div>
+                    </div>
+                    <div class="popular-tour-info">
+                        <span class="popular-tour-country">${escapeHtml(countryName)}</span>
+                        <h4 class="popular-tour-title">${escapeHtml(hotelName)}</h4>
+                        <div class="popular-tour-location">
+                            <i class="fa-regular fa-location-dot"></i>
+                            <span>${escapeHtml(cityName)}</span>
+                        </div>
+                        <div class="popular-tour-details">
+                            <div class="popular-tour-detail-item">
+                                <i class="fa-regular fa-plane"></i>
+                                <span>Виліт: ${escapeHtml(departureText)}</span>
+                            </div>
+                            <div class="popular-tour-detail-item">
+                                <i class="fa-regular fa-moon"></i>
+                                <span>${nights} ночей</span>
+                            </div>
+                        </div>
+                        <div class="popular-tour-price-section">
+                            <div>
+                                <div class="popular-tour-price-label">Вартість від</div>
+                                <div class="popular-tour-price">${priceFormatted} ₴ <small>за тур</small></div>
+                            </div>
+                            <button class="popular-tour-btn" onclick="event.stopPropagation(); searchByCountry('${encodeURIComponent(countryName)}', '${escapeHtml(departureText)}')">
+                                Дивитись <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             `;
         });
 
@@ -570,13 +661,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (prevBtn && sliderContainer) {
         prevBtn.addEventListener('click', () => {
-            sliderContainer.scrollBy({ left: -300, behavior: 'smooth' });
+            sliderContainer.scrollBy({ left: -320, behavior: 'smooth' });
         });
     }
 
     if (nextBtn && sliderContainer) {
         nextBtn.addEventListener('click', () => {
-            sliderContainer.scrollBy({ left: 300, behavior: 'smooth' });
+            sliderContainer.scrollBy({ left: 320, behavior: 'smooth' });
         });
     }
 
