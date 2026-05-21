@@ -53,17 +53,32 @@
         <div class="card-body p-4">
             <!-- ТУТ ВСТАВИТИ ВЕСЬ КОД, ЯКИЙ ВИ НАДАЛИ -->
             <div class="hot-size-checker" id="otpusk_onsite_hot28113">
-                <img src="https://export.otpusk.com/os/ajax-loader.gif"/><span></span>
-            </div>
-            <script>
-    var osTarget28113 = "/search-otpusk/";  // ← ВИПРАВЛЕНО!
+    <img src="https://export.otpusk.com/os/ajax-loader.gif"/><span></span>
+</div>
+<script>
+    var osTarget28113 = "/search-otpusk/";
     var osLang = "uk";
     var osCurrency = "converted";
     var osTargetBlank28113 = false;
+    var osCacheBuster = Date.now(); // Додано для оновлення кешу
 
     (function (d, s) {
-        function loadScript(src, id, callback) {if (d.getElementById(id)) {if (typeof callback === "function") callback();return;}var js = d.createElement(s);js.id = id;js.src = src;js.defer = true;js.onload = function () {if (typeof callback === "function") callback();};d.head.appendChild(js);}
-        if (!window._otpuskApiLoaded) {window._otpuskApiLoaded = true;
+        function loadScript(src, id, callback) {
+            if (d.getElementById(id)) {
+                if (typeof callback === "function") callback();
+                return;
+            }
+            var js = d.createElement(s);
+            js.id = id;
+            js.src = src + '?_=' + osCacheBuster;
+            js.defer = true;
+            js.onload = function () {
+                if (typeof callback === "function") callback();
+            };
+            d.head.appendChild(js);
+        }
+        if (!window._otpuskApiLoaded) {
+            window._otpuskApiLoaded = true;
             loadScript("https://export.otpusk.com/api/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca", "OShotApi28113", function () {
                 loadScript("https://export.otpusk.com/js/view?id=28113", "OShotGetData28113");
             });
