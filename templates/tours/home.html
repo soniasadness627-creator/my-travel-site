@@ -1087,6 +1087,7 @@ function selectCalendarDate(dateISO, price, nights) {
         </div>
 
 <style>
+/* ========== СТИЛІ ДЛЯ БЛОКУ "ТУРИ З ВАШОГО МІСТА" ========== */
 .city-btn {
     background: #f8f9fa;
     border: 1px solid #dee2e6;
@@ -1151,16 +1152,18 @@ function selectCalendarDate(dateISO, price, nights) {
     margin-bottom: 8px;
 }
 
-.country-stars {
+.country-departure {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 8px;
     display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 3px;
-    margin-bottom: 10px;
+    gap: 5px;
 }
 
-.country-stars i {
-    font-size: 12px;
-    color: #f59e0b;
+.country-departure i {
+    font-size: 0.7rem;
 }
 
 .country-price {
@@ -1175,39 +1178,7 @@ function selectCalendarDate(dateISO, price, nights) {
     color: #64748b;
 }
 
-@media (max-width: 768px) {
-    .countries-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-    }
-    .city-btn {
-        padding: 6px 14px;
-        font-size: 0.8rem;
-    }
-    .country-img {
-        height: 130px;
-    }
-}
-
-@media (max-width: 480px) {
-    .countries-grid {
-        grid-template-columns: 1fr;
-    }
-}
-    .country-departure {
-    font-size: 0.75rem;
-    color: #64748b;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-}
-
-.country-departure i {
-    font-size: 0.7rem;
-}
-    /* Стилі для каруселі міст */
+/* Стилі для каруселі міст */
 .city-slider-container::-webkit-scrollbar {
     display: none;
 }
@@ -1242,6 +1213,32 @@ function selectCalendarDate(dateISO, price, nights) {
     background: var(--primary-color);
     border-color: var(--primary-color);
     color: white;
+}
+
+/* АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ */
+@media (max-width: 768px) {
+    .countries-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    .city-btn {
+        padding: 6px 14px;
+        font-size: 0.8rem;
+    }
+    .country-img {
+        height: 130px;
+    }
+}
+
+@media (max-width: 480px) {
+    .countries-grid {
+        grid-template-columns: 1fr;
+    }
+}
+    .city-tours-wrapper {
+    background-color: #e8f0e3;
+    border-radius: 28px;
+    padding: 20px;
 }
 </style>
 
