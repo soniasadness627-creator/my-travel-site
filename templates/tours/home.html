@@ -1824,38 +1824,34 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 
     {% elif block == 'about_us' %}
-        <!-- Про нас -->
-        {% if agent_site and agent_site.about_us_title and agent_site.about_us_text %}
-        <div class="container my-5">
-            <div class="row justify-content-center">
-                <div class="col-12 col-md-10">
-                    <div class="about-us-section">
-                        <div class="mb-4">
-                            <h3 class="about-us-title mb-0">{{ agent_site.about_us_title }}</h3>
-                        </div>
-                        <div class="row align-items-center g-4">
-                            {% if agent_site.about_us_image %}
-                            <div class="col-md-6">
-                                <div class="about-us-image-wrapper">
-                                    <img src="{{ agent_site.about_us_image.url }}" alt="{{ agent_site.about_us_title }}" class="img-fluid rounded-4 shadow-sm" style="width: 100%; object-fit: cover; height: 100%; min-height: 300px;">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                            {% else %}
-                            <div class="col-12">
-                            {% endif %}
-                                <div class="about-us-content">
-                                    <div class="about-us-text" style="color: #475569; line-height: 1.7; font-size: 1rem;">
-                                        {{ agent_site.about_us_text|linebreaks }}
-                                    </div>
-                                </div>
-                            </div>
+    <!-- Про нас -->
+    {% if agent_site and agent_site.about_us_title and agent_site.about_us_text %}
+    <div class="container my-5">
+        <div class="about-us-section">
+            <div class="row align-items-center g-5">
+                <!-- Фото - ліворуч -->
+                {% if agent_site.about_us_image %}
+                <div class="col-md-6">
+                    <div class="about-us-image-wrapper">
+                        <img src="{{ agent_site.about_us_image.url }}" alt="{{ agent_site.about_us_title }}" class="img-fluid">
+                    </div>
+                </div>
+                {% endif %}
+                <!-- Текст - праворуч -->
+                <div class="{% if agent_site.about_us_image %}col-md-6{% else %}col-12{% endif %}">
+                    <div class="about-us-content">
+                        <span class="about-us-subtitle">Про нас</span>
+                        <h3 class="about-us-title">{{ agent_site.about_us_title }}</h3>
+                        <div class="about-us-text">
+                            {{ agent_site.about_us_text|linebreaks }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        {% endif %}
+    </div>
+    {% endif %}
+
 <style>
 /* ========== СТИЛІ ДЛЯ БЛОКУ "ПРО НАС" ========== */
 .about-us-section {
@@ -1883,11 +1879,6 @@ document.addEventListener('DOMContentLoaded', function() {
     height: 100%;
     min-height: 320px;
     object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.about-us-image-wrapper:hover img {
-    transform: scale(1.03);
 }
 
 .about-us-image-wrapper:hover {
@@ -1897,6 +1888,16 @@ document.addEventListener('DOMContentLoaded', function() {
 /* Контент (текст) - праворуч */
 .about-us-content {
     padding: 20px 0 20px 30px;
+}
+
+/* Підзаголовок */
+.about-us-subtitle {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #bf9b30;
+    display: block;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
 }
 
 /* Заголовок */
@@ -1949,6 +1950,10 @@ document.addEventListener('DOMContentLoaded', function() {
         padding: 30px 0;
         margin: 20px 0;
         border-radius: 20px;
+    }
+
+    .about-us-subtitle {
+        text-align: center;
     }
 
     .about-us-title {
@@ -2004,10 +2009,6 @@ document.addEventListener('DOMContentLoaded', function() {
         padding: 15px 0 15px 20px;
     }
 
-    .about-us-text {
-        font-size: 0.95rem;
-    }
-
     .about-us-image-wrapper img {
         min-height: 280px;
     }
@@ -2028,17 +2029,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 
-/* Анімація появи */
-.about-us-section {
-    opacity: 1;
-    transition: all 0.4s ease;
-}
-
 /* Якщо немає фото - центруємо текст */
 .about-us-section .col-12 .about-us-content {
     text-align: center;
     max-width: 800px;
     margin: 0 auto;
+}
+
+.about-us-section .col-12 .about-us-subtitle {
+    text-align: center;
 }
 
 .about-us-section .col-12 .about-us-title::after {
