@@ -1012,6 +1012,12 @@ document.addEventListener('DOMContentLoaded', function() {
 .new_r-item-rating-container * {
     max-width: 100% !important;
 }
+    /* Приховуємо кнопку фільтрів на мобільних пристроях */
+@media (max-width: 768px) {
+    .filter-open-btn {
+        display: none !important;
+    }
+}
 </style>
 
 <style>
