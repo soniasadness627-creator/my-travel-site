@@ -1857,54 +1857,193 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
         {% endif %}
 <style>
-/* Стилі для блоку "Про нас" */
+/* ========== СТИЛІ ДЛЯ БЛОКУ "ПРО НАС" ========== */
 .about-us-section {
-    padding: 20px 0;
+    padding: 50px 0;
+    background-color: #f8f9fa;
+    border-radius: 28px;
+    margin: 30px 0;
 }
 
-/* Заголовок - не жирний, чорний, ліворуч */
+/* Контейнер з фото та текстом */
+.about-us-section .row {
+    align-items: center;
+}
+
+/* Фото - ліворуч */
+.about-us-image-wrapper {
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.about-us-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    min-height: 320px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.about-us-image-wrapper:hover img {
+    transform: scale(1.03);
+}
+
+.about-us-image-wrapper:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Контент (текст) - праворуч */
+.about-us-content {
+    padding: 20px 0 20px 30px;
+}
+
+/* Заголовок */
 .about-us-title {
-    font-weight: 500 !important;  /* Не жирний */
-    font-size: 1.8rem !important;
-    color: #000000 !important;  /* Чорний колір */
-    margin-bottom: 0;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 25px;
     position: relative;
+    padding-bottom: 15px;
     display: inline-block;
-    text-align: left !important;
+}
+
+/* Лінія під заголовком */
+.about-us-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.about-us-section:hover .about-us-title::after {
+    width: 100px;
 }
 
 /* Текст */
+.about-us-text {
+    color: #475569;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
 .about-us-text p {
     margin-bottom: 15px;
 }
 
-/* Фото */
-.about-us-image-wrapper {
-    overflow: hidden;
-    border-radius: 16px;
-}
-.about-us-image-wrapper img {
-    transition: transform 0.3s ease;
-}
-.about-us-image-wrapper img:hover {
-    transform: scale(1.02);
+.about-us-text strong {
+    color: var(--primary-color);
+    font-weight: 600;
 }
 
-/* Для мобільних */
+/* ===== МОБІЛЬНА ВЕРСІЯ ===== */
 @media (max-width: 768px) {
+    .about-us-section {
+        padding: 30px 0;
+        margin: 20px 0;
+        border-radius: 20px;
+    }
+
     .about-us-title {
-        font-size: 1.5rem !important;
-        text-align: center !important;
-        display: block !important;
+        font-size: 1.6rem;
+        text-align: center;
+        display: block;
+        margin-bottom: 20px;
     }
-    .about-us-title:after {
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        right: auto !important;
+
+    .about-us-title::after {
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
     }
+
+    .about-us-section:hover .about-us-title::after {
+        width: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
     .about-us-content {
         text-align: center;
+        padding: 20px 15px;
     }
+
+    .about-us-image-wrapper {
+        margin-bottom: 20px;
+        margin-top: 0;
+    }
+
+    .about-us-image-wrapper img {
+        min-height: 220px;
+    }
+
+    .about-us-text {
+        font-size: 0.95rem;
+        text-align: center;
+    }
+}
+
+/* ===== ПЛАНШЕТИ ===== */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .about-us-section {
+        padding: 40px 0;
+    }
+
+    .about-us-title {
+        font-size: 1.8rem;
+    }
+
+    .about-us-content {
+        padding: 15px 0 15px 20px;
+    }
+
+    .about-us-text {
+        font-size: 0.95rem;
+    }
+
+    .about-us-image-wrapper img {
+        min-height: 280px;
+    }
+}
+
+/* ===== ДЕСКТОП (більше 1200px) ===== */
+@media (min-width: 1200px) {
+    .about-us-section {
+        padding: 60px 0;
+    }
+
+    .about-us-title {
+        font-size: 2.2rem;
+    }
+
+    .about-us-text {
+        font-size: 1.05rem;
+    }
+}
+
+/* Анімація появи */
+.about-us-section {
+    opacity: 1;
+    transition: all 0.4s ease;
+}
+
+/* Якщо немає фото - центруємо текст */
+.about-us-section .col-12 .about-us-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.about-us-section .col-12 .about-us-title::after {
+    left: 50%;
+    transform: translateX(-50%);
 }
 </style>
 
