@@ -48,20 +48,20 @@
 <!-- ========== БЛОК З КНОПКОЮ ДЛЯ ПЕРЕХОДУ ДО ФОРМИ КОНСУЛЬТАЦІЇ ========== -->
 <div class="container my-5">
     <div class="consult-promo-block rounded-3xl shadow-xl relative overflow-hidden cursor-pointer group">
-        <!-- Фонове зображення з ефектом збільшення при наведенні -->
+        <!-- Фонове зображення -->
         <div class="consult-promo-bg">
             <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&auto=format&fit=crop&q=80" alt="Travel background" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
         </div>
 
-        <!-- Темне затемнення -->
+        <!-- Темне затемнення для читабельності тексту -->
         <div class="absolute inset-0 bg-black/50 z-10"></div>
 
-        <!-- Контент -->
-        <div class="relative z-20 flex flex-col md:flex-row items-center justify-between gap-8 p-8 sm:p-12">
+        <!-- Контент поверх фото -->
+        <div class="relative z-20 flex flex-col md:flex-row items-center justify-between gap-8 p-8 sm:p-12 min-h-[300px]">
             <div class="text-center md:text-left">
                 <span class="text-amber-400 text-sm font-semibold uppercase tracking-wider">Потрібна допомога?</span>
                 <h3 class="text-2xl md:text-3xl font-bold mt-2 font-serif text-white">Важко обрати тур самостійно?</h3>
-                <p class="text-stone-300 mt-2 max-w-md">Наші експерти безкоштовно підберуть для вас найкращі варіанти</p>
+                <p class="text-white/80 mt-2 max-w-md">Наші експерти безкоштовно підберуть для вас найкращі варіанти</p>
             </div>
             <button id="scrollToConsultationBtn" class="consult-promo-btn group px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl cursor-pointer">
                 Скласти індивідуальний маршрут
@@ -78,10 +78,13 @@
 /* Стилі для блоку */
 .consult-promo-block {
     position: relative;
-    min-height: 240px;
+    min-height: 350px;
+    border-radius: 24px;
     overflow: hidden;
+    box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.2);
 }
 
+/* Фонове зображення */
 .consult-promo-bg {
     position: absolute;
     top: 0;
@@ -102,76 +105,89 @@
     transform: scale(1.05);
 }
 
-/* Стилі для кнопки */
+/* Затемнення */
+.consult-promo-block .absolute.bg-black\/50 {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 10;
+}
+
+/* Контент поверх фото */
+.consult-promo-block .relative.z-20 {
+    position: relative;
+    z-index: 20;
+    min-height: 350px;
+    display: flex;
+    align-items: center;
+}
+
+/* Текст */
+.consult-promo-block h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.consult-promo-block p {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.consult-promo-block span {
+    color: #e0c285;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+}
+
+/* Кнопка */
 .consult-promo-btn {
     background-color: #e0c285;
     color: #1a1a1a;
     border: none;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .consult-promo-btn:hover {
     transform: scale(1.02);
     background-color: #d4b570;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
 }
 
-.consult-promo-btn:active {
-    transform: scale(0.98);
-}
-
-/* Текст на білому фоні тепер видно */
-.consult-promo-block h3,
-.consult-promo-block p {
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-    /* ========== ЗБІЛЬШЕННЯ БЛОКУ З КНОПКОЮ ========== */
-.consult-promo-block {
-    min-height: 320px !important;
-    border-radius: 24px !important;
-}
-
-/* Збільшуємо внутрішні відступи */
-.consult-promo-block .relative.z-20 {
-    padding: 48px 40px !important;
-}
-
-/* Збільшуємо заголовок */
-.consult-promo-block h3 {
-    font-size: 2rem !important;
-    margin-bottom: 12px !important;
-}
-
-/* Збільшуємо опис */
-.consult-promo-block p {
-    font-size: 1.1rem !important;
-    max-width: 500px !important;
-}
-
-/* Збільшуємо кнопку */
-.consult-promo-btn {
-    padding: 14px 32px !important;
-    font-size: 1rem !important;
-    border-radius: 50px !important;
-}
-
-/* Для мобільних пристроїв */
+/* Для мобільних */
 @media (max-width: 768px) {
     .consult-promo-block {
-        min-height: 280px !important;
+        min-height: 280px;
     }
     .consult-promo-block .relative.z-20 {
-        padding: 32px 24px !important;
+        min-height: 280px;
+        padding: 30px 20px !important;
+        flex-direction: column !important;
+        text-align: center !important;
     }
     .consult-promo-block h3 {
-        font-size: 1.5rem !important;
+        font-size: 1.5rem;
     }
     .consult-promo-block p {
-        font-size: 0.9rem !important;
+        font-size: 0.85rem;
     }
     .consult-promo-btn {
-        padding: 12px 24px !important;
-        font-size: 0.9rem !important;
+        padding: 10px 20px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Для планшетів */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .consult-promo-block {
+        min-height: 300px;
+    }
+    .consult-promo-block h3 {
+        font-size: 1.6rem;
     }
 }
 </style>
@@ -181,13 +197,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const scrollBtn = document.getElementById('scrollToConsultationBtn');
     if (scrollBtn) {
-        // Прибираємо старий обробник, якщо був
-        const newBtn = scrollBtn.cloneNode(true);
-        scrollBtn.parentNode.replaceChild(newBtn, scrollBtn);
-
-        newBtn.addEventListener('click', function(e) {
+        scrollBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            e.stopPropagation();
             const consultationSection = document.getElementById('consultationCard');
             if (consultationSection) {
                 consultationSection.scrollIntoView({
