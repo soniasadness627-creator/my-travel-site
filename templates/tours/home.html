@@ -1999,28 +1999,29 @@ console.log('searchByCityAndCountry існує:', typeof window.searchByCityAndC
     text-align: left !important;
     margin-bottom: 20px !important;
 }
-    /* ========== СВІТЛО-ОЛИВКОВИЙ ФОН ДЛЯ БЛОКУ "ТУРИ З ВАШОГО МІСТА" ========== */
-/* Розтягуємо фон на всю ширину екрану */
+    /* ========== СВІТЛО-ОЛИВКОВИЙ ФОН НА ВСЮ ШИРИНУ ДЛЯ БЛОКУ "ТУРИ З ВАШОГО МІСТА" ========== */
 .city-tours-wrapper {
     position: relative;
-    margin-left: calc(-50vw + 50%);
-    margin-right: calc(-50vw + 50%);
-    padding: 40px 0;
+}
+
+/* Створюємо псевдоелемент для фону на всю ширину */
+.city-tours-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 100%;
     background-color: #e8f0e3;  /* Світло-оливковий колір */
+    z-index: -1;
 }
 
-/* Повертаємо контент всередину */
-.city-tours-wrapper .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
-
-/* Для кращого вигляду на мобільних */
-@media (max-width: 768px) {
-    .city-tours-wrapper {
-        padding: 30px 0;
-    }
+/* Або простіший варіант - використовуємо box-shadow для розтягування фону */
+.city-tours-wrapper {
+    background-color: #e8f0e3;
+    box-shadow: 0 0 0 100vmax #e8f0e3;
+    clip-path: inset(0 -100vmax);
 }
 </style>
 {% endblock %}
