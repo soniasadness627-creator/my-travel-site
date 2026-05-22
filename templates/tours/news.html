@@ -10,7 +10,7 @@
             <div class="card news-card h-100 d-flex flex-column" style="border: 1px solid #000000; border-radius: 16px; overflow: hidden;">
                 <div class="news-img-wrapper" style="overflow: hidden; height: 200px;">
                     {% if item.image %}
-                    <img src="{{ item.image.url }}" class="card-img-top news-img" alt="{{ item.title }}" style="height: 100%; width: 100%; object-fit: cover; transition: transform 0.4s ease-out;">
+                    <img src="{{ item.image.url }}" class="news-img" alt="{{ item.title }}" style="height: 100%; width: 100%; object-fit: cover; transition: transform 0.4s ease-out;">
                     {% else %}
                     <div class="bg-light d-flex align-items-center justify-content-center" style="height: 100%;">
                         <i class="fa-solid fa-image fa-3x text-muted"></i>
@@ -37,25 +37,18 @@
 </div>
 
 <style>
-    /* Картка новини - ЗАБОРОНЯЄМО БУДЬ-ЯКІ TRANSFORM */
+    /* Картка новини - без підйому */
     .news-card {
         border: 1px solid #000000 !important;
         border-radius: 16px !important;
         transition: box-shadow 0.3s ease;
-        transform: none !important;  /* ← ЗАБОРОНЯЄМО ТРАНСФОРМАЦІЇ */
     }
 
     .news-card:hover {
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        transform: none !important;  /* ← НІЯКИХ ПЕРЕМІЩЕНЬ */
     }
 
-    /* Плавне збільшення тільки фото */
-    .news-img {
-        transition: transform 0.4s ease-out;
-        transform: none !important;
-    }
-
+    /* Плавне збільшення фото при наведенні на картку */
     .news-card:hover .news-img {
         transform: scale(1.05);
     }
