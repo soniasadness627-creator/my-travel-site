@@ -277,21 +277,23 @@ document.addEventListener('DOMContentLoaded', function() {
         <!-- Календар низьких цін -->
         <div class="container my-5 pt-4">
             <div class="price-calendar-wrapper">
-                <h2 class="text-center mb-4">Календар низьких цін</h2>
-                <div class="departure-city mb-3 text-center">
-                    <label class="fw-bold me-2">Місто виїзду:</label>
-                    <select id="departureCitySelect" class="form-select d-inline-block w-auto">
-                        <option value="Кишинів" selected>Кишинів</option>
-                        <option value="Варшава">Варшава</option>
-                        <option value="Краків">Краків</option>
-                        <option value="Бухарест">Бухарест</option>
-                        <option value="Будапешт">Будапешт</option>
-                        <option value="Берлін">Берлін</option>
-                        <option value="Прага">Прага</option>
-                        <option value="Тбілісі">Тбілісі</option>
-                        <option value="Стамбул">Стамбул</option>
-                    </select>
-                </div>
+<h2 class="mb-4" style="color: #000000; font-size: 1.8rem; text-align: left;">Календар низьких цін</h2>
+                <div class="departure-city mb-3 d-flex justify-content-end">
+    <div class="d-flex align-items-center gap-2">
+        <label class="fw-bold mb-0" style="white-space: nowrap;">Місто виїзду:</label>
+        <select id="departureCitySelect" class="form-select" style="width: auto; min-width: 140px; border-radius: 40px; padding: 8px 20px; background-color: #f5f5f5; border: 1px solid #e0e0e0; cursor: pointer;">
+            <option value="Кишинів" selected>Кишинів</option>
+            <option value="Варшава">Варшава</option>
+            <option value="Краків">Краків</option>
+            <option value="Бухарест">Бухарест</option>
+            <option value="Будапешт">Будапешт</option>
+            <option value="Берлін">Берлін</option>
+            <option value="Прага">Прага</option>
+            <option value="Тбілісі">Тбілісі</option>
+            <option value="Стамбул">Стамбул</option>
+        </select>
+    </div>
+</div>
                 <div class="country-tabs mb-4"></div>
                 <div class="text-muted small mb-3 text-center">Ціни вказані за двох дорослих на 6-8 ночей</div>
                 <div class="calendar-container">
@@ -1227,6 +1229,87 @@ function selectCalendarDate(dateISO, price, nights) {
         .day-column { min-width: 65px; padding: 0.5rem 0.25rem; }
         .price-bar-container { width: 35px; height: 80px; }
     }
+    /* ========== КАРУСЕЛЬ ДЛЯ ВКЛАДОК КРАЇН ========== */
+.country-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.country-tabs::-webkit-scrollbar {
+    height: 4px;
+}
+
+.country-tabs::-webkit-scrollbar-track {
+    background: #e5e5e5;
+    border-radius: 10px;
+}
+
+.country-tabs::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+.country-tab {
+    background: #f5f5f5;
+    border: 1px solid #e5e5e5;
+    border-radius: 2rem;
+    padding: 0.4rem 1.2rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #555;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.country-tab:hover {
+    background: #e8e8e8;
+    transform: translateY(-2px);
+}
+
+.country-tab.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* Кнопки навігації для каруселі (опціонально) */
+.country-slider-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 10px;
+}
+
+.country-prev-btn,
+.country-next-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.country-prev-btn:hover,
+.country-next-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
 </style>
 
 
@@ -1854,7 +1937,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+// Додайте цей код в кінець вашого скрипту (перед закриттям </script>)
+document.addEventListener('DOMContentLoaded', function() {
+    // Затримка, щоб вкладки встигли створитися
+    setTimeout(function() {
+        const countryTabs = document.querySelector('.country-tabs');
+        const prevBtn = document.getElementById('countryPrevBtn');
+        const nextBtn = document.getElementById('countryNextBtn');
 
+        if (prevBtn && countryTabs) {
+            prevBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                countryTabs.scrollBy({ left: -150, behavior: 'smooth' });
+            });
+        }
+
+        if (nextBtn && countryTabs) {
+            nextBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                countryTabs.scrollBy({ left: 150, behavior: 'smooth' });
+            });
+        }
+    }, 100);
+});
 
 </script>
 <style>
