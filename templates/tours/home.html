@@ -1135,28 +1135,7 @@ function selectCalendarDate(dateISO, price, nights) {
     width: 100%;
     overflow-x: hidden;  /* ← ДОДАНО: прибираємо горизонтальний скрол батька */
 }
-    .country-tabs {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        justify-content: center;
-        margin-bottom: 1.5rem;
-    }
-    .country-tab {
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 2rem;
-        padding: 0.4rem 1.2rem;
-        font-size: 0.9rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    .country-tab.active {
-        background: var(--primary-color);
-        border-color: var(--primary-color);
-        color: white;
-    }
+
     .calendar-header {
         display: flex;
         justify-content: space-between;
@@ -1243,14 +1222,13 @@ function selectCalendarDate(dateISO, price, nights) {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    padding: 0 16px 15px 16px;  /* ← ДОДАНО: відступи зліва і справа (перші елементи не обрізаються) */
+    padding: 0 16px 15px 16px;
     margin-bottom: 1.5rem;
-    margin-left: -16px;  /* ← ДОДАНО: компенсуємо відступ контейнера */
-    margin-right: -16px; /* ← ДОДАНО: компенсуємо відступ контейнера */
+    margin-left: -16px;
+    margin-right: -16px;
     width: calc(100% + 32px);
 }
 
-/* Стилі для скролбару */
 .country-tabs::-webkit-scrollbar {
     height: 4px;
 }
@@ -1265,7 +1243,6 @@ function selectCalendarDate(dateISO, price, nights) {
     border-radius: 10px;
 }
 
-/* Кнопки країн */
 .country-tab {
     background: #f5f5f5;
     border: 1px solid #e5e5e5;
@@ -1281,11 +1258,11 @@ function selectCalendarDate(dateISO, price, nights) {
 }
 
 .country-tab:first-child {
-    margin-left: 0;  /* перший елемент */
+    margin-left: 0;
 }
 
 .country-tab:last-child {
-    margin-right: 0; /* останній елемент */
+    margin-right: 0;
 }
 
 .country-tab:hover {
@@ -1297,20 +1274,6 @@ function selectCalendarDate(dateISO, price, nights) {
     background: var(--primary-color);
     border-color: var(--primary-color);
     color: white;
-}
-
-/* Для мобільних пристроїв */
-@media (max-width: 768px) {
-    .country-tabs {
-        padding: 0 12px 12px 12px;
-        margin-left: -12px;
-        margin-right: -12px;
-        width: calc(100% + 24px);
-    }
-    .country-tab {
-        padding: 0.3rem 1rem;
-        font-size: 0.75rem;
-    }
 }
     /* Рамка навколо блоку з календарем */
 .calendar-container {
@@ -1946,30 +1909,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Затримка, щоб вкладки встигли створитися
-    setTimeout(function() {
-        const countryTabs = document.querySelector('.country-tabs');
-        const prevBtn = document.getElementById('countryPrevBtn');
-        const nextBtn = document.getElementById('countryNextBtn');
-
-        if (prevBtn && countryTabs) {
-            prevBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                countryTabs.scrollBy({ left: -150, behavior: 'smooth' });
-            });
-        }
-
-        if (nextBtn && countryTabs) {
-            nextBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                countryTabs.scrollBy({ left: 150, behavior: 'smooth' });
-            });
-        }
-    }, 100);
-});
-
 </script>
 <style>
 /* ========== ЗМІНА КОЛЬОРУ БЛОКУ ПОШУКУ OTPUSK (ГОЛУБИЙ → БІЛИЙ) ========== */
