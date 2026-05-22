@@ -303,10 +303,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="min-price text-end">—</div>
                         </div>
                         <div class="month-controls">
-                            <button class="btn btn-sm btn-outline-secondary" id="prevMonthBtn"><i class="fa-solid fa-chevron-left"></i></button>
-                            <span id="monthYearDisplay" class="fw-bold mx-2">Травень 2026</span>
-                            <button class="btn btn-sm btn-outline-secondary" id="nextMonthBtn"><i class="fa-solid fa-chevron-right"></i></button>
-                        </div>
+    <button class="month-nav-btn" id="prevMonthBtn">
+        <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    <span id="monthYearDisplay" class="month-year-text">травень 2026 р.</span>
+    <button class="month-nav-btn" id="nextMonthBtn">
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+</div>
                     </div>
                     <div class="calendar-scroll">
                         <div class="calendar-days" id="calendarDays"></div>
@@ -1230,21 +1234,57 @@ function selectCalendarDate(dateISO, price, nights) {
         color: #28a745;
     }
 
-    .month-controls .btn {
+    /* ========== СТИЛІ ДЛЯ КНОПОК МІСЯЦІВ ========== */
+.month-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.month-nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: #555;
+}
+
+.month-nav-btn:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    transform: scale(1.05);
+}
+
+.month-year-text {
+    font-size: 1rem;
+    font-weight: 600;
+    min-width: 140px;
+    text-align: center;
+    color: #333;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+    .month-nav-btn {
         width: 32px;
         height: 32px;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
-
-    .month-controls span {
-        font-size: 1rem;
-        font-weight: 500;
-        min-width: 140px;
-        text-align: center;
+    .month-year-text {
+        font-size: 0.85rem;
+        min-width: 120px;
     }
+    .month-controls {
+        gap: 8px;
+    }
+}
 
     .calendar-scroll {
         overflow-x: auto;
@@ -1439,6 +1479,99 @@ function selectCalendarDate(dateISO, price, nights) {
             height: 90px;
         }
     }
+  /* ========== ПОКРАЩЕННЯ ПРИ НАВЕДЕННІ НА КРАЇНИ ========== */
+.country-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding: 0 16px 15px 16px;
+    margin-bottom: 1.5rem;
+    margin-left: -16px;
+    margin-right: -16px;
+    width: calc(100% + 32px);
+    /* Додаємо плавну зупинку скролу */
+    scroll-snap-type: x mandatory;
+}
+
+.country-tab {
+    background: #f5f5f5;
+    border: 1px solid #e5e5e5;
+    border-radius: 2rem;
+    padding: 0.4rem 1.2rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #555;
+    white-space: nowrap;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+}
+
+/* ПРИ НАВЕДЕННІ - СІРИЙ ФОН (як у "Тури з вашого міста") */
+.country-tab:hover {
+    background: #e0e0e0 !important;  /* Світло-сірий фон при наведенні */
+    border-color: #ccc;
+    transform: translateY(-2px);
+    color: #333;
+}
+
+/* АКТИВНА КРАЇНА - колір агента */
+.country-tab.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* Активна при наведенні залишається кольором агента */
+.country-tab.active:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Додаткові відступи, щоб нічого не обрізалося */
+.country-tabs {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) #e5e5e5;
+}
+
+.country-tabs::-webkit-scrollbar {
+    height: 4px;
+}
+
+.country-tabs::-webkit-scrollbar-track {
+    background: #e5e5e5;
+    border-radius: 10px;
+}
+
+.country-tabs::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+/* Для мобільних */
+@media (max-width: 768px) {
+    .country-tabs {
+        padding: 0 12px 12px 12px;
+        margin-left: -12px;
+        margin-right: -12px;
+        width: calc(100% + 24px);
+    }
+    .country-tab {
+        padding: 0.3rem 1rem;
+        font-size: 0.75rem;
+    }
+    .country-tab:hover {
+        transform: translateY(-1px);
+    }
+}
 </style>
 
 
