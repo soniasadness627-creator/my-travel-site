@@ -1823,43 +1823,75 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('consultationForm');
-    if (!form) return;
+    const submitBtn = document.getElementById('submitConsultationBtn');
+    if (!submitBtn) return;
 
-    form.addEventListener('submit', function(e) {
+    // Запобігаємо дублюванню обробника
+    if (submitBtn.hasAttribute('data-listener')) return;
+    submitBtn.setAttribute('data-listener', 'true');
+
+    submitBtn.addEventListener('click', function(e) {
         e.preventDefault();
+        e.stopPropagation();
+
+        // Отримуємо дані з полів
+        const name = document.getElementById('consultationName')?.value || '';
+        const phone = document.getElementById('consultationPhone')?.value || '';
+        const countryCode = document.getElementById('consultationCountryCode')?.value || '+380';
+        const message = document.getElementById('consultationMessage')?.value || '';
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+        // Валідація
+        if (!name.trim()) {
+            alert("Введіть ваше ім'я");
+            return;
+        }
+        if (!phone.trim()) {
+            alert("Введіть номер телефону");
+            return;
+        }
 
         let ajaxUrl = '/consultation-ajax/';
         {% if agent_site %}
         ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
         {% endif %}
 
-        const formData = new FormData(form);
-        const btn = form.querySelector('button[type="submit"]');
-        const originalText = btn.innerHTML;
-
-        btn.disabled = true;
-        btn.innerHTML = '⏳ Відправляємо...';
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ Відправляємо...';
 
         fetch(ajaxUrl, {
             method: 'POST',
-            body: formData,
             headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            }
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: new URLSearchParams({
+                'name': name,
+                'phone': phone,
+                'country_code': countryCode,
+                'message': message,
+                'consultation_submit': '1'
+            })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                form.reset();
+                // Очищаємо форму
+                document.getElementById('consultationName').value = '';
+                document.getElementById('consultationPhone').value = '';
+                document.getElementById('consultationMessage').value = '';
+                alert("Заявку відправлено! Ми зв'яжемося з вами найближчим часом.");
+            } else {
+                alert("Сталася помилка. Спробуйте пізніше.");
             }
         })
         .catch(error => {
             console.error('Помилка:', error);
+            alert("Сталася помилка. Спробуйте пізніше.");
         })
         .finally(() => {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Надіслати приватний запит <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>';
         });
     });
 });
