@@ -3550,5 +3550,115 @@ ul.messages {
 .info-icon i {
     transition: transform 0.3s ease;
 }
+    /* ========== СТИЛІ ДЛЯ БЛОКУ "ГОТЕЛІ З НАЙКРАЩИМ СПІВВІДНОШЕННЯМ ЦІНИ ТА ЯКОСТІ" ========== */
+.similar-price-card {
+    border: 1px solid #000000 !important;
+    border-radius: 16px !important;
+    transition: box-shadow 0.3s ease !important;
+    background: white !important;
+    transform: none !important;  /* ЗАБОРОНЯЄМО ПІДЙОМ */
+    overflow: hidden !important;  /* Щоб фото не виходило за межі */
+}
+
+.similar-price-card:hover {
+    transform: none !important;  /* НІЯКОГО ПІДЙОМУ ПРИ НАВЕДЕННІ */
+    box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ПЛАВНЕ ЗБІЛЬШЕННЯ ТІЛЬКИ ФОТО */
+.similar-price-img {
+    transition: transform 0.4s ease-out !important;
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.similar-price-card:hover .similar-price-img {
+    transform: scale(1.05) !important;  /* Збільшення фото на 5% */
+}
+
+/* ========== СТИЛІ ДЛЯ БЛОКУ "ГОТЕЛІ ЗІ СХОЖИМ РЕЙТИНГОМ" ========== */
+.rating-card {
+    border: 1px solid #000000 !important;
+    border-radius: 16px !important;
+    transition: box-shadow 0.3s ease !important;
+    background: white !important;
+    transform: none !important;  /* ЗАБОРОНЯЄМО ПІДЙОМ */
+    overflow: hidden !important;  /* Щоб фото не виходило за межі */
+}
+
+.rating-card:hover {
+    transform: none !important;  /* НІЯКОГО ПІДЙОМУ ПРИ НАВЕДЕННІ */
+    box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ПЛАВНЕ ЗБІЛЬШЕННЯ ТІЛЬКИ ФОТО */
+.rating-img {
+    transition: transform 0.4s ease-out !important;
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.rating-card:hover .rating-img {
+    transform: scale(1.05) !important;  /* Збільшення фото на 5% */
+}
+
+/* ========== ЦІНИ - ЧОРНІ, НЕ ЖИРНІ ========== */
+.similar-price-price,
+.rating-price,
+.similar-price-card .popular-hotel-price-value,
+.rating-card .rating-price-value {
+    font-weight: 400 !important;
+    font-size: 1.1rem !important;
+    color: #000000 !important;
+}
+
+.similar-price-price small,
+.rating-price small {
+    font-weight: 300 !important;
+    color: #666666 !important;
+}
+
+/* ========== КНОПКИ - КОЛІР АГЕНТА ПРИ НАВЕДЕННІ ========== */
+.similar-price-card .btn-outline-primary,
+.rating-card .btn-outline-primary {
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+    transition: all 0.3s ease !important;
+}
+
+.similar-price-card:hover .btn-outline-primary,
+.rating-card:hover .btn-outline-primary {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+    /* ========== СТИЛІ ДЛЯ БЛОКУ "ПОПУЛЯРНІ ГОТЕЛІ" ========== */
+.popular-hotel-card {
+    border: 1px solid #000000 !important;
+    border-radius: 16px !important;
+    transition: box-shadow 0.3s ease !important;
+    background: white !important;
+    transform: none !important;
+    overflow: hidden !important;
+}
+
+.popular-hotel-card:hover {
+    transform: none !important;
+    box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ПЛАВНЕ ЗБІЛЬШЕННЯ ТІЛЬКИ ФОТО */
+.popular-hotel-img {
+    transition: transform 0.4s ease-out !important;
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.popular-hotel-card:hover .popular-hotel-img {
+    transform: scale(1.05) !important;
+}
+
 </style>
 {% endblock %}
