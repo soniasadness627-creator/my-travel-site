@@ -37,19 +37,25 @@
 </div>
 
 <style>
-    /* Картка новини - без підйому при наведенні */
+    /* Картка новини - ЗАБОРОНЯЄМО БУДЬ-ЯКІ TRANSFORM */
     .news-card {
         border: 1px solid #000000 !important;
         border-radius: 16px !important;
         transition: box-shadow 0.3s ease;
+        transform: none !important;  /* ← ЗАБОРОНЯЄМО ТРАНСФОРМАЦІЇ */
     }
 
     .news-card:hover {
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        /* transform: translateY(-5px); - ВИДАЛЕНО! */
+        transform: none !important;  /* ← НІЯКИХ ПЕРЕМІЩЕНЬ */
     }
 
-    /* Плавне збільшення фото при наведенні на картку */
+    /* Плавне збільшення тільки фото */
+    .news-img {
+        transition: transform 0.4s ease-out;
+        transform: none !important;
+    }
+
     .news-card:hover .news-img {
         transform: scale(1.05);
     }

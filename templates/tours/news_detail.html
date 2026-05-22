@@ -648,6 +648,16 @@
     object-fit: cover;
     width: 100%;
 }
+    /* ПОВНЕ БЛОКУВАННЯ БУДЬ-ЯКИХ РУХІВ КАРТКИ */
+.news-card,
+.news-card:hover,
+.news-card:active,
+.news-card:focus {
+    transform: none !important;
+    translate: none !important;
+    top: 0 !important;
+    margin-top: 0 !important;
+}
 </style>
 
 <script>
