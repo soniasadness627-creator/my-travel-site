@@ -21,8 +21,7 @@
                     <div class="mt-auto">
                         <p class="text-muted small mb-2">{{ item.created_at|date:"d.m.Y" }}</p>
                         <!-- ВАЖЛИВО: використовуємо agent_site для URL -->
-                        <a href="{% if agent_site %}{% url 'agent_news_detail' agent_site.slug item.pk %}{% else %}{% url 'news_detail' item.pk %}{% endif %}" class="btn btn-outline-primary btn-sm">
-                            Детальніше
+<a href="{% if agent_site %}{% url 'agent_news_detail' agent_site.slug item.pk %}{% else %}/news/{{ item.pk }}/{% endif %}" class="btn btn-outline-primary btn-sm">                            Детальніше
                         </a>
                     </div>
                 </div>

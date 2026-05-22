@@ -8,12 +8,12 @@
             <!-- Хлібні крихти -->
             {% if not agent_site or agent_site.show_news %}
             <nav aria-label="breadcrumb" class="mb-4">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% if agent_site %}{% url 'agent_home' agent_site.slug %}{% else %}{% url 'home' %}{% endif %}">Головна</a></li>
-                    <li class="breadcrumb-item"><a href="{% if agent_site %}{% url 'agent_news_list' agent_site.slug %}{% else %}{% url 'news' %}{% endif %}">Новини</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ news_item.title }}</li>
-                </ol>
-            </nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/{% else %}{% url 'home' %}{% endif %}">Головна</a></li>
+        <li class="breadcrumb-item"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/news/{% else %}/news/{% endif %}">Новини</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ news_item.title }}</li>
+    </ol>
+</nav>
             {% endif %}
 
             <!-- Заголовок + дата -->
