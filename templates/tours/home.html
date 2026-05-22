@@ -1241,11 +1241,18 @@ function selectCalendarDate(dateISO, price, nights) {
     scrollbar-width: thin;
     padding-bottom: 15px;
     margin-bottom: 1.5rem;
-    /* ВАЖЛИВО: додаємо максимальну ширину */
     max-width: 100%;
+    width: 100%;
     /* Додаємо відступи, щоб не обрізало тіні */
     padding-left: 2px;
     padding-right: 2px;
+}
+
+/* Для десктопу - фіксована ширина контейнера */
+.price-calendar-wrapper {
+    max-width: 998px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 /* Стилі для скролбару */
@@ -1289,33 +1296,16 @@ function selectCalendarDate(dateISO, price, nights) {
     color: white;
 }
 
-/* Кнопки навігації для каруселі (опціонально) */
-.country-slider-nav {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 10px;
-}
-
-.country-prev-btn,
-.country-next-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: white;
-    border: 1px solid #ddd;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-}
-
-.country-prev-btn:hover,
-.country-next-btn:hover {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
+/* Для мобільних пристроїв */
+@media (max-width: 768px) {
+    .price-calendar-wrapper {
+        max-width: 100%;
+        padding: 1rem;
+    }
+    .country-tab {
+        padding: 0.3rem 1rem;
+        font-size: 0.75rem;
+    }
 }
     /* Рамка навколо блоку з календарем */
 .calendar-container {
