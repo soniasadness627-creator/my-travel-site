@@ -5,21 +5,18 @@
 <div class="container my-5 pt-5">
     <div class="row">
         <div class="col-12">
-            <!-- Хлібні крихти -->
-            {% if not agent_site or agent_site.show_news %}
-            <!-- Хлібні крихти -->
-<nav aria-label="breadcrumb" class="mb-4">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="{% if agent_site %}/a/{{ agent_site.slug }}/{% else %}/{% endif %}">Головна</a>
-        </li>
-        <li class="breadcrumb-item">
-            <a href="{% if agent_site %}/a/{{ agent_site.slug }}/news/{% else %}/news/{% endif %}">Новини</a>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">{{ news_item.title }}</li>
-    </ol>
-</nav>
-            {% endif %}
+            <!-- Хлібні крихти - ВИПРАВЛЕНО -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% if agent_site %}/a/{{ agent_site.slug }}/{% else %}/{% endif %}">Головна</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{% if agent_site %}/a/{{ agent_site.slug }}/news/{% else %}/news/{% endif %}">Новини</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ news_item.title }}</li>
+                </ol>
+            </nav>
 
             <!-- Заголовок + дата -->
             <div class="d-flex justify-content-center">
@@ -33,34 +30,34 @@
                 </div>
             </div>
 
-            <!-- Галерея (карусель) - ЗБІЛЬШЕНА -->
-{% if news_item.gallery.all %}
-<div id="newsCarousel" class="carousel slide mb-5" data-bs-ride="carousel" style="max-width: 100%; margin: 0 auto;">
-    <div class="carousel-inner">
-        {% for img in news_item.gallery.all %}
-        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-            <img src="{{ img.image.url }}" class="d-block w-100 rounded" style="height: 500px; width: 100%; object-fit: cover;" alt="{{ news_item.title }}">
-        </div>
-        {% endfor %}
-    </div>
-    {% if news_item.gallery.count > 1 %}
-    <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Попереднє</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Наступне</span>
-    </button>
-    {% endif %}
-</div>
-{% elif news_item.image %}
-<div class="text-center mb-5">
-    <img src="{{ news_item.image.url }}" class="img-fluid rounded shadow" style="max-height: 500px; width: 100%; object-fit: cover; max-width: 100%;" alt="{{ news_item.title }}">
-</div>
-{% endif %}
+            <!-- Галерея (карусель) -->
+            {% if news_item.gallery.all %}
+            <div id="newsCarousel" class="carousel slide mb-5" data-bs-ride="carousel" style="max-width: 100%; margin: 0 auto;">
+                <div class="carousel-inner">
+                    {% for img in news_item.gallery.all %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ img.image.url }}" class="d-block w-100 rounded" style="height: 500px; width: 100%; object-fit: cover;" alt="{{ news_item.title }}">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if news_item.gallery.count > 1 %}
+                <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Попереднє</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Наступне</span>
+                </button>
+                {% endif %}
+            </div>
+            {% elif news_item.image %}
+            <div class="text-center mb-5">
+                <img src="{{ news_item.image.url }}" class="img-fluid rounded shadow" style="max-height: 500px; width: 100%; object-fit: cover; max-width: 100%;" alt="{{ news_item.title }}">
+            </div>
+            {% endif %}
 
-            <!-- Текст новини - АДАПТИВНИЙ -->
+            <!-- Текст новини -->
             <div class="d-flex justify-content-center">
                 <div class="news-content" style="max-width: 800px; width: 100%;">
                     <div class="news-text">
@@ -69,342 +66,298 @@
                 </div>
             </div>
 
-<!-- ========== БЛОК КОНСУЛЬТАЦІЇ ========== -->
-<div class="container my-5">
-    <div class="consultation-form-wrapper">
-        <div class="consultation-form-card">
-            <div class="consultation-form-left">
-                <span class="consultation-subtitle">Приватна розмова</span>
-                <h4 class="consultation-title">Допоможемо обрати ідеальний тур</h4>
-                <div class="consultation-expert">
-                    <div class="consultation-expert-icon">
-                        <span>👑</span>
-                    </div>
-                    <div>
-                        <div class="consultation-expert-name">Консультант Клубу</div>
-                        <div class="consultation-expert-exp">9 років особистих експедицій</div>
-                    </div>
-                </div>
-            </div>
-            <div class="consultation-form-right">
-                <form id="consultationForm" novalidate>
-                    {% csrf_token %}
-                    <input type="hidden" name="consultation_submit" value="1">
-                    <div class="consultation-field">
-                        <label>Ваше Ім'я</label>
-                        <input type="text" name="name" id="consultationName" placeholder="Наприклад: Віктор Коваль" required>
-                    </div>
-                    <div class="consultation-phone-row">
-                        <div class="consultation-phone-code">
-                            <label>Код</label>
-                            <select name="country_code" id="consultationCountryCode">
-                                <option value="+380">🇺🇦 +380</option>
-                                <option value="+48">🇵🇱 +48</option>
-                                <option value="+1">🇺🇸 +1</option>
-                                <option value="+44">🇬🇧 +44</option>
-                                <option value="+49">🇩🇪 +49</option>
-                                <option value="+33">🇫🇷 +33</option>
-                            </select>
-                        </div>
-                        <div class="consultation-phone-number">
-                            <label>Номер телефону</label>
-                            <input type="tel" name="phone" id="consultationPhone" placeholder="XX XXX XX XX" required>
-                        </div>
-                    </div>
-                    <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">Залишити запит</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-/* ========== СТИЛІ ДЛЯ ФОРМИ КОНСУЛЬТАЦІЇ ========== */
-.consultation-form-wrapper {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
-
-.consultation-form-card {
-    background-color: #1c1c1c;
-    border-radius: 28px;
-    padding: 40px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 40px;
-    border: 1px solid #2c2c2c;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-}
-
-.consultation-form-left {
-    flex: 1;
-    border-right: 1px solid #2c2c2c;
-    padding-right: 40px;
-}
-
-.consultation-subtitle {
-    font-size: 14px;
-    font-style: italic;
-    color: #bf9b30;
-    display: block;
-    margin-bottom: 10px;
-}
-
-.consultation-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 25px;
-    line-height: 1.3;
-}
-
-.consultation-expert {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.consultation-expert-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid #3c3c3c;
-    background-color: rgba(255, 255, 255, 0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.consultation-expert-icon span {
-    font-size: 22px;
-}
-
-.consultation-expert-name {
-    font-size: 12px;
-    font-weight: 600;
-    color: #ffffff;
-}
-
-.consultation-expert-exp {
-    font-size: 10px;
-    color: #a0a0a0;
-    margin-top: 4px;
-}
-
-.consultation-form-right {
-    flex: 1.5;
-}
-
-.consultation-field {
-    margin-bottom: 18px;
-}
-
-.consultation-field label {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #a0a0a0;
-    display: block;
-    margin-bottom: 6px;
-}
-
-.consultation-field input,
-.consultation-field textarea {
-    width: 100%;
-    background-color: #2a2a2a;
-    border: 1px solid #3c3c3c;
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: #ffffff;
-    transition: all 0.3s ease;
-}
-
-.consultation-field input:focus,
-.consultation-field textarea:focus {
-    outline: none;
-    border-color: #bf9b30;
-}
-
-.consultation-phone-row {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 12px;
-    margin-bottom: 18px;
-}
-
-.consultation-phone-code label,
-.consultation-phone-number label {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #a0a0a0;
-    display: block;
-    margin-bottom: 6px;
-}
-
-.consultation-phone-code select,
-.consultation-phone-number input {
-    width: 100%;
-    background-color: #2a2a2a;
-    border: 1px solid #3c3c3c;
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: #ffffff;
-}
-
-.consultation-phone-code select:focus,
-.consultation-phone-number input:focus {
-    outline: none;
-    border-color: #bf9b30;
-}
-
-@media (max-width: 768px) {
-    .consultation-form-card {
-        flex-direction: column;
-        padding: 30px 20px;
-    }
-    .consultation-form-left {
-        border-right: none;
-        border-bottom: 1px solid #2c2c2c;
-        padding-right: 0;
-        padding-bottom: 25px;
-        text-align: center;
-    }
-    .consultation-expert {
-        justify-content: center;
-    }
-}
-</style>
-
-<script>
-// ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
-(function() {
-    const submitBtn = document.getElementById('submitConsultationBtn');
-    if (!submitBtn) return;
-
-    submitBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        // Збираємо дані з форми
-        const name = document.getElementById('consultationName')?.value || '';
-        const phone = document.getElementById('consultationPhone')?.value || '';
-        const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-
-        // Валідація
-        if (!name.trim()) {
-            console.log('Введіть ім\'я');
-            return;
-        }
-        if (!phone.trim()) {
-            console.log('Введіть телефон');
-            return;
-        }
-
-        // Визначаємо URL
-        let ajaxUrl = '/consultation-ajax/';
-        {% if agent_site %}
-        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
-        {% endif %}
-
-        // Відправляємо
-        fetch(ajaxUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': csrfToken
-            },
-            body: new URLSearchParams({
-                'name': name,
-                'phone': phone,
-                'country_code': countryCode,
-                'consultation_submit': '1'
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Очищуємо форму
-                document.getElementById('consultationName').value = '';
-                document.getElementById('consultationPhone').value = '';
-                console.log('Заявка відправлена');
-            }
-        })
-        .catch(error => {
-            console.error('Помилка:', error);
-        });
-    });
-})();
-</script>
-            <!-- Рекомендовані статті (карусель) - ВИПРАВЛЕНО -->
-{% if recommended %}
-<div class="row justify-content-center">
-    <div class="col-md-10">
-        <div class="recommended-news-block my-5">
-            <h3 class="mb-4">Рекомендовані статті</h3>
-            <div class="carousel-container">
-                <div class="carousel-track" id="recommendedNewsTrack">
-                    {% for rec in recommended %}
-                    <div class="carousel-card">
-                        <div class="card h-100 shadow-sm border-0 rounded-4 d-flex flex-column">
-                            {% if rec.image %}
-                            <img src="{{ rec.image.url }}" class="card-img-top rounded-top-4" alt="{{ rec.title }}" style="height: 160px; object-fit: cover; width: 100%;">
-                            {% else %}
-                            <div class="bg-light rounded-top-4 d-flex align-items-center justify-content-center" style="height: 160px;">
-                                <i class="fa-solid fa-newspaper fa-3x text-muted"></i>
-                            </div>
-                            {% endif %}
-                            <div class="card-body d-flex flex-column flex-grow-1 p-3">
-                                <h6 class="card-title fw-bold mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.5rem;">
-                                    {{ rec.title|truncatechars:70 }}
-                                </h6>
-                                <p class="card-text small text-muted mb-2">
-                                    <i class="fa-regular fa-calendar me-1"></i> {{ rec.created_at|date:"d.m.Y" }}
-                                </p>
-                                <div class="mt-auto pt-2">
-                                    <a href="{% if agent_site %}{% url 'agent_news_detail' agent_site.slug rec.pk %}{% else %}{% url 'news_detail' rec.pk %}{% endif %}" class="btn btn-outline-primary btn-sm w-100 rounded-pill" style="border-color: var(--primary-color); color: var(--primary-color);">Читати</a>
+            <!-- ========== БЛОК КОНСУЛЬТАЦІЇ ========== -->
+            <div class="container my-5">
+                <div class="consultation-form-wrapper">
+                    <div class="consultation-form-card">
+                        <div class="consultation-form-left">
+                            <span class="consultation-subtitle">Приватна розмова</span>
+                            <h4 class="consultation-title">Допоможемо обрати ідеальний тур</h4>
+                            <div class="consultation-expert">
+                                <div class="consultation-expert-icon">
+                                    <span>👑</span>
+                                </div>
+                                <div>
+                                    <div class="consultation-expert-name">
+                                        {% if agent_site %}
+                                            {{ agent_site.user.get_full_name|default:agent_site.user.username }}
+                                        {% else %}
+                                            {{ random_agent.get_full_name|default:random_agent.username }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="consultation-expert-exp">9 років особистих експедицій</div>
                                 </div>
                             </div>
                         </div>
+                        <div class="consultation-form-right">
+                            <form id="consultationForm" novalidate>
+                                {% csrf_token %}
+                                <input type="hidden" name="consultation_submit" value="1">
+                                <div class="consultation-field">
+                                    <label>Ваше Ім'я</label>
+                                    <input type="text" name="name" id="consultationName" placeholder="Наприклад: Віктор Коваль" required>
+                                </div>
+                                <div class="consultation-phone-row">
+                                    <div class="consultation-phone-code">
+                                        <label>Код</label>
+                                        <select name="country_code" id="consultationCountryCode">
+                                            <option value="+380">🇺🇦 +380</option>
+                                            <option value="+48">🇵🇱 +48</option>
+                                            <option value="+1">🇺🇸 +1</option>
+                                            <option value="+44">🇬🇧 +44</option>
+                                            <option value="+49">🇩🇪 +49</option>
+                                            <option value="+33">🇫🇷 +33</option>
+                                        </select>
+                                    </div>
+                                    <div class="consultation-phone-number">
+                                        <label>Номер телефону</label>
+                                        <input type="tel" name="phone" id="consultationPhone" placeholder="XX XXX XX XX" required>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">Залишити запит</button>
+                            </form>
+                        </div>
                     </div>
-                    {% endfor %}
                 </div>
-                <button class="carousel-btn prev" id="recommendedPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
-                <button class="carousel-btn next" id="recommendedNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
-        </div>
-    </div>
-</div>
-{% endif %}
 
-            <!-- КНОПКА "ПОВЕРНУТИСЯ ДО НОВИН" -->
-            {% if not agent_site or agent_site.show_news %}
+            <style>
+                /* ========== СТИЛІ ДЛЯ ФОРМИ КОНСУЛЬТАЦІЇ ========== */
+                .consultation-form-wrapper {
+                    max-width: 900px;
+                    margin: 0 auto;
+                    padding: 0 15px;
+                }
+                .consultation-form-card {
+                    background-color: #1c1c1c;
+                    border-radius: 28px;
+                    padding: 40px;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 40px;
+                    border: 1px solid #2c2c2c;
+                    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+                }
+                .consultation-form-left {
+                    flex: 1;
+                    border-right: 1px solid #2c2c2c;
+                    padding-right: 40px;
+                }
+                .consultation-subtitle {
+                    font-size: 14px;
+                    font-style: italic;
+                    color: #bf9b30;
+                    display: block;
+                    margin-bottom: 10px;
+                }
+                .consultation-title {
+                    font-size: 22px;
+                    font-weight: 700;
+                    color: #ffffff;
+                    margin-bottom: 25px;
+                    line-height: 1.3;
+                }
+                .consultation-expert {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                }
+                .consultation-expert-icon {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
+                    border: 1px solid #3c3c3c;
+                    background-color: rgba(255, 255, 255, 0.05);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .consultation-expert-icon span {
+                    font-size: 22px;
+                }
+                .consultation-expert-name {
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: #ffffff;
+                }
+                .consultation-expert-exp {
+                    font-size: 10px;
+                    color: #a0a0a0;
+                    margin-top: 4px;
+                }
+                .consultation-form-right {
+                    flex: 1.5;
+                }
+                .consultation-field {
+                    margin-bottom: 18px;
+                }
+                .consultation-field label {
+                    font-size: 10px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    color: #a0a0a0;
+                    display: block;
+                    margin-bottom: 6px;
+                }
+                .consultation-field input,
+                .consultation-field textarea {
+                    width: 100%;
+                    background-color: #2a2a2a;
+                    border: 1px solid #3c3c3c;
+                    border-radius: 12px;
+                    padding: 12px 16px;
+                    font-size: 13px;
+                    color: #ffffff;
+                    transition: all 0.3s ease;
+                }
+                .consultation-field input:focus,
+                .consultation-field textarea:focus {
+                    outline: none;
+                    border-color: #bf9b30;
+                }
+                .consultation-phone-row {
+                    display: grid;
+                    grid-template-columns: 1fr 2fr;
+                    gap: 12px;
+                    margin-bottom: 18px;
+                }
+                .consultation-phone-code label,
+                .consultation-phone-number label {
+                    font-size: 10px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    color: #a0a0a0;
+                    display: block;
+                    margin-bottom: 6px;
+                }
+                .consultation-phone-code select,
+                .consultation-phone-number input {
+                    width: 100%;
+                    background-color: #2a2a2a;
+                    border: 1px solid #3c3c3c;
+                    border-radius: 12px;
+                    padding: 12px 16px;
+                    font-size: 13px;
+                    color: #ffffff;
+                }
+                .consultation-phone-code select:focus,
+                .consultation-phone-number input:focus {
+                    outline: none;
+                    border-color: #bf9b30;
+                }
+                @media (max-width: 768px) {
+                    .consultation-form-card {
+                        flex-direction: column;
+                        padding: 30px 20px;
+                    }
+                    .consultation-form-left {
+                        border-right: none;
+                        border-bottom: 1px solid #2c2c2c;
+                        padding-right: 0;
+                        padding-bottom: 25px;
+                        text-align: center;
+                    }
+                    .consultation-expert {
+                        justify-content: center;
+                    }
+                }
+            </style>
+
+            <script>
+                // AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ
+                (function() {
+                    const submitBtn = document.getElementById('submitConsultationBtn');
+                    if (!submitBtn) return;
+                    submitBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const name = document.getElementById('consultationName')?.value || '';
+                        const phone = document.getElementById('consultationPhone')?.value || '';
+                        const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
+                        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+                        if (!name.trim() || !phone.trim()) return;
+                        let ajaxUrl = '/consultation-ajax/';
+                        {% if agent_site %}
+                        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
+                        {% endif %}
+                        fetch(ajaxUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-CSRFToken': csrfToken
+                            },
+                            body: new URLSearchParams({
+                                'name': name,
+                                'phone': phone,
+                                'country_code': countryCode,
+                                'consultation_submit': '1'
+                            })
+                        }).catch(error => console.error('Помилка:', error));
+                    });
+                })();
+            </script>
+
+            <!-- Рекомендовані статті -->
+            {% if recommended %}
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="recommended-news-block my-5">
+                        <h3 class="mb-4">Рекомендовані статті</h3>
+                        <div class="carousel-container">
+                            <div class="carousel-track" id="recommendedNewsTrack">
+                                {% for rec in recommended %}
+                                <div class="carousel-card">
+                                    <div class="card h-100 shadow-sm border-0 rounded-4 d-flex flex-column">
+                                        {% if rec.image %}
+                                        <img src="{{ rec.image.url }}" class="card-img-top rounded-top-4" alt="{{ rec.title }}" style="height: 160px; object-fit: cover; width: 100%;">
+                                        {% else %}
+                                        <div class="bg-light rounded-top-4 d-flex align-items-center justify-content-center" style="height: 160px;">
+                                            <i class="fa-solid fa-newspaper fa-3x text-muted"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div class="card-body d-flex flex-column flex-grow-1 p-3">
+                                            <h6 class="card-title fw-bold mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.5rem;">
+                                                {{ rec.title|truncatechars:70 }}
+                                            </h6>
+                                            <p class="card-text small text-muted mb-2">
+                                                <i class="fa-regular fa-calendar me-1"></i> {{ rec.created_at|date:"d.m.Y" }}
+                                            </p>
+                                            <div class="mt-auto pt-2">
+                                                <a href="{% if agent_site %}/a/{{ agent_site.slug }}/news/{{ rec.pk }}/{% else %}/news/{{ rec.pk }}/{% endif %}" class="btn btn-outline-primary btn-sm w-100 rounded-pill">Читати</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button class="carousel-btn prev" id="recommendedPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button class="carousel-btn next" id="recommendedNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Кнопка "ПОВЕРНУТИСЯ ДО НОВИН" -->
             <div class="d-flex justify-content-center my-5">
-                <a href="{% if agent_site %}{% url 'agent_news_list' agent_site.slug %}{% else %}{% url 'news' %}{% endif %}" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
+                <a href="{% if agent_site %}/a/{{ agent_site.slug }}/news/{% else %}/news/{% endif %}" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
                     <i class="fa-solid fa-arrow-left me-2"></i> Повернутися до новин
                 </a>
             </div>
-            {% endif %}
 
         </div>
     </div>
 </div>
 
 <style>
-    /* АДАПТИВНІ СТИЛІ ДЛЯ ТЕКСТУ НОВИНИ */
+    /* Адаптивні стилі */
     .news-content {
         width: 100%;
         max-width: 800px;
         margin: 0 auto;
     }
-
     .news-text {
         word-wrap: break-word;
         overflow-wrap: break-word;
@@ -412,164 +365,38 @@
         line-height: 1.6;
         font-size: 1rem;
     }
-
-    .news-text p {
-        margin-bottom: 1rem;
-    }
-
-    /* Стилі для галереї новин - ЗБІЛЬШЕНЕ ФОТО */
-    #newsCarousel {
-        max-width: 100%;
-        margin: 0 auto;
-    }
-
     .carousel-item img {
         height: 550px;
         width: 100%;
         object-fit: cover;
         border-radius: 16px;
     }
-
-    /* Для мобільних пристроїв - текст */
     @media (max-width: 768px) {
-        .news-text {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            padding: 0 15px;
-        }
-
-        .news-header-container h1 {
-            font-size: 1.5rem;
-            padding: 0 15px;
-        }
-
-        .carousel-item img {
-            height: 350px !important;
-        }
+        .carousel-item img { height: 350px !important; }
+        .news-text { font-size: 0.95rem; }
     }
-
     @media (max-width: 576px) {
-        .news-text {
-            font-size: 0.9rem;
-            padding: 0 10px;
-        }
-
-        .news-header-container h1 {
-            font-size: 1.3rem;
-        }
-
-        .carousel-item img {
-            height: 250px !important;
-        }
+        .carousel-item img { height: 250px !important; }
+        .news-text { font-size: 0.9rem; }
     }
 
-    /* Адаптація висоти фото для планшетів */
-    @media (max-width: 992px) and (min-width: 769px) {
-        .carousel-item img {
-            height: 450px;
-        }
-    }
-
-    .agent-card {
-        background: rgba(255, 255, 255, 0.55);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    }
-
-    /* Рекомендовані статті - АДАПТИВНІ КАРТКИ */
+    /* Рекомендовані статті - карусель */
     .recommended-news-block .carousel-container {
         position: relative;
         width: 100%;
         overflow: hidden;
         padding: 0 5px;
     }
-
     .recommended-news-block .carousel-track {
         display: flex;
         transition: transform 0.4s ease;
         gap: 15px;
     }
-
     .recommended-news-block .carousel-card {
         flex: 0 0 calc(25% - 15px);
         min-width: 0;
         box-sizing: border-box;
     }
-
-    .recommended-news-block .card {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        transition: transform 0.2s ease;
-    }
-
-    .recommended-news-block .card:hover {
-        transform: translateY(-5px);
-    }
-
-    .recommended-news-block .card-title {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        min-height: 2.5rem;
-        font-size: 0.95rem;
-        line-height: 1.3;
-    }
-
-    .recommended-news-block .card-body {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .recommended-news-block .btn {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    /* Адаптація для рекомендованих статей */
-    @media (max-width: 992px) {
-        .recommended-news-block .carousel-card {
-            flex: 0 0 calc(33.33% - 15px);
-        }
-        .recommended-news-block .card-title {
-            font-size: 0.9rem;
-            min-height: 2.3rem;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .recommended-news-block .carousel-card {
-            flex: 0 0 calc(50% - 15px);
-        }
-        .recommended-news-block .card-title {
-            font-size: 0.85rem;
-            min-height: 2.2rem;
-        }
-        .recommended-news-block .btn {
-            font-size: 0.8rem;
-            padding: 0.4rem 0.5rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .recommended-news-block .carousel-card {
-            flex: 0 0 calc(100% - 15px);
-        }
-        .recommended-news-block .card-title {
-            font-size: 0.9rem;
-            min-height: auto;
-        }
-        .recommended-news-block .btn {
-            font-size: 0.85rem;
-            padding: 0.5rem;
-        }
-    }
-
-    /* Кнопки навігації каруселі */
     .recommended-news-block .carousel-btn {
         position: absolute;
         top: 50%;
@@ -577,7 +404,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(0,0,0,0.6);
         border: none;
         color: white;
         font-size: 18px;
@@ -586,120 +413,56 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: background 0.2s;
     }
-
-    .recommended-news-block .carousel-btn:hover {
-        background: rgba(0, 0, 0, 0.9);
+    .recommended-news-block .carousel-btn.prev { left: 0px; }
+    .recommended-news-block .carousel-btn.next { right: 0px; }
+    @media (max-width: 992px) {
+        .recommended-news-block .carousel-card { flex: 0 0 calc(33.33% - 15px); }
     }
-
-    .recommended-news-block .carousel-btn.prev {
-        left: 0px;
-    }
-
-    .recommended-news-block .carousel-btn.next {
-        right: 0px;
-    }
-
     @media (max-width: 768px) {
-        .recommended-news-block .carousel-btn {
-            width: 35px;
-            height: 35px;
-            font-size: 16px;
-        }
-        .recommended-news-block .carousel-btn.prev {
-            left: 5px;
-        }
-        .recommended-news-block .carousel-btn.next {
-            right: 5px;
-        }
+        .recommended-news-block .carousel-card { flex: 0 0 calc(50% - 15px); }
+        .recommended-news-block .carousel-btn { width: 35px; height: 35px; font-size: 16px; }
     }
-
     @media (max-width: 576px) {
-        .recommended-news-block .carousel-btn {
-            width: 30px;
-            height: 30px;
-            background: rgba(0, 0, 0, 0.5);
-        }
-        .recommended-news-block .carousel-btn.prev {
-            left: 0px;
-        }
-        .recommended-news-block .carousel-btn.next {
-            right: 0px;
-        }
+        .recommended-news-block .carousel-card { flex: 0 0 calc(100% - 15px); }
+        .recommended-news-block .carousel-btn { width: 30px; height: 30px; }
     }
-
-
 </style>
 
 <script>
-function copyCurrentUrl() {
-    navigator.clipboard.writeText(window.location.href);
-    alert('Посилання скопійовано!');
-}
-
-// Випадковий фон для блоку консультації
-document.addEventListener('DOMContentLoaded', function() {
-    const colors = ['#c4edd4', '#ccfbfb', '#FFC0CB'];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
-    const card = document.getElementById('consultationCard');
-    if (card) {
-        card.style.backgroundColor = randomColor;
-        card.style.color = '#434343';
-        const cardBody = card.querySelector('.card-body');
-        if (cardBody) cardBody.style.backgroundColor = 'transparent';
-    }
-
-    // Карусель рекомендованих статей
-    function initCarousel(trackId, prevBtnId, nextBtnId) {
-        const track = document.getElementById(trackId);
-        const prevBtn = document.getElementById(prevBtnId);
-        const nextBtn = document.getElementById(nextBtnId);
-        if (!track || !prevBtn || !nextBtn) return;
-
-        let currentIndex = 0;
-        const cards = track.children;
-        const totalCards = cards.length;
-
-        function getVisibleCards() {
-            if (window.innerWidth >= 992) return 4;
-            if (window.innerWidth >= 768) return 3;
-            if (window.innerWidth >= 576) return 2;
-            return 1;
-        }
-
-        function updateCarousel() {
-            const visibleCards = getVisibleCards();
-            const maxIndex = Math.max(0, totalCards - visibleCards);
-            currentIndex = Math.min(currentIndex, maxIndex);
-            const cardWidth = cards[0].offsetWidth + 15;
-            track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-        }
-
-        prevBtn.addEventListener('click', function() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateCarousel();
+    document.addEventListener('DOMContentLoaded', function() {
+        // Карусель рекомендованих статей
+        function initCarousel(trackId, prevBtnId, nextBtnId) {
+            const track = document.getElementById(trackId);
+            const prevBtn = document.getElementById(prevBtnId);
+            const nextBtn = document.getElementById(nextBtnId);
+            if (!track || !prevBtn || !nextBtn) return;
+            let currentIndex = 0;
+            const cards = track.children;
+            const totalCards = cards.length;
+            function getVisibleCards() {
+                if (window.innerWidth >= 992) return 4;
+                if (window.innerWidth >= 768) return 3;
+                if (window.innerWidth >= 576) return 2;
+                return 1;
             }
-        });
-
-        nextBtn.addEventListener('click', function() {
-            const visibleCards = getVisibleCards();
-            const maxIndex = totalCards - visibleCards;
-            if (currentIndex < maxIndex) {
-                currentIndex++;
-                updateCarousel();
+            function updateCarousel() {
+                const visibleCards = getVisibleCards();
+                const maxIndex = Math.max(0, totalCards - visibleCards);
+                currentIndex = Math.min(currentIndex, maxIndex);
+                const cardWidth = cards[0].offsetWidth + 15;
+                track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
             }
-        });
-
-        window.addEventListener('resize', function() {
+            prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; updateCarousel(); } });
+            nextBtn.addEventListener('click', () => {
+                const visibleCards = getVisibleCards();
+                const maxIndex = totalCards - visibleCards;
+                if (currentIndex < maxIndex) { currentIndex++; updateCarousel(); }
+            });
+            window.addEventListener('resize', () => updateCarousel());
             updateCarousel();
-        });
-
-        updateCarousel();
-    }
-
-    initCarousel('recommendedNewsTrack', 'recommendedPrevBtn', 'recommendedNextBtn');
-});
+        }
+        initCarousel('recommendedNewsTrack', 'recommendedPrevBtn', 'recommendedNextBtn');
+    });
 </script>
 {% endblock %}
