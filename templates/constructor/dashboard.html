@@ -252,29 +252,33 @@
     <div class="blocks-order-list" id="blocks-order-container">
         {% for block_id in blocks_order %}
             <div class="block-order-item mb-2 p-2 border rounded d-flex justify-content-between align-items-center" data-block="{{ block_id }}">
-                <div class="d-flex align-items-center">
-                    <i class="
-                        {% if block_id == 'price_calendar' %}fa-regular fa-calendar me-2
-                        {% elif block_id == 'popular_destinations' %}fa-regular fa-compass me-2
-                        {% elif block_id == 'consultation' %}fa-regular fa-message me-2
-                        {% elif block_id == 'tours_from_city' %}fa-regular fa-city me-2
-                        {% elif block_id == 'about_us' %}fa-regular fa-circle-info me-2
-                        {% elif block_id == 'popular_hotels' %}fa-regular fa-building me-2
-                        {% elif block_id == 'banners' %}fa-regular fa-image me-2
-                        {% else %}fa-regular fa-square me-2
-                        {% endif %}"></i>
-                    <strong>
-                        {% if block_id == 'price_calendar' %} 📅 Календар низьких цін
-                        {% elif block_id == 'popular_destinations' %} 🌍 Популярні напрямки
-                        {% elif block_id == 'consultation' %} 📞 Консультація
-                        {% elif block_id == 'tours_from_city' %} 🏙️ Тури з вашого міста
-                        {% elif block_id == 'about_us' %} ℹ️ Про нас
-                        {% elif block_id == 'popular_hotels' %} 🏨 Популярні готелі
-                        {% elif block_id == 'banners' %} 🎯 Мої банери
-                        {% else %}{{ block_id }}
-                        {% endif %}
-                    </strong>
-                </div>
+    <div class="d-flex align-items-center">
+        <i class="
+            {% if block_id == 'price_calendar' %}fa-regular fa-calendar me-2
+            {% elif block_id == 'popular_destinations' %}fa-regular fa-compass me-2
+            {% elif block_id == 'consultation' %}fa-regular fa-message me-2
+            {% elif block_id == 'tours_from_city' %}fa-regular fa-city me-2
+            {% elif block_id == 'about_us' %}fa-regular fa-circle-info me-2
+            {% elif block_id == 'popular_hotels' %}fa-regular fa-building me-2
+            {% elif block_id == 'banners' %}fa-regular fa-image me-2
+            {% elif block_id == 'consultation_promo' %}fa-regular fa-bullhorn me-2
+            {% elif block_id == 'hot_tours' %}fa-regular fa-fire-flame-curved me-2
+            {% else %}fa-regular fa-square me-2
+            {% endif %}"></i>
+        <strong>
+            {% if block_id == 'price_calendar' %} 📅 Календар низьких цін
+            {% elif block_id == 'popular_destinations' %} 🌍 Популярні напрямки
+            {% elif block_id == 'consultation' %} 📞 Консультація
+            {% elif block_id == 'tours_from_city' %} 🏙️ Тури з вашого міста
+            {% elif block_id == 'about_us' %} ℹ️ Про нас
+            {% elif block_id == 'popular_hotels' %} 🏨 Популярні готелі
+            {% elif block_id == 'banners' %} 🎯 Мої банери
+            {% elif block_id == 'consultation_promo' %} 🎯 Промо-блок консультації
+            {% elif block_id == 'hot_tours' %} 🔥 Гарячі тури
+            {% else %}{{ block_id }}
+            {% endif %}
+        </strong>
+    </div>
                 <div class="btn-group" style="gap: 5px;">
                     <button type="button" class="move-up btn btn-sm btn-outline-secondary" style="width: 32px;" title="Перемістити вгору">
                         <i class="fa-solid fa-chevron-up"></i>

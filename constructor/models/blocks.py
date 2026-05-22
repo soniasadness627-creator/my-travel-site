@@ -14,7 +14,9 @@ class AgentBlockSettings(models.Model):
         ('tours_from_city', '🏙️ Тури з вашого міста'),
         ('about_us', 'ℹ️ Про нас'),
         ('popular_hotels', '🏨 Популярні готелі'),
-        ('banners', '🎯 Мої банери'),  # якщо потрібен
+        ('banners', '🎯 Мої банери'),
+        ('consultation_promo', '🎯 Промо-блок консультації'),
+        ('hot_tours', '🔥 Гарячі тури'),
     ]
 
     POSITION_CHOICES = [
@@ -99,6 +101,8 @@ class AgentBlockSettings(models.Model):
             'about_us',
             'popular_hotels',
             'banners',
+            'consultation_promo',
+            'hot_tours',
         ]
 
     def get_default_active_blocks(self):
@@ -111,4 +115,6 @@ class AgentBlockSettings(models.Model):
             'about_us',
             'popular_hotels',
             'banners',
+            'consultation_promo',
+            'hot_tours',
         ]

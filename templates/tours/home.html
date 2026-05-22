@@ -45,6 +45,7 @@
     <script src="https://export.otpusk.com/js/order"></script>
 </div>
 
+{% if 'consultation_promo' in active_blocks %}
 <!-- ========== БЛОК З КНОПКОЮ ДЛЯ ПЕРЕХОДУ ДО ФОРМИ КОНСУЛЬТАЦІЇ ========== -->
 <div class="container my-5">
     <div class="consult-promo-block rounded-3xl shadow-xl relative overflow-hidden cursor-pointer group">
@@ -238,6 +239,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+{% endif %}
+
+{% if 'hot_tours' in active_blocks %}
 <!-- ========== БЛОК ГАРЯЧИХ ТУРІВ ВІД OTPUSK (ДОДАНО) ========== -->
 <div class="container my-5">
     <div class="card shadow-sm border-0 rounded-4">
@@ -249,6 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="hot-size-checker" id="otpusk_onsite_hot28113">
     <img src="https://export.otpusk.com/os/ajax-loader.gif"/><span></span>
 </div>
+            {% endif %}
 <script>
     var osTarget28113 = "https://clubdatour.com.ua/search-otpusk/";
     var osLang = "uk";
@@ -320,6 +325,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
 
 {% elif block == 'popular_destinations' %}
+
         <!-- Популярні напрямки -->
         <div class="container my-5">
             <div class="popular-tours-wrapper">
@@ -2658,6 +2664,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </div>
                     </div>
+
                     {% endif %}
                 {% endfor %}
             </div>
