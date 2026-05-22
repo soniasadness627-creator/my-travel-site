@@ -1137,7 +1137,7 @@ function selectCalendarDate(dateISO, price, nights) {
         max-width: 998px;
         margin: 0 auto;
         width: 100%;
-        overflow-x: hidden;
+        overflow-x: visible;
     }
 
     /* ========== КАРУСЕЛЬ ДЛЯ ВКЛАДОК КРАЇН ========== */
@@ -1565,12 +1565,15 @@ function selectCalendarDate(dateISO, price, nights) {
         width: calc(100% + 24px);
     }
     .country-tab {
-        padding: 0.3rem 1rem;
-        font-size: 0.75rem;
-    }
-    .country-tab:hover {
-        transform: translateY(-1px);
-    }
+    position: relative;
+    z-index: 1;
+}
+
+.country-tab:hover {
+    z-index: 10;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
 }
 </style>
 
