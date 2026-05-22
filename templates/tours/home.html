@@ -46,231 +46,6 @@ DjangoProject1/templates/tours/home.html
     <script src="https://export.otpusk.com/js/order"></script>
 </div>
 
-<!-- ========== БЛОК З КНОПКОЮ ДЛЯ ПЕРЕХОДУ ДО ФОРМИ КОНСУЛЬТАЦІЇ ========== -->
-<div class="container my-5">
-    <div class="consult-promo-block rounded-3xl shadow-xl relative overflow-hidden cursor-pointer group">
-        <!-- Фонове зображення -->
-        <div class="consult-promo-bg">
-            <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&auto=format&fit=crop&q=80" alt="Travel background" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-        </div>
-
-        <!-- Темне затемнення для читабельності тексту -->
-        <div class="absolute inset-0 bg-black/50 z-10"></div>
-
-        <!-- Контент поверх фото - все вертикально по центру -->
-        <div class="relative z-20 flex flex-col items-center justify-center text-center p-8 sm:p-12 min-h-[350px]">
-            <span class="text-amber-400 text-sm font-semibold uppercase tracking-wider mb-3">Потрібна допомога?</span>
-            <h3 class="text-2xl md:text-3xl font-bold font-serif text-white mb-4">Важко обрати тур самостійно?</h3>
-            <p class="text-white/80 text-base max-w-md mx-auto mb-8">Наші експерти безкоштовно підберуть для вас найкращі варіанти</p>
-
-            <button id="scrollToConsultationBtn" class="consult-promo-btn inline-flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer">
-                Скласти індивідуальний маршрут
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon transition-transform duration-300 group-hover:translate-x-1">
-                    <path d="M5 12h14"></path>
-                    <path d="m12 5 7 7-7 7"></path>
-                </svg>
-            </button>
-        </div>
-    </div>
-</div>
-
-<style>
-/* Стилі для блоку */
-.consult-promo-block {
-    position: relative;
-    min-height: 380px;
-    border-radius: 28px;
-    overflow: hidden;
-    box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.2);
-}
-
-/* Фонове зображення */
-.consult-promo-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-
-.consult-promo-bg img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.7s ease-out;
-}
-
-.consult-promo-block:hover .consult-promo-bg img {
-    transform: scale(1.05);
-}
-
-/* Затемнення */
-.consult-promo-block .absolute.bg-black\/50 {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: 10;
-}
-
-/* Контент поверх фото - центруємо */
-.consult-promo-block .relative.z-20 {
-    position: relative;
-    z-index: 20;
-    min-height: 380px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Кнопка - нові кольори */
-.consult-promo-btn {
-    background-color: #d9bf8c;
-    color: #ffffff;
-    border: none;
-    padding: 12px 32px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    width: auto;
-    min-width: 265px;
-    height: 44px;
-}
-
-/* Стрілочка всередині кнопки */
-.consult-promo-btn .arrow-icon {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-/* Ефект при наведенні на кнопку */
-.consult-promo-btn:hover {
-    transform: scale(1.02);
-    background-color: #c9ad7a;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-}
-
-/* Ефект при натисканні */
-.consult-promo-btn:active {
-    transform: scale(0.98);
-}
-
-/* Текст */
-.consult-promo-block h3 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 12px;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.consult-promo-block p {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.9);
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    max-width: 500px;
-}
-
-.consult-promo-block span {
-    color: #d9bf8c;
-    font-size: 0.85rem;
-    letter-spacing: 2px;
-}
-
-/* Для мобільних */
-@media (max-width: 768px) {
-    .consult-promo-block {
-        min-height: 320px;
-        border-radius: 20px;
-    }
-    .consult-promo-block .relative.z-20 {
-        min-height: 320px;
-        padding: 30px 20px !important;
-    }
-    .consult-promo-block h3 {
-        font-size: 1.4rem;
-    }
-    .consult-promo-block p {
-        font-size: 0.85rem;
-        padding: 0 10px;
-    }
-    .consult-promo-btn {
-        padding: 10px 20px;
-        font-size: 0.85rem;
-        min-width: 240px;
-        height: 42px;
-    }
-    .consult-promo-btn .arrow-icon {
-        width: 16px;
-        height: 16px;
-    }
-}
-
-/* Для планшетів */
-@media (min-width: 768px) and (max-width: 1024px) {
-    .consult-promo-block {
-        min-height: 340px;
-    }
-    .consult-promo-block h3 {
-        font-size: 1.6rem;
-    }
-}
-</style>
-
-<script>
-// Плавний скрол до форми консультації
-document.addEventListener('DOMContentLoaded', function() {
-    const scrollBtn = document.getElementById('scrollToConsultationBtn');
-    if (scrollBtn) {
-        scrollBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const consultationSection = document.getElementById('consultationCard');
-            if (consultationSection) {
-                consultationSection.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    }
-});
-</script>
-<!-- ========== БЛОК ГАРЯЧИХ ТУРІВ ВІД OTPUSK (ДОДАНО) ========== -->
-<div class="container my-5">
-    <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-header bg-white py-3 px-4 border-0">
-            <h3 class="fw-bold mb-0" style="color: #000000;">Гарячі тури</h3>
-        </div>
-        <div class="card-body p-4">
-            <!-- ТУТ ВСТАВИТИ ВЕСЬ КОД, ЯКИЙ ВИ НАДАЛИ -->
-            <div class="hot-size-checker" id="otpusk_onsite_hot28113">
-    <img src="https://export.otpusk.com/os/ajax-loader.gif"/><span></span>
-</div>
-<script>
-    var osTarget28113 = "https://clubdatour.com.ua/search-otpusk/";
-    var osLang = "uk";
-    var osCurrency = "converted";
-    var osTargetBlank28113 = false;
-
-    (function (d, s) {
-        function loadScript(src, id, callback) {if (d.getElementById(id)) {if (typeof callback === "function") callback();return;}var js = d.createElement(s);js.id = id;js.src = src;js.defer = true;js.onload = function () {if (typeof callback === "function") callback();};d.head.appendChild(js);}
-        if (!window._otpuskApiLoaded) {window._otpuskApiLoaded = true;
-            loadScript("https://export.otpusk.com/api/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca", "OShotApi28113", function () {
-                loadScript("https://export.otpusk.com/js/view?id=28113", "OShotGetData28113");
-            });
-        } else {
-            loadScript("https://export.otpusk.com/js/view?id=28113", "OShotGetData28113");
-        }
-    }(document, "script"));
-</script>
-        </div>
-    </div>
-</div>
-<!-- ========== КІНЕЦЬ БЛОКУ ГАРЯЧИХ ТУРІВ ========== -->
 
 <!-- ========== ВСІ БЛОКИ В ПОРЯДКУ (згідно з налаштуваннями конструктора) ========== -->
 {% for block in active_blocks %}
@@ -343,6 +118,792 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>
 
+
+
+    {% elif block == 'consultation' %}
+    <!-- Консультація -->
+    <div class="container my-5">
+        <div class="consultation-form-wrapper">
+            <div class="consultation-form-card">
+                <div class="consultation-form-left">
+                    <span class="consultation-subtitle">Приватна розмова</span>
+                    <h4 class="consultation-title">Допоможемо обрати ідеальний тур</h4>
+                    <div class="consultation-expert">
+                        <div class="consultation-expert-icon">
+                            <span>👑</span>
+                        </div>
+                        <div>
+                            <div class="consultation-expert-name">Консультант Клубу</div>
+                            <div class="consultation-expert-exp">9 років особистих експедицій</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="consultation-form-right">
+                    <form id="consultationForm" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="consultation_submit" value="1">
+                        <div class="consultation-field">
+                            <label>Ваше Ім'я</label>
+                            <input type="text" name="name" id="consultationName" placeholder="Наприклад: Віктор Коваль" required>
+                        </div>
+                        <div class="consultation-phone-row">
+                            <div class="consultation-phone-code">
+                                <label>Код</label>
+                                <select name="country_code" id="consultationCountryCode">
+                                    <option value="+380">🇺🇦 +380</option>
+                                    <option value="+48">🇵🇱 +48</option>
+                                    <option value="+1">🇺🇸 +1</option>
+                                    <option value="+44">🇬🇧 +44</option>
+                                    <option value="+49">🇩🇪 +49</option>
+                                    <option value="+33">🇫🇷 +33</option>
+                                </select>
+                            </div>
+                            <div class="consultation-phone-number">
+                                <label>Номер телефону</label>
+                                <input type="tel" name="phone" id="consultationPhone" placeholder="XX XXX XX XX" required>
+                            </div>
+                                    </div>
+                                    <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">Залишити запит</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+{% elif block == 'consultation_promo' %}
+<!-- ========== БЛОК З КНОПКОЮ ДЛЯ ПЕРЕХОДУ ДО ФОРМИ КОНСУЛЬТАЦІЇ ========== -->
+<div class="container my-5">
+    <div class="consult-promo-block rounded-3xl shadow-xl relative overflow-hidden cursor-pointer group">
+        <!-- Фонове зображення -->
+        <div class="consult-promo-bg">
+            <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&auto=format&fit=crop&q=80" alt="Travel background" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+        </div>
+
+        <!-- Темне затемнення для читабельності тексту -->
+        <div class="absolute inset-0 bg-black/50 z-10"></div>
+
+        <!-- Контент поверх фото - все вертикально по центру -->
+        <div class="relative z-20 flex flex-col items-center justify-center text-center p-8 sm:p-12 min-h-[350px]">
+            <span class="text-amber-400 text-sm font-semibold uppercase tracking-wider mb-3">Потрібна допомога?</span>
+            <h3 class="text-2xl md:text-3xl font-bold font-serif text-white mb-4">Важко обрати тур самостійно?</h3>
+            <p class="text-white/80 text-base max-w-md mx-auto mb-8">Наші експерти безкоштовно підберуть для вас найкращі варіанти</p>
+
+            <button id="scrollToConsultationBtn" class="consult-promo-btn inline-flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer">
+                Скласти індивідуальний маршрут
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon transition-transform duration-300 group-hover:translate-x-1">
+                    <path d="M5 12h14"></path>
+                    <path d="m12 5 7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+{% elif block == 'hot_tours %}
+<!-- ========== БЛОК ГАРЯЧИХ ТУРІВ ВІД OTPUSK (ДОДАНО) ========== -->
+<div class="container my-5">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-white py-3 px-4 border-0">
+            <h3 class="fw-bold mb-0" style="color: #000000;">Гарячі тури</h3>
+        </div>
+        <div class="card-body p-4">
+            <!-- ТУТ ВСТАВИТИ ВЕСЬ КОД, ЯКИЙ ВИ НАДАЛИ -->
+            <div class="hot-size-checker" id="otpusk_onsite_hot28113">
+    <img src="https://export.otpusk.com/os/ajax-loader.gif"/><span></span>
+</div>
+
+        </div>
+    </div>
+</div>
+<!-- ========== КІНЕЦЬ БЛОКУ ГАРЯЧИХ ТУРІВ ========== -->
+{% elif block == 'tours_from_city' %}
+        <!-- Тури з вашого міста -->
+        <div class="container my-5">
+            <div class="city-tours-wrapper">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold" style="color: #000000; font-size: 1.8rem;">Тури з вашого міста</h2>
+                    <div class="city-slider-nav d-flex gap-2">
+                        <button class="btn btn-sm rounded-circle city-prev" style="width: 36px; height: 36px; border: 1px solid #dee2e6; background: white; color: var(--primary-color);">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button class="btn btn-sm rounded-circle city-next" style="width: 36px; height: 36px; border: 1px solid #dee2e6; background: white; color: var(--primary-color);">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="city-slider-container" style="position: relative; overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+                    <div class="city-buttons-wrapper" id="cityButtonsWrapper" style="display: flex; gap: 12px; padding-bottom: 10px;">
+                        <button class="city-btn active" data-city="Кишинів">Кишинів</button>
+                        <button class="city-btn" data-city="Київ">Київ</button>
+                        <button class="city-btn" data-city="Одеса">Одеса</button>
+                        <button class="city-btn" data-city="Дніпро">Дніпро</button>
+                        <button class="city-btn" data-city="Львів">Львів</button>
+                        <button class="city-btn" data-city="Харків">Харків</button>
+                        <button class="city-btn" data-city="Варшава">Варшава</button>
+                        <button class="city-btn" data-city="Краків">Краків</button>
+                        <button class="city-btn" data-city="Жешув">Жешув</button>
+                        <button class="city-btn" data-city="Вроцлав">Вроцлав</button>
+                        <button class="city-btn" data-city="Катовіце">Катовіце</button>
+                        <button class="city-btn" data-city="Бухарест">Бухарест</button>
+                        <button class="city-btn" data-city="Будапешт">Будапешт</button>
+                        <button class="city-btn" data-city="Прага">Прага</button>
+                        <button class="city-btn" data-city="Берлін">Берлін</button>
+                        <button class="city-btn" data-city="Кривий Ріг">Кривий Ріг</button>
+                        <button class="city-btn" data-city="Сучава">Сучава</button>
+                        <button class="city-btn" data-city="Ясси">Ясси</button>
+                        <button class="city-btn" data-city="Житомир">Житомир</button>
+                        <button class="city-btn" data-city="Запоріжжя">Запоріжжя</button>
+                        <button class="city-btn" data-city="Відень">Відень</button>
+                    </div>
+                </div>
+                <div class="countries-grid" id="countriesGrid">
+                    <div class="text-center py-5 w-100">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Завантаження...</span>
+                        </div>
+                        <p class="mt-3 text-muted">Завантаження напрямків...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    {% elif block == 'about_us' %}
+    <!-- Про нас -->
+    {% if agent_site and agent_site.about_us_title and agent_site.about_us_text %}
+    <div class="container my-5">
+        <div class="about-us-section">
+            <div class="row align-items-center g-5">
+                <!-- Фото - ліворуч -->
+                {% if agent_site.about_us_image %}
+                <div class="col-md-6">
+                    <div class="about-us-image-wrapper">
+                        <img src="{{ agent_site.about_us_image.url }}" alt="{{ agent_site.about_us_title }}" class="img-fluid">
+                    </div>
+                </div>
+                {% endif %}
+                <!-- Текст - праворуч -->
+                <div class="{% if agent_site.about_us_image %}col-md-6{% else %}col-12{% endif %}">
+                    <div class="about-us-content">
+                        <span class="about-us-subtitle">Про нас</span>
+                        <h3 class="about-us-title">{{ agent_site.about_us_title }}</h3>
+                        <div class="about-us-text">
+                            {{ agent_site.about_us_text|linebreaks }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+
+        {% elif block == 'popular_hotels' %}
+        <!-- Популярні готелі -->
+        <div class="container my-5">
+            <div class="popular-hotels-wrapper">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold" style="color: #000000; font-size: 1.8rem;">Популярні готелі</h2>
+                    <div class="hotels-slider-nav d-flex gap-2">
+                        <button class="btn btn-sm rounded-circle hotels-prev" style="width: 36px; height: 36px; border: 1px solid #dee2e6; background: white; color: var(--primary-color);">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button class="btn btn-sm rounded-circle hotels-next" style="width: 36px; height: 36px; border: 1px solid #dee2e6; background: white; color: var(--primary-color);">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="hotels-slider-container" style="position: relative; overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+                    <div class="hotels-slider-track d-flex gap-3" id="popularHotelsTrack">
+                        <div class="text-center py-5 w-100">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Завантаження...</span>
+                            </div>
+                            <p class="mt-3 text-muted">Завантаження популярних готелів...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+               {% elif block == 'banners' %}
+        <!-- Блок банерів -->
+        {% if banners %}
+        <div class="container my-5">
+            <div class="banners-section">
+                {% for banner in banners %}
+                    {% if banner.active %}
+                    <div class="banner-wrapper mb-4" data-position="{{ banner.position|default:'full' }}">
+                        <div class="banner-container position-relative rounded-4 overflow-hidden" style="background-image: url('{{ banner.image }}'); background-size: cover; background-position: center; min-height: 250px;">
+                            <div class="banner-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, {{ banner.overlay_opacity|default:0.4 }}); z-index: 1;"></div>
+                            <div class="banner-content position-relative" style="z-index: 2; min-height: 250px; display: flex; flex-direction: column; justify-content: center; padding: 2rem; text-align: center;">
+                                {% for text_block in banner.text_blocks %}
+                                    {% if text_block.heading %}
+                                    <h2 class="banner-heading" style="color: {{ text_block.heading_color|default:'#ffffff' }}; font-size: 1.8rem; font-weight: bold; margin-bottom: 0.5rem;">{{ text_block.heading }}</h2>
+                                    {% endif %}
+                                    {% if text_block.text %}
+                                    <p class="banner-text" style="color: {{ text_block.text_color|default:'#ffffff' }}; font-size: 1rem; margin-bottom: 1rem;">{{ text_block.text }}</p>
+                                    {% endif %}
+                                    {% if text_block.button_text and text_block.button_link %}
+                                    <a href="{{ text_block.button_link }}" class="banner-btn btn" style="background: {{ text_block.button_color|default:'#086745' }}; color: white; padding: 0.5rem 1.2rem; border-radius: 25px; text-decoration: none; display: inline-block; width: fit-content; margin: 0 auto;">{{ text_block.button_text }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+
+        {% endif %}
+    {% endif %}
+
+{% endfor %}
+
+<script>
+// ========== БЛОК "ПОПУЛЯРНІ ГОТЕЛІ" ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const track = document.getElementById('popularHotelsTrack');
+    if (!track) return;
+
+    async function fetchPopularHotels() {
+        try {
+            let url = '/api/get-popular-hotels/';
+            const pathParts = window.location.pathname.split('/');
+            for (let i = 0; i < pathParts.length; i++) {
+                if (pathParts[i] === 'a' && pathParts[i + 1]) {
+                    url = `/a/${pathParts[i + 1]}/api/get-popular-hotels/`;
+                    break;
+                }
+            }
+            const response = await fetch(url);
+            const data = await response.json();
+            console.log('✅ Отримано готелі:', data.hotels?.length);
+            return data.hotels || [];
+        } catch (error) {
+            console.error('Помилка завантаження готелів:', error);
+            return [];
+        }
+    }
+
+    // Функція для переходу на деталі туру
+    window.goToHotelDetail = function(hid, oid, od, ol) {
+        let baseUrl = '/tour-detail/';
+        const pathParts = window.location.pathname.split('/');
+        for (let i = 0; i < pathParts.length; i++) {
+            if (pathParts[i] === 'a' && pathParts[i + 1]) {
+                baseUrl = `/a/${pathParts[i + 1]}/tour-detail/`;
+                break;
+            }
+        }
+        let url = `${baseUrl}?hid=${hid}&oid=${oid}`;
+        if (od) url += `&od=${od}`;
+        if (ol) url += `&ol=${ol}`;
+        window.location.href = url;
+    };
+
+    function renderHotels(hotels) {
+        if (!track) return;
+
+        if (!hotels || hotels.length === 0) {
+            track.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних готелів. Додайте їх в адмінці.</div>';
+            return;
+        }
+
+        let html = '';
+        hotels.forEach(hotel => {
+            const priceFormatted = Math.round(hotel.price).toLocaleString('uk-UA');
+            const ratingValue = hotel.rating || 9.8;
+// Перетворюємо рейтинг з 10-бальної шкали в 5-зіркову
+const starsCount = Math.min(5, Math.floor(ratingValue / 2));  // 9.8 → 4 зірки
+
+// Генеруємо тільки жовті зірки (без пустих)
+let starsHtml = '';
+for (let i = 0; i < starsCount; i++) {  // ✅ ВИПРАВЛЕНО: starsCount
+    starsHtml += '<i class="fa-solid fa-star"></i>';
+}
+
+            html += `
+            <div class="popular-hotel-card" onclick="goToHotelDetail('${hotel.hid}', '${hotel.oid}', '${hotel.od || ''}', '${hotel.ol || ''}')">
+                <div class="popular-hotel-img-wrapper">
+                    <img class="popular-hotel-img" src="${hotel.image}" alt="${hotel.hotel_name}" onerror="this.src='/static/images/default-hotel.jpg'">
+                    <div class="popular-hotel-gradient"></div>
+                    <div class="popular-hotel-rating-badge">
+                        <span>${ratingValue.toFixed(1)}</span>
+                        <span>Оцінка</span>
+                    </div>
+                    <div class="popular-hotel-overlay-info">
+                        <span class="popular-hotel-country">${hotel.country}</span>
+                        <h4 class="popular-hotel-title">${hotel.hotel_name}</h4>
+                    </div>
+                </div>
+                <div class="popular-hotel-info">
+                    <div>
+                        <div class="popular-hotel-stars">
+                            ${starsHtml}
+                            <span>${ratingValue.toFixed(1)}★ ${hotel.city || hotel.country}</span>
+                        </div>
+                        <div class="popular-hotel-details">
+                            <div class="popular-hotel-detail-item">
+                                <span class="dot"></span>
+                                <span>Харчування: <strong>${hotel.food || 'All Inclusive'}</strong></span>
+                            </div>
+                            <div class="popular-hotel-detail-item">
+                                <span class="dot"></span>
+                                <span>Виліт: <strong>${hotel.departure || 'з Кишинева'} • ${hotel.nights || '7'} ночей</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="popular-hotel-footer">
+                        <div class="popular-hotel-price">
+                            <span class="popular-hotel-price-label">Вартість туру (2 дорослих)</span>
+                            <span class="popular-hotel-price-value">${priceFormatted} ₴ <small>за тур</small></span>
+                        </div>
+                        <button class="popular-hotel-btn" onclick="event.stopPropagation(); goToHotelDetail('${hotel.hid}', '${hotel.oid}', '${hotel.od || ''}', '${hotel.ol || ''}')">
+                            Забронювати <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            `;
+        });
+
+        track.innerHTML = html;
+    }
+
+    // Навігація слайдера
+    const sliderContainer = document.querySelector('.hotels-slider-container');
+    const prevBtn = document.querySelector('.hotels-prev');
+    const nextBtn = document.querySelector('.hotels-next');
+
+    if (prevBtn && sliderContainer) {
+        prevBtn.addEventListener('click', () => {
+            sliderContainer.scrollBy({ left: -320, behavior: 'smooth' });
+        });
+    }
+
+    if (nextBtn && sliderContainer) {
+        nextBtn.addEventListener('click', () => {
+            sliderContainer.scrollBy({ left: 320, behavior: 'smooth' });
+        });
+    }
+
+    fetchPopularHotels().then(hotels => renderHotels(hotels));
+});
+</script>
+
+<style>
+/* ========== НОВА СТИЛІСТИКА ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ ========== */
+.hotels-slider-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Картка готелю - новий дизайн */
+.popular-hotel-card {
+    flex: 0 0 auto;
+    width: 300px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #000000;  /* ← ТОНЕНЬКА ЧОРНА РАМКА */
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.popular-hotel-card:hover {
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+    /* без transform */
+}
+
+/* Контейнер зображення */
+.popular-hotel-img-wrapper {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+    background-color: #f5f5f5;
+}
+
+.popular-hotel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease-out;
+}
+
+.popular-hotel-card:hover .popular-hotel-img {
+    transform: scale(1.03);
+}
+
+/* Градієнт поверх зображення */
+.popular-hotel-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.1) 100%);
+    z-index: 1;
+}
+
+/* Бейджик рейтингу */
+.popular-hotel-rating-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    height: 48px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.popular-hotel-rating-badge span:first-child {
+    font-size: 14px;
+    font-weight: 700;
+    color: #bf9b30;
+    line-height: 1.2;
+}
+
+.popular-hotel-rating-badge span:last-child {
+    font-size: 7.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 4px;
+}
+
+/* Інформація на зображенні знизу */
+.popular-hotel-overlay-info {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    z-index: 2;
+    color: white;
+}
+
+.popular-hotel-country {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #bf9b30;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.popular-hotel-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0;
+    transition: color 0.2s;
+    font-family: serif;
+}
+
+.popular-hotel-card:hover .popular-hotel-title {
+    color: #bf9b30;
+}
+
+/* Інформація про готель */
+.popular-hotel-info {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Зірки */
+.popular-hotel-stars {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 16px;
+}
+
+.popular-hotel-stars i {
+    font-size: 12px;
+    color: #bf9b30;
+}
+
+.popular-hotel-stars span {
+    font-size: 11px;
+    color: #888;
+    font-weight: 500;
+    margin-left: 6px;
+}
+
+/* Деталі */
+.popular-hotel-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.popular-hotel-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #555;
+}
+
+.popular-hotel-detail-item .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: #bbb;
+}
+
+.popular-hotel-detail-item strong {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Ціна і кнопка */
+.popular-hotel-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.popular-hotel-price {
+    display: flex;
+    flex-direction: column;
+}
+
+.popular-hotel-price-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #999;  /* Світло-сірий, залишаємо */
+    font-weight: normal;
+}
+
+.popular-hotel-price-value {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: #000000;
+}
+
+.popular-hotel-price-value small {
+    font-size: 9px;
+    font-weight: normal;
+    color: #666;
+}
+
+/* Кнопка - змінює колір при наведенні на КАРТКУ */
+.popular-hotel-btn {
+    background: transparent;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #555;
+    transition: all 0.3s;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.popular-hotel-btn i {
+    font-size: 11px;
+    transition: transform 0.2s;
+}
+
+/* ЗМІНА: кнопка змінює колір при наведенні на КАРТКУ, а не на кнопку */
+.popular-hotel-card:hover .popular-hotel-btn {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.popular-hotel-card:hover .popular-hotel-btn i {
+    transform: translate(2px, -2px);
+}
+
+@media (max-width: 768px) {
+    .popular-hotel-card {
+        width: 280px;
+    }
+    .popular-hotel-img-wrapper {
+        height: 220px;
+    }
+}
+</style>
+
+    <!-- ========== ДІАГНОСТИКА ПОРЯДКУ БЛОКІВ ========== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== ПОРЯДОК БЛОКІВ НА СТОРІНЦІ ===');
+    const activeBlocks = {{ active_blocks|safe }};
+    console.log('active_blocks з сервера:', activeBlocks);
+});
+</script>
+<script>
+// Перевіряємо, чи функції взагалі існують
+console.log('=== ДІАГНОСТИКА ФУНКЦІЙ ===');
+console.log('searchByCountry існує:', typeof window.searchByCountry === 'function');
+console.log('searchByCityAndCountry існує:', typeof window.searchByCityAndCountry === 'function');
+
+// Тестові виклики (розкоментуйте для перевірки)
+// setTimeout(() => {
+//     console.log('🔍 Тестовий виклик searchByCountry');
+//     searchByCountry('Єгипет', 'з Кишинева');
+// }, 3000);
+</script>
+<style>
+/* ========== ЦЕНТРУВАННЯ БЛОКУ ГАРЯЧИХ ТУРІВ ========== */
+.hot-block_tiles .hot-wrapper {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 20px !important;
+    margin: 0 auto !important;
+}
+
+.hot-block_tiles .hot-otp-form-wrap {
+    margin: 0 !important;
+    flex: 0 0 auto !important;
+}
+
+/* Для більш рівномірного відображення на різних екранах */
+@media (min-width: 1200px) {
+    .hot-block_tiles .hot-wrapper {
+        justify-content: center !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .hot-block_tiles .hot-wrapper {
+        justify-content: center !important;
+        gap: 15px !important;
+    }
+}
+    /* ========== ВИДАЛЕННЯ РАМКИ БЛОКУ ГАРЯЧИХ ТУРІВ ========== */
+/* Прибираємо фон, рамку та тінь у картки */
+.hot-card .card,
+.container.my-5 .card,
+.container.my-5 .card.shadow-sm,
+.container.my-5 .card.border-0,
+.container.my-5 .card.rounded-4 {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Прибираємо фон у заголовка картки */
+.container.my-5 .card-header {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 0 15px 0 !important;
+}
+
+/* Прибираємо фон у тіла картки */
+.container.my-5 .card-body {
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+/* Вирівнюємо заголовок ліворуч */
+.container.my-5 .card-header h3 {
+    text-align: left !important;
+    margin-bottom: 20px !important;
+}
+
+
+/* Додаткові відступи для мобільних */
+@media (max-width: 768px) {
+    .city-tours-wrapper {
+        padding: 40px 0 !important;
+    }
+}
+
+/* 2. Виправляємо обрізання кнопок міст при наведенні */
+.city-btn {
+    transition: all 0.3s ease;
+    overflow: visible !important;  /* Дозволяє елементу виходити за межі */
+    position: relative;
+    z-index: 10;
+}
+
+.city-btn:hover {
+    transform: translateY(-3px);  /* Зменшуємо підйом з -5px до -3px */
+    background: var(--primary-light);
+    border-color: var(--primary-color);
+}
+
+/* Контейнер кнопок - не обрізаємо */
+.city-buttons-wrapper {
+    overflow: visible !important;
+    padding-bottom: 5px;
+}
+
+/* Карусель міст - дозволяє видимість при наведенні */
+.city-slider-container {
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    padding-bottom: 10px;
+}
+
+/* Додатковий простір для кнопок */
+.city-slider-container::-webkit-scrollbar {
+    display: none;
+}
+    /* Прибираємо обмеження висоти */
+.city-buttons-wrapper {
+    overflow: visible !important;
+}
+
+.city-slider-container {
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    padding: 5px 0 15px 0 !important;
+}
+    /* ========== ФОН НА ВСЮ ШИРИНУ ДЛЯ БЛОКУ "ТУРИ З ВАШОГО МІСТА" ========== */
+.city-tours-wrapper {
+    position: relative;
+    padding: 30px 0;
+}
+
+/* Псевдоелемент для фону на всю ширину (не впливає на контент) */
+.city-tours-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 100%;
+    background-color: #e8e8e8;  /* Світло-сірий колір */
+    z-index: -1;
+}
+</style>
 <style>
 /* ========== НОВА СТИЛІСТИКА ДЛЯ ПОПУЛЯРНИХ НАПРЯМКІВ ========== */
 
@@ -724,58 +1285,6 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchPopularTours().then(tours => renderTours(tours));
 });
 </script>
-
-    {% elif block == 'consultation' %}
-    <!-- Консультація -->
-    <div class="container my-5">
-        <div class="consultation-form-wrapper">
-            <div class="consultation-form-card">
-                <div class="consultation-form-left">
-                    <span class="consultation-subtitle">Приватна розмова</span>
-                    <h4 class="consultation-title">Допоможемо обрати ідеальний тур</h4>
-                    <div class="consultation-expert">
-                        <div class="consultation-expert-icon">
-                            <span>👑</span>
-                        </div>
-                        <div>
-                            <div class="consultation-expert-name">Консультант Клубу</div>
-                            <div class="consultation-expert-exp">9 років особистих експедицій</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="consultation-form-right">
-                    <form id="consultationForm" novalidate>
-                        {% csrf_token %}
-                        <input type="hidden" name="consultation_submit" value="1">
-                        <div class="consultation-field">
-                            <label>Ваше Ім'я</label>
-                            <input type="text" name="name" id="consultationName" placeholder="Наприклад: Віктор Коваль" required>
-                        </div>
-                        <div class="consultation-phone-row">
-                            <div class="consultation-phone-code">
-                                <label>Код</label>
-                                <select name="country_code" id="consultationCountryCode">
-                                    <option value="+380">🇺🇦 +380</option>
-                                    <option value="+48">🇵🇱 +48</option>
-                                    <option value="+1">🇺🇸 +1</option>
-                                    <option value="+44">🇬🇧 +44</option>
-                                    <option value="+49">🇩🇪 +49</option>
-                                    <option value="+33">🇫🇷 +33</option>
-                                </select>
-                            </div>
-                            <div class="consultation-phone-number">
-                                <label>Номер телефону</label>
-                                <input type="tel" name="phone" id="consultationPhone" placeholder="XX XXX XX XX" required>
-                            </div>
-                                    </div>
-                                    <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">Залишити запит</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 <style>
     /* ========== СТИЛІ ДЛЯ ФОРМИ КОНСУЛЬТАЦІЇ ========== */
     .consultation-form-wrapper {
@@ -1577,36 +2086,6 @@ function selectCalendarDate(dateISO, price, nights) {
 }
 }
 </style>
-
-{% elif block == 'consultation_promo' %}
-<!-- ========== БЛОК З КНОПКОЮ ДЛЯ ПЕРЕХОДУ ДО ФОРМИ КОНСУЛЬТАЦІЇ ========== -->
-<div class="container my-5">
-    <div class="consult-promo-block rounded-3xl shadow-xl relative overflow-hidden cursor-pointer group">
-        <!-- Фонове зображення -->
-        <div class="consult-promo-bg">
-            <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&auto=format&fit=crop&q=80" alt="Travel background" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-        </div>
-
-        <!-- Темне затемнення для читабельності тексту -->
-        <div class="absolute inset-0 bg-black/50 z-10"></div>
-
-        <!-- Контент поверх фото - все вертикально по центру -->
-        <div class="relative z-20 flex flex-col items-center justify-center text-center p-8 sm:p-12 min-h-[350px]">
-            <span class="text-amber-400 text-sm font-semibold uppercase tracking-wider mb-3">Потрібна допомога?</span>
-            <h3 class="text-2xl md:text-3xl font-bold font-serif text-white mb-4">Важко обрати тур самостійно?</h3>
-            <p class="text-white/80 text-base max-w-md mx-auto mb-8">Наші експерти безкоштовно підберуть для вас найкращі варіанти</p>
-
-            <button id="scrollToConsultationBtn" class="consult-promo-btn inline-flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer">
-                Скласти індивідуальний маршрут
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon transition-transform duration-300 group-hover:translate-x-1">
-                    <path d="M5 12h14"></path>
-                    <path d="m12 5 7 7-7 7"></path>
-                </svg>
-            </button>
-        </div>
-    </div>
-</div>
-
 <style>
 /* Стилі для блоку */
 .consult-promo-block {
@@ -1772,19 +2251,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-
-{% elif block == 'hot_tours %}
-<!-- ========== БЛОК ГАРЯЧИХ ТУРІВ ВІД OTPUSK (ДОДАНО) ========== -->
-<div class="container my-5">
-    <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-header bg-white py-3 px-4 border-0">
-            <h3 class="fw-bold mb-0" style="color: #000000;">Гарячі тури</h3>
-        </div>
-        <div class="card-body p-4">
-            <!-- ТУТ ВСТАВИТИ ВЕСЬ КОД, ЯКИЙ ВИ НАДАЛИ -->
-            <div class="hot-size-checker" id="otpusk_onsite_hot28113">
-    <img src="https://export.otpusk.com/os/ajax-loader.gif"/><span></span>
-</div>
 <script>
     var osTarget28113 = "https://clubdatour.com.ua/search-otpusk/";
     var osLang = "uk";
@@ -1802,61 +2268,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }(document, "script"));
 </script>
-        </div>
-    </div>
-</div>
-<!-- ========== КІНЕЦЬ БЛОКУ ГАРЯЧИХ ТУРІВ ========== -->
-{% elif block == 'tours_from_city' %}
-        <!-- Тури з вашого міста -->
-        <div class="container my-5">
-            <div class="city-tours-wrapper">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fw-bold" style="color: #000000; font-size: 1.8rem;">Тури з вашого міста</h2>
-                    <div class="city-slider-nav d-flex gap-2">
-                        <button class="btn btn-sm rounded-circle city-prev" style="width: 36px; height: 36px; border: 1px solid #dee2e6; background: white; color: var(--primary-color);">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button class="btn btn-sm rounded-circle city-next" style="width: 36px; height: 36px; border: 1px solid #dee2e6; background: white; color: var(--primary-color);">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="city-slider-container" style="position: relative; overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
-                    <div class="city-buttons-wrapper" id="cityButtonsWrapper" style="display: flex; gap: 12px; padding-bottom: 10px;">
-                        <button class="city-btn active" data-city="Кишинів">Кишинів</button>
-                        <button class="city-btn" data-city="Київ">Київ</button>
-                        <button class="city-btn" data-city="Одеса">Одеса</button>
-                        <button class="city-btn" data-city="Дніпро">Дніпро</button>
-                        <button class="city-btn" data-city="Львів">Львів</button>
-                        <button class="city-btn" data-city="Харків">Харків</button>
-                        <button class="city-btn" data-city="Варшава">Варшава</button>
-                        <button class="city-btn" data-city="Краків">Краків</button>
-                        <button class="city-btn" data-city="Жешув">Жешув</button>
-                        <button class="city-btn" data-city="Вроцлав">Вроцлав</button>
-                        <button class="city-btn" data-city="Катовіце">Катовіце</button>
-                        <button class="city-btn" data-city="Бухарест">Бухарест</button>
-                        <button class="city-btn" data-city="Будапешт">Будапешт</button>
-                        <button class="city-btn" data-city="Прага">Прага</button>
-                        <button class="city-btn" data-city="Берлін">Берлін</button>
-                        <button class="city-btn" data-city="Кривий Ріг">Кривий Ріг</button>
-                        <button class="city-btn" data-city="Сучава">Сучава</button>
-                        <button class="city-btn" data-city="Ясси">Ясси</button>
-                        <button class="city-btn" data-city="Житомир">Житомир</button>
-                        <button class="city-btn" data-city="Запоріжжя">Запоріжжя</button>
-                        <button class="city-btn" data-city="Відень">Відень</button>
-                    </div>
-                </div>
-                <div class="countries-grid" id="countriesGrid">
-                    <div class="text-center py-5 w-100">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Завантаження...</span>
-                        </div>
-                        <p class="mt-3 text-muted">Завантаження напрямків...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
 <style>
 /* ========== СТИЛІ ДЛЯ БЛОКУ "ТУРИ З ВАШОГО МІСТА" ========== */
 .city-btn {
@@ -2582,36 +2993,6 @@ document.addEventListener('DOMContentLoaded', function() {
     color: #000000 !important;
 }
 </style>
-
-    {% elif block == 'about_us' %}
-    <!-- Про нас -->
-    {% if agent_site and agent_site.about_us_title and agent_site.about_us_text %}
-    <div class="container my-5">
-        <div class="about-us-section">
-            <div class="row align-items-center g-5">
-                <!-- Фото - ліворуч -->
-                {% if agent_site.about_us_image %}
-                <div class="col-md-6">
-                    <div class="about-us-image-wrapper">
-                        <img src="{{ agent_site.about_us_image.url }}" alt="{{ agent_site.about_us_title }}" class="img-fluid">
-                    </div>
-                </div>
-                {% endif %}
-                <!-- Текст - праворуч -->
-                <div class="{% if agent_site.about_us_image %}col-md-6{% else %}col-12{% endif %}">
-                    <div class="about-us-content">
-                        <span class="about-us-subtitle">Про нас</span>
-                        <h3 class="about-us-title">{{ agent_site.about_us_title }}</h3>
-                        <div class="about-us-text">
-                            {{ agent_site.about_us_text|linebreaks }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
 <style>
 /* ========== СТИЛІ ДЛЯ БЛОКУ "ПРО НАС" ========== */
 .about-us-section {
@@ -2833,65 +3214,7 @@ document.addEventListener('DOMContentLoaded', function() {
     border-radius: 28px;
 }
 </style>
-
-        {% elif block == 'popular_hotels' %}
-        <!-- Популярні готелі -->
-        <div class="container my-5">
-            <div class="popular-hotels-wrapper">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fw-bold" style="color: #000000; font-size: 1.8rem;">Популярні готелі</h2>
-                    <div class="hotels-slider-nav d-flex gap-2">
-                        <button class="btn btn-sm rounded-circle hotels-prev" style="width: 36px; height: 36px; border: 1px solid #dee2e6; background: white; color: var(--primary-color);">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button class="btn btn-sm rounded-circle hotels-next" style="width: 36px; height: 36px; border: 1px solid #dee2e6; background: white; color: var(--primary-color);">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="hotels-slider-container" style="position: relative; overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
-                    <div class="hotels-slider-track d-flex gap-3" id="popularHotelsTrack">
-                        <div class="text-center py-5 w-100">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Завантаження...</span>
-                            </div>
-                            <p class="mt-3 text-muted">Завантаження популярних готелів...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-               {% elif block == 'banners' %}
-        <!-- Блок банерів -->
-        {% if banners %}
-        <div class="container my-5">
-            <div class="banners-section">
-                {% for banner in banners %}
-                    {% if banner.active %}
-                    <div class="banner-wrapper mb-4" data-position="{{ banner.position|default:'full' }}">
-                        <div class="banner-container position-relative rounded-4 overflow-hidden" style="background-image: url('{{ banner.image }}'); background-size: cover; background-position: center; min-height: 250px;">
-                            <div class="banner-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, {{ banner.overlay_opacity|default:0.4 }}); z-index: 1;"></div>
-                            <div class="banner-content position-relative" style="z-index: 2; min-height: 250px; display: flex; flex-direction: column; justify-content: center; padding: 2rem; text-align: center;">
-                                {% for text_block in banner.text_blocks %}
-                                    {% if text_block.heading %}
-                                    <h2 class="banner-heading" style="color: {{ text_block.heading_color|default:'#ffffff' }}; font-size: 1.8rem; font-weight: bold; margin-bottom: 0.5rem;">{{ text_block.heading }}</h2>
-                                    {% endif %}
-                                    {% if text_block.text %}
-                                    <p class="banner-text" style="color: {{ text_block.text_color|default:'#ffffff' }}; font-size: 1rem; margin-bottom: 1rem;">{{ text_block.text }}</p>
-                                    {% endif %}
-                                    {% if text_block.button_text and text_block.button_link %}
-                                    <a href="{{ text_block.button_link }}" class="banner-btn btn" style="background: {{ text_block.button_color|default:'#086745' }}; color: white; padding: 0.5rem 1.2rem; border-radius: 25px; text-decoration: none; display: inline-block; width: fit-content; margin: 0 auto;">{{ text_block.button_text }}</a>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </div>
-
-        <style>
+<style>
         .banner-container {
             position: relative;
             min-height: 250px;
@@ -2919,545 +3242,4 @@ document.addEventListener('DOMContentLoaded', function() {
             .banner-wrapper[data-position="center"] .banner-container { width: 95%; }
         }
         </style>
-        {% endif %}
-    {% endif %}
-
-{% endfor %}
-
-<script>
-// ========== БЛОК "ПОПУЛЯРНІ ГОТЕЛІ" ==========
-document.addEventListener('DOMContentLoaded', function() {
-    const track = document.getElementById('popularHotelsTrack');
-    if (!track) return;
-
-    async function fetchPopularHotels() {
-        try {
-            let url = '/api/get-popular-hotels/';
-            const pathParts = window.location.pathname.split('/');
-            for (let i = 0; i < pathParts.length; i++) {
-                if (pathParts[i] === 'a' && pathParts[i + 1]) {
-                    url = `/a/${pathParts[i + 1]}/api/get-popular-hotels/`;
-                    break;
-                }
-            }
-            const response = await fetch(url);
-            const data = await response.json();
-            console.log('✅ Отримано готелі:', data.hotels?.length);
-            return data.hotels || [];
-        } catch (error) {
-            console.error('Помилка завантаження готелів:', error);
-            return [];
-        }
-    }
-
-    // Функція для переходу на деталі туру
-    window.goToHotelDetail = function(hid, oid, od, ol) {
-        let baseUrl = '/tour-detail/';
-        const pathParts = window.location.pathname.split('/');
-        for (let i = 0; i < pathParts.length; i++) {
-            if (pathParts[i] === 'a' && pathParts[i + 1]) {
-                baseUrl = `/a/${pathParts[i + 1]}/tour-detail/`;
-                break;
-            }
-        }
-        let url = `${baseUrl}?hid=${hid}&oid=${oid}`;
-        if (od) url += `&od=${od}`;
-        if (ol) url += `&ol=${ol}`;
-        window.location.href = url;
-    };
-
-    function renderHotels(hotels) {
-        if (!track) return;
-
-        if (!hotels || hotels.length === 0) {
-            track.innerHTML = '<div class="text-center py-5 w-100">На жаль, немає доступних готелів. Додайте їх в адмінці.</div>';
-            return;
-        }
-
-        let html = '';
-        hotels.forEach(hotel => {
-            const priceFormatted = Math.round(hotel.price).toLocaleString('uk-UA');
-            const ratingValue = hotel.rating || 9.8;
-// Перетворюємо рейтинг з 10-бальної шкали в 5-зіркову
-const starsCount = Math.min(5, Math.floor(ratingValue / 2));  // 9.8 → 4 зірки
-
-// Генеруємо тільки жовті зірки (без пустих)
-let starsHtml = '';
-for (let i = 0; i < starsCount; i++) {  // ✅ ВИПРАВЛЕНО: starsCount
-    starsHtml += '<i class="fa-solid fa-star"></i>';
-}
-
-            html += `
-            <div class="popular-hotel-card" onclick="goToHotelDetail('${hotel.hid}', '${hotel.oid}', '${hotel.od || ''}', '${hotel.ol || ''}')">
-                <div class="popular-hotel-img-wrapper">
-                    <img class="popular-hotel-img" src="${hotel.image}" alt="${hotel.hotel_name}" onerror="this.src='/static/images/default-hotel.jpg'">
-                    <div class="popular-hotel-gradient"></div>
-                    <div class="popular-hotel-rating-badge">
-                        <span>${ratingValue.toFixed(1)}</span>
-                        <span>Оцінка</span>
-                    </div>
-                    <div class="popular-hotel-overlay-info">
-                        <span class="popular-hotel-country">${hotel.country}</span>
-                        <h4 class="popular-hotel-title">${hotel.hotel_name}</h4>
-                    </div>
-                </div>
-                <div class="popular-hotel-info">
-                    <div>
-                        <div class="popular-hotel-stars">
-                            ${starsHtml}
-                            <span>${ratingValue.toFixed(1)}★ ${hotel.city || hotel.country}</span>
-                        </div>
-                        <div class="popular-hotel-details">
-                            <div class="popular-hotel-detail-item">
-                                <span class="dot"></span>
-                                <span>Харчування: <strong>${hotel.food || 'All Inclusive'}</strong></span>
-                            </div>
-                            <div class="popular-hotel-detail-item">
-                                <span class="dot"></span>
-                                <span>Виліт: <strong>${hotel.departure || 'з Кишинева'} • ${hotel.nights || '7'} ночей</strong></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="popular-hotel-footer">
-                        <div class="popular-hotel-price">
-                            <span class="popular-hotel-price-label">Вартість туру (2 дорослих)</span>
-                            <span class="popular-hotel-price-value">${priceFormatted} ₴ <small>за тур</small></span>
-                        </div>
-                        <button class="popular-hotel-btn" onclick="event.stopPropagation(); goToHotelDetail('${hotel.hid}', '${hotel.oid}', '${hotel.od || ''}', '${hotel.ol || ''}')">
-                            Забронювати <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            `;
-        });
-
-        track.innerHTML = html;
-    }
-
-    // Навігація слайдера
-    const sliderContainer = document.querySelector('.hotels-slider-container');
-    const prevBtn = document.querySelector('.hotels-prev');
-    const nextBtn = document.querySelector('.hotels-next');
-
-    if (prevBtn && sliderContainer) {
-        prevBtn.addEventListener('click', () => {
-            sliderContainer.scrollBy({ left: -320, behavior: 'smooth' });
-        });
-    }
-
-    if (nextBtn && sliderContainer) {
-        nextBtn.addEventListener('click', () => {
-            sliderContainer.scrollBy({ left: 320, behavior: 'smooth' });
-        });
-    }
-
-    fetchPopularHotels().then(hotels => renderHotels(hotels));
-});
-</script>
-
-<style>
-/* ========== НОВА СТИЛІСТИКА ДЛЯ ПОПУЛЯРНИХ ГОТЕЛІВ ========== */
-.hotels-slider-container::-webkit-scrollbar {
-    display: none;
-}
-
-/* Картка готелю - новий дизайн */
-.popular-hotel-card {
-    flex: 0 0 auto;
-    width: 300px;
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid #000000;  /* ← ТОНЕНЬКА ЧОРНА РАМКА */
-    transition: all 0.3s ease;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.popular-hotel-card:hover {
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
-    /* без transform */
-}
-
-/* Контейнер зображення */
-.popular-hotel-img-wrapper {
-    position: relative;
-    height: 250px;
-    overflow: hidden;
-    background-color: #f5f5f5;
-}
-
-.popular-hotel-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease-out;
-}
-
-.popular-hotel-card:hover .popular-hotel-img {
-    transform: scale(1.03);
-}
-
-/* Градієнт поверх зображення */
-.popular-hotel-gradient {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.1) 100%);
-    z-index: 1;
-}
-
-/* Бейджик рейтингу */
-.popular-hotel-rating-badge {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    z-index: 2;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    border-radius: 12px;
-    padding: 8px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-width: 48px;
-    height: 48px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.popular-hotel-rating-badge span:first-child {
-    font-size: 14px;
-    font-weight: 700;
-    color: #bf9b30;
-    line-height: 1.2;
-}
-
-.popular-hotel-rating-badge span:last-child {
-    font-size: 7.5px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: rgba(255, 255, 255, 0.6);
-    margin-top: 4px;
-}
-
-/* Інформація на зображенні знизу */
-.popular-hotel-overlay-info {
-    position: absolute;
-    bottom: 16px;
-    left: 16px;
-    z-index: 2;
-    color: white;
-}
-
-.popular-hotel-country {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #bf9b30;
-    margin-bottom: 4px;
-    display: block;
-}
-
-.popular-hotel-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 0;
-    transition: color 0.2s;
-    font-family: serif;
-}
-
-.popular-hotel-card:hover .popular-hotel-title {
-    color: #bf9b30;
-}
-
-/* Інформація про готель */
-.popular-hotel-info {
-    padding: 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-/* Зірки */
-.popular-hotel-stars {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 16px;
-}
-
-.popular-hotel-stars i {
-    font-size: 12px;
-    color: #bf9b30;
-}
-
-.popular-hotel-stars span {
-    font-size: 11px;
-    color: #888;
-    font-weight: 500;
-    margin-left: 6px;
-}
-
-/* Деталі */
-.popular-hotel-details {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.popular-hotel-detail-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: #555;
-}
-
-.popular-hotel-detail-item .dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background-color: #bbb;
-}
-
-.popular-hotel-detail-item strong {
-    font-weight: 600;
-    color: #333;
-}
-
-/* Ціна і кнопка */
-.popular-hotel-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 16px;
-    border-top: 1px solid #f0f0f0;
-}
-
-.popular-hotel-price {
-    display: flex;
-    flex-direction: column;
-}
-
-.popular-hotel-price-label {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #999;  /* Світло-сірий, залишаємо */
-    font-weight: normal;
-}
-
-.popular-hotel-price-value {
-    font-size: 1.2rem;
-    font-weight: normal;
-    color: #000000;
-}
-
-.popular-hotel-price-value small {
-    font-size: 9px;
-    font-weight: normal;
-    color: #666;
-}
-
-/* Кнопка - змінює колір при наведенні на КАРТКУ */
-.popular-hotel-btn {
-    background: transparent;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 8px 16px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #555;
-    transition: all 0.3s;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.popular-hotel-btn i {
-    font-size: 11px;
-    transition: transform 0.2s;
-}
-
-/* ЗМІНА: кнопка змінює колір при наведенні на КАРТКУ, а не на кнопку */
-.popular-hotel-card:hover .popular-hotel-btn {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-    color: white;
-}
-
-.popular-hotel-card:hover .popular-hotel-btn i {
-    transform: translate(2px, -2px);
-}
-
-@media (max-width: 768px) {
-    .popular-hotel-card {
-        width: 280px;
-    }
-    .popular-hotel-img-wrapper {
-        height: 220px;
-    }
-}
-</style>
-
-    <!-- ========== ДІАГНОСТИКА ПОРЯДКУ БЛОКІВ ========== -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('=== ПОРЯДОК БЛОКІВ НА СТОРІНЦІ ===');
-    const activeBlocks = {{ active_blocks|safe }};
-    console.log('active_blocks з сервера:', activeBlocks);
-});
-</script>
-<script>
-// Перевіряємо, чи функції взагалі існують
-console.log('=== ДІАГНОСТИКА ФУНКЦІЙ ===');
-console.log('searchByCountry існує:', typeof window.searchByCountry === 'function');
-console.log('searchByCityAndCountry існує:', typeof window.searchByCityAndCountry === 'function');
-
-// Тестові виклики (розкоментуйте для перевірки)
-// setTimeout(() => {
-//     console.log('🔍 Тестовий виклик searchByCountry');
-//     searchByCountry('Єгипет', 'з Кишинева');
-// }, 3000);
-</script>
-<style>
-/* ========== ЦЕНТРУВАННЯ БЛОКУ ГАРЯЧИХ ТУРІВ ========== */
-.hot-block_tiles .hot-wrapper {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    gap: 20px !important;
-    margin: 0 auto !important;
-}
-
-.hot-block_tiles .hot-otp-form-wrap {
-    margin: 0 !important;
-    flex: 0 0 auto !important;
-}
-
-/* Для більш рівномірного відображення на різних екранах */
-@media (min-width: 1200px) {
-    .hot-block_tiles .hot-wrapper {
-        justify-content: center !important;
-    }
-}
-
-@media (max-width: 768px) {
-    .hot-block_tiles .hot-wrapper {
-        justify-content: center !important;
-        gap: 15px !important;
-    }
-}
-    /* ========== ВИДАЛЕННЯ РАМКИ БЛОКУ ГАРЯЧИХ ТУРІВ ========== */
-/* Прибираємо фон, рамку та тінь у картки */
-.hot-card .card,
-.container.my-5 .card,
-.container.my-5 .card.shadow-sm,
-.container.my-5 .card.border-0,
-.container.my-5 .card.rounded-4 {
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-}
-
-/* Прибираємо фон у заголовка картки */
-.container.my-5 .card-header {
-    background: transparent !important;
-    border: none !important;
-    padding: 0 0 15px 0 !important;
-}
-
-/* Прибираємо фон у тіла картки */
-.container.my-5 .card-body {
-    background: transparent !important;
-    padding: 0 !important;
-}
-
-/* Вирівнюємо заголовок ліворуч */
-.container.my-5 .card-header h3 {
-    text-align: left !important;
-    margin-bottom: 20px !important;
-}
-
-
-/* Додаткові відступи для мобільних */
-@media (max-width: 768px) {
-    .city-tours-wrapper {
-        padding: 40px 0 !important;
-    }
-}
-
-/* 2. Виправляємо обрізання кнопок міст при наведенні */
-.city-btn {
-    transition: all 0.3s ease;
-    overflow: visible !important;  /* Дозволяє елементу виходити за межі */
-    position: relative;
-    z-index: 10;
-}
-
-.city-btn:hover {
-    transform: translateY(-3px);  /* Зменшуємо підйом з -5px до -3px */
-    background: var(--primary-light);
-    border-color: var(--primary-color);
-}
-
-/* Контейнер кнопок - не обрізаємо */
-.city-buttons-wrapper {
-    overflow: visible !important;
-    padding-bottom: 5px;
-}
-
-/* Карусель міст - дозволяє видимість при наведенні */
-.city-slider-container {
-    overflow-x: auto !important;
-    overflow-y: visible !important;
-    padding-bottom: 10px;
-}
-
-/* Додатковий простір для кнопок */
-.city-slider-container::-webkit-scrollbar {
-    display: none;
-}
-    /* Прибираємо обмеження висоти */
-.city-buttons-wrapper {
-    overflow: visible !important;
-}
-
-.city-slider-container {
-    overflow-x: auto !important;
-    overflow-y: visible !important;
-    padding: 5px 0 15px 0 !important;
-}
-    /* ========== ФОН НА ВСЮ ШИРИНУ ДЛЯ БЛОКУ "ТУРИ З ВАШОГО МІСТА" ========== */
-.city-tours-wrapper {
-    position: relative;
-    padding: 30px 0;
-}
-
-/* Псевдоелемент для фону на всю ширину (не впливає на контент) */
-.city-tours-wrapper::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100vw;
-    height: 100%;
-    background-color: #e8e8e8;  /* Світло-сірий колір */
-    z-index: -1;
-}
-</style>
 {% endblock %}
