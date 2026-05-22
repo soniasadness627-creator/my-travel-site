@@ -1123,14 +1123,18 @@ function selectCalendarDate(dateISO, price, nights) {
         box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
 
-    /* ===== СТИЛІ ДЛЯ КАЛЕНДАРЯ ===== */
-    .price-calendar-wrapper {
-        background: #fff;
-        border-radius: 1rem;
-        padding: 1.5rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        border: 1px solid #e9ecef;
-    }
+    /* Додайте це до .price-calendar-wrapper */
+.price-calendar-wrapper {
+    background: #fff;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #000000;
+    max-width: 998px;
+    margin: 0 auto;
+    width: 100%;
+    overflow-x: hidden;  /* ← ДОДАНО: прибираємо горизонтальний скрол батька */
+}
     .country-tabs {
         display: flex;
         flex-wrap: wrap;
@@ -1239,20 +1243,11 @@ function selectCalendarDate(dateISO, price, nights) {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    padding-bottom: 15px;
+    padding: 0 16px 15px 16px;  /* ← ДОДАНО: відступи зліва і справа (перші елементи не обрізаються) */
     margin-bottom: 1.5rem;
-    max-width: 100%;
-    width: 100%;
-    /* Додаємо відступи, щоб не обрізало тіні */
-    padding-left: 2px;
-    padding-right: 2px;
-}
-
-/* Для десктопу - фіксована ширина контейнера */
-.price-calendar-wrapper {
-    max-width: 998px;
-    margin: 0 auto;
-    width: 100%;
+    margin-left: -16px;  /* ← ДОДАНО: компенсуємо відступ контейнера */
+    margin-right: -16px; /* ← ДОДАНО: компенсуємо відступ контейнера */
+    width: calc(100% + 32px);
 }
 
 /* Стилі для скролбару */
@@ -1285,6 +1280,14 @@ function selectCalendarDate(dateISO, price, nights) {
     flex-shrink: 0;
 }
 
+.country-tab:first-child {
+    margin-left: 0;  /* перший елемент */
+}
+
+.country-tab:last-child {
+    margin-right: 0; /* останній елемент */
+}
+
 .country-tab:hover {
     background: #e8e8e8;
     transform: translateY(-2px);
@@ -1298,9 +1301,11 @@ function selectCalendarDate(dateISO, price, nights) {
 
 /* Для мобільних пристроїв */
 @media (max-width: 768px) {
-    .price-calendar-wrapper {
-        max-width: 100%;
-        padding: 1rem;
+    .country-tabs {
+        padding: 0 12px 12px 12px;
+        margin-left: -12px;
+        margin-right: -12px;
+        width: calc(100% + 24px);
     }
     .country-tab {
         padding: 0.3rem 1rem;
@@ -1941,7 +1946,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-// Додайте цей код в кінець вашого скрипту (перед закриттям </script>)
+
 document.addEventListener('DOMContentLoaded', function() {
     // Затримка, щоб вкладки встигли створитися
     setTimeout(function() {
