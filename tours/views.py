@@ -626,15 +626,14 @@ def city_detail(request, city_id):
 
 
 def news_detail(request, pk):
-    from .views import get_random_agent  # або зробити імпорт на початку файлу
-
     news_item = get_object_or_404(News, pk=pk)
     recommended = News.objects.exclude(pk=pk).order_by('-created_at')[:4]
 
     context = {
         'news_item': news_item,
         'recommended': recommended,
-        'random_agent': get_random_agent(),  # ← ДОДАТИ
+        'agent_site': getattr(request, 'current_agent_site', None),  # ← ЦЕЙ РЯДОК МАЄ БУТИ
+        'random_agent': get_random_agent(),
     }
     return render(request, 'tours/news_detail.html', context)
 

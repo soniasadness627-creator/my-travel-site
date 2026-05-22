@@ -362,7 +362,7 @@
                                                 <i class="fa-regular fa-calendar me-1"></i> {{ rec.created_at|date:"d.m.Y" }}
                                             </p>
                                             <div class="mt-auto pt-2">
-                                                <a href="{% if agent_site %}{% url 'agent_news_detail' agent_site.slug rec.pk %}{% else %}{% url 'news_detail' rec.pk %}{% endif %}" class="btn btn-outline-primary btn-sm w-100 rounded-pill" style="border-color: var(--primary-color); color: var(--primary-color);">Читати</a>
+                                                <a href="{% if agent_site %}/a/{{ agent_site.slug }}/news/{{ rec.pk }}/{% else %}/news/{{ rec.pk }}/{% endif %}" class="btn btn-outline-primary btn-sm w-100 rounded-pill" style="border-color: var(--primary-color); color: var(--primary-color);">Читати</a>
                                             </div>
                                         </div>
                                     </div>
@@ -379,7 +379,7 @@
 
             <!-- КНОПКА "ПОВЕРНУТИСЯ ДО НОВИН" -->
             <div class="d-flex justify-content-center my-5">
-                <a href="{% if agent_site %}{% url 'agent_news_list' agent_site.slug %}{% else %}{% url 'news' %}{% endif %}" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
+                <a href="{% if agent_site %}/a/{{ agent_site.slug }}/news/{% else %}/news/{% endif %}" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
                     <i class="fa-solid fa-arrow-left me-2"></i> Повернутися до новин
                 </a>
             </div>
