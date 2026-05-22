@@ -1123,19 +1123,84 @@ function selectCalendarDate(dateISO, price, nights) {
         box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
 
-    /* Додайте це до .price-calendar-wrapper */
-.price-calendar-wrapper {
-    background: #fff;
-    border-radius: 1rem;
-    padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    border: 1px solid #000000;
-    max-width: 998px;
-    margin: 0 auto;
-    width: 100%;
-    overflow-x: hidden;  /* ← ДОДАНО: прибираємо горизонтальний скрол батька */
-}
+    /* ========== ОСНОВНІ СТИЛІ ДЛЯ КАЛЕНДАРЯ ========== */
+    .price-calendar-wrapper {
+        background: #fff;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid #000000;
+        max-width: 998px;
+        margin: 0 auto;
+        width: 100%;
+        overflow-x: hidden;
+    }
 
+    /* ========== КАРУСЕЛЬ ДЛЯ ВКЛАДОК КРАЇН ========== */
+    .country-tabs {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        padding: 0 16px 15px 16px;
+        margin-bottom: 1.5rem;
+        margin-left: -16px;
+        margin-right: -16px;
+        width: calc(100% + 32px);
+    }
+
+    .country-tabs::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .country-tabs::-webkit-scrollbar-track {
+        background: #e5e5e5;
+        border-radius: 10px;
+    }
+
+    .country-tabs::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 10px;
+    }
+
+    .country-tab {
+        background: #f5f5f5;
+        border: 1px solid #e5e5e5;
+        border-radius: 2rem;
+        padding: 0.4rem 1.2rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #555;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .country-tab:first-child {
+        margin-left: 0;
+    }
+
+    .country-tab:last-child {
+        margin-right: 0;
+    }
+
+    .country-tab:hover {
+        background: #e8e8e8;
+        transform: translateY(-2px);
+    }
+
+    .country-tab.active {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    /* ========== СТИЛІ ДЛЯ КАЛЕНДАРЯ ДНІВ ========== */
     .calendar-header {
         display: flex;
         justify-content: space-between;
@@ -1144,6 +1209,7 @@ function selectCalendarDate(dateISO, price, nights) {
         flex-wrap: wrap;
         gap: 1rem;
     }
+
     .price-range-indicator {
         background: #f8f9fa;
         border-radius: 0.75rem;
@@ -1151,41 +1217,104 @@ function selectCalendarDate(dateISO, price, nights) {
         min-width: 180px;
         text-align: right;
     }
-    .price-range-indicator .max-price { font-size: 0.9rem; font-weight: 700; color: #dc3545; }
-    .price-range-indicator .min-price { font-size: 0.9rem; font-weight: 700; color: #28a745; }
-    .month-controls .btn { width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; }
-    .month-controls span { font-size: 1rem; font-weight: 500; min-width: 140px; text-align: center; }
-    .calendar-scroll { overflow-x: auto; padding-bottom: 0.5rem; }
-    .calendar-days { display: inline-flex; gap: 0.75rem; align-items: flex-end; }
+
+    .price-range-indicator .max-price {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #dc3545;
+    }
+
+    .price-range-indicator .min-price {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #28a745;
+    }
+
+    .month-controls .btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .month-controls span {
+        font-size: 1rem;
+        font-weight: 500;
+        min-width: 140px;
+        text-align: center;
+    }
+
+    .calendar-scroll {
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+
+    .calendar-days {
+        display: inline-flex;
+        gap: 0.75rem;
+        align-items: flex-end;
+    }
+
+    /* Стилі для днів (звужені) */
     .day-column {
         display: inline-flex;
         flex-direction: column;
         align-items: center;
-        min-width: 80px;
+        min-width: 55px;
+        width: 55px;
         background: #fff;
         border-radius: 0.75rem;
-        padding: 0.75rem 0.5rem;
+        padding: 0.5rem 0.25rem;
         cursor: pointer;
         transition: all 0.2s;
         border: 1px solid #e9ecef;
     }
-    .day-column:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: var(--primary-color); }
+
+    .day-column:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: var(--primary-color);
+    }
+
     .day-column.past-date {
         opacity: 0.5;
         cursor: not-allowed;
         background: #f5f5f5;
     }
-    .day-week { font-size: 0.75rem; color: #6c757d; text-transform: capitalize; margin-bottom: 0.25rem; }
-    .day-date { font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem; }
+
+    .day-column.past-date:hover {
+        transform: none;
+    }
+
+    .day-week {
+        font-size: 9px;
+        color: #999;
+        font-weight: 500;
+        margin-bottom: 3px;
+        text-transform: capitalize;
+    }
+
+    .day-date {
+        font-size: 11px;
+        color: #666;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
     .price-bar-container {
-        width: 40px;
+        width: 100%;
+        position: relative;
         height: 100px;
         background: #e9ecef;
         border-radius: 6px;
-        position: relative;
         margin: 0 auto 0.5rem;
         overflow: hidden;
+        display: flex;
+        align-items: flex-end;
     }
+
     .price-column {
         position: absolute;
         bottom: 0;
@@ -1193,95 +1322,123 @@ function selectCalendarDate(dateISO, price, nights) {
         transition: height 0.2s;
         border-radius: 6px 6px 0 0;
     }
-    .price-column.low { background: linear-gradient(135deg, #28a745, #20c997); }
-    .price-column.medium { background: linear-gradient(135deg, #ffc107, #fd7e14); }
-    .price-column.red { background: linear-gradient(135deg, #dc3545, #e83e8c); }
-    .price-column.gray { background: #ced4da; }
-    .price-column.past { background: #d4d4d4 !important; opacity: 0.5; }
-    .price-value-text { font-weight: 500; font-size: 0.7rem; white-space: nowrap; margin-top: 0.25rem; }
-    .price-value-text.past { color: #999 !important; }
 
-    @media (max-width: 768px) {
-        .consult-row { flex-direction: column !important; gap: 1.5rem !important; }
-        .form-block { order: 1; width: 100%; }
-        .agent-block { order: 2; width: 100%; justify-content: center; }
-        #otpusk-search-module { padding: 15px !important; margin: -20px 15px 0 15px !important; max-width: none !important; }
-        .calendar-header { flex-wrap: nowrap !important; justify-content: space-between; gap: 0.5rem; }
-        .month-controls span { font-size: 0.85rem; min-width: 100px; }
-        .price-range-indicator { min-width: 120px; padding: 0.25rem 0.5rem; }
-        .day-column { min-width: 65px; padding: 0.5rem 0.25rem; }
-        .price-bar-container { width: 35px; height: 80px; }
+    .price-column.low {
+        background: linear-gradient(135deg, #2d6a4f, #40916c);
     }
-    /* ========== КАРУСЕЛЬ ДЛЯ ВКЛАДОК КРАЇН ========== */
-.country-tabs {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 0.5rem;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    padding: 0 16px 15px 16px;
-    margin-bottom: 1.5rem;
-    margin-left: -16px;
-    margin-right: -16px;
-    width: calc(100% + 32px);
-}
 
-.country-tabs::-webkit-scrollbar {
-    height: 4px;
-}
+    .price-column.medium {
+        background: linear-gradient(135deg, #e9c46a, #f4a261);
+    }
 
-.country-tabs::-webkit-scrollbar-track {
-    background: #e5e5e5;
-    border-radius: 10px;
-}
+    .price-column.red {
+        background: linear-gradient(135deg, #e76f51, #f4a261);
+    }
 
-.country-tabs::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 10px;
-}
+    .price-column.gray {
+        background: #d4d4d4;
+    }
 
-.country-tab {
-    background: #f5f5f5;
-    border: 1px solid #e5e5e5;
-    border-radius: 2rem;
-    padding: 0.4rem 1.2rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    color: #555;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
+    .price-column.past {
+        background: #d4d4d4 !important;
+        opacity: 0.5;
+    }
 
-.country-tab:first-child {
-    margin-left: 0;
-}
+    .price-value-text {
+        font-size: 8px;
+        font-weight: 600;
+        margin-top: 4px;
+        white-space: nowrap;
+    }
 
-.country-tab:last-child {
-    margin-right: 0;
-}
+    .price-value-text.past {
+        color: #bbb;
+    }
 
-.country-tab:hover {
-    background: #e8e8e8;
-    transform: translateY(-2px);
-}
-
-.country-tab.active {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-    color: white;
-}
     /* Рамка навколо блоку з календарем */
-.calendar-container {
-    border: 1px solid #000000;
-    border-radius: 12px;
-    padding: 16px;
-    background: white;
-}
+    .calendar-container {
+        border: 1px solid #000000;
+        border-radius: 12px;
+        padding: 16px;
+        background: white;
+    }
+
+    /* ========== АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ ========== */
+    @media (max-width: 768px) {
+        .consult-row {
+            flex-direction: column !important;
+            gap: 1.5rem !important;
+        }
+        .form-block {
+            order: 1;
+            width: 100%;
+        }
+        .agent-block {
+            order: 2;
+            width: 100%;
+            justify-content: center;
+        }
+        #otpusk-search-module {
+            padding: 15px !important;
+            margin: -20px 15px 0 15px !important;
+            max-width: none !important;
+        }
+        .calendar-header {
+            flex-wrap: nowrap !important;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+        .month-controls span {
+            font-size: 0.85rem;
+            min-width: 100px;
+        }
+        .price-range-indicator {
+            min-width: 120px;
+            padding: 0.25rem 0.5rem;
+        }
+
+        /* Мобільні дні календаря */
+        .day-column {
+            min-width: 45px;
+            width: 45px;
+            padding: 0.4rem 0.2rem;
+        }
+        .price-bar-container {
+            height: 80px;
+        }
+        .day-week {
+            font-size: 8px;
+        }
+        .day-date {
+            font-size: 9px;
+        }
+        .price-value-text {
+            font-size: 7px;
+        }
+
+        /* Мобільні вкладки країн */
+        .country-tabs {
+            padding: 0 12px 12px 12px;
+            margin-left: -12px;
+            margin-right: -12px;
+            width: calc(100% + 24px);
+        }
+        .country-tab {
+            padding: 0.3rem 1rem;
+            font-size: 0.75rem;
+        }
+    }
+
+    /* Для планшетів */
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .day-column {
+            min-width: 50px;
+            width: 50px;
+        }
+        .price-bar-container {
+            height: 90px;
+        }
+    }
 </style>
 
 
