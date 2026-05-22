@@ -274,18 +274,14 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- ========== ВСІ БЛОКИ В ПОРЯДКУ (згідно з налаштуваннями конструктора) ========== -->
 {% for block in active_blocks %}
     {% if block == 'price_calendar' %}
-    <!-- Календар низьких цін -->
-    <div class="container my-5 pt-4">
-        <div class="price-calendar-wrapper">
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <span class="font-serif italic text-sm text-stone-500 block mb-0.5">Ексклюзивний авіа-календар</span>
-                    <h2 class="font-serif text-2xl sm:text-3xl text-stone-900 tracking-tight">Календар найкращих цін</h2>
-                </div>
-                <div class="flex items-center gap-3 bg-stone-50 border border-stone-200 px-4 py-2 rounded-xl text-sm w-full md:w-auto">
-                    <span class="text-stone-500 font-medium whitespace-nowrap">Виліт із:</span>
-                    <select id="departureCitySelect" class="bg-transparent border-0 font-semibold text-stone-800 focus:outline-none cursor-pointer w-full md:w-auto">
-                        <option value="Кишинів">Кишинів</option>
+        <!-- Календар низьких цін -->
+        <div class="container my-5 pt-4">
+            <div class="price-calendar-wrapper">
+                <h2 class="text-center mb-4">Календар низьких цін</h2>
+                <div class="departure-city mb-3 text-center">
+                    <label class="fw-bold me-2">Місто виїзду:</label>
+                    <select id="departureCitySelect" class="form-select d-inline-block w-auto">
+                        <option value="Кишинів" selected>Кишинів</option>
                         <option value="Варшава">Варшава</option>
                         <option value="Краків">Краків</option>
                         <option value="Бухарест">Бухарест</option>
@@ -296,41 +292,26 @@ document.addEventListener('DOMContentLoaded', function() {
                         <option value="Стамбул">Стамбул</option>
                     </select>
                 </div>
-            </div>
-
-            <div class="country-tabs mb-4" id="countryTabsContainer"></div>
-
-            <div class="text-muted small mb-3 text-center">Ціни вказані за двох дорослих на 6-8 ночей</div>
-
-            <div class="bg-stone-50/50 rounded-2xl border border-stone-150 p-4 sm:p-6">
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 pb-4 border-b border-stone-100">
-                    <div class="flex items-center gap-5">
-                        <span class="text-xs text-stone-400 italic">Ціна за 2 гостей на 7-9 ночей</span>
-                        <div class="flex items-center gap-4 text-xs">
-                            <span class="flex items-center gap-1.5 font-medium text-emerald-800">
-                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-800 inline-block"></span>Вигідна
-                            </span>
-                            <span class="flex items-center gap-1.5 font-medium text-amber-700">
-                                <span class="w-2.5 h-2.5 rounded-full bg-amber-600 inline-block"></span>Краща пропозиція
-                            </span>
+                <div class="country-tabs mb-4"></div>
+                <div class="text-muted small mb-3 text-center">Ціни вказані за двох дорослих на 6-8 ночей</div>
+                <div class="calendar-container">
+                    <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
+                        <div class="price-range-indicator">
+                            <div class="max-price text-end">—</div>
+                            <div class="min-price text-end">—</div>
+                        </div>
+                        <div class="month-controls">
+                            <button class="btn btn-sm btn-outline-secondary" id="prevMonthBtn"><i class="fa-solid fa-chevron-left"></i></button>
+                            <span id="monthYearDisplay" class="fw-bold mx-2">Травень 2026</span>
+                            <button class="btn btn-sm btn-outline-secondary" id="nextMonthBtn"><i class="fa-solid fa-chevron-right"></i></button>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto">
-                        <button class="p-1.5 rounded-lg border border-stone-200 bg-white shadow-xs text-stone-500 hover:bg-stone-50 focus:outline-none" id="prevMonthBtn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="m15 18-6-6 6-6"></path></svg>
-                        </button>
-                        <span id="monthYearDisplay" class="font-serif text-lg font-medium text-stone-800 min-w-[120px] text-center capitalize">Травень 2026</span>
-                        <button class="p-1.5 rounded-lg border border-stone-200 bg-white shadow-xs text-stone-500 hover:bg-stone-50 focus:outline-none" id="nextMonthBtn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="m9 18 6-6-6-6"></path></svg>
-                        </button>
+                    <div class="calendar-scroll">
+                        <div class="calendar-days" id="calendarDays"></div>
                     </div>
-                </div>
-                <div class="relative overflow-x-auto pb-4 scrollbar-thin">
-                    <div class="flex justify-between items-end min-w-[680px] px-2 pt-6" id="calendarDays"></div>
                 </div>
             </div>
         </div>
-    </div>
 
 {% elif block == 'popular_destinations' %}
         <!-- Популярні напрямки -->
@@ -1140,169 +1121,112 @@ function selectCalendarDate(dateISO, price, nights) {
         box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
 
-    /* ========== НОВА СТИЛІСТИКА ДЛЯ КАЛЕНДАРЯ ========== */
-.price-calendar-wrapper {
-    background: white;
-    border-radius: 1rem;
-    padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e5e5;
-}
-
-/* Стилі для вкладок країн */
-.country-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-}
-
-.country-tab {
-    background: #f5f5f5;
-    border: 1px solid #e5e5e5;
-    border-radius: 2rem;
-    padding: 0.4rem 1.2rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    color: #555;
-}
-
-.country-tab:hover {
-    background: #e8e8e8;
-    transform: translateY(-2px);
-}
-
-.country-tab.active {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-    color: white;
-}
-
-/* Дні календаря */
-.day-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    margin: 0 1.5px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.day-column:hover {
-    transform: translateY(-4px);
-}
-
-.day-week {
-    font-size: 10px;
-    color: #999;
-    font-weight: 500;
-    margin-bottom: 4px;
-    text-transform: capitalize;
-}
-
-.day-date {
-    font-size: 12px;
-    color: #666;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-.price-bar-container {
-    width: 100%;
-    position: relative;
-    height: 100px;
-    display: flex;
-    align-items: flex-end;
-}
-
-.price-column {
-    width: 100%;
-    transition: height 0.3s ease;
-    border-radius: 4px 4px 0 0;
-}
-
-.price-column.low {
-    background: linear-gradient(135deg, #2d6a4f, #40916c);
-}
-
-.price-column.medium {
-    background: linear-gradient(135deg, #e9c46a, #f4a261);
-}
-
-.price-column.red {
-    background: linear-gradient(135deg, #e76f51, #f4a261);
-}
-
-.price-column.gray {
-    background: #d4d4d4;
-}
-
-.price-column.past {
-    background: #d4d4d4 !important;
-    opacity: 0.5;
-}
-
-.price-value-text {
-    font-size: 9px;
-    font-weight: 600;
-    margin-top: 6px;
-    white-space: nowrap;
-}
-
-.price-value-text.past {
-    color: #bbb;
-}
-
-.day-column.past-date {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.day-column.past-date:hover {
-    transform: none;
-}
-
-/* Тултіп при наведенні */
-.day-column {
-    position: relative;
-}
-
-.day-column .tooltip {
-    position: absolute;
-    bottom: 110%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #1a1a1a;
-    color: white;
-    font-size: 9px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
-    z-index: 20;
-}
-
-.day-column:hover .tooltip {
-    opacity: 1;
-}
-
-@media (max-width: 768px) {
+    /* ===== СТИЛІ ДЛЯ КАЛЕНДАРЯ ===== */
     .price-calendar-wrapper {
-        padding: 1rem;
+        background: #fff;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid #e9ecef;
     }
+    .country-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+    .country-tab {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 2rem;
+        padding: 0.4rem 1.2rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .country-tab.active {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .price-range-indicator {
+        background: #f8f9fa;
+        border-radius: 0.75rem;
+        padding: 0.5rem 1rem;
+        min-width: 180px;
+        text-align: right;
+    }
+    .price-range-indicator .max-price { font-size: 0.9rem; font-weight: 700; color: #dc3545; }
+    .price-range-indicator .min-price { font-size: 0.9rem; font-weight: 700; color: #28a745; }
+    .month-controls .btn { width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; }
+    .month-controls span { font-size: 1rem; font-weight: 500; min-width: 140px; text-align: center; }
+    .calendar-scroll { overflow-x: auto; padding-bottom: 0.5rem; }
+    .calendar-days { display: inline-flex; gap: 0.75rem; align-items: flex-end; }
     .day-column {
-        min-width: 45px;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 80px;
+        background: #fff;
+        border-radius: 0.75rem;
+        padding: 0.75rem 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid #e9ecef;
     }
+    .day-column:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: var(--primary-color); }
+    .day-column.past-date {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: #f5f5f5;
+    }
+    .day-week { font-size: 0.75rem; color: #6c757d; text-transform: capitalize; margin-bottom: 0.25rem; }
+    .day-date { font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem; }
     .price-bar-container {
-        height: 70px;
+        width: 40px;
+        height: 100px;
+        background: #e9ecef;
+        border-radius: 6px;
+        position: relative;
+        margin: 0 auto 0.5rem;
+        overflow: hidden;
     }
-}
+    .price-column {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        transition: height 0.2s;
+        border-radius: 6px 6px 0 0;
+    }
+    .price-column.low { background: linear-gradient(135deg, #28a745, #20c997); }
+    .price-column.medium { background: linear-gradient(135deg, #ffc107, #fd7e14); }
+    .price-column.red { background: linear-gradient(135deg, #dc3545, #e83e8c); }
+    .price-column.gray { background: #ced4da; }
+    .price-column.past { background: #d4d4d4 !important; opacity: 0.5; }
+    .price-value-text { font-weight: 500; font-size: 0.7rem; white-space: nowrap; margin-top: 0.25rem; }
+    .price-value-text.past { color: #999 !important; }
+
+    @media (max-width: 768px) {
+        .consult-row { flex-direction: column !important; gap: 1.5rem !important; }
+        .form-block { order: 1; width: 100%; }
+        .agent-block { order: 2; width: 100%; justify-content: center; }
+        #otpusk-search-module { padding: 15px !important; margin: -20px 15px 0 15px !important; max-width: none !important; }
+        .calendar-header { flex-wrap: nowrap !important; justify-content: space-between; gap: 0.5rem; }
+        .month-controls span { font-size: 0.85rem; min-width: 100px; }
+        .price-range-indicator { min-width: 120px; padding: 0.25rem 0.5rem; }
+        .day-column { min-width: 65px; padding: 0.5rem 0.25rem; }
+        .price-bar-container { width: 35px; height: 80px; }
+    }
 </style>
 
 
@@ -1712,20 +1636,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const prevBtn = document.getElementById('prevMonthBtn');
     const nextBtn = document.getElementById('nextMonthBtn');
     const departureSelect = document.getElementById('departureCitySelect');
-
-    // Отримуємо елементи для цін з перевіркою на існування
-    let maxPriceSpan = document.querySelector('.price-range-indicator .max-price');
-    let minPriceSpan = document.querySelector('.price-range-indicator .min-price');
-    let countryTabsContainer = document.getElementById('countryTabsContainer');
-
-    // Якщо не знайшли за id, шукаємо за класом
-    if (!countryTabsContainer) {
-        countryTabsContainer = document.querySelector('.country-tabs');
-    }
+    const maxPriceSpan = document.querySelector('.price-range-indicator .max-price');
+    const minPriceSpan = document.querySelector('.price-range-indicator .min-price');
+    const countryTabsContainer = document.querySelector('.country-tabs');
 
     function rebuildCountryTabs(departureCity) {
         const countries = countryListByDepartureCity[departureCity];
-        if (!countries || !countryTabsContainer) return;
+        if (!countries) return;
 
         countryTabsContainer.innerHTML = '';
         countries.forEach((country, idx) => {
@@ -1787,6 +1704,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getCurrentNights() {
+        // Функція для отримання поточної кількості ночей (можна налаштувати)
         const nightsSelect = document.getElementById('searchNights');
         if (nightsSelect) {
             const val = nightsSelect.value;
@@ -1815,16 +1733,17 @@ document.addEventListener('DOMContentLoaded', function() {
             globalMax = Math.max(...validPrices);
         }
 
-        // Оновлюємо індикатори цін (з перевіркою на існування)
-        if (minPriceSpan && globalMin !== null) {
+        if (globalMin !== null) {
             minPriceSpan.innerHTML = `від ${globalMin.toLocaleString('uk-UA')} ₴`;
-        } else if (minPriceSpan) {
+            minPriceSpan.style.color = '#28a745';
+        } else {
             minPriceSpan.innerHTML = 'немає даних';
         }
 
-        if (maxPriceSpan && globalMax !== null) {
+        if (globalMax !== null) {
             maxPriceSpan.innerHTML = `до ${globalMax.toLocaleString('uk-UA')} ₴`;
-        } else if (maxPriceSpan) {
+            maxPriceSpan.style.color = '#dc3545';
+        } else {
             maxPriceSpan.innerHTML = 'немає даних';
         }
 
@@ -1833,45 +1752,38 @@ document.addEventListener('DOMContentLoaded', function() {
             const dayDate = new Date(year, month, day);
             const dayOfWeek = dayDate.toLocaleDateString('uk', { weekday: 'short' });
             const dateISO = `${year}-${String(month+1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
             const isPastDate = dayDate < today;
 
             const col = document.createElement('div');
             col.className = 'day-column' + (isPastDate ? ' past-date' : '');
 
             if (isPastDate) {
-                col.innerHTML = `
-                    <div class="day-week">${dayOfWeek}</div>
-                    <div class="day-date">${day}</div>
-                    <div class="price-bar-container">
-                        <div class="price-column past" style="height: 20%;"></div>
-                    </div>
-                    <div class="price-value-text past">минула</div>
-                `;
+                col.innerHTML = `<div class="day-week">${dayOfWeek}</div>
+                                 <div class="day-date">${day}</div>
+                                 <div class="price-bar-container">
+                                     <div class="price-column past" style="height: 20%;"></div>
+                                 </div>
+                                 <div class="price-value-text past">минула</div>`;
             } else if (price !== null && price !== undefined) {
                 const barClass = getColorForPrice(price, globalMin, globalMax);
                 const barHeight = getHeightForPrice(price, globalMin, globalMax);
                 col.setAttribute('onclick', `selectCalendarDate('${dateISO}', ${price}, ${getCurrentNights()})`);
                 col.style.cursor = 'pointer';
-                col.innerHTML = `
-                    <div class="tooltip">${Math.round(price).toLocaleString('uk-UA')} ₴</div>
-                    <div class="day-week">${dayOfWeek}</div>
-                    <div class="day-date">${day}</div>
-                    <div class="price-bar-container">
-                        <div class="price-column ${barClass}" style="height: ${barHeight}%;"></div>
-                    </div>
-                    <div class="price-value-text" style="color: ${barClass === 'low' ? '#2d6a4f' : (barClass === 'red' ? '#e76f51' : '#e9c46a')}">
-                            ${Math.round(price / 1000)}k ₴
-                        </div>
-                `;
+                col.innerHTML = `<div class="day-week">${dayOfWeek}</div>
+                                 <div class="day-date">${day}</div>
+                                 <div class="price-bar-container">
+                                     <div class="price-column ${barClass}" style="height: ${barHeight}%;"></div>
+                                 </div>
+                                 <div class="price-value-text" style="color: ${barClass === 'low' ? '#28a745' : (barClass === 'red' ? '#dc3545' : '#ffc107')}">${Math.round(price).toLocaleString('uk-UA')} ₴</div>`;
             } else {
-                col.innerHTML = `
-                    <div class="day-week">${dayOfWeek}</div>
-                    <div class="day-date">${day}</div>
-                    <div class="price-bar-container">
-                        <div class="price-column gray" style="height: 20%;"></div>
-                    </div>
-                    <div class="price-value-text" style="color: #adb5bd;">немає</div>
-                `;
+                // ТУТ ПОКАЗУЄМО "НЕМАЄ" ЗАМІСТЬ РАНДОМНОЇ ЦІНИ
+                col.innerHTML = `<div class="day-week">${dayOfWeek}</div>
+                                 <div class="day-date">${day}</div>
+                                 <div class="price-bar-container">
+                                     <div class="price-column gray" style="height: 20%;"></div>
+                                 </div>
+                                 <div class="price-value-text" style="color: #adb5bd;">немає</div>`;
             }
             calendarDays.appendChild(col);
         }
@@ -1879,12 +1791,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function updateCalendar() {
         if (!currentCountry || !currentDeparture) return;
-        if (monthYearDisplay) {
-            monthYearDisplay.textContent = currentMonth.toLocaleString('uk', { month: 'long', year: 'numeric' });
-        }
-        if (calendarDays) {
-            calendarDays.innerHTML = '<div class="text-center w-100 py-5">Завантаження...</div>';
-        }
+        monthYearDisplay.textContent = currentMonth.toLocaleString('uk', { month: 'long', year: 'numeric' });
+        if (calendarDays) calendarDays.innerHTML = '<div class="text-center w-100 py-5">Завантаження...</div>';
         const { prices } = await fetchPriceData(currentCountry, currentMonth, currentDeparture);
         renderCalendar(prices);
     }
@@ -1906,75 +1814,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
 document.addEventListener('DOMContentLoaded', function() {
-    const submitBtn = document.getElementById('submitConsultationBtn');
-    if (!submitBtn) return;
+    const form = document.getElementById('consultationForm');
+    if (!form) return;
 
-    // Запобігаємо дублюванню обробника
-    if (submitBtn.hasAttribute('data-listener')) return;
-    submitBtn.setAttribute('data-listener', 'true');
-
-    submitBtn.addEventListener('click', function(e) {
+    form.addEventListener('submit', function(e) {
         e.preventDefault();
-        e.stopPropagation();
-
-        const name = document.getElementById('consultationName')?.value || '';
-        const phone = document.getElementById('consultationPhone')?.value || '';
-        const countryCode = document.getElementById('consultationCountryCode')?.value || '+380';
-        const message = document.getElementById('consultationMessage')?.value || '';
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-
-        if (!name.trim()) {
-            alert("Введіть ваше ім'я");
-            return;
-        }
-        if (!phone.trim()) {
-            alert("Введіть номер телефону");
-            return;
-        }
 
         let ajaxUrl = '/consultation-ajax/';
         {% if agent_site %}
         ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
         {% endif %}
 
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '⏳ Відправляємо...';
+        const formData = new FormData(form);
+        const btn = form.querySelector('button[type="submit"]');
+        const originalText = btn.innerHTML;
+
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Відправляємо...';
 
         fetch(ajaxUrl, {
             method: 'POST',
+            body: formData,
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': csrfToken
-            },
-            body: new URLSearchParams({
-                'name': name,
-                'phone': phone,
-                'country_code': countryCode,
-                'message': message,
-                'consultation_submit': '1'
-            })
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                document.getElementById('consultationName').value = '';
-                document.getElementById('consultationPhone').value = '';
-                document.getElementById('consultationMessage').value = '';
-                alert("Заявку відправлено! Ми зв'яжемося з вами найближчим часом.");
-            } else {
-                alert("Сталася помилка. Спробуйте пізніше.");
+                form.reset();
             }
         })
         .catch(error => {
             console.error('Помилка:', error);
-            alert("Сталася помилка. Спробуйте пізніше.");
         })
         .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Надіслати приватний запит <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>';
+            btn.disabled = false;
+            btn.innerHTML = originalText;
         });
     });
 });
+
+
 </script>
 <style>
 /* ========== ЗМІНА КОЛЬОРУ БЛОКУ ПОШУКУ OTPUSK (ГОЛУБИЙ → БІЛИЙ) ========== */
