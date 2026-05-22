@@ -979,75 +979,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     </style>
 <script>
-    // ЄДИНИЙ AJAX СКРИПТ ДЛЯ ФОРМИ КОНСУЛЬТАЦІЇ
-    (function() {
-        const submitBtn = document.getElementById('submitConsultationBtn');
-        if (!submitBtn) return;
-
-        submitBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const name = document.getElementById('consultationName')?.value || '';
-            const phone = document.getElementById('consultationPhone')?.value || '';
-            const countryCode = document.getElementById('consultationCountryCode')?.value || '+380';
-            const message = document.getElementById('consultationMessage')?.value || '';
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-
-            if (!name.trim()) {
-                alert("Введіть ваше ім'я");
-                return;
-            }
-            if (!phone.trim()) {
-                alert("Введіть номер телефону");
-                return;
-            }
-
-            let ajaxUrl = '/consultation-ajax/';
-            {% if agent_site %}
-            ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
-            {% endif %}
-
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '⏳ Відправляємо...';
-
-            fetch(ajaxUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrfToken
-                },
-                body: new URLSearchParams({
-                    'name': name,
-                    'phone': phone,
-                    'country_code': countryCode,
-                    'message': message,
-                    'consultation_submit': '1'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('consultationName').value = '';
-                    document.getElementById('consultationPhone').value = '';
-                    document.getElementById('consultationMessage').value = '';
-                    alert("Заявку відправлено! Ми зв'яжемося з вами найближчим часом.");
-                } else {
-                    alert("Сталася помилка. Спробуйте пізніше.");
-                }
-            })
-            .catch(error => {
-                console.error('Помилка:', error);
-                alert("Сталася помилка. Спробуйте пізніше.");
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Надіслати приватний запит <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>';
-            });
-        });
-    })();
-    </script>
-<script>
 // ========== ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА СТОРІНКУ РЕЗУЛЬТАТІВ ПРИ КЛІКУ НА ДАТУ ==========
 function getCurrentNights() {
     return 0;
@@ -1102,62 +1033,60 @@ function selectCalendarDate(dateISO, price, nights) {
     window.location.href = `${baseUrl}?${params.toString()}`;
 }
 
+// ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
+(function() {
+    const submitBtn = document.getElementById('submitConsultationBtn');
+    if (!submitBtn) return;
 
-// ========== ФУНКЦІЯ ДЛЯ ПЕРЕХОДУ НА СТОРІНКУ РЕЗУЛЬТАТІВ ПРИ КЛІКУ НА ДАТУ ==========
-function getCurrentNights() {
-    return 0;
-}
+    submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
 
-function selectCalendarDate(dateISO, price, nights) {
-    const selectedDate = new Date(dateISO);
-    const currentCountryTab = document.querySelector('.country-tab.active');
-    const country = currentCountryTab ? currentCountryTab.getAttribute('data-country') : 'Єгипет';
+        const name = document.getElementById('consultationName')?.value || '';
+        const phone = document.getElementById('consultationPhone')?.value || '';
+        const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
-    const departureSelect = document.getElementById('departureCitySelect');
-    const departureName = departureSelect ? departureSelect.value : 'Кишинів';
+        if (!name.trim()) {
+            console.log('Введіть ім\'я');
+            return;
+        }
+        if (!phone.trim()) {
+            console.log('Введіть телефон');
+            return;
+        }
 
-    const departureTextMap = {
-        "Кишинів": "Кишинева",
-        "Варшава": "Варшави",
-        "Краків": "Кракова",
-        "Бухарест": "Бухареста",
-        "Будапешт": "Будапешта",
-        "Берлін": "Берліна",
-        "Прага": "Праги",
-        "Тбілісі": "Тбілісі",
-        "Стамбул": "Стамбула",
-        "Київ": "Києва"
-    };
+        let ajaxUrl = '/consultation-ajax/';
+        {% if agent_site %}
+        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
+        {% endif %}
 
-    const departureText = departureTextMap[departureName] || departureName;
-
-    let baseUrl = '/search-results-calendar/';
-    if (window.location.pathname.startsWith('/a/')) {
-        const slug = window.location.pathname.split('/')[2];
-        baseUrl = `/a/${slug}/search-results-calendar/`;
-    }
-
-    const formatDate = (d) => {
-        return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
-    };
-
-    const dateFromFormatted = formatDate(selectedDate);
-    const dateToFormatted = dateFromFormatted;
-
-    const params = new URLSearchParams({
-        geo: country,
-        departure_text: departureText,
-        date_from: dateFromFormatted,
-        date_to: dateToFormatted,
-        duration: 0,
-        auto_search: '1'
+        fetch(ajaxUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: new URLSearchParams({
+                'name': name,
+                'phone': phone,
+                'country_code': countryCode,
+                'consultation_submit': '1'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('consultationName').value = '';
+                document.getElementById('consultationPhone').value = '';
+                console.log('Заявка відправлена');
+            }
+        })
+        .catch(error => {
+            console.error('Помилка:', error);
+        });
     });
-
-    console.log('🚀 Перехід:', `${baseUrl}?${params.toString()}`);
-    window.location.href = `${baseUrl}?${params.toString()}`;
-}
-
-
+})();
 </script>
 
 <style>
@@ -1890,6 +1819,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (prevBtn) prevBtn.addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() - 1); updateCalendar(); });
     if (nextBtn) nextBtn.addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() + 1); updateCalendar(); });
+});
+
+// ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('consultationForm');
+    if (!form) return;
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        let ajaxUrl = '/consultation-ajax/';
+        {% if agent_site %}
+        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
+        {% endif %}
+
+        const formData = new FormData(form);
+        const btn = form.querySelector('button[type="submit"]');
+        const originalText = btn.innerHTML;
+
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Відправляємо...';
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                form.reset();
+            }
+        })
+        .catch(error => {
+            console.error('Помилка:', error);
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        });
+    });
 });
 
 
