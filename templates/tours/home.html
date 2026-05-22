@@ -1712,13 +1712,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const prevBtn = document.getElementById('prevMonthBtn');
     const nextBtn = document.getElementById('nextMonthBtn');
     const departureSelect = document.getElementById('departureCitySelect');
-    const maxPriceSpan = document.querySelector('.price-range-indicator .max-price');
-    const minPriceSpan = document.querySelector('.price-range-indicator .min-price');
-    const countryTabsContainer = document.querySelector('.country-tabs');
+
+    // Отримуємо елементи для цін з перевіркою на існування
+    let maxPriceSpan = document.querySelector('.price-range-indicator .max-price');
+    let minPriceSpan = document.querySelector('.price-range-indicator .min-price');
+    let countryTabsContainer = document.getElementById('countryTabsContainer');
+
+    // Якщо не знайшли за id, шукаємо за класом
+    if (!countryTabsContainer) {
+        countryTabsContainer = document.querySelector('.country-tabs');
+    }
 
     function rebuildCountryTabs(departureCity) {
         const countries = countryListByDepartureCity[departureCity];
-        if (!countries) return;
+        if (!countries || !countryTabsContainer) return;
 
         countryTabsContainer.innerHTML = '';
         countries.forEach((country, idx) => {
@@ -1780,7 +1787,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getCurrentNights() {
-        // Функція для отримання поточної кількості ночей (можна налаштувати)
         const nightsSelect = document.getElementById('searchNights');
         if (nightsSelect) {
             const val = nightsSelect.value;
@@ -1793,87 +1799,92 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderCalendar(prices) {
-    if (!calendarDays) return;
+        if (!calendarDays) return;
 
-    const year = currentMonth.getFullYear();
-    const month = currentMonth.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    calendarDays.innerHTML = '';
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        calendarDays.innerHTML = '';
 
-    const validPrices = prices.filter(p => p !== null && p !== undefined);
-    let globalMin = null;
-    let globalMax = null;
+        const validPrices = prices.filter(p => p !== null && p !== undefined);
+        let globalMin = null;
+        let globalMax = null;
 
-    if (validPrices.length > 0) {
-        globalMin = Math.min(...validPrices);
-        globalMax = Math.max(...validPrices);
-    }
-
-    if (globalMin !== null) {
-        minPriceSpan.innerHTML = `від ${globalMin.toLocaleString('uk-UA')} ₴`;
-    } else {
-        minPriceSpan.innerHTML = 'немає даних';
-    }
-
-    if (globalMax !== null) {
-        maxPriceSpan.innerHTML = `до ${globalMax.toLocaleString('uk-UA')} ₴`;
-    } else {
-        maxPriceSpan.innerHTML = 'немає даних';
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-        const price = prices[day - 1];
-        const dayDate = new Date(year, month, day);
-        const dayOfWeek = dayDate.toLocaleDateString('uk', { weekday: 'short' });
-        const dateISO = `${year}-${String(month+1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const isPastDate = dayDate < today;
-
-        const col = document.createElement('div');
-        col.className = 'day-column' + (isPastDate ? ' past-date' : '');
-
-        if (isPastDate) {
-            col.innerHTML = `
-                <div class="day-week">${dayOfWeek}</div>
-                <div class="day-date">${day}</div>
-                <div class="price-bar-container">
-                    <div class="price-column past" style="height: 20%;"></div>
-                </div>
-                <div class="price-value-text past">минула</div>
-            `;
-        } else if (price !== null && price !== undefined) {
-            const barClass = getColorForPrice(price, globalMin, globalMax);
-            const barHeight = getHeightForPrice(price, globalMin, globalMax);
-            col.setAttribute('onclick', `selectCalendarDate('${dateISO}', ${price}, ${getCurrentNights()})`);
-            col.style.cursor = 'pointer';
-            col.innerHTML = `
-                <div class="tooltip">${Math.round(price).toLocaleString('uk-UA')} ₴</div>
-                <div class="day-week">${dayOfWeek}</div>
-                <div class="day-date">${day}</div>
-                <div class="price-bar-container">
-                    <div class="price-column ${barClass}" style="height: ${barHeight}%;"></div>
-                </div>
-                <div class="price-value-text" style="color: ${barClass === 'low' ? '#2d6a4f' : (barClass === 'red' ? '#e76f51' : '#e9c46a')}">
-                    ${Math.round(price / 1000)}k ₴
-                </div>
-            `;
-        } else {
-            col.innerHTML = `
-                <div class="day-week">${dayOfWeek}</div>
-                <div class="day-date">${day}</div>
-                <div class="price-bar-container">
-                    <div class="price-column gray" style="height: 20%;"></div>
-                </div>
-                <div class="price-value-text" style="color: #adb5bd;">немає</div>
-            `;
+        if (validPrices.length > 0) {
+            globalMin = Math.min(...validPrices);
+            globalMax = Math.max(...validPrices);
         }
-        calendarDays.appendChild(col);
+
+        // Оновлюємо індикатори цін (з перевіркою на існування)
+        if (minPriceSpan && globalMin !== null) {
+            minPriceSpan.innerHTML = `від ${globalMin.toLocaleString('uk-UA')} ₴`;
+        } else if (minPriceSpan) {
+            minPriceSpan.innerHTML = 'немає даних';
+        }
+
+        if (maxPriceSpan && globalMax !== null) {
+            maxPriceSpan.innerHTML = `до ${globalMax.toLocaleString('uk-UA')} ₴`;
+        } else if (maxPriceSpan) {
+            maxPriceSpan.innerHTML = 'немає даних';
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const price = prices[day - 1];
+            const dayDate = new Date(year, month, day);
+            const dayOfWeek = dayDate.toLocaleDateString('uk', { weekday: 'short' });
+            const dateISO = `${year}-${String(month+1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const isPastDate = dayDate < today;
+
+            const col = document.createElement('div');
+            col.className = 'day-column' + (isPastDate ? ' past-date' : '');
+
+            if (isPastDate) {
+                col.innerHTML = `
+                    <div class="day-week">${dayOfWeek}</div>
+                    <div class="day-date">${day}</div>
+                    <div class="price-bar-container">
+                        <div class="price-column past" style="height: 20%;"></div>
+                    </div>
+                    <div class="price-value-text past">минула</div>
+                `;
+            } else if (price !== null && price !== undefined) {
+                const barClass = getColorForPrice(price, globalMin, globalMax);
+                const barHeight = getHeightForPrice(price, globalMin, globalMax);
+                col.setAttribute('onclick', `selectCalendarDate('${dateISO}', ${price}, ${getCurrentNights()})`);
+                col.style.cursor = 'pointer';
+                col.innerHTML = `
+                    <div class="tooltip">${Math.round(price).toLocaleString('uk-UA')} ₴</div>
+                    <div class="day-week">${dayOfWeek}</div>
+                    <div class="day-date">${day}</div>
+                    <div class="price-bar-container">
+                        <div class="price-column ${barClass}" style="height: ${barHeight}%;"></div>
+                    </div>
+                    <div class="price-value-text" style="color: ${barClass === 'low' ? '#2d6a4f' : (barClass === 'red' ? '#e76f51' : '#e9c46a')}">
+                            ${Math.round(price / 1000)}k ₴
+                        </div>
+                `;
+            } else {
+                col.innerHTML = `
+                    <div class="day-week">${dayOfWeek}</div>
+                    <div class="day-date">${day}</div>
+                    <div class="price-bar-container">
+                        <div class="price-column gray" style="height: 20%;"></div>
+                    </div>
+                    <div class="price-value-text" style="color: #adb5bd;">немає</div>
+                `;
+            }
+            calendarDays.appendChild(col);
+        }
     }
-}
 
     async function updateCalendar() {
         if (!currentCountry || !currentDeparture) return;
-        monthYearDisplay.textContent = currentMonth.toLocaleString('uk', { month: 'long', year: 'numeric' });
-        if (calendarDays) calendarDays.innerHTML = '<div class="text-center w-100 py-5">Завантаження...</div>';
+        if (monthYearDisplay) {
+            monthYearDisplay.textContent = currentMonth.toLocaleString('uk', { month: 'long', year: 'numeric' });
+        }
+        if (calendarDays) {
+            calendarDays.innerHTML = '<div class="text-center w-100 py-5">Завантаження...</div>';
+        }
         const { prices } = await fetchPriceData(currentCountry, currentMonth, currentDeparture);
         renderCalendar(prices);
     }
@@ -1895,48 +1906,75 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('consultationForm');
-    if (!form) return;
+    const submitBtn = document.getElementById('submitConsultationBtn');
+    if (!submitBtn) return;
 
-    form.addEventListener('submit', function(e) {
+    // Запобігаємо дублюванню обробника
+    if (submitBtn.hasAttribute('data-listener')) return;
+    submitBtn.setAttribute('data-listener', 'true');
+
+    submitBtn.addEventListener('click', function(e) {
         e.preventDefault();
+        e.stopPropagation();
+
+        const name = document.getElementById('consultationName')?.value || '';
+        const phone = document.getElementById('consultationPhone')?.value || '';
+        const countryCode = document.getElementById('consultationCountryCode')?.value || '+380';
+        const message = document.getElementById('consultationMessage')?.value || '';
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+        if (!name.trim()) {
+            alert("Введіть ваше ім'я");
+            return;
+        }
+        if (!phone.trim()) {
+            alert("Введіть номер телефону");
+            return;
+        }
 
         let ajaxUrl = '/consultation-ajax/';
         {% if agent_site %}
         ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
         {% endif %}
 
-        const formData = new FormData(form);
-        const btn = form.querySelector('button[type="submit"]');
-        const originalText = btn.innerHTML;
-
-        btn.disabled = true;
-        btn.innerHTML = '⏳ Відправляємо...';
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ Відправляємо...';
 
         fetch(ajaxUrl, {
             method: 'POST',
-            body: formData,
             headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            }
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: new URLSearchParams({
+                'name': name,
+                'phone': phone,
+                'country_code': countryCode,
+                'message': message,
+                'consultation_submit': '1'
+            })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                form.reset();
+                document.getElementById('consultationName').value = '';
+                document.getElementById('consultationPhone').value = '';
+                document.getElementById('consultationMessage').value = '';
+                alert("Заявку відправлено! Ми зв'яжемося з вами найближчим часом.");
+            } else {
+                alert("Сталася помилка. Спробуйте пізніше.");
             }
         })
         .catch(error => {
             console.error('Помилка:', error);
+            alert("Сталася помилка. Спробуйте пізніше.");
         })
         .finally(() => {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Надіслати приватний запит <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>';
         });
     });
 });
-
-
 </script>
 <style>
 /* ========== ЗМІНА КОЛЬОРУ БЛОКУ ПОШУКУ OTPUSK (ГОЛУБИЙ → БІЛИЙ) ========== */
