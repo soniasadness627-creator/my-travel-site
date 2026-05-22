@@ -1239,10 +1239,16 @@ function selectCalendarDate(dateISO, price, nights) {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    padding-bottom: 10px;
+    padding-bottom: 15px;
     margin-bottom: 1.5rem;
+    /* ВАЖЛИВО: додаємо максимальну ширину */
+    max-width: 100%;
+    /* Додаємо відступи, щоб не обрізало тіні */
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
+/* Стилі для скролбару */
 .country-tabs::-webkit-scrollbar {
     height: 4px;
 }
@@ -1257,6 +1263,7 @@ function selectCalendarDate(dateISO, price, nights) {
     border-radius: 10px;
 }
 
+/* Кнопки країн */
 .country-tab {
     background: #f5f5f5;
     border: 1px solid #e5e5e5;
@@ -1309,6 +1316,13 @@ function selectCalendarDate(dateISO, price, nights) {
     background: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
+}
+    /* Рамка навколо блоку з календарем */
+.calendar-container {
+    border: 1px solid #000000;
+    border-radius: 12px;
+    padding: 16px;
+    background: white;
 }
 </style>
 
