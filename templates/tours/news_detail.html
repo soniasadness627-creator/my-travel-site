@@ -607,6 +607,47 @@
             right: 0px;
         }
     }
+    /* Тоненька чорна рамка для карток рекомендованих статей */
+.recommended-news-block .card {
+    border: 1px solid #000000 !important;
+    border-radius: 16px !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.recommended-news-block .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+    /* Рекомендовані статті - без підйому при наведенні */
+.recommended-news-block .card {
+    border: 1px solid #000000 !important;
+    border-radius: 16px !important;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+.recommended-news-block .card:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    /* transform: translateY(-5px); - ВИДАЛЕНО! */
+}
+
+/* Плавне збільшення фото при наведенні */
+.recommended-news-block .card:hover img {
+    transform: scale(1.05);
+    transition: transform 0.4s ease-out;
+}
+
+.recommended-news-block .card img {
+    transition: transform 0.4s ease-out;
+}
+
+/* Контейнер для фото */
+.recommended-news-block .card-img-top {
+    overflow: hidden;
+    height: 160px;
+    object-fit: cover;
+    width: 100%;
+}
 </style>
 
 <script>

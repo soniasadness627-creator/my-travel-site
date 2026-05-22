@@ -7,22 +7,22 @@
     <div class="row">
         {% for item in news %}
         <div class="col-md-4 mb-4">
-            <div class="card news-card shadow-sm h-100 d-flex flex-column">
-                {% if item.image %}
-                <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}" style="height: 200px; width: 100%; object-fit: cover;">
-                {% else %}
-                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                    <i class="fa-solid fa-image fa-3x text-muted"></i>
+            <div class="card news-card h-100 d-flex flex-column" style="border: 1px solid #000000; border-radius: 16px; overflow: hidden;">
+                <div class="news-img-wrapper" style="overflow: hidden; height: 200px;">
+                    {% if item.image %}
+                    <img src="{{ item.image.url }}" class="card-img-top news-img" alt="{{ item.title }}" style="height: 100%; width: 100%; object-fit: cover; transition: transform 0.4s ease-out;">
+                    {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 100%;">
+                        <i class="fa-solid fa-image fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
                 </div>
-                {% endif %}
                 <div class="card-body d-flex flex-column flex-grow-1">
                     <h5 class="card-title">{{ item.title }}</h5>
                     <p class="card-text">{{ item.text|truncatechars:120 }}</p>
                     <div class="mt-auto">
                         <p class="text-muted small mb-2">{{ item.created_at|date:"d.m.Y" }}</p>
-                        <!-- ВАЖЛИВО: використовуємо agent_site для URL -->
-<a href="{% if agent_site %}{% url 'agent_news_detail' agent_site.slug item.pk %}{% else %}/news/{{ item.pk }}/{% endif %}" class="btn btn-outline-primary btn-sm">                            Детальніше
-                        </a>
+                        <a href="{% if agent_site %}{% url 'agent_news_detail' agent_site.slug item.pk %}{% else %}/news/{{ item.pk }}/{% endif %}" class="btn btn-outline-primary btn-sm">Детальніше</a>
                     </div>
                 </div>
             </div>
@@ -35,4 +35,33 @@
         {% endfor %}
     </div>
 </div>
+
+<style>
+    /* Картка новини - без підйому при наведенні */
+    .news-card {
+        border: 1px solid #000000 !important;
+        border-radius: 16px !important;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .news-card:hover {
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        /* transform: translateY(-5px); - ВИДАЛЕНО! */
+    }
+
+    /* Плавне збільшення фото при наведенні на картку */
+    .news-card:hover .news-img {
+        transform: scale(1.05);
+    }
+
+    /* Для мобільних */
+    @media (max-width: 768px) {
+        .news-card {
+            border-radius: 12px !important;
+        }
+        .news-img-wrapper {
+            height: 180px !important;
+        }
+    }
+</style>
 {% endblock %}
