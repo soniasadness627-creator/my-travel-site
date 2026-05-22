@@ -65,71 +65,217 @@
             </div>
 
 <!-- ========== БЛОК КОНСУЛЬТАЦІЇ ========== -->
-<div class="row justify-content-center my-5">
-    <div class="col-12 col-md-10 col-lg-8">
-        <div class="card border-0 shadow-sm" id="consultationCard">
-            <div class="card-body p-4 p-md-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">
-                    Довірте вибір спеціалістам
-                </h5>
-                <p class="text-muted mb-0">
-                    Залишіть заявку, щоб отримати персональний підбір турів
-                </p>
-                <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
-                    <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
-                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3"
-                             style="width: 40px; height: 40px;">
-                            <i class="fa-regular fa-user text-secondary"></i>
-                        </div>
-                        <div>
-                            <div class="fw-bold" style="font-size: 0.95rem;">
-                                {% if agent_site %}
-                                    {{ agent_site.user.get_full_name|default:agent_site.user.username }}
-                                {% else %}
-                                    {{ random_agent.get_full_name|default:random_agent.username }}
-                                {% endif %}
-                            </div>
-                            <div class="text-muted" style="font-size: 0.8rem;">
-                                9 років досвіду в туризмі
-                            </div>
-                        </div>
+<div class="container my-5">
+    <div class="consultation-form-wrapper">
+        <div class="consultation-form-card">
+            <div class="consultation-form-left">
+                <span class="consultation-subtitle">Приватна розмова</span>
+                <h4 class="consultation-title">Допоможемо обрати ідеальний тур</h4>
+                <div class="consultation-expert">
+                    <div class="consultation-expert-icon">
+                        <span>👑</span>
                     </div>
-                    <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
-                        <form id="consultationForm" novalidate>
-                            {% csrf_token %}
-                            <input type="hidden" name="consultation_submit" value="1">
-                            <div class="mb-3">
-                                <input type="text" name="name" id="consultationName" class="form-control" placeholder="Ваше ім'я" required>
-                            </div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-4">
-                                    <select name="country_code" class="form-select" required>
-                                        <option value="+380" selected>🇺🇦 +380</option>
-                                        <option value="+48">🇵🇱 +48</option>
-                                        <option value="+1">🇺🇸 +1</option>
-                                        <option value="+44">🇬🇧 +44</option>
-                                        <option value="+49">🇩🇪 +49</option>
-                                        <option value="+33">🇫🇷 +33</option>
-                                    </select>
-                                </div>
-                                <div class="col-8">
-                                    <input type="tel" name="phone" id="consultationPhone" class="form-control" placeholder="XXXXXXXXX" required
-                                           pattern="[0-9]+"
-                                           title="Тільки цифри (приклад: 501234567)"
-                                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)"
-                                           onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                                </div>
-                            </div>
-                            <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">
-                                Залишити запит
-                            </button>
-                        </form>
+                    <div>
+                        <div class="consultation-expert-name">Консультант Клубу</div>
+                        <div class="consultation-expert-exp">9 років особистих експедицій</div>
                     </div>
                 </div>
+            </div>
+            <div class="consultation-form-right">
+                <form id="consultationForm" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="consultation_submit" value="1">
+                    <div class="consultation-field">
+                        <label>Ваше Ім'я</label>
+                        <input type="text" name="name" id="consultationName" placeholder="Наприклад: Віктор Коваль" required>
+                    </div>
+                    <div class="consultation-phone-row">
+                        <div class="consultation-phone-code">
+                            <label>Код</label>
+                            <select name="country_code" id="consultationCountryCode">
+                                <option value="+380">🇺🇦 +380</option>
+                                <option value="+48">🇵🇱 +48</option>
+                                <option value="+1">🇺🇸 +1</option>
+                                <option value="+44">🇬🇧 +44</option>
+                                <option value="+49">🇩🇪 +49</option>
+                                <option value="+33">🇫🇷 +33</option>
+                            </select>
+                        </div>
+                        <div class="consultation-phone-number">
+                            <label>Номер телефону</label>
+                            <input type="tel" name="phone" id="consultationPhone" placeholder="XX XXX XX XX" required>
+                        </div>
+                    </div>
+                    <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">Залишити запит</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+/* ========== СТИЛІ ДЛЯ ФОРМИ КОНСУЛЬТАЦІЇ ========== */
+.consultation-form-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.consultation-form-card {
+    background-color: #1c1c1c;
+    border-radius: 28px;
+    padding: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 40px;
+    border: 1px solid #2c2c2c;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.consultation-form-left {
+    flex: 1;
+    border-right: 1px solid #2c2c2c;
+    padding-right: 40px;
+}
+
+.consultation-subtitle {
+    font-size: 14px;
+    font-style: italic;
+    color: #bf9b30;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.consultation-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 25px;
+    line-height: 1.3;
+}
+
+.consultation-expert {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.consultation-expert-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid #3c3c3c;
+    background-color: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.consultation-expert-icon span {
+    font-size: 22px;
+}
+
+.consultation-expert-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.consultation-expert-exp {
+    font-size: 10px;
+    color: #a0a0a0;
+    margin-top: 4px;
+}
+
+.consultation-form-right {
+    flex: 1.5;
+}
+
+.consultation-field {
+    margin-bottom: 18px;
+}
+
+.consultation-field label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #a0a0a0;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.consultation-field input,
+.consultation-field textarea {
+    width: 100%;
+    background-color: #2a2a2a;
+    border: 1px solid #3c3c3c;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.consultation-field input:focus,
+.consultation-field textarea:focus {
+    outline: none;
+    border-color: #bf9b30;
+}
+
+.consultation-phone-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.consultation-phone-code label,
+.consultation-phone-number label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #a0a0a0;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.consultation-phone-code select,
+.consultation-phone-number input {
+    width: 100%;
+    background-color: #2a2a2a;
+    border: 1px solid #3c3c3c;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #ffffff;
+}
+
+.consultation-phone-code select:focus,
+.consultation-phone-number input:focus {
+    outline: none;
+    border-color: #bf9b30;
+}
+
+@media (max-width: 768px) {
+    .consultation-form-card {
+        flex-direction: column;
+        padding: 30px 20px;
+    }
+    .consultation-form-left {
+        border-right: none;
+        border-bottom: 1px solid #2c2c2c;
+        padding-right: 0;
+        padding-bottom: 25px;
+        text-align: center;
+    }
+    .consultation-expert {
+        justify-content: center;
+    }
+}
+</style>
 
 <script>
 // ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
@@ -478,39 +624,7 @@
         }
     }
 
-    /* Блок консультації - адаптація */
-    @media (max-width: 768px) {
-        .consult-row {
-            flex-direction: column !important;
-            gap: 1.5rem !important;
-        }
-        .form-block {
-            order: 1;
-            width: 100%;
-        }
-        .agent-block {
-            order: 2;
-            width: 100%;
-            justify-content: center;
-        }
-        .agent-block .rounded-circle {
-            margin-right: 0 !important;
-            margin-bottom: 0.5rem;
-        }
-        .card-body.p-5 {
-            padding: 1.5rem !important;
-        }
-        #consultationCard .form-control,
-        #consultationCard .form-select,
-        #consultationCard .btn {
-            font-size: 0.9rem;
-            height: auto;
-            padding: 0.5rem 0.75rem;
-        }
-        #consultationCard .row.g-2 {
-            --bs-gutter-x: 0.5rem;
-        }
-    }
+
 </style>
 
 <script>
