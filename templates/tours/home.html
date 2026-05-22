@@ -760,25 +760,16 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <label>Номер телефону</label>
                                 <input type="tel" name="phone" id="consultationPhone" placeholder="XX XXX XX XX" required>
                             </div>
+                                    </div>
+                                    <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">Залишити запит</button>
+                                </form>
+                            </div>
                         </div>
-                        <div class="consultation-field">
-                            <label>Побажання щодо готелю або дати</label>
-                            <textarea name="message" id="consultationMessage" rows="2" placeholder="Оренда вілли, приватна тераса..."></textarea>
-                        </div>
-                        <button type="button" id="submitConsultationBtn" class="consultation-submit-btn">
-                            Надіслати приватний запит
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
-                                <path d="M5 12h14"></path>
-                                <path d="m12 5 7 7-7 7"></path>
-                            </svg>
-                        </button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <style>
+<style>
     /* ========== СТИЛІ ДЛЯ ФОРМИ КОНСУЛЬТАЦІЇ ========== */
     .consultation-form-wrapper {
         max-width: 900px;
@@ -1823,75 +1814,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
 document.addEventListener('DOMContentLoaded', function() {
-    const submitBtn = document.getElementById('submitConsultationBtn');
-    if (!submitBtn) return;
+    const form = document.getElementById('consultationForm');
+    if (!form) return;
 
-    // Запобігаємо дублюванню обробника
-    if (submitBtn.hasAttribute('data-listener')) return;
-    submitBtn.setAttribute('data-listener', 'true');
-
-    submitBtn.addEventListener('click', function(e) {
+    form.addEventListener('submit', function(e) {
         e.preventDefault();
-        e.stopPropagation();
-
-        // Отримуємо дані з полів
-        const name = document.getElementById('consultationName')?.value || '';
-        const phone = document.getElementById('consultationPhone')?.value || '';
-        const countryCode = document.getElementById('consultationCountryCode')?.value || '+380';
-        const message = document.getElementById('consultationMessage')?.value || '';
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-
-        // Валідація
-        if (!name.trim()) {
-            alert("Введіть ваше ім'я");
-            return;
-        }
-        if (!phone.trim()) {
-            alert("Введіть номер телефону");
-            return;
-        }
 
         let ajaxUrl = '/consultation-ajax/';
         {% if agent_site %}
         ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
         {% endif %}
 
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '⏳ Відправляємо...';
+        const formData = new FormData(form);
+        const btn = form.querySelector('button[type="submit"]');
+        const originalText = btn.innerHTML;
+
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Відправляємо...';
 
         fetch(ajaxUrl, {
             method: 'POST',
+            body: formData,
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': csrfToken
-            },
-            body: new URLSearchParams({
-                'name': name,
-                'phone': phone,
-                'country_code': countryCode,
-                'message': message,
-                'consultation_submit': '1'
-            })
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Очищаємо форму
-                document.getElementById('consultationName').value = '';
-                document.getElementById('consultationPhone').value = '';
-                document.getElementById('consultationMessage').value = '';
-                alert("Заявку відправлено! Ми зв'яжемося з вами найближчим часом.");
-            } else {
-                alert("Сталася помилка. Спробуйте пізніше.");
+                form.reset();
             }
         })
         .catch(error => {
             console.error('Помилка:', error);
-            alert("Сталася помилка. Спробуйте пізніше.");
         })
         .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Надіслати приватний запит <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>';
+            btn.disabled = false;
+            btn.innerHTML = originalText;
         });
     });
 });
