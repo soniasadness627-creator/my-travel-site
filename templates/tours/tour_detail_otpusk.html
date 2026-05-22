@@ -742,76 +742,189 @@ function goToSearchPage() {
 <!-- ========== БЛОК БРОНЮВАННЯ ========== -->
 <div class="row justify-content-center my-5">
     <div class="col-12 col-md-10 col-lg-8">
-        <div class="card border-0 shadow-sm" id="consultationCard">
-            <div class="card-body p-4 p-md-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                <h5 class="fw-bold mb-0" style="font-size: 1.5rem;">Забронювати тур</h5>
-                <p class="text-muted mb-0">Заповніть форму, щоб забронювати цей тур</p>
-                <div id="formMessage" style="display: none;" class="alert"></div>
+        <div class="booking-form-wrapper">
+            <div class="booking-form-card">
+                <div class="booking-form-header">
+                    <h4 class="booking-form-title">Забронювати тур</h4>
+                    <p class="booking-form-subtitle">Заповніть форму, щоб забронювати цей тур</p>
+                </div>
+                <div class="booking-form-body">
+                    <form id="bookingForm" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="consultation_submit" value="1">
+                        <input type="hidden" name="tour_hid" id="tourHid" value="{{ hid }}">
+                        <input type="hidden" name="tour_oid" id="tourOid" value="{{ oid }}">
+                        <input type="hidden" name="tour_name" id="tourName" value="">
+                        <input type="hidden" name="tour_price" id="tourPrice" value="">
+                        <input type="hidden" name="tour_dates" id="tourDates" value="{{ od }} - {{ ol }} ночей">
+                        <input type="hidden" name="tour_url" id="tourUrl" value="{{ request.build_absolute_uri }}">
 
-                <div class="consult-row d-flex justify-content-between align-items-center flex-wrap gap-5">
-                    <div class="agent-block d-flex align-items-center px-4 py-2 rounded-3 agent-card">
-                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                            <i class="fa-regular fa-user text-secondary"></i>
+                        <div class="booking-field">
+                            <input type="text" name="name" id="bookingName" class="form-control" placeholder="Ваше ім'я" required>
                         </div>
-                        <div>
-                            <div class="fw-bold" style="font-size: 0.95rem; color: var(--primary-color);">
-                                {% if agent_site %}
-                                    {{ agent_site.user.get_full_name|default:agent_site.user.username }}
-                                {% else %}
-                                    {{ random_agent.get_full_name|default:random_agent.username }}
-                                {% endif %}
-                            </div>
-                            <div class="text-muted" style="font-size: 0.8rem;">9 років досвіду в туризмі</div>
+                        <div class="booking-field">
+                            <input type="email" name="email" id="bookingEmail" class="form-control" placeholder="Ваш email">
                         </div>
-                    </div>
-                    <div class="form-block" style="flex: 1 1 320px; min-width: 260px;">
-                        <form id="bookingForm" method="POST">
-                            {% csrf_token %}
-                            <input type="hidden" name="consultation_submit" value="1">
-                            <input type="hidden" name="tour_hid" id="tourHid" value="{{ hid }}">
-                            <input type="hidden" name="tour_oid" id="tourOid" value="{{ oid }}">
-                            <input type="hidden" name="tour_name" id="tourName" value="">
-                            <input type="hidden" name="tour_price" id="tourPrice" value="">
-                            <input type="hidden" name="tour_dates" id="tourDates" value="{{ od }} - {{ ol }} ночей">
-                            <input type="hidden" name="tour_url" id="tourUrl" value="{{ request.build_absolute_uri }}">
-
-                            <div class="mb-3">
-                                <input type="text" name="name" id="bookingName" class="form-control" placeholder="Ваше ім'я" required>
+                        <div class="booking-phone-row">
+                            <div class="booking-phone-code">
+                                <select name="country_code" class="form-select" required>
+                                    <option value="+380" selected>🇺🇦 +380</option>
+                                    <option value="+48">🇵🇱 +48</option>
+                                    <option value="+1">🇺🇸 +1</option>
+                                    <option value="+44">🇬🇧 +44</option>
+                                    <option value="+49">🇩🇪 +49</option>
+                                    <option value="+33">🇫🇷 +33</option>
+                                </select>
                             </div>
-                            <div class="mb-3">
-                                <input type="email" name="email" id="bookingEmail" class="form-control" placeholder="Ваш email">
+                            <div class="booking-phone-number">
+                                <input type="tel" name="phone" id="bookingPhone" class="form-control" placeholder="XXXXXXXXX" required
+                                       pattern="[0-9]+"
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)">
                             </div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-4">
-                                    <select name="country_code" class="form-select" required>
-                                        <option value="+380" selected>🇺🇦 +380</option>
-                                        <option value="+48">🇵🇱 +48</option>
-                                        <option value="+1">🇺🇸 +1</option>
-                                        <option value="+44">🇬🇧 +44</option>
-                                        <option value="+49">🇩🇪 +49</option>
-                                        <option value="+33">🇫🇷 +33</option>
-                                    </select>
-                                </div>
-                                <div class="col-8">
-                                    <input type="tel" name="phone" id="bookingPhone" class="form-control" placeholder="XXXXXXXXX" required
-                                           pattern="[0-9]+"
-                                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)">
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <textarea name="comment" id="bookingMessage" class="form-control" rows="3" placeholder="Ваші побажання (необов'язково)"></textarea>
-                            </div>
-                            <button type="button" class="btn w-100" id="submitBookingBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px; border: none;">
-                                <i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур
-                            </button>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="booking-field">
+                            <textarea name="comment" id="bookingMessage" class="form-control" rows="3" placeholder="Ваші побажання (необов'язково)"></textarea>
+                        </div>
+                        <button type="button" class="booking-submit-btn" id="submitBookingBtn">
+                            <i class="fa-regular fa-calendar-check me-2"></i> Забронювати тур
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<style>
+/* ========== СТИЛІ ДЛЯ БЛОКУ БРОНЮВАННЯ (як у консультації) ========== */
+.booking-form-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
 
+.booking-form-card {
+    background-color: #1c1c1c;
+    border-radius: 28px;
+    padding: 40px;
+    border: 1px solid #2c2c2c;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.booking-form-header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #2c2c2c;
+    padding-bottom: 20px;
+}
+
+.booking-form-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.booking-form-subtitle {
+    font-size: 13px;
+    color: #a0a0a0;
+    margin-bottom: 0;
+}
+
+.booking-field {
+    margin-bottom: 18px;
+}
+
+.booking-field input,
+.booking-field textarea {
+    width: 100%;
+    background-color: #2a2a2a;
+    border: 1px solid #3c3c3c;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.booking-field input:focus,
+.booking-field textarea:focus {
+    outline: none;
+    border-color: #bf9b30;
+}
+
+.booking-field input::placeholder,
+.booking-field textarea::placeholder {
+    color: #888;
+}
+
+.booking-phone-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.booking-phone-code select,
+.booking-phone-number input {
+    width: 100%;
+    background-color: #2a2a2a;
+    border: 1px solid #3c3c3c;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #ffffff;
+}
+
+.booking-phone-code select:focus,
+.booking-phone-number input:focus {
+    outline: none;
+    border-color: #bf9b30;
+}
+
+.booking-phone-code select option {
+    background-color: #2a2a2a;
+    color: #ffffff;
+}
+
+.booking-submit-btn {
+    width: 100%;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.booking-submit-btn:hover {
+    transform: translateY(-2px);
+    background-color: var(--primary-dark);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .booking-form-card {
+        padding: 30px 20px;
+    }
+    .booking-phone-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .booking-form-title {
+        font-size: 18px;
+    }
+}
+</style>
 <script>
 function getHotelName() {
     const hotelTitle = document.querySelector('.new_t-header-title');
@@ -3399,6 +3512,43 @@ ul.messages {
 .new_f-wrapper .new_f-dropdown-btn {
     border: 1px solid #e2e8f0 !important;
     background: #ffffff !important;
+}
+    /* ========== БЛОКИ ПЕРЕВАГ - НОВИЙ ДИЗАЙН ========== */
+.info-card {
+    border: 1px solid #000000 !important;  /* Тоненька чорна рамка */
+    border-radius: 20px !important;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease !important;
+    transform: none !important;  /* Забороняємо будь-які переміщення */
+    background: white !important;
+}
+
+/* При наведенні - тільки тінь і легке підсвічення, БЕЗ переміщення */
+.info-card:hover {
+    transform: none !important;  /* Ніякого translateY */
+    box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Легке підсвічення фону при наведенні (опціонально) */
+.info-card-blue:hover {
+    background: linear-gradient(135deg, rgba(173, 216, 230, 0.1) 0%, rgba(100, 149, 237, 0.05) 100%) !important;
+}
+
+.info-card-red:hover {
+    background: linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, rgba(255, 99, 132, 0.05) 100%) !important;
+}
+
+.info-card-green:hover {
+    background: linear-gradient(135deg, rgba(144, 238, 144, 0.1) 0%, rgba(46, 139, 87, 0.05) 100%) !important;
+}
+
+/* Іконка при наведенні - легке збільшення (опціонально) */
+.info-card:hover .info-icon i {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+.info-icon i {
+    transition: transform 0.3s ease;
 }
 </style>
 {% endblock %}
