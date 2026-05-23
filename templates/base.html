@@ -688,5 +688,48 @@
             .review-rating i { font-size: 0.8rem !important; }
         }
     </style>
+<script>
+// ========== ЗАКРИТТЯ МОБІЛЬНОГО МЕНЮ ПРИ КЛІКУ ПОЗА НИМ ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+
+    if (!navbarToggler || !navbarCollapse) return;
+
+    // Функція для закриття меню
+    function closeMenu() {
+        if (navbarCollapse.classList.contains('show')) {
+            // Імітуємо клік по кнопці бургера
+            navbarToggler.click();
+        }
+    }
+
+    // Закриваємо меню при кліку на будь-яке посилання в меню
+    const navLinks = navbarCollapse.querySelectorAll('a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            closeMenu();
+        });
+    });
+
+    // Закриваємо меню при кліку на будь-яке місце за межами меню
+    document.addEventListener('click', function(event) {
+        // Перевіряємо, чи клік був НЕ по кнопці бургера і НЕ всередині меню
+        const isClickOnToggler = navbarToggler.contains(event.target);
+        const isClickInsideMenu = navbarCollapse.contains(event.target);
+
+        if (!isClickOnToggler && !isClickInsideMenu && navbarCollapse.classList.contains('show')) {
+            closeMenu();
+        }
+    });
+
+    // Додатково: закриваємо меню при зміні розміру вікна (якщо стало desktop)
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && navbarCollapse.classList.contains('show')) {
+            closeMenu();
+        }
+    });
+});
+</script>
 </body>
 </html>
