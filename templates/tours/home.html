@@ -383,14 +383,14 @@
         });
         </script>
 
-    {% elif block == 'hot_tours' %}
+        {% elif block == 'hot_tours' %}
         <!-- ГАРЯЧІ ТУРИ -->
-        <div class="container my-5">
-            <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-header bg-white py-3 px-4 border-0">
+        <div class="container my-5 hot-tours-container">
+            <div class="hot-tours-card">
+                <div class="hot-tours-header">
                     <h3 class="fw-bold mb-0" style="color: #000000;">Гарячі тури</h3>
                 </div>
-                <div class="card-body p-4">
+                <div class="hot-tours-body">
                     <div class="hot-size-checker" id="otpusk_onsite_hot28113">
                         <img src="https://export.otpusk.com/os/ajax-loader.gif"/><span></span>
                     </div>
@@ -419,6 +419,65 @@
                 </div>
             </div>
         </div>
+
+        <style>
+        /* Спеціальні стилі для блоку "Гарячі тури" - центрування */
+        .hot-tours-container {
+            max-width: 1200px !important;
+            width: 100% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            padding-left: 15px !important;
+            padding-right: 15px !important;
+        }
+        .hot-tours-card {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .hot-tours-header {
+            text-align: left !important;
+            margin-bottom: 20px !important;
+            padding: 0 !important;
+            background: transparent !important;
+        }
+        .hot-tours-body {
+            padding: 0 !important;
+            background: transparent !important;
+        }
+        /* Центрування карток турів */
+        .hot-block_tiles .hot-wrapper {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            gap: 20px !important;
+            margin: 0 auto !important;
+        }
+        .hot-block_tiles .hot-otp-form-wrap {
+            margin: 0 !important;
+            flex: 0 0 auto !important;
+        }
+        @media (min-width: 1200px) {
+            .hot-block_tiles .hot-wrapper {
+                justify-content: center !important;
+            }
+        }
+        @media (max-width: 768px) {
+            .hot-block_tiles .hot-wrapper {
+                justify-content: center !important;
+                gap: 15px !important;
+            }
+        }
+        /* Прибираємо зайві стилі, які заважають центруванню */
+        .container.my-5 .card,
+        .container.my-5 .card.shadow-sm,
+        .container.my-5 .card.border-0,
+        .container.my-5 .card.rounded-4 {
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+        </style>
 
     {% elif block == 'tours_from_city' %}
         <!-- Тури з вашого міста -->
