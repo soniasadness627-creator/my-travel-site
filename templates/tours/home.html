@@ -323,7 +323,7 @@
         })();
         </script>
 
-    {% elif block == 'consultation_promo' %}
+        {% elif block == 'consultation_promo' %}
         <!-- ПРОМО-БЛОК КОНСУЛЬТАЦІЇ (з кнопкою) -->
         <div class="container my-5">
             <div class="consult-promo-block rounded-3xl shadow-xl relative overflow-hidden cursor-pointer group">
@@ -347,19 +347,19 @@
         </div>
 
         <style>
-.consult-promo-block { position: relative; min-height: 380px; border-radius: 28px; overflow: hidden; box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.2); }
-.consult-promo-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-.consult-promo-bg img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s ease-out; }
-.consult-promo-block:hover .consult-promo-bg img { transform: scale(1.05); }
-.consult-promo-block .absolute.bg-black\/50 { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55); z-index: 10; }
-.consult-promo-block .relative.z-20 { position: relative; z-index: 20; min-height: 380px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.consult-promo-btn { background-color: #d9bf8c; color: #ffffff; border: none; padding: 12px 32px; font-size: 0.95rem; font-weight: 600; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); width: auto; min-width: 265px; height: 44px; }
-.consult-promo-btn:hover { transform: scale(1.02); background-color: #c9ad7a; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25); }
-.consult-promo-block h3 { font-size: 1.8rem; font-weight: 700; margin-bottom: 12px; color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); }
-.consult-promo-block p { color: white !important; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); }
-.consult-promo-block span { color: #d9bf8c; font-size: 0.85rem; letter-spacing: 2px; }
-@media (max-width: 768px) { .consult-promo-block { min-height: 320px; border-radius: 20px; } .consult-promo-block h3 { font-size: 1.4rem; } .consult-promo-btn { padding: 10px 20px; font-size: 0.85rem; min-width: 240px; height: 42px; } }
-</style>
+        .consult-promo-block { position: relative; min-height: 380px; border-radius: 28px; overflow: hidden; box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.2); }
+        .consult-promo-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .consult-promo-bg img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s ease-out; }
+        .consult-promo-block:hover .consult-promo-bg img { transform: scale(1.05); }
+        .consult-promo-block .absolute.bg-black\/50 { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55); z-index: 10; }
+        .consult-promo-block .relative.z-20 { position: relative; z-index: 20; min-height: 380px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .consult-promo-btn { background-color: #d9bf8c; color: #ffffff; border: none; padding: 12px 32px; font-size: 0.95rem; font-weight: 600; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); width: auto; min-width: 265px; height: 44px; }
+        .consult-promo-btn:hover { transform: scale(1.02); background-color: #c9ad7a; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25); }
+        .consult-promo-block h3 { font-size: 1.8rem; font-weight: 700; margin-bottom: 12px; color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); }
+        .consult-promo-block p { color: white !important; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); }
+        .consult-promo-block span { color: #d9bf8c; font-size: 0.85rem; letter-spacing: 2px; }
+        @media (max-width: 768px) { .consult-promo-block { min-height: 320px; border-radius: 20px; } .consult-promo-block h3 { font-size: 1.4rem; } .consult-promo-btn { padding: 10px 20px; font-size: 0.85rem; min-width: 240px; height: 42px; } }
+        </style>
 
         <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -367,8 +367,17 @@
             if (scrollBtn) {
                 scrollBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const consultationSection = document.getElementById('consultationCard');
-                    if (consultationSection) consultationSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Шукаємо форму консультації за різними можливими селекторами
+                    const consultationForm = document.querySelector('#consultationForm, .consultation-form-wrapper, #consultationForm, form[id="consultationForm"]');
+                    if (consultationForm) {
+                        consultationForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else {
+                        // Якщо форма не знайдена, шукаємо будь-який елемент з класом consultation
+                        const consultationSection = document.querySelector('.consultation-form-wrapper, .consultation-form-card');
+                        if (consultationSection) {
+                            consultationSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
                 });
             }
         });
