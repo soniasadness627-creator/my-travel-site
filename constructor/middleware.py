@@ -1,6 +1,7 @@
 # constructor/middleware.py
 
 from django.utils.deprecation import MiddlewareMixin
+from django.db import connection
 from .models import AgentSite
 
 
@@ -74,3 +75,19 @@ class AgentColorsMiddleware(MiddlewareMixin):
             print("🎨 Використовуються кольори за замовчуванням")
 
         print(f"🎨 Підсумкові request.agent_colors: {request.agent_colors}")
+
+
+class DatabaseConnectionMiddleware(MiddlewareMixin):
+    """Автоматично перевіряє та відновлює з'єднання з БД перед кожним запитом"""
+
+    def process_request(self, request):
+        try:
+            connection.ensure_connection()
+        except Exception:
+            # Якщо з'єднання впало, закриваємо його, щоб створити нове
+            connection.close()
+            try:
+                connection.ensure_connection()
+            except Exception:
+                pass  # Якщо все ще не працює, наступний запит створить нове з'єднання
+        return None

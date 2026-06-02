@@ -67,6 +67,7 @@ MIDDLEWARE = [
     'constructor.middleware.AgentSiteMiddleware',
     'constructor.middleware.AgentColorsMiddleware',
     'tours.middleware.TourTrackingMiddleware',
+'constructor.middleware.DatabaseConnectionMiddleware',
 ]
 
 ROOT_URLCONF = 'DjangoProject1.urls'
