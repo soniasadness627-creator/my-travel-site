@@ -8,6 +8,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 
+# ========== ІМПОРТ ДЛЯ НАЛАШТУВАННЯ БАЗИ ДАНИХ ==========
+from django.db.backends.signals import connection_created
+
 # ========== ІНІЦІАЛІЗАЦІЯ CLOUDINARY ==========
 import cloudinary
 import cloudinary.uploader
@@ -67,7 +70,7 @@ MIDDLEWARE = [
     'constructor.middleware.AgentSiteMiddleware',
     'constructor.middleware.AgentColorsMiddleware',
     'tours.middleware.TourTrackingMiddleware',
-'constructor.middleware.DatabaseConnectionMiddleware',
+    'constructor.middleware.DatabaseConnectionMiddleware',
 ]
 
 ROOT_URLCONF = 'DjangoProject1.urls'
@@ -111,7 +114,8 @@ else:
             'default': dj_database_url.config(
                 default=DATABASE_URL,
                 conn_max_age=600,
-                ssl_require=False
+                conn_health_checks=True,
+                ssl_require=True
             )
         }
         print(f"✅ Сервер: використовується PostgreSQL")
@@ -123,6 +127,17 @@ else:
             }
         }
         print("⚠️ Сервер: DATABASE_URL не знайдено, використовується SQLite")
+
+# ========== НАЛАШТУВАННЯ KEEPALIVE ДЛЯ БАЗИ ДАНИХ (виправлення помилки SSL) ==========
+def activate_keepalive(sender, connection, **kwargs):
+    """Встановлює keepalive параметри для PostgreSQL з'єднання"""
+    if connection.vendor == 'postgresql':
+        with connection.cursor() as cursor:
+            cursor.execute("SET tcp_keepalives_idle = 60")
+            cursor.execute("SET tcp_keepalives_interval = 10")
+            cursor.execute("SET tcp_keepalives_count = 5")
+
+connection_created.connect(activate_keepalive)
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -185,7 +200,7 @@ if not DEBUG:
     X_FRAME_OPTIONS = 'DENY'
 
 # API ключі
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyAlyvwC7SmSESF7YpCOUJRuYgTLIP7b7L4')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', '')
 
 PORT = os.getenv('PORT', '10000')
