@@ -1,28 +1,65 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header" style="background: var(--primary-color); color: white;">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-header" style="background: var(--primary-color); color: white; border-radius: 1rem 1rem 0 0;">
                     <h2 class="mb-0">Допомогти обрати тур</h2>
                 </div>
-                <div class="card-body">
-                    <p class="text-muted">Залиште свої контакти, і наш менеджер зв'яжеться з вами для підбору туру.</p>
+                <div class="card-body p-4">
+                    <p class="text-muted mb-4">Залиште свої контакти, і наш менеджер зв'яжеться з вами для підбору туру.</p>
 
-                    <div id="phoneErrorGlobal" class="alert alert-warning d-none" style="font-size: 0.85rem; padding: 0.5rem 0.75rem; margin-bottom: 1rem;">
-                        <i class="fa-solid fa-triangle-exclamation me-2"></i> Будь ласка, введіть тільки цифри в номер телефону (9-15 цифр)
+                    <!-- Контейнер для повідомлень -->
+                    <div id="successMessage" class="alert alert-success d-none">
+                        <i class="fa-regular fa-circle-check me-2"></i> Дякуємо! Ми зателефонуємо вам найближчим часом.
+                    </div>
+                    <div id="errorMessage" class="alert alert-danger d-none">
+                        <i class="fa-regular fa-circle-xmark me-2"></i> <span id="errorText"></span>
                     </div>
 
-                    <form method="post" id="consultationForm">
+                    <form id="consultationForm">
                         {% csrf_token %}
-                        {{ form.as_p }}
-                        <input type="hidden" name="next" value="{{ request.GET.next|default:request.META.HTTP_REFERER|default:'/' }}">
-                        <button type="submit" class="btn w-100" id="submitBtn" style="background: var(--primary-color); color: white; border: none;">
-                            Надіслати
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Ваше ім'я</label>
+                            <input type="text" name="name" id="consultationName" class="form-control" placeholder="Іван Петренко" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Номер телефону</label>
+                            <div class="row g-2">
+                                <div class="col-4">
+                                    <select name="country_code" id="consultationCountryCode" class="form-select">
+                                        <option value="+380">🇺🇦 +380</option>
+                                        <option value="+48">🇵🇱 +48</option>
+                                        <option value="+1">🇺🇸 +1</option>
+                                        <option value="+44">🇬🇧 +44</option>
+                                        <option value="+49">🇩🇪 +49</option>
+                                        <option value="+33">🇫🇷 +33</option>
+                                    </select>
+                                </div>
+                                <div class="col-8">
+                                    <input type="tel" name="phone" id="consultationPhone" class="form-control" placeholder="XX XXX XX XX" required
+                                           pattern="[0-9]+" title="Тільки цифри" maxlength="15">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Коментар (необов'язково)</label>
+                            <textarea name="comment" id="consultationComment" class="form-control" rows="3" placeholder="Ваші побажання, дати, кількість людей..."></textarea>
+                        </div>
+
+                        <button type="button" id="submitConsultationBtn" class="btn w-100 py-2" style="background: var(--primary-color); color: white; border: none; font-weight: 500;">
+                            <i class="fa-regular fa-paper-plane me-2"></i> Надіслати
                         </button>
                     </form>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">Натискаючи кнопку, ви погоджуєтеся на обробку персональних даних</small>
+                    </div>
                 </div>
             </div>
         </div>
@@ -30,179 +67,159 @@
 </div>
 
 <style>
-    :root {
-        --primary-color: #086745;
-        --primary-dark: #02432c;
-        --primary-light: #2a6b5c;
-        --primary-lighter: #cbf6ec;
-        --accent-color: #e67e22;
-        --bg-light: #f8f9fa;
-    }
-
-    /* Стилі для форми */
     .card {
-        border-radius: 1rem;
+        border-radius: 1rem !important;
         overflow: hidden;
     }
-    .card-header {
-        padding: 1rem 1.5rem;
+    .form-control, .form-select {
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
     }
-    .card-body {
-        padding: 1.5rem;
-    }
-    .card-header h2 {
-        font-size: 1.5rem;
-        font-weight: 600;
-    }
-
-    /* Стилі для полів форми Django */
-    form p {
-        margin-bottom: 1rem;
-    }
-    form label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        color: #333;
-    }
-    form input, form select, form textarea {
-        width: 100%;
-        padding: 0.5rem 0.75rem;
-        border: 1px solid #ced4da;
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-    form input:focus, form select:focus, form textarea:focus {
-        outline: none;
+    .form-control:focus, .form-select:focus {
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 0.2rem rgba(8, 103, 69, 0.25);
+        box-shadow: 0 0 0 3px rgba(8, 103, 69, 0.1);
     }
-    form .helptext {
-        display: block;
-        font-size: 0.75rem;
-        color: #6c757d;
-        margin-top: 0.25rem;
-    }
-    form .errorlist {
-        list-style: none;
-        padding: 0;
-        margin: 0 0 0.5rem 0;
-        color: #dc3545;
-        font-size: 0.8rem;
-    }
-
-    /* Стиль для помилки валідації */
-    input.is-invalid {
-        border-color: #ffc107 !important;
-        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25) !important;
-    }
-
     .btn {
         transition: all 0.2s ease;
-        padding: 0.5rem 1rem;
-        font-weight: 500;
-        border-radius: 0.5rem;
+        border-radius: 0.75rem;
     }
     .btn:hover {
-        background: var(--primary-dark) !important;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 6px rgba(8, 103, 69, 0.2);
+        background-color: var(--primary-dark) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(8, 103, 69, 0.2);
+    }
+    .alert {
+        border-radius: 0.75rem;
+        border: none;
+        animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 
 <script>
-// Захист для поля телефону на сторінці консультації
-(function() {
-    // Знаходимо поле телефону (воно створюється Django Form)
-    const phoneInput = document.querySelector('input[name="phone"], input[type="tel"]');
-    const submitBtn = document.getElementById('submitBtn');
-    const errorDiv = document.getElementById('phoneErrorGlobal');
-    const form = document.getElementById('consultationForm');
+document.addEventListener('DOMContentLoaded', function() {
+    const submitBtn = document.getElementById('submitConsultationBtn');
+    const nameInput = document.getElementById('consultationName');
+    const phoneInput = document.getElementById('consultationPhone');
+    const countryCodeSelect = document.getElementById('consultationCountryCode');
+    const commentInput = document.getElementById('consultationComment');
+    const successDiv = document.getElementById('successMessage');
+    const errorDiv = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
 
-    if (!phoneInput) {
-        console.log('Поле телефону не знайдено');
-        return;
+    function hideMessages() {
+        successDiv.classList.add('d-none');
+        errorDiv.classList.add('d-none');
     }
 
-    // Додаємо ID для простого доступу
-    phoneInput.id = 'consultationPhoneField';
-
-    // Функція для перевірки валідності телефону
-    function isValidPhone(value) {
-        return /^[0-9]{9,15}$/.test(value);
+    function showSuccess() {
+        successDiv.classList.remove('d-none');
+        setTimeout(() => {
+            successDiv.classList.add('d-none');
+        }, 5000);
     }
 
-    // Функція для оновлення стилю поля
-    function updatePhoneStyle() {
-        const value = phoneInput.value;
-        if (value.length > 0 && !isValidPhone(value)) {
-            phoneInput.classList.add('is-invalid');
-            if (errorDiv) errorDiv.classList.remove('d-none');
-        } else {
-            phoneInput.classList.remove('is-invalid');
-            if (errorDiv) errorDiv.classList.add('d-none');
-        }
+    function showError(text) {
+        errorText.textContent = text;
+        errorDiv.classList.remove('d-none');
+        setTimeout(() => {
+            errorDiv.classList.add('d-none');
+        }, 5000);
     }
 
-    // Блокуємо введення букв
+    // Валідація телефону – тільки цифри
+    phoneInput.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15);
+    });
+
     phoneInput.addEventListener('keypress', function(e) {
         const charCode = e.which ? e.which : e.keyCode;
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        if (charCode < 48 || charCode > 57) {
             e.preventDefault();
-            phoneInput.classList.add('is-invalid');
-            if (errorDiv) errorDiv.classList.remove('d-none');
-            return false;
         }
     });
 
-    // Очищаємо вставлені значення
-    phoneInput.addEventListener('input', function(e) {
-        const numbers = this.value.replace(/[^0-9]/g, '');
-        if (this.value !== numbers) {
-            this.value = numbers;
+    submitBtn.addEventListener('click', function() {
+        hideMessages();
+
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+        const countryCode = countryCodeSelect.value;
+        const comment = commentInput.value.trim();
+
+        if (!name) {
+            showError("Введіть ваше ім'я");
+            nameInput.focus();
+            return;
         }
-        updatePhoneStyle();
-    });
-
-    // Блокуємо вставку з буквами
-    phoneInput.addEventListener('paste', function(e) {
-        e.preventDefault();
-        const pasted = (e.clipboardData || window.clipboardData).getData('text');
-        const numbers = pasted.replace(/[^0-9]/g, '');
-        this.value = numbers;
-        updatePhoneStyle();
-    });
-
-    // При втраті фокусу перевіряємо
-    phoneInput.addEventListener('blur', function() {
-        updatePhoneStyle();
-    });
-
-    // При фокусі прибираємо помилку
-    phoneInput.addEventListener('focus', function() {
-        if (isValidPhone(this.value)) {
-            if (errorDiv) errorDiv.classList.add('d-none');
-            phoneInput.classList.remove('is-invalid');
+        if (!phone) {
+            showError("Введіть номер телефону");
+            phoneInput.focus();
+            return;
         }
-    });
+        if (phone.length < 9) {
+            showError("Номер телефону занадто короткий (мінімум 9 цифр)");
+            phoneInput.focus();
+            return;
+        }
 
-    // Перевірка перед відправленням форми
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            const phoneValue = phoneInput.value;
+        // Зберігаємо оригінальний текст кнопки
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Відправляємо...';
+        submitBtn.disabled = true;
 
-            if (!isValidPhone(phoneValue)) {
-                e.preventDefault();
-                if (errorDiv) errorDiv.classList.remove('d-none');
-                phoneInput.classList.add('is-invalid');
-
-                // Прокручуємо до помилки
-                errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return false;
+        // Визначаємо URL для AJAX (враховуємо slug агента)
+        let ajaxUrl = '/consultation-ajax/';
+        const pathParts = window.location.pathname.split('/');
+        for (let i = 0; i < pathParts.length; i++) {
+            if (pathParts[i] === 'a' && pathParts[i + 1]) {
+                ajaxUrl = `/a/${pathParts[i + 1]}/consultation-ajax/`;
+                break;
             }
+        }
+
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams({
+                'name': name,
+                'phone': phone,
+                'country_code': countryCode,
+                'comment': comment,
+                'consultation_submit': '1'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccess();
+                nameInput.value = '';
+                phoneInput.value = '';
+                commentInput.value = '';
+            } else {
+                showError(data.error || 'Сталася помилка. Спробуйте пізніше.');
+            }
+        })
+        .catch(error => {
+            console.error('Помилка:', error);
+            showError('Помилка з\'єднання. Спробуйте пізніше.');
+        })
+        .finally(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
         });
-    }
-})();
+    });
+});
 </script>
 {% endblock %}
