@@ -1622,8 +1622,8 @@ if (form) {
         console.log('📤 Відправляємо форму...');
 
         // Окреме збереження hero_title та hero_subtitle через AJAX
-        const heroTitleInput = document.querySelector('input[name="hero_title"]');
-        const heroSubtitleInput = document.querySelector('input[name="hero_subtitle"]');
+        
+                // Окреме збереження hero_title та hero_subtitle через AJAX (використовує вже оголошені змінні)
         if (heroTitleInput && (heroTitleInput.value !== '{{ agent_site.hero_title|escapejs }}' ||
             heroSubtitleInput.value !== '{{ agent_site.hero_subtitle|escapejs }}')) {
             fetch('/constructor/save-hero-ajax/', {
