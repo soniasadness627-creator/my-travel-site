@@ -151,7 +151,8 @@ def calendar_prices_otpusk(request):
 
 def calendar_prices_cached(request):
     """
-    API для календаря низьких цін з кешуванням та БД
+    API для календаря низьких цін з кешуванням та БД.
+    Якщо ціни немає в БД – генерує реалістичну рандомну ціну.
     """
     country = request.GET.get('country')
     year = request.GET.get('year')
@@ -168,30 +169,19 @@ def calendar_prices_cached(request):
     except ValueError:
         return JsonResponse({'error': 'Invalid year/month'}, status=400)
 
-    # ========== НОРМАЛІЗАЦІЯ НАЗВИ МІСТА ВИЛЬОТУ ==========
+    # Нормалізація назви міста вильоту
     departure_normalized = departure
     if departure in ['Кишинев', 'Chisinau', 'Кишинёв', 'chisinau', 'Kishinev']:
         departure_normalized = 'Кишинів'
 
-    # Формуємо ключ для кешу
-    cache_key = f"calendar_prices_{country}_{year}_{month}_{departure_normalized}_{slug}"
-
-    # Перевіряємо кеш (розкоментуй для продакшену)
-    # cached_data = cache.get(cache_key)
-    # if cached_data:
-    #     return JsonResponse(cached_data)
-
-    # ========== ШУКАЄМО В БАЗІ ДАНИХ ==========
     from datetime import date
-    from .models import PriceCalendar
-
     start_date = date(year, month, 1)
     if month == 12:
         end_date = date(year + 1, 1, 1)
     else:
         end_date = date(year, month + 1, 1)
 
-    # Отримуємо ціни з таблиці
+    # Отримуємо ціни з таблиці PriceCalendar
     db_prices = {}
     price_options = PriceCalendar.objects.filter(
         country__icontains=country,
@@ -202,35 +192,46 @@ def calendar_prices_cached(request):
 
     for option in price_options:
         day = option.date.day
-        # Якщо тури недоступні - позначаємо як None
         if not option.is_available:
-            db_prices[day] = None
+            db_prices[day] = None  # явно позначаємо, що турів немає
         elif option.price:
             price_val = int(option.price)
             if day not in db_prices or (db_prices[day] is not None and price_val < db_prices[day]):
                 db_prices[day] = price_val
 
+    # Отримуємо рандомні реалістичні ціни для цього місяця
+    random_data = get_realistic_prices(month, year, country, departure_normalized)
+    random_prices = random_data.get('prices', [])
+
     days_in_month = (end_date - start_date).days
     prices = []
+    today = date.today()
+
     for day in range(1, days_in_month + 1):
-        if day in db_prices:
-            prices.append(db_prices[day])
-        else:
+        day_date = date(year, month, day)
+
+        # Якщо дата вже минула – ставимо None (минула)
+        if day_date < today:
             prices.append(None)
+        # Якщо в БД є позначка "немає турів" (None)
+        elif day in db_prices and db_prices[day] is None:
+            prices.append(None)
+        # Якщо в БД є ціна
+        elif day in db_prices and db_prices[day] is not None:
+            prices.append(db_prices[day])
+        # Інакше – генеруємо рандомну ціну
+        else:
+            if day - 1 < len(random_prices):
+                prices.append(random_prices[day - 1])
+            else:
+                prices.append(None)
 
-    # Визначаємо результат - ТІЛЬКИ ЦІНИ З БД, БЕЗ РАНДОМУ
+    # Обчислюємо максимальну ціну (тільки для наявних цін, не None)
     valid_prices = [p for p in prices if p is not None]
-    if valid_prices:
-        max_price = max(valid_prices)
-        result = {'prices': prices, 'max_price': max_price}
-    else:
-        # Якщо немає жодної ціни - всі дні "немає"
-        result = {'prices': [None] * len(prices), 'max_price': None}
+    max_price = max(valid_prices) if valid_prices else None
 
-    # Зберігаємо в кеш (розкоментуй для продакшену)
-    # cache.set(cache_key, result, 86400)
+    result = {'prices': prices, 'max_price': max_price}
     return JsonResponse(result)
-
 
 # ========== ІНШІ API ФУНКЦІЇ ==========
 def calendar_prices_from_otpusk(request):
