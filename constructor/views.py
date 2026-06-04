@@ -275,6 +275,12 @@ def constructor_dashboard(request):
         print("🚀 ОТРИМАНО POST ЗАПИТ")
         print(f"📋 POST keys: {list(request.POST.keys())}")
 
+        # ========== ДІАГНОСТИКА ПОЛІВ hero_title ТА hero_subtitle ==========
+        raw_hero_title = request.POST.get('hero_title', '')
+        raw_hero_subtitle = request.POST.get('hero_subtitle', '')
+        print(f"📝 hero_title з POST: '{raw_hero_title}'")
+        print(f"📝 hero_subtitle з POST: '{raw_hero_subtitle}'")
+
         form = AgentSiteForm(request.POST, request.FILES, instance=agent_site)
 
         blocks_order = request.POST.getlist('blocks_order')
@@ -298,9 +304,9 @@ def constructor_dashboard(request):
         block_settings.save()
 
         # ========== ФІКС: Явне збереження hero_title та hero_subtitle ==========
-        # Отримуємо значення безпосередньо з POST
-        new_hero_title = request.POST.get('hero_title', '').strip()
-        new_hero_subtitle = request.POST.get('hero_subtitle', '').strip()
+        # Отримуємо значення безпосередньо з POST (навіть якщо форма невалідна)
+        new_hero_title = raw_hero_title.strip()
+        new_hero_subtitle = raw_hero_subtitle.strip()
 
         if new_hero_title:
             agent_site.hero_title = new_hero_title
@@ -309,8 +315,9 @@ def constructor_dashboard(request):
 
         if new_hero_title or new_hero_subtitle:
             agent_site.save(update_fields=['hero_title', 'hero_subtitle'])
-            print(
-                f"✅ ПРИМУСОВО ЗБЕРЕЖЕНО: hero_title='{agent_site.hero_title}', hero_subtitle='{agent_site.hero_subtitle}'")
+            print(f"✅ ПРИМУСОВО ЗБЕРЕЖЕНО: hero_title='{agent_site.hero_title}', hero_subtitle='{agent_site.hero_subtitle}'")
+        else:
+            print("⚠️ ПОЛЯ hero_title/hero_subtitle НЕ БУЛИ ЗМІНЕНІ АБО ВІДСУТНІ В POST")
 
         # Перевірка валідності форми та збереження інших полів
         if form.is_valid():
@@ -321,8 +328,7 @@ def constructor_dashboard(request):
             print(f"   slug: {form.cleaned_data.get('slug')}")
 
             saved_site = form.save()
-            print(
-                f"✅ Після form.save(): hero_title='{saved_site.hero_title}', hero_subtitle='{saved_site.hero_subtitle}'")
+            print(f"✅ Після form.save(): hero_title='{saved_site.hero_title}', hero_subtitle='{saved_site.hero_subtitle}'")
 
             messages.success(request, 'Налаштування збережено!')
             return redirect('constructor:dashboard')
@@ -332,7 +338,7 @@ def constructor_dashboard(request):
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'{field}: {error}')
-            # Якщо форма невалідна, але заголовок/підтекст збереглись
+            # Якщо форма невалідна, але заголовок/підтекст збереглись – повідомляємо
             if new_hero_title or new_hero_subtitle:
                 messages.success(request, 'Заголовок та підтекст збережено, але деякі інші налаштування мають помилки.')
             return redirect('constructor:dashboard')
