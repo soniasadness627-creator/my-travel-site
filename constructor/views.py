@@ -297,16 +297,32 @@ def constructor_dashboard(request):
         block_settings.custom_js = custom_js
         block_settings.save()
 
-        # Перевірка валідності форми та збереження
+        # ========== ФІКС: Явне збереження hero_title та hero_subtitle ==========
+        # Отримуємо значення безпосередньо з POST
+        new_hero_title = request.POST.get('hero_title', '').strip()
+        new_hero_subtitle = request.POST.get('hero_subtitle', '').strip()
+
+        if new_hero_title:
+            agent_site.hero_title = new_hero_title
+        if new_hero_subtitle:
+            agent_site.hero_subtitle = new_hero_subtitle
+
+        if new_hero_title or new_hero_subtitle:
+            agent_site.save(update_fields=['hero_title', 'hero_subtitle'])
+            print(
+                f"✅ ПРИМУСОВО ЗБЕРЕЖЕНО: hero_title='{agent_site.hero_title}', hero_subtitle='{agent_site.hero_subtitle}'")
+
+        # Перевірка валідності форми та збереження інших полів
         if form.is_valid():
             print("✅ Форма валідна. Отримані дані:")
-            print(f"   hero_title: {form.cleaned_data.get('hero_title')}")
-            print(f"   hero_subtitle: {form.cleaned_data.get('hero_subtitle')}")
+            print(f"   hero_title (cleaned): {form.cleaned_data.get('hero_title')}")
+            print(f"   hero_subtitle (cleaned): {form.cleaned_data.get('hero_subtitle')}")
             print(f"   agency_name: {form.cleaned_data.get('agency_name')}")
             print(f"   slug: {form.cleaned_data.get('slug')}")
 
             saved_site = form.save()
-            print(f"✅ Після збереження: hero_title='{saved_site.hero_title}', hero_subtitle='{saved_site.hero_subtitle}'")
+            print(
+                f"✅ Після form.save(): hero_title='{saved_site.hero_title}', hero_subtitle='{saved_site.hero_subtitle}'")
 
             messages.success(request, 'Налаштування збережено!')
             return redirect('constructor:dashboard')
@@ -316,6 +332,10 @@ def constructor_dashboard(request):
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'{field}: {error}')
+            # Якщо форма невалідна, але заголовок/підтекст збереглись
+            if new_hero_title or new_hero_subtitle:
+                messages.success(request, 'Заголовок та підтекст збережено, але деякі інші налаштування мають помилки.')
+            return redirect('constructor:dashboard')
     else:
         form = AgentSiteForm(instance=agent_site)
 
