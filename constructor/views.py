@@ -245,7 +245,6 @@ def constructor_dashboard(request):
         agent_site.save()
 
     # Отримуємо налаштування блоків для агента
-    # ВАЖЛИВО: явно вказуємо DEFAULT значення для active_blocks
     default_active_blocks = [
         'price_calendar',
         'popular_destinations',
@@ -260,11 +259,10 @@ def constructor_dashboard(request):
         agent=request.user,
         defaults={
             'blocks_order': AgentBlockSettings().get_default_order(),
-            'active_blocks': default_active_blocks,  # ← ВСІ БЛОКИ АКТИВНІ
+            'active_blocks': default_active_blocks,
         }
     )
 
-    # ЯКЩО ЗАПИС ВЖЕ ІСНУЄ, АЛЕ active_blocks ПОРОЖНІЙ - ВИПРАВЛЯЄМО
     if not created and not block_settings.active_blocks:
         print("⚠️ active_blocks ПОРОЖНІЙ, ВСТАНОВЛЮЄМО ЗНАЧЕННЯ ЗА ЗАМОВЧУВАННЯМ")
         block_settings.active_blocks = default_active_blocks
@@ -299,11 +297,22 @@ def constructor_dashboard(request):
         block_settings.custom_js = custom_js
         block_settings.save()
 
+        # Перевірка валідності форми та збереження
         if form.is_valid():
+            print("✅ Форма валідна. Отримані дані:")
+            print(f"   hero_title: {form.cleaned_data.get('hero_title')}")
+            print(f"   hero_subtitle: {form.cleaned_data.get('hero_subtitle')}")
+            print(f"   agency_name: {form.cleaned_data.get('agency_name')}")
+            print(f"   slug: {form.cleaned_data.get('slug')}")
+
             saved_site = form.save()
+            print(f"✅ Після збереження: hero_title='{saved_site.hero_title}', hero_subtitle='{saved_site.hero_subtitle}'")
+
             messages.success(request, 'Налаштування збережено!')
             return redirect('constructor:dashboard')
         else:
+            print("❌ ФОРМА НЕ ВАЛІДНА!")
+            print(f"Помилки: {form.errors}")
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'{field}: {error}')
