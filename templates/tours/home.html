@@ -3,14 +3,15 @@
 
 {% block content %}
 
+<!-- ДІАГНОСТИКА: ID сайту = {{ agent_site.id }}, hero_title = "{{ agent_site.hero_title }}" -->
 <!-- Hero секція (завжди показується) -->
 <div class="hero-section" style="background-image: url('{% if agent_site and agent_site.hero_background %}{{ agent_site.hero_background.url }}{% else %}{% static 'images/giau-tran-ZMdXvd6jGww-unsplash.jpg' %}{% endif %}');">
     <div class="hero-overlay"></div>
     <div class="container h-100">
         <div class="row h-100 align-items-center text-center">
             <div class="col-12">
-                <h1 class="display-4 fw-bold text-white mb-4">Ваша подорож починається тут</h1>
-                <p class="lead text-white mb-5">Знайдіть ідеальний тур за лічені хвилини</p>
+                <h1 class="display-4 fw-bold text-white mb-4">{{ agent_site.hero_title|default:"Ваша подорож починається тут" }}</h1>
+                <p class="lead text-white mb-5">{{ agent_site.hero_subtitle|default:"Знайдіть ідеальний тур за лічені хвилини" }}</p>
             </div>
         </div>
     </div>
