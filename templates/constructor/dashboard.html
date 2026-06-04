@@ -365,6 +365,10 @@
 
                     </div>
                 </div>
+                            <!-- Резервні поля для hero_title та hero_subtitle -->
+            <input type="hidden" name="hero_title_backup" id="hero_title_backup" value="">
+            <input type="hidden" name="hero_subtitle_backup" id="hero_subtitle_backup" value="">
+
             </form>
         </div>
     </div>
@@ -1566,50 +1570,59 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Початково вибрані блоки:', selected);
 
     // ========== ОБРОБКА ВІДПРАВКИ ФОРМИ ==========
-    const form = document.getElementById('site-form');
-    if (form) {
-        // ВИДАЛЯЄМО СТАРИЙ ОБРОБНИК, ЯКЩО ВІН Є
-        const oldSubmitHandler = form.getAttribute('data-listener');
+const form = document.getElementById('site-form');
+if (form) {
+    // ВИДАЛЯЄМО СТАРИЙ ОБРОБНИК, ЯКЩО ВІН Є
+    const oldSubmitHandler = form.getAttribute('data-listener');
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-            console.log('🔍 ПОЧАТОК ВІДПРАВКИ ФОРМИ');
+        console.log('🔍 ПОЧАТОК ВІДПРАВКИ ФОРМИ');
 
-            // 1. Перевіряємо, які чекбокси вибрані
-            const checkedBoxes = document.querySelectorAll('.active-blocks-list input[type="checkbox"]:checked');
-            const checkedValues = Array.from(checkedBoxes).map(cb => cb.value);
-            console.log('📌 Вибрані чекбокси:', checkedValues);
+        // 1. Перевіряємо, які чекбокси вибрані
+        const checkedBoxes = document.querySelectorAll('.active-blocks-list input[type="checkbox"]:checked');
+        const checkedValues = Array.from(checkedBoxes).map(cb => cb.value);
+        console.log('📌 Вибрані чекбокси:', checkedValues);
 
-            // 2. Видаляємо старі hidden поля
-            const oldHidden = form.querySelectorAll('input[name="active_blocks"][type="hidden"]');
-            console.log('🗑️ Видаляємо старих hidden полів:', oldHidden.length);
-            oldHidden.forEach(el => el.remove());
+        // 2. Видаляємо старі hidden поля
+        const oldHidden = form.querySelectorAll('input[name="active_blocks"][type="hidden"]');
+        console.log('🗑️ Видаляємо старих hidden полів:', oldHidden.length);
+        oldHidden.forEach(el => el.remove());
 
-            // 3. Створюємо нові hidden поля
-            checkedBoxes.forEach(cb => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'active_blocks';
-                input.value = cb.value;
-                form.appendChild(input);
-                console.log('✅ Додано hidden field:', cb.value);
-            });
-
-            // 4. Перевіряємо, чи створилися hidden поля
-            const newHidden = form.querySelectorAll('input[name="active_blocks"][type="hidden"]');
-            console.log('📦 Нових hidden полів:', newHidden.length);
-
-            // 5. Збираємо всі дані форми для відправки
-            const formData = new FormData(form);
-            const allActiveBlocks = formData.getAll('active_blocks');
-            console.log('🚀 ВІДПРАВЛЯЄМО active_blocks:', allActiveBlocks);
-
-            // 6. Відправляємо форму
-            console.log('📤 Відправляємо форму...');
-            form.submit();
+        // 3. Створюємо нові hidden поля
+        checkedBoxes.forEach(cb => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'active_blocks';
+            input.value = cb.value;
+            form.appendChild(input);
+            console.log('✅ Додано hidden field:', cb.value);
         });
-    }
+
+        // 4. Перевіряємо, чи створилися hidden поля
+        const newHidden = form.querySelectorAll('input[name="active_blocks"][type="hidden"]');
+        console.log('📦 Нових hidden полів:', newHidden.length);
+
+        // 5. Копіюємо значення hero_title та hero_subtitle у резервні поля
+        const heroTitleInput = document.querySelector('input[name="hero_title"]');
+        const heroSubtitleInput = document.querySelector('input[name="hero_subtitle"]');
+        const heroTitleBackup = document.getElementById('hero_title_backup');
+        const heroSubtitleBackup = document.getElementById('hero_subtitle_backup');
+        if (heroTitleInput && heroTitleBackup) heroTitleBackup.value = heroTitleInput.value;
+        if (heroSubtitleInput && heroSubtitleBackup) heroSubtitleBackup.value = heroSubtitleInput.value;
+        console.log('📝 Резервні поля заповнено:', heroTitleBackup?.value, heroSubtitleBackup?.value);
+
+        // 6. Збираємо всі дані форми для відправки
+        const formData = new FormData(form);
+        const allActiveBlocks = formData.getAll('active_blocks');
+        console.log('🚀 ВІДПРАВЛЯЄМО active_blocks:', allActiveBlocks);
+
+        // 7. Відправляємо форму
+        console.log('📤 Відправляємо форму...');
+        form.submit();
+    });
+}
 });
 
 // ========== ГЕНЕРАЦІЯ ШІ ==========

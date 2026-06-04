@@ -304,9 +304,9 @@ def constructor_dashboard(request):
         block_settings.save()
 
         # ========== ФІКС: Явне збереження hero_title та hero_subtitle ==========
-        # Отримуємо значення безпосередньо з POST (навіть якщо форма невалідна)
-        new_hero_title = raw_hero_title.strip()
-        new_hero_subtitle = raw_hero_subtitle.strip()
+        # Отримуємо значення з резервних полів (backup) або з оригінальних
+        new_hero_title = request.POST.get('hero_title_backup', '') or request.POST.get('hero_title', '').strip()
+        new_hero_subtitle = request.POST.get('hero_subtitle_backup', '') or request.POST.get('hero_subtitle', '').strip()
 
         if new_hero_title:
             agent_site.hero_title = new_hero_title
