@@ -21,6 +21,9 @@ urlpatterns = [
 
     # ========== API ДЛЯ БРОНЮВАННЯ ТУРІВ ==========
     path('api/booking/', views.booking_api, name='booking_api'),
+
+    # ========== ОКРЕМИЙ AJAX ДЛЯ ЗБЕРЕЖЕННЯ ЗАГОЛОВКІВ ==========
+    path('save-hero-ajax/', views.save_hero_ajax, name='save_hero_ajax'),
 ]
 
 # ========== ОКРЕМИЙ КОНФІГ ДЛЯ АГЕНТСЬКИХ САЙТІВ ==========

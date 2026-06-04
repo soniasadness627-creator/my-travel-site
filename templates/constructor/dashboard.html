@@ -1618,8 +1618,29 @@ if (form) {
         const allActiveBlocks = formData.getAll('active_blocks');
         console.log('🚀 ВІДПРАВЛЯЄМО active_blocks:', allActiveBlocks);
 
-        // 7. Відправляємо форму
+       // 7. Відправляємо форму
         console.log('📤 Відправляємо форму...');
+
+        // Окреме збереження hero_title та hero_subtitle через AJAX
+        const heroTitleInput = document.querySelector('input[name="hero_title"]');
+        const heroSubtitleInput = document.querySelector('input[name="hero_subtitle"]');
+        if (heroTitleInput && (heroTitleInput.value !== '{{ agent_site.hero_title|escapejs }}' ||
+            heroSubtitleInput.value !== '{{ agent_site.hero_subtitle|escapejs }}')) {
+            fetch('/constructor/save-hero-ajax/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'hero_title': heroTitleInput.value,
+                    'hero_subtitle': heroSubtitleInput.value,
+                })
+            }).then(r => r.json()).then(data => {
+                if (data.success) console.log('✅ Hero збережено окремим запитом');
+            }).catch(e => console.error('Помилка hero-ajax:', e));
+        }
+
         form.submit();
     });
 }

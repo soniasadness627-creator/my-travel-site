@@ -359,6 +359,22 @@ def constructor_dashboard(request):
     }
     return render(request, 'constructor/dashboard.html', context)
 
+# ========== ДОДАТИ НОВУ ФУНКЦІЮ ТУТ ==========
+@login_required
+@csrf_exempt
+def save_hero_ajax(request):
+    if request.method == 'POST':
+        agent_site = request.user.agent_site
+        hero_title = request.POST.get('hero_title', '').strip()
+        hero_subtitle = request.POST.get('hero_subtitle', '').strip()
+        if hero_title:
+            agent_site.hero_title = hero_title
+        if hero_subtitle:
+            agent_site.hero_subtitle = hero_subtitle
+        agent_site.save(update_fields=['hero_title', 'hero_subtitle'])
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Invalid'}, status=400)
+
 @login_required
 def open_site(request):
     try:
