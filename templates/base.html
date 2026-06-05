@@ -401,7 +401,7 @@
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/{% else %}/{% endif %}">
+            <a class="navbar-brand d-flex align-items-center" href="{% if agent_site %}{{ agent_site.get_absolute_url }}{% else %}/{% endif %}">
                 {% if not agent_site.hide_logo %}
                     {% if agent_site and agent_site.top_logo %}
                         <img src="{{ agent_site.top_logo.url }}" alt="Logo" style="height: 40px; width: auto; {% if agent_site.enlarge_logo %}transform: scale(1.25);{% endif %}">
@@ -420,12 +420,12 @@
                 {% if '/constructor/' not in request.path %}
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/{% else %}/{% endif %}">Головна</a>
+                        <a class="nav-link" href="{% if agent_site %}{{ agent_site.get_absolute_url }}{% else %}/{% endif %}">Головна</a>
                     </li>
 
                     {% if not agent_site or agent_site.show_news %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% if agent_site and agent_site.slug %}/a/{{ agent_site.slug }}/news/{% else %}{% url 'news' %}{% endif %}">Новини</a>
+                        <a class="nav-link" href="{% if agent_site %}{{ agent_site.get_absolute_url }}news/{% else %}{% url 'news' %}{% endif %}">Новини</a>
                     </li>
                     {% endif %}
 
@@ -458,12 +458,12 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% if agent_site %}/a/{{ agent_site.slug }}/login/{% else %}/login/{% endif %}">Вхід</a>
+                            <a class="nav-link" href="{% if agent_site %}{{ agent_site.get_absolute_url }}login/{% else %}/login/{% endif %}">Вхід</a>
                         </li>
                     {% endif %}
 
                     <li class="nav-item">
-                        <a class="btn btn-primary ms-lg-2 px-3" href="{% if agent_site and agent_site.slug %}{% url 'agent_consultation' agent_site.slug %}{% else %}{% url 'consultation' %}{% endif %}">
+                        <a class="btn btn-primary ms-lg-2 px-3" href="{% if agent_site %}{{ agent_site.get_absolute_url }}consultation/{% else %}{% url 'consultation' %}{% endif %}">
                             Підібрати тур
                         </a>
                     </li>
@@ -533,20 +533,20 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <ul class="list-unstyled">
-                                            <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk-by-country/?country=Єгипет{% else %}/search-otpusk-by-country/?country=Єгипет{% endif %}" class="text-white-50 footer-links">Тури в Єгипет</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk-by-country/?country=Туреччина{% else %}/search-otpusk-by-country/?country=Туреччина{% endif %}" class="text-white-50 footer-links">Тури в Туреччину</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk-by-country/?country=ОАЕ{% else %}/search-otpusk-by-country/?country=ОАЕ{% endif %}" class="text-white-50 footer-links">Тури в ОАЕ</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk-by-country/?country=Шрі-Ланка{% else %}/search-otpusk-by-country/?country=Шрі-Ланка{% endif %}" class="text-white-50 footer-links">Тури в Шрі-Ланку</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk-by-country/?country=Іспанія{% else %}/search-otpusk-by-country/?country=Іспанія{% endif %}" class="text-white-50 footer-links">Тури в Іспанію</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{{ agent_site.get_absolute_url }}search-otpusk-by-country/?country=Єгипет{% else %}/search-otpusk-by-country/?country=Єгипет{% endif %}" class="text-white-50 footer-links">Тури в Єгипет</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{{ agent_site.get_absolute_url }}search-otpusk-by-country/?country=Туреччина{% else %}/search-otpusk-by-country/?country=Туреччина{% endif %}" class="text-white-50 footer-links">Тури в Туреччину</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{{ agent_site.get_absolute_url }}search-otpusk-by-country/?country=ОАЕ{% else %}/search-otpusk-by-country/?country=ОАЕ{% endif %}" class="text-white-50 footer-links">Тури в ОАЕ</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{{ agent_site.get_absolute_url }}search-otpusk-by-country/?country=Шрі-Ланка{% else %}/search-otpusk-by-country/?country=Шрі-Ланка{% endif %}" class="text-white-50 footer-links">Тури в Шрі-Ланку</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{{ agent_site.get_absolute_url }}search-otpusk-by-country/?country=Іспанія{% else %}/search-otpusk-by-country/?country=Іспанія{% endif %}" class="text-white-50 footer-links">Тури в Іспанію</a></li>
                                         </ul>
                                     </div>
                                     <div class="col-6">
                                         <ul class="list-unstyled">
-                                            <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk-by-country/?country=Танзанія{% else %}/search-otpusk-by-country/?country=Танзанія{% endif %}" class="text-white-50 footer-links">Тури в Танзанію</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk-by-country/?country=Мальдіви{% else %}/search-otpusk-by-country/?country=Мальдіви{% endif %}" class="text-white-50 footer-links">Тури в Мальдіви</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk-by-country/?country=В'єтнам{% else %}/search-otpusk-by-country/?country=В'єтнам{% endif %}" class="text-white-50 footer-links">Тури в В'єтнам</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk-by-country/?country=Албанія{% else %}/search-otpusk-by-country/?country=Албанія{% endif %}" class="text-white-50 footer-links">Тури в Албанію</a></li>
-                                            <li class="mb-2"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk-by-country/?country=Італія{% else %}/search-otpusk-by-country/?country=Італія{% endif %}" class="text-white-50 footer-links">Тури в Італію</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{{ agent_site.get_absolute_url }}search-otpusk-by-country/?country=Танзанія{% else %}/search-otpusk-by-country/?country=Танзанія{% endif %}" class="text-white-50 footer-links">Тури в Танзанію</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{{ agent_site.get_absolute_url }}search-otpusk-by-country/?country=Мальдіви{% else %}/search-otpusk-by-country/?country=Мальдіви{% endif %}" class="text-white-50 footer-links">Тури в Мальдіви</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{{ agent_site.get_absolute_url }}search-otpusk-by-country/?country=В'єтнам{% else %}/search-otpusk-by-country/?country=В'єтнам{% endif %}" class="text-white-50 footer-links">Тури в В'єтнам</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{{ agent_site.get_absolute_url }}search-otpusk-by-country/?country=Албанія{% else %}/search-otpusk-by-country/?country=Албанія{% endif %}" class="text-white-50 footer-links">Тури в Албанію</a></li>
+                                            <li class="mb-2"><a href="{% if agent_site %}{{ agent_site.get_absolute_url }}search-otpusk-by-country/?country=Італія{% else %}/search-otpusk-by-country/?country=Італія{% endif %}" class="text-white-50 footer-links">Тури в Італію</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -557,8 +557,8 @@
                 <div class="text-center mt-4 pt-3 border-top border-secondary">
                     <p class="mb-0">© 2026 TourConstructor</p>
                     <div class="mt-2">
-                        <a href="{% if agent_site %}/a/{{ agent_site.slug }}/privacy-policy/{% else %}{% url 'privacy_policy' %}{% endif %}" class="text-white-50 text-decoration-none me-3">Політика конфіденційності</a>
-                        <a href="{% if agent_site %}/a/{{ agent_site.slug }}/terms-of-service/{% else %}{% url 'terms_of_service' %}{% endif %}" class="text-white-50 text-decoration-none">Правила надання послуг</a>
+                        <a href="{% if agent_site %}{{ agent_site.get_absolute_url }}privacy-policy/{% else %}{% url 'privacy_policy' %}{% endif %}" class="text-white-50 text-decoration-none me-3">Політика конфіденційності</a>
+                        <a href="{% if agent_site %}{{ agent_site.get_absolute_url }}terms-of-service/{% else %}{% url 'terms_of_service' %}{% endif %}" class="text-white-50 text-decoration-none">Правила надання послуг</a>
                         <a href="https://www.otpusk.com" target="_blank" rel="noopener noreferrer" class="text-white-50 text-decoration-none">Тури на Otpusk.com</a>
                     </div>
                 </div>

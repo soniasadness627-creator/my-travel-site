@@ -58,7 +58,7 @@ urlpatterns = [
     # ========== ОСНОВНІ МАРШРУТИ ==========
     path('home/', tours_views.home, name='home'),
     path('news/', tours_views.NewsListView.as_view(), name='news'),
-path('news/<int:pk>/', tours_views.news_detail, name='news_detail'),
+    path('news/<int:pk>/', tours_views.news_detail, name='news_detail'),
 
     # ========== API КАЛЕНДАРЯ ЦІН ==========
     path('api/calendar-prices/', tours_views.calendar_prices_otpusk, name='calendar_prices'),
@@ -113,7 +113,7 @@ path('news/<int:pk>/', tours_views.news_detail, name='news_detail'),
     # ========== КОНСТРУКТОР ==========
     path('constructor/', include('constructor.urls')),
 
-    # ========== АГЕНТСЬКІ САЙТИ ==========
+    # ========== АГЕНТСЬКІ САЙТИ (через /a/slug/) ==========
     path('a/<slug:slug>/', constructor_views.agent_public_site, name='agent_home'),
     path('a/<slug:slug>/tour/<int:pk>/', constructor_views.agent_public_site, name='agent_tour_detail'),
     path('a/<slug:slug>/tour/<int:pk>/reviews/', constructor_views.agent_public_site, name='agent_tour_reviews'),

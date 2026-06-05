@@ -1,4 +1,3 @@
-# constructor/middleware.py
 
 from django.utils.deprecation import MiddlewareMixin
 from django.db import connection
@@ -22,6 +21,39 @@ class AgentSiteMiddleware(MiddlewareMixin):
                     print(f"❌ AgentSiteMiddleware: сайт для slug={slug} не знайдено")
         else:
             print(f"ℹ️ AgentSiteMiddleware: шлях {path} не починається з 'a/'")
+
+
+class SubdomainMiddleware(MiddlewareMixin):
+    """Визначає агента за субдоменом (наприклад, sonia45.clubdatour.com.ua)"""
+
+    def process_request(self, request):
+        # Якщо вже є current_agent_site через основний шлях - не чіпаємо
+        if hasattr(request, 'current_agent_site') and request.current_agent_site:
+            return
+
+        # Отримуємо домен без порту
+        host = request.get_host().split(':')[0]
+
+        # Розділяємо на частини
+        parts = host.split('.')
+
+        # Якщо це субдомен (більше 2 частин, наприклад: sonia45.clubdatour.com.ua)
+        if len(parts) >= 3:
+            subdomain = parts[0]  # sonia45
+
+            # Перевіряємо, чи не це основний домен (www теж не рахуємо)
+            if subdomain in ['www', 'clubdatour', 'clubdatour.com', 'clubdatour.com.ua']:
+                return
+
+            # Шукаємо агента з таким slug
+            try:
+                agent_site = AgentSite.objects.select_related('user').get(slug=subdomain)
+                request.current_agent_site = agent_site
+                request.agent_subdomain = subdomain
+                print(f"✅ SubdomainMiddleware: знайдено агента для субдомену {subdomain}")
+            except AgentSite.DoesNotExist:
+                print(f"❌ SubdomainMiddleware: агент для субдомену {subdomain} не знайдено")
+                request.current_agent_site = None
 
 
 class AgentColorsMiddleware(MiddlewareMixin):

@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
     '.onrender.com',
     'clubdatour.com.ua',
     'www.clubdatour.com.ua',
+    '.clubdatour.com.ua',  # Дозволяє всі субдомени (*.clubdatour.com.ua)
 ]
 
 # Application definition
@@ -68,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'constructor.middleware.AgentSiteMiddleware',
+    'constructor.middleware.SubdomainMiddleware',  # ← ДОДАТИ ЦЕЙ РЯДОК
     'constructor.middleware.AgentColorsMiddleware',
     'tours.middleware.TourTrackingMiddleware',
     'constructor.middleware.DatabaseConnectionMiddleware',

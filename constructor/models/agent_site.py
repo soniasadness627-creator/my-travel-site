@@ -121,6 +121,10 @@ class AgentSite(models.Model):
     def __str__(self):
         return f"{self.user.get_full_name()} - {self.slug}"
 
+    def get_absolute_url(self):
+        """Повертає абсолютне посилання на сайт агента через субдомен"""
+        return f"//{self.slug}.clubdatour.com.ua/"
+
     def get_primary_color(self):
         return self.primary_color or "#086745"
 
