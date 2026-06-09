@@ -76,32 +76,8 @@ def agent_register_step1(request):
             request.session['reg_data'] = form.cleaned_data
             request.session['reg_code'] = code
 
-            # ========== ВІДПРАВКА ЧЕРЕЗ MAILGUN API (ЗАМІСТЬ SMTP) ==========
-            if settings.USE_MAILGUN_FOR_ALL and settings.MAILGUN_API_KEY:
-                try:
-                    import requests
-                    response = requests.post(
-                        f"https://api.mailgun.net/v3/{settings.MAILGUN_DOMAIN}/messages",
-                        auth=("api", settings.MAILGUN_API_KEY),
-                        data={
-                            "from": settings.MAILGUN_FROM_EMAIL,
-                            "to": [form.cleaned_data['email']],
-                            "subject": "Підтвердження реєстрації",
-                            "html": f"<h2>Ваш код для створення сайту: <strong>{code}</strong></h2><p>Код дійсний 10 хвилин.</p>"
-                        },
-                        timeout=30
-                    )
-                    if response.status_code == 200:
-                        messages.success(request, 'Код надіслано на ваш email. Введіть його нижче.')
-                    else:
-                        messages.error(request, 'Помилка відправки коду. Спробуйте ще раз.')
-                        return redirect('constructor:register')
-                except Exception as e:
-                    print(f"Mailgun API error: {e}")
-                    messages.error(request, 'Помилка відправки коду. Спробуйте ще раз.')
-                    return redirect('constructor:register')
-            else:
-                # fallback на старий send_mail
+            # ========== НАДСИЛАННЯ ЛИСТА ЧЕРЕЗ SENDGRID (STANDARD DJANGO MAIL) ==========
+            try:
                 send_mail(
                     subject='Підтвердження реєстрації',
                     message=f'Ваш код для створення сайту: {code}',
@@ -110,6 +86,10 @@ def agent_register_step1(request):
                     fail_silently=False,
                 )
                 messages.success(request, 'Код надіслано на ваш email. Введіть його нижче.')
+            except Exception as e:
+                print(f"Помилка відправки email: {e}")
+                messages.error(request, 'Помилка відправки коду. Спробуйте ще раз.')
+                return redirect('constructor:register')
 
             return redirect('constructor:verify')
     else:
@@ -624,31 +604,8 @@ def agent_login(request, slug):
                 request.session['agent_login_email'] = email
                 request.session['agent_login_slug'] = slug
 
-                # ========== ВІДПРАВКА ЧЕРЕЗ MAILGUN API (ЗАМІСТЬ SMTP) ==========
-                if settings.USE_MAILGUN_FOR_ALL and settings.MAILGUN_API_KEY:
-                    try:
-                        import requests
-                        response = requests.post(
-                            f"https://api.mailgun.net/v3/{settings.MAILGUN_DOMAIN}/messages",
-                            auth=("api", settings.MAILGUN_API_KEY),
-                            data={
-                                "from": settings.MAILGUN_FROM_EMAIL,
-                                "to": [email],
-                                "subject": "Код для входу в кабінет",
-                                "html": f"<h2>Ваш код для входу: <strong>{code}</strong></h2><p>Код дійсний 10 хвилин.</p>"
-                            },
-                            timeout=30
-                        )
-                        if response.status_code != 200:
-                            print(f"Mailgun error: {response.text}")
-                            messages.error(request, 'Помилка відправки коду. Спробуйте ще раз.')
-                            return redirect('agent_login', slug=slug)
-                    except Exception as e:
-                        print(f"Mailgun API error: {e}")
-                        messages.error(request, 'Помилка відправки коду. Спробуйте ще раз.')
-                        return redirect('agent_login', slug=slug)
-                else:
-                    # fallback на старий send_mail
+                # ========== НАДСИЛАННЯ ЛИСТА ЧЕРЕЗ SENDGRID (STANDARD DJANGO MAIL) ==========
+                try:
                     send_mail(
                         subject='Код для входу в кабінет',
                         message=f'Ваш код для входу: {code}\n\nКод дійсний 10 хвилин.',
@@ -656,8 +613,12 @@ def agent_login(request, slug):
                         recipient_list=[email],
                         fail_silently=False,
                     )
-                messages.success(request, 'Код надіслано на ваш email!')
-                request.session['code_sent'] = True
+                    messages.success(request, 'Код надіслано на ваш email!')
+                    request.session['code_sent'] = True
+                except Exception as e:
+                    print(f"Помилка відправки email: {e}")
+                    messages.error(request, 'Помилка відправки коду. Спробуйте ще раз.')
+                    return redirect('agent_login', slug=slug)
             else:
                 messages.error(request, 'Користувача з таким email не знайдено')
 
@@ -701,7 +662,6 @@ def agent_login(request, slug):
     context.update(colors)
 
     return render(request, 'constructor/agent_login.html', context)
-
 
 # -------------------------
 # НОВА ФУНКЦІЯ: Перенаправлення агента на сторінку входу
