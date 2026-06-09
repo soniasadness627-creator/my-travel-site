@@ -260,24 +260,22 @@ print("✅ Cloudinary ініціалізовано")
 print(f"✅ Telegram бот налаштовано. Адмінів: {len(TELEGRAM_ADMIN_IDS)}")
 
 # ==============================================
-# ========== EMAIL НАЛАШТУВАННЯ (ОНОВЛЕНІ) ==========
+# ========== EMAIL НАЛАШТУВАННЯ (SENDGRID) ==========
 # ==============================================
 
-# Який спосіб відправки використовувати?
-# True - всі листи через Mailgun
-# False - використовувати стару логіку (AWS SES або Gmail)
-USE_MAILGUN_FOR_ALL = os.getenv('USE_MAILGUN_FOR_ALL', 'True') == 'True'
+# Використовуємо SendGrid замість Mailgun
+USE_SENDGRID = True
 
-if USE_MAILGUN_FOR_ALL:
-    # ========== ВСІ ЛИСТИ ЧЕРЕЗ MAILGUN ==========
+if USE_SENDGRID:
+    # ========== ВСІ ЛИСТИ ЧЕРЕЗ SENDGRID ==========
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = 'smtp.mailgun.org'
+    EMAIL_HOST = 'smtp.sendgrid.net'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = 'postmaster@clubdatour.com.ua'
-    EMAIL_HOST_PASSWORD = os.getenv('MAILGUN_API_KEY', '')
-    DEFAULT_FROM_EMAIL = 'postmaster@clubdatour.com.ua'
-    print("✅ ВСІ листи надсилаються через MAILGUN (postmaster@clubdatour.com.ua)")
+    EMAIL_HOST_USER = 'apikey'
+    EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_API_KEY', '')
+    DEFAULT_FROM_EMAIL = 'ClubDatour <info@clubdatour.com.ua>'
+    print("✅ ВСІ листи надсилаються через SENDGRID (ClubDatour)")
 
 elif USE_AWS_SES:
     # ========== AWS SES ==========
