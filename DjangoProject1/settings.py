@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
     '.onrender.com',
     'clubdatour.com.ua',
     'www.clubdatour.com.ua',
+'209.38.199.98',
     '.clubdatour.com.ua',  # Дозволяє всі субдомени (*.clubdatour.com.ua)
 ]
 
