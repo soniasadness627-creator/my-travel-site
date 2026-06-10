@@ -9,7 +9,7 @@ from constructor import views as constructor_views
 from constructor.agent_admin import agent_admin_site
 from landing import views as landing_views
 from django.views.generic import TemplateView
-from tours.admin import mass_email_admin  # ← ІМПОРТ ПРАВИЛЬНИЙ
+from tours.admin import mass_email_admin
 
 # ========== ОБРОБНИК ПОМИЛКИ CSRF ==========
 from django.views.csrf import csrf_failure
@@ -39,7 +39,7 @@ def custom_csrf_failure(request, reason=""):
 handler403 = custom_csrf_failure
 
 urlpatterns = [
-    # ========== МАСОВА EMAIL-РОЗСИЛКА (ПРАЦЮЄ) ==========
+    # ========== МАСОВА EMAIL-РОЗСИЛКА ==========
     path('admin/mass-email/', mass_email_admin.urls, name='mass_email'),
 
     # ========== МАРШРУТ ДЛЯ СТВОРЕННЯ СУПЕРАДМІНА ==========
@@ -110,26 +110,18 @@ urlpatterns = [
     path('tours-by-city/', tours_views.tours_by_city, name='tours_by_city'),
     path('city/<int:city_id>/', tours_views.city_detail, name='city_detail'),
 
-    # ========== КОНСТРУКТОР ==========
+    # ========== КОНСТРУКТОР (ВСІ МАРШРУТИ ЧЕРЕЗ INCLUDE) ==========
     path('constructor/', include('constructor.urls')),
 
-    # ========== АГЕНТСЬКІ САЙТИ (через /a/slug/) ==========
+    # ========== АГЕНТСЬКІ САЙТИ (ТІЛЬКИ ОСНОВНІ МАРШРУТИ) ==========
+    # Всі інші маршрути агента (news/, tour/, consultation/ тощо)
+    # обробляються через agent_public_site в views.py
     path('a/<slug:slug>/', constructor_views.agent_public_site, name='agent_home'),
-    path('a/<slug:slug>/tour/<int:pk>/', constructor_views.agent_public_site, name='agent_tour_detail'),
-    path('a/<slug:slug>/tour/<int:pk>/reviews/', constructor_views.agent_public_site, name='agent_tour_reviews'),
-    path('a/<slug:slug>/city/<int:city_id>/', constructor_views.agent_public_site, name='agent_city_detail'),
-    path('a/<slug:slug>/news/', constructor_views.agent_public_site, name='agent_news_list'),
-    path('a/<slug:slug>/news/<int:pk>/', constructor_views.agent_public_site, name='agent_news_detail'),
-    path('a/<slug:slug>/consultation/', constructor_views.agent_public_site, name='agent_consultation'),
-    path('a/<slug:slug>/privacy-policy/', constructor_views.agent_public_site, name='agent_privacy_policy'),
-    path('a/<slug:slug>/terms-of-service/', constructor_views.agent_public_site, name='agent_terms_of_service'),
-    path('a/<slug:slug>/login/', constructor_views.agent_public_site, name='agent_login'),
+    path('a/<slug:slug>/login/', constructor_views.agent_login, name='agent_login'),
 
     # ========== АГЕНТСЬКІ API ==========
     path('a/<slug:slug>/api/get-popular-tours/', tours_views.get_popular_tours_api, name='agent_get_popular_tours'),
     path('a/<slug:slug>/api/get-popular-hotels/', tours_views.get_popular_hotels_api, name='agent_get_popular_hotels'),
-
-    # ========== API ДЛЯ БРОНЮВАННЯ (ДОДАНО) ==========
     path('a/<slug:slug>/api/booking/', constructor_views.booking_api, name='agent_booking_api_direct'),
 ]
 
