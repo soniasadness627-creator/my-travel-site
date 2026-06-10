@@ -36,7 +36,7 @@ class SubdomainMiddleware(MiddlewareMixin):
         # СПИСОК ГОЛОВНИХ ДОМЕНІВ (НЕ ПІДДОМЕНИ)
         MAIN_DOMAINS = ['clubdatour.com.ua', 'www.clubdatour.com.ua', '209.38.199.98']
 
-        # Якщо це головний домен - не чіпаємо, показуємо лендінг
+        # 1. Якщо це головний домен - не чіпаємо, показуємо лендінг
         if host in MAIN_DOMAINS:
             request.current_agent_site = None
             request.is_agent_subdomain = False
@@ -48,7 +48,7 @@ class SubdomainMiddleware(MiddlewareMixin):
 
         # Якщо це субдомен (більше 2 частин)
         if len(parts) >= 3:
-            subdomain = parts[0]  # stank23565vdf
+            subdomain = parts[0]  # stank23565vdf або sonias22
 
             # Перевіряємо, чи не це службовий субдомен
             if subdomain in ['www', 'mail', 'email', 'smtp', 'pop', 'imap']:
@@ -56,7 +56,15 @@ class SubdomainMiddleware(MiddlewareMixin):
                 request.is_agent_subdomain = False
                 return None
 
-            # Шукаємо агента з таким slug
+            # 2. ІГНОРУЄМО ВАШ ОСОБИСТИЙ ПІДДОМЕН (sonias22)
+            #    Він не повинен показувати лендінг чи щось інше.
+            if subdomain == 'sonias22':
+                print(f"🚫 SubdomainMiddleware: субдомен {subdomain} заблоковано для показу сайту.")
+                request.current_agent_site = None
+                request.is_agent_subdomain = False
+                return None
+
+            # 3. ШУКАЄМО ЗВИЧАЙНОГО АГЕНТА
             try:
                 agent_site = AgentSite.objects.select_related('user').get(slug=subdomain)
                 request.current_agent_site = agent_site
