@@ -121,7 +121,6 @@ class AgentColorsMiddleware(MiddlewareMixin):
 
 class DatabaseConnectionMiddleware(MiddlewareMixin):
     """Автоматично перевіряє та відновлює з'єднання з БД перед кожним запитом"""
-
     def process_request(self, request):
         try:
             connection.ensure_connection()
