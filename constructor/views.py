@@ -1,3 +1,6 @@
+import os  # ← ДОДАТИ ЦЕ
+import sendgrid
+from sendgrid.helpers.mail import Mail
 import random
 import uuid
 import requests
@@ -33,6 +36,27 @@ from tours.views import tour_detail, search_results, city_detail, news_detail, \
     NewsListView, get_agent_colors, tour_reviews, hotel_reviews_api  # ← ДОДАНО hotel_reviews_api
 from tours.models import News
 
+
+# ========== ФУНКЦІЯ ДЛЯ ВІДПРАВКИ EMAIL ЧЕРЕЗ SENDGRID API ==========
+def send_email_sendgrid(to_email, subject, body):
+    """Відправка email через SendGrid Web API (обходить SMTP блокування)"""
+    try:
+        sg = sendgrid.SendGridAPIClient(api_key=os.getenv('SENDGRID_API_KEY'))
+        from_email = os.getenv('DEFAULT_FROM_EMAIL', 'info@clubdatour.com.ua')
+
+        message = Mail(
+            from_email=from_email,
+            to_emails=to_email,
+            subject=subject,
+            plain_text_content=body
+        )
+
+        response = sg.send(message)
+        print(f"SendGrid API response: {response.status_code}")
+        return response.status_code == 202  # 202 означає успіх
+    except Exception as e:
+        print(f"SendGrid API помилка: {e}")
+        return False
 from django.http import HttpResponse
 
 # А потім в функції generate_image додайте:
@@ -76,16 +100,19 @@ def agent_register_step1(request):
             request.session['reg_data'] = form.cleaned_data
             request.session['reg_code'] = code
 
-            # ========== НАДСИЛАННЯ ЛИСТА ЧЕРЕЗ SENDGRID (STANDARD DJANGO MAIL) ==========
             try:
-                send_mail(
+                success = send_email_sendgrid(
+                    to_email=form.cleaned_data['email'],
                     subject='Підтвердження реєстрації',
-                    message=f'Ваш код для створення сайту: {code}',
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[form.cleaned_data['email']],
-                    fail_silently=False,
+                    body=f'Ваш код для створення сайту: {code}'
                 )
-                messages.success(request, 'Код надіслано на ваш email. Введіть його нижче.')
+
+                if success:
+                    messages.success(request, 'Код надіслано на ваш email. Введіть його нижче.')
+                else:
+                    raise Exception("SendGrid API failed")
+
+                # ← ВИДАЛІТЬ ЦЕЙ РЯДОК: messages.success(request, 'Код надіслано на ваш email. Введіть його нижче.')
             except Exception as e:
                 print(f"Помилка відправки email: {e}")
                 messages.error(request, 'Помилка відправки коду. Спробуйте ще раз.')
@@ -95,7 +122,6 @@ def agent_register_step1(request):
     else:
         form = AgentRegistrationForm()
     return render(request, 'constructor/register_step1.html', {'form': form})
-
 
 def agent_verify(request):
     """
@@ -604,17 +630,21 @@ def agent_login(request, slug):
                 request.session['agent_login_email'] = email
                 request.session['agent_login_slug'] = slug
 
-                # ========== НАДСИЛАННЯ ЛИСТА ЧЕРЕЗ SENDGRID (STANDARD DJANGO MAIL) ==========
+                # ========== НАДСИЛАННЯ ЛИСТА ЧЕРЕЗ SENDGRID API ==========
                 try:
-                    send_mail(
+                    success = send_email_sendgrid(
+                        to_email=email,
                         subject='Код для входу в кабінет',
-                        message=f'Ваш код для входу: {code}\n\nКод дійсний 10 хвилин.',
-                        from_email=settings.DEFAULT_FROM_EMAIL,
-                        recipient_list=[email],
-                        fail_silently=False,
+                        body=f'Ваш код для входу: {code}\n\nКод дійсний 10 хвилин.'
                     )
-                    messages.success(request, 'Код надіслано на ваш email!')
-                    request.session['code_sent'] = True
+
+                    if success:
+                        messages.success(request, 'Код надіслано на ваш email!')
+                        request.session['code_sent'] = True
+                    else:
+                        raise Exception("SendGrid API failed")
+
+
                 except Exception as e:
                     print(f"Помилка відправки email: {e}")
                     messages.error(request, 'Помилка відправки коду. Спробуйте ще раз.')

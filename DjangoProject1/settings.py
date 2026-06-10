@@ -291,7 +291,7 @@ elif USE_AWS_SES:
 else:
     # ========== GMAIL (СТАРИЙ ВАРІАНТ) ==========
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST = 'smtpф.gmail.com'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = os.getenv('GMAIL_USER', 'soniasadness627@gmail.com')
