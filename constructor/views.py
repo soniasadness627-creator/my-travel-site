@@ -217,7 +217,8 @@ def agent_verify(request):
                 if 'reg_data' in request.session:
                     del request.session['reg_data']
 
-                return redirect('/constructor/dashboard/')
+                agent_site_url = f'https://{agent_site.slug}.clubdatour.com.ua/'
+                return redirect(agent_site_url)
             else:
                 messages.error(request, 'Невірний код. Спробуйте ще раз.')
                 return redirect('constructor:verify')
@@ -236,18 +237,31 @@ def agent_verify(request):
 
 @login_required
 def constructor_dashboard(request):
-    agent_site, created = AgentSite.objects.get_or_create(user=request.user)
+    # ВАЖЛИВО: використовуємо агента з current_agent_site, якщо він є (при заході через піддомен)
+    if hasattr(request, 'current_agent_site') and request.current_agent_site:
+        agent_user = request.current_agent_site.user
+        current_slug = request.current_agent_site.slug
+        print(f"🔧 Конструктор для агента: {agent_user.email} (slug: {current_slug})")
+    else:
+        agent_user = request.user
+        print(f"🔧 Конструктор для користувача: {agent_user.email}")
+
+    agent_site, created = AgentSite.objects.get_or_create(user=agent_user)
 
     if not agent_site.slug:
-        base_slug = slugify(request.user.username)
-        if not base_slug:
-            base_slug = f"user_{request.user.id}"
-        unique_slug = base_slug
-        counter = 1
-        while AgentSite.objects.filter(slug=unique_slug).exists():
-            unique_slug = f"{base_slug}-{counter}"
-            counter += 1
-        agent_site.slug = unique_slug
+        # Використовуємо slug з current_agent_site, якщо він є
+        if hasattr(request, 'current_agent_site') and request.current_agent_site:
+            agent_site.slug = request.current_agent_site.slug
+        else:
+            base_slug = slugify(agent_user.username)
+            if not base_slug:
+                base_slug = f"user_{agent_user.id}"
+            unique_slug = base_slug
+            counter = 1
+            while AgentSite.objects.filter(slug=unique_slug).exists():
+                unique_slug = f"{base_slug}-{counter}"
+                counter += 1
+            agent_site.slug = unique_slug
         agent_site.save()
 
     # Отримуємо налаштування блоків для агента
@@ -262,7 +276,7 @@ def constructor_dashboard(request):
     ]
 
     block_settings, created = AgentBlockSettings.objects.get_or_create(
-        agent=request.user,
+        agent=agent_user,  # ← ВИКОРИСТОВУЄМО agent_user, а не request.user
         defaults={
             'blocks_order': AgentBlockSettings().get_default_order(),
             'active_blocks': default_active_blocks,
@@ -312,7 +326,8 @@ def constructor_dashboard(request):
         # ========== ФІКС: Явне збереження hero_title та hero_subtitle ==========
         # Отримуємо значення з резервних полів (backup) або з оригінальних
         new_hero_title = request.POST.get('hero_title_backup', '') or request.POST.get('hero_title', '').strip()
-        new_hero_subtitle = request.POST.get('hero_subtitle_backup', '') or request.POST.get('hero_subtitle', '').strip()
+        new_hero_subtitle = request.POST.get('hero_subtitle_backup', '') or request.POST.get('hero_subtitle',
+                                                                                             '').strip()
 
         if new_hero_title:
             agent_site.hero_title = new_hero_title
@@ -321,7 +336,8 @@ def constructor_dashboard(request):
 
         if new_hero_title or new_hero_subtitle:
             agent_site.save(update_fields=['hero_title', 'hero_subtitle'])
-            print(f"✅ ПРИМУСОВО ЗБЕРЕЖЕНО: hero_title='{agent_site.hero_title}', hero_subtitle='{agent_site.hero_subtitle}'")
+            print(
+                f"✅ ПРИМУСОВО ЗБЕРЕЖЕНО: hero_title='{agent_site.hero_title}', hero_subtitle='{agent_site.hero_subtitle}'")
         else:
             print("⚠️ ПОЛЯ hero_title/hero_subtitle НЕ БУЛИ ЗМІНЕНІ АБО ВІДСУТНІ В POST")
 
@@ -334,7 +350,8 @@ def constructor_dashboard(request):
             print(f"   slug: {form.cleaned_data.get('slug')}")
 
             saved_site = form.save()
-            print(f"✅ Після form.save(): hero_title='{saved_site.hero_title}', hero_subtitle='{saved_site.hero_subtitle}'")
+            print(
+                f"✅ Після form.save(): hero_title='{saved_site.hero_title}', hero_subtitle='{saved_site.hero_subtitle}'")
 
             messages.success(request, 'Налаштування збережено!')
             return redirect('constructor:dashboard')
@@ -381,15 +398,20 @@ def save_hero_ajax(request):
         return JsonResponse({'success': True})
     return JsonResponse({'error': 'Invalid'}, status=400)
 
+
 @login_required
 def open_site(request):
-    try:
-        slug = request.user.agent_site.slug
-        return redirect(f'/a/{slug}/')
-    except AttributeError:
-        messages.error(request, 'У вас немає створеного сайту.')
-        return redirect('constructor:dashboard')
+    # Використовуємо агента з current_agent_site, якщо він є
+    if hasattr(request, 'current_agent_site') and request.current_agent_site:
+        slug = request.current_agent_site.slug
+    else:
+        try:
+            slug = request.user.agent_site.slug
+        except AttributeError:
+            messages.error(request, 'У вас немає створеного сайту.')
+            return redirect('constructor:dashboard')
 
+    return redirect(f'https://{slug}.clubdatour.com.ua/')
 
 @require_POST
 @csrf_exempt
@@ -1201,3 +1223,9 @@ def booking_api(request, slug=None):
         print(f"Помилка бронювання: {e}")
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
 # ========== КІНЕЦЬ НОВИХ ФУНКЦІЙ ==========
+def agent_logout(request, slug):
+    """Вихід агента з системи"""
+    from django.contrib.auth import logout as auth_logout
+    auth_logout(request)
+    messages.success(request, 'Ви вийшли з системи.')
+    return redirect(f'/a/{slug}/login/')

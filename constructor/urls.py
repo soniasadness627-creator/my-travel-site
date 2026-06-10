@@ -39,6 +39,7 @@ agent_urlpatterns = [
 
     # ========== АВТЕНТИФІКАЦІЯ ==========
     path('login/', views.agent_login, name='agent_login'),
+    path('logout/', views.agent_logout, name='agent_logout'),
 
     # ========== СТОРІНКИ САЙТУ АГЕНТА ==========
     path('', views.agent_public_site, name='agent_home'),
