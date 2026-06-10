@@ -217,8 +217,8 @@ def agent_verify(request):
                 if 'reg_data' in request.session:
                     del request.session['reg_data']
 
-                agent_site_url = f'https://{agent_site.slug}.clubdatour.com.ua/'
-                return redirect(agent_site_url)
+                agent_dashboard_url = f'https://{agent_site.slug}.clubdatour.com.ua/constructor/dashboard/'
+                return redirect(agent_dashboard_url)
             else:
                 messages.error(request, 'Невірний код. Спробуйте ще раз.')
                 return redirect('constructor:verify')
