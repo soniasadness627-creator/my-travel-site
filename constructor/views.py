@@ -840,6 +840,7 @@ def agent_public_site(request, slug, **kwargs):
     else:
         raise Http404("Сторінку не знайдено")
 
+
 # -------------------------
 # Клас AgentHomeView для головної сторінки конструктора
 # -------------------------
