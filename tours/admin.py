@@ -1,3 +1,6 @@
+import time
+import sendgrid
+from sendgrid.helpers.mail import Mail
 from django.contrib import admin
 from django import forms
 from django.db import models
@@ -655,6 +658,8 @@ class MassEmailAdminSite(AdminSite):
             elif recipient_type == 'upload_file' and uploaded_file:
                 content = uploaded_file.read().decode('utf-8')
                 if uploaded_file.name.endswith('.csv'):
+                    import csv
+                    import io
                     reader = csv.reader(io.StringIO(content))
                     for row in reader:
                         if row and '@' in row[0]:
@@ -671,36 +676,49 @@ class MassEmailAdminSite(AdminSite):
             success_count = 0
             fail_count = 0
 
+            import time  # Додаємо імпорт time
+
             for email in emails:
-                result = self.send_via_mailgun(email, subject, message)
+                result = self.send_via_sendgrid(email, subject, message)
                 if result:
                     success_count += 1
                 else:
                     fail_count += 1
+                time.sleep(1)  # Пауза 0.5 секунди між листами (120 листів/хвилину)
+
+                # Для дуже великих розсилок (1000+) можна додати індикатор прогресу
+                if (success_count + fail_count) % 50 == 0:
+                    print(f"Прогрес: {success_count + fail_count}/{len(emails)}")
 
             messages.success(request, f'Відправлено {success_count} листів, помилок: {fail_count}')
             return redirect('/admin/mass-email/')
 
         return redirect('/admin/mass-email/')
 
-    def send_via_mailgun(self, to_email, subject, message):
-        if not settings.MAILGUN_API_KEY:
+    def send_via_sendgrid(self, to_email, subject, message):
+        """Відправка email через SendGrid API"""
+        if not settings.SENDGRID_API_KEY:
+            print("SENDGRID_API_KEY не налаштовано")
             return False
         try:
-            response = requests.post(
-                f"https://api.mailgun.net/v3/{settings.MAILGUN_DOMAIN}/messages",
-                auth=("api", settings.MAILGUN_API_KEY),
-                data={
-                    "from": settings.MAILGUN_FROM_EMAIL,
-                    "to": [to_email],
-                    "subject": subject,
-                    "html": message.replace('\n', '<br>')
-                },
-                timeout=30
+            import sendgrid
+            from sendgrid.helpers.mail import Mail
+
+            sg = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
+            from_email = settings.DEFAULT_FROM_EMAIL
+
+            mail = Mail(
+                from_email=from_email,
+                to_emails=to_email,
+                subject=subject,
+                html_content=message.replace('\n', '<br>')
             )
-            return response.status_code == 200
+
+            response = sg.send(mail)
+            print(f"SendGrid response: {response.status_code}")
+            return response.status_code == 202
         except Exception as e:
-            print(f"Помилка Mailgun: {e}")
+            print(f"Помилка SendGrid: {e}")
             return False
 
 

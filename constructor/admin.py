@@ -1,3 +1,4 @@
+from .models.blocks import AgentBlockSettings
 from django.contrib import admin
 from .models import AgentSite
 
@@ -26,3 +27,13 @@ class AgentSiteAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+    @admin.register(AgentBlockSettings)
+    class AgentBlockSettingsAdmin(admin.ModelAdmin):
+        list_display = ('agent', 'get_agent_slug')
+        search_fields = ('agent__email',)
+
+        def get_agent_slug(self, obj):
+            return obj.agent.agent_site.slug if hasattr(obj.agent, 'agent_site') else '-'
+
+        get_agent_slug.short_description = 'Slug сайту'

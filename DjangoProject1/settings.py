@@ -275,6 +275,8 @@ if USE_SENDGRID:
     EMAIL_HOST_USER = 'apikey'
     EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_API_KEY', '')
     DEFAULT_FROM_EMAIL = 'ClubDatour <info@clubdatour.com.ua>'
+    # SendGrid API ключ для масової розсилки
+    SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
     print("✅ ВСІ листи надсилаються через SENDGRID (ClubDatour)")
 
 elif USE_AWS_SES:
