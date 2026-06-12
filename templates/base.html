@@ -465,7 +465,7 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% if agent_site %}{{ agent_site.get_absolute_url }}login/{% else %}/login/{% endif %}">Вхід</a>
+<a class="nav-link" href="{% if agent_site %}/a/{{ agent_site.slug }}/login/{% else %}/constructor/agent-login-redirect/{% endif %}">Вхід</a>
                         </li>
                     {% endif %}
 
