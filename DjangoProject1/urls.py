@@ -10,6 +10,8 @@ from constructor.agent_admin import agent_admin_site
 from landing import views as landing_views
 from django.views.generic import TemplateView
 from tours.admin import mass_email_admin
+from django.contrib.sitemaps.views import sitemap
+from tours.sitemaps import StaticViewSitemap
 
 # ========== ОБРОБНИК ПОМИЛКИ CSRF ==========
 from django.views.csrf import csrf_failure
@@ -38,7 +40,14 @@ def custom_csrf_failure(request, reason=""):
 
 handler403 = custom_csrf_failure
 
+sitemaps = {
+    'static': StaticViewSitemap,
+}
+
 urlpatterns = [
+    # ========== SITEMAP (динамічний) ==========
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
+
     # ========== МАСОВА EMAIL-РОЗСИЛКА ==========
     path('admin/mass-email/', mass_email_admin.urls, name='mass_email'),
 
@@ -48,6 +57,8 @@ urlpatterns = [
     # ========== ГОЛОВНА СТОРІНКА ==========
     path('', home_redirect, name='home_redirect'),
     path('landing/', include('landing.urls')),
+    # Перехоплюємо будь-які шляхи після /landing/ і перенаправляємо на головний лендінг
+    path('landing/<path:whatever>/', landing_views.index, name='landing_catchall'),
 
     # ========== АДМІН-ПАНЕЛІ ==========
     path('admin/', admin.site.urls, name='admin'),

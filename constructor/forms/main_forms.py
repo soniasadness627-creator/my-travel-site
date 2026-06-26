@@ -153,7 +153,7 @@ class AgentSiteForm(forms.ModelForm):
             'social_telegram': 'Telegram',
         }
         help_texts = {
-            'slug': 'Унікальна адреса вашого сайту (тільки латиниця, дефіси)',
+            'slug': 'Унікальна адреса вашого сайту (латиниця, дефіси)',
             'hero_background': 'Рекомендований розмір: 1200×400px',
             'top_logo': 'Формати: PNG, SVG. Рекомендований розмір: 250×250px',
             'bottom_logo': 'Формати: PNG, SVG. Рекомендований розмір: 150×150px або 150×50px',
@@ -178,8 +178,10 @@ class AgentSiteForm(forms.ModelForm):
         slug = self.cleaned_data.get('slug')
         if slug:
             import re
-            if not re.match(r'^[a-z0-9-]+$', slug):
-                raise forms.ValidationError('Slug може містити тільки малі латинські літери, цифри та дефіс.')
+            # ДОЗВОЛЯЄМО ВЕЛИКІ ЛІТЕРИ - прибираємо обмеження на малі літери
+            # Тепер дозволено: великі та малі латинські літери, цифри, дефіс
+            if not re.match(r'^[a-zA-Z0-9-]+$', slug):
+                raise forms.ValidationError('Slug може містити тільки латинські літери (великі та малі), цифри та дефіс.')
             instance = getattr(self, 'instance', None)
             if instance and instance.pk:
                 if AgentSite.objects.exclude(pk=instance.pk).filter(slug=slug).exists():

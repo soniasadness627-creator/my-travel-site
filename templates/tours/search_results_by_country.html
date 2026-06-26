@@ -320,36 +320,47 @@
 // ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
 (function() {
     const submitBtn = document.getElementById('submitConsultationBtn');
-    if (!submitBtn) return;
+    if (!submitBtn) {
+        console.log('❌ Кнопка submitConsultationBtn не знайдена');
+        return;
+    }
+
+    console.log('✅ Кнопка консультації знайдена');
 
     submitBtn.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
 
-        const name = document.getElementById('consultationName')?.value || '';
-        const phone = document.getElementById('consultationPhone')?.value || '';
+        const name = document.getElementById('consultationName')?.value?.trim() || '';
+        const phone = document.getElementById('consultationPhone')?.value?.trim() || '';
         const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken');
 
-        if (!name.trim()) {
-            console.log('Введіть ім\'я');
+        if (!name) {
+            alert("Будь ласка, введіть ваше ім'я");
+            document.getElementById('consultationName').focus();
             return;
         }
-        if (!phone.trim()) {
-            console.log('Введіть телефон');
+        if (!phone) {
+            alert("Будь ласка, введіть номер телефону");
+            document.getElementById('consultationPhone').focus();
             return;
         }
 
-        let ajaxUrl = '/consultation-ajax/';
-        {% if agent_site %}
-        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
-        {% endif %}
+        // ========== ВИПРАВЛЕНО: ЗАВЖДИ ВИКОРИСТОВУЄМО /consultation-ajax/ ==========
+        const ajaxUrl = '/consultation-ajax/';
+        console.log(`📡 Відправка на ${ajaxUrl}`);
+
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Відправка...';
+        submitBtn.disabled = true;
 
         fetch(ajaxUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': csrfToken
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
             },
             body: new URLSearchParams({
                 'name': name,
@@ -358,18 +369,44 @@
                 'consultation_submit': '1'
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
+            console.log('📦 Відповідь:', data);
             if (data.success) {
                 document.getElementById('consultationName').value = '';
                 document.getElementById('consultationPhone').value = '';
-                console.log('Заявка відправлена');
+                alert('✅ Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом.');
+            } else {
+                alert('❌ ' + (data.error || 'Сталася помилка. Спробуйте пізніше.'));
             }
         })
         .catch(error => {
-            console.error('Помилка:', error);
+            console.error('❌ Помилка:', error);
+            alert('❌ Помилка з\'єднання. Спробуйте пізніше.');
+        })
+        .finally(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
         });
     });
+
+    function getCookie(name) {
+        let value = null;
+        if (document.cookie && document.cookie !== '') {
+            document.cookie.split(';').forEach(cookie => {
+                const parts = cookie.trim().split('=');
+                if (parts[0] === name) {
+                    value = decodeURIComponent(parts[1]);
+                }
+            });
+        }
+        return value;
+    }
 })();
 </script>
 
@@ -1486,6 +1523,483 @@ document.addEventListener('DOMContentLoaded', function() {
 .new_f-wrapper .new_f-dropdown-btn {
     border: 1px solid #e2e8f0 !important;
     background: #ffffff !important;
+}
+    /* ========== МОБІЛЬНА ВЕРСІЯ ДЛЯ КАРТОК ТУРІВ OTPUSK ========== */
+@media (max-width: 768px) {
+    /* Картка туру */
+    .new_r-item {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+        height: auto !important;
+        min-height: 150px !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        margin-bottom: 16px !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+        background: white !important;
+    }
+
+    /* Зображення - зліва, фіксована ширина */
+    .new_r-item-img {
+        position: relative !important;
+        width: 120px !important;
+        min-width: 120px !important;
+        max-width: 120px !important;
+        height: auto !important;
+        min-height: 120px !important;
+        object-fit: cover !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Тіло картки - справа, займає решту місця */
+    .new_r-item-body {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        padding: 10px 12px !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+        min-height: 120px !important;
+        overflow: hidden !important;
+    }
+
+    /* Заголовок готелю */
+    .new_r-item-hotel {
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 4px !important;
+        line-height: 1.2 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+    }
+
+    /* Зірки */
+    .new_r-item-stars {
+        display: inline-flex !important;
+        gap: 2px !important;
+        margin-left: 6px !important;
+    }
+    .new_r-item-stars i {
+        font-size: 10px !important;
+    }
+
+    /* Геолокація */
+    .new_r-item-geo {
+        font-size: 0.7rem !important;
+        margin-bottom: 4px !important;
+        color: #64748b !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+    }
+    .new_r-item-geo svg {
+        width: 12px !important;
+        height: 12px !important;
+    }
+
+    /* Харчування */
+    .new_r-item-food {
+        font-size: 0.6rem !important;
+        padding: 2px 10px !important;
+        background: #f1f5f9 !important;
+        border-radius: 12px !important;
+        display: inline-block !important;
+        width: fit-content !important;
+        margin-bottom: 4px !important;
+        color: #334155 !important;
+    }
+
+    /* Деталі вильоту */
+    .new_r-item-table {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 6px 12px !important;
+        margin: 4px 0 !important;
+        font-size: 0.65rem !important;
+        color: #475569 !important;
+    }
+    .new_r-item-from,
+    .new_r-item-date {
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+    }
+
+    /* Ціна - внизу, вирівняна вправо */
+    .new_r-item-price {
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: baseline !important;
+        margin-top: 6px !important;
+        padding-top: 6px !important;
+        border-top: 1px solid #e2e8f0 !important;
+        gap: 6px !important;
+        flex-wrap: wrap !important;
+        width: 100% !important;
+    }
+    .new_price-value {
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+    }
+    .new_price-desc {
+        font-size: 0.6rem !important;
+        color: #94a3b8 !important;
+    }
+
+    /* Рейтинг - абсолютне позиціонування зверху справа (поверх фото) */
+    .new_r-item-rating-container {
+        position: absolute !important;
+        top: 8px !important;
+        right: 8px !important;
+        width: 44px !important;
+        height: 44px !important;
+        background: rgba(255,255,255,0.95) !important;
+        border-radius: 8px !important;
+        border: 2px solid #f59e0b !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1) !important;
+        z-index: 2 !important;
+    }
+    .new_r-item-rating-value {
+        font-size: 0.85rem !important;
+        font-weight: 700 !important;
+        color: #f59e0b !important;
+        line-height: 1 !important;
+    }
+    .new_r-item-rating-rev {
+        font-size: 0.45rem !important;
+        color: #64748b !important;
+        line-height: 1 !important;
+    }
+    .new_r-item-rating-rev span {
+        font-size: 0.5rem !important;
+        font-weight: 600 !important;
+    }
+    /* Ховаємо кругові елементи */
+    .new_r-item-rating-container .slice,
+    .new_r-item-rating-container .bar,
+    .new_r-item-rating-container .fill {
+        display: none !important;
+    }
+
+    /* Контейнер для фото (щоб рейтинг був поверх) */
+    .new_r-item-img-wrap {
+        position: relative !important;
+        flex-shrink: 0 !important;
+        width: 120px !important;
+        min-width: 120px !important;
+        max-width: 120px !important;
+        overflow: hidden !important;
+    }
+
+    /* Кнопка бронювання – ховаємо, якщо вона заважає, або залишаємо маленьку */
+    .new_r-item .btn,
+    .new_t-order-btn {
+        display: none !important;
+    }
+
+    /* Перемикач валюти */
+    .new_r-currency-switch {
+        float: none !important;
+        margin: 0 0 12px auto !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+    }
+}
+
+}
+    /* ========== ВИПРАВЛЕННЯ ДЛЯ МОБІЛЬНИХ - ЦІНА ПІД ТЕКСТОМ ========== */
+@media (max-width: 768px) {
+    /* Основний контейнер картки - flex рядок */
+    .new_r-item {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+        height: auto !important;
+        min-height: 140px !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        background: white !important;
+        border: 1px solid #e2e8f0 !important;
+        position: relative !important;
+    }
+
+    /* Фото - фіксована ширина, не розтягується */
+    .new_r-item-img {
+        position: relative !important;
+        width: 120px !important;
+        min-width: 120px !important;
+        max-width: 120px !important;
+        height: auto !important;
+        object-fit: cover !important;
+        flex-shrink: 0 !important;
+        display: block !important;
+    }
+
+    /* Тіло картки - займає решту місця */
+    .new_r-item-body {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        flex: 1 !important;
+        padding: 10px 14px !important;
+        min-height: 120px !important;
+        overflow: hidden !important;
+        position: relative !important;
+    }
+
+    /* Блок з деталями - займає весь вільний простір */
+    .new_r-item-table,
+    .new_r-item-col {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 4px !important;
+        margin: 4px 0 !important;
+    }
+
+    /* Ціна - притискається до низу, вирівнюється вправо */
+    .new_r-item-price {
+        margin-top: auto !important; /* Важливо: притискає до низу */
+        padding-top: 8px !important;
+        border-top: 1px solid #e2e8f0 !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: baseline !important;
+        gap: 8px !important;
+        flex-wrap: wrap !important;
+        width: 100% !important;
+        background: transparent !important;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+
+    .new_price-value {
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+    }
+
+    .new_price-desc {
+        font-size: 0.6rem !important;
+        color: #94a3b8 !important;
+    }
+
+    /* Прибираємо зайві відступи та абсолютне позиціонування */
+    .new_r-item-price {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Рейтинг - поверх фото, не впливає на текст */
+    .new_r-item-rating-container {
+        position: absolute !important;
+        top: 8px !important;
+        right: 8px !important;
+        width: 44px !important;
+        height: 44px !important;
+        z-index: 5 !important;
+        background: rgba(255,255,255,0.95) !important;
+        border-radius: 8px !important;
+        border: 2px solid #f59e0b !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1) !important;
+    }
+    .new_r-item-rating-value {
+        font-size: 0.85rem !important;
+        font-weight: 700 !important;
+        color: #f59e0b !important;
+    }
+    .new_r-item-rating-rev {
+        display: none !important; /* ховаємо слово "оцінок" */
+    }
+
+    /* Перемикач валюти - зліва або по центру */
+    .new_r-currency-switch {
+        float: none !important;
+        margin: 0 0 10px auto !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+    }
+
+    /* Заголовок готелю */
+    .new_r-item-hotel {
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 4px !important;
+        line-height: 1.2 !important;
+    }
+
+    /* Геолокація */
+    .new_r-item-geo {
+        font-size: 0.7rem !important;
+        margin-bottom: 4px !important;
+        color: #64748b !important;
+    }
+
+    /* Харчування */
+    .new_r-item-food {
+        font-size: 0.6rem !important;
+        padding: 2px 10px !important;
+        background: #f1f5f9 !important;
+        border-radius: 12px !important;
+        display: inline-block !important;
+        width: fit-content !important;
+        margin-bottom: 4px !important;
+        color: #334155 !important;
+    }
+}
+    /* ========== ДОДАТКОВІ ВІДСТУПИ ДЛЯ МОБІЛЬНИХ ========== */
+@media (max-width: 768px) {
+    /* ... ваші попередні стилі ... */
+
+    /* Рядок із зірочками та назвою готелю */
+    .new_r-item-hotel {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 6px !important; /* відступ між зірочками та назвою */
+        margin-bottom: 4px !important;
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        line-height: 1.2 !important;
+    }
+
+    /* Контейнер зірок */
+    .new_r-item-stars {
+        display: inline-flex !important;
+        gap: 2px !important;
+        flex-shrink: 0 !important; /* щоб зірочки не зменшувалися */
+    }
+
+    /* Кожна зірочка */
+    .new_r-item-star {
+        width: 12px !important;
+        height: 12px !important;
+    }
+
+    /* Назва готелю – займає решту рядка */
+    .new_r-item-hotel .new_r-item-hotel-name,
+    .new_r-item-hotel span:not(.new_r-item-stars) {
+        flex: 1 !important;
+        min-width: 0 !important;
+        word-break: break-word !important;
+    }
+
+    /* Розташування – окремий рядок з відступом */
+    .new_r-item-geo {
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        font-size: 0.7rem !important;
+        color: #64748b !important;
+        margin-top: 2px !important;
+        margin-bottom: 4px !important;
+    }
+
+    .new_r-item-geo svg {
+        width: 12px !important;
+        height: 12px !important;
+        flex-shrink: 0 !important;
+    }
+}
+    /* ========== ФІНАЛЬНЕ ВИПРАВЛЕННЯ: ПЕРЕНОС ДАТИ ТА НОЧЕЙ ========== */
+@media (max-width: 768px) {
+    .new_r-item-col {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 2px !important;
+    }
+
+    .new_r-item-from,
+    .new_r-item-date {
+        white-space: normal !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        font-size: 0.8rem !important;
+    }
+
+    .new_r-item-from svg,
+    .new_r-item-date svg {
+        width: 14px !important;
+        height: 14px !important;
+    }
+
+    /* Якщо потрібно, щоб "на 7 ночей" було з малої літери */
+    .new_r-item-date {
+        text-transform: lowercase !important;
+    }
+}
+    /* ========== ПОКАЗУЄМО ТІЛЬКИ ЦИФРУ ВІДГУКІВ, БЕЗ СЛІВ ========== */
+.new_r-item-rating-rev {
+    display: flex !important;
+    font-size: 0 !important;          /* ховаємо текст (слово "оцінок") */
+    color: #64748b !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    margin-top: 8px !important;       /* ← ДОДАНО: відступ зверху */
+}
+
+/* Показуємо цифру */
+.new_r-item-rating-rev span {
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    color: #475569 !important;
+}
+
+/* Для мобільних */
+@media (max-width: 768px) {
+    .new_r-item-rating-rev {
+        font-size: 0 !important;
+        gap: 1px !important;
+    }
+    .new_r-item-rating-rev span {
+        font-size: 0.55rem !important;
+    }
+}
+    /* ========== ЗБІЛЬШЕННЯ ВІДСТУПУ ДЛЯ ЦІНИ ========== */
+.new_r-item-price {
+    margin-top: 25px !important;   /* збільшуємо відступ зверху */
+    padding-top: 18px !important;  /* трохи більше внутрішнього відступу */
+}
+
+/* Для мобільних можна трохи зменшити, якщо забагато */
+@media (max-width: 768px) {
+    .new_r-item-price {
+        margin-top: 12px !important;
+        padding-top: 10px !important;
+    }
+}
+    @media (max-width: 768px) {
+    .new_r-item .new_r-item-price {
+        margin-top: 30px !important;
+    }
+    .new_r-item-body {
+        padding-bottom: 20px !important;
+    }
+}
+    /* ========== ВИПРАВЛЕННЯ: ДАТА ТА НОЧІ В ОДИН РЯДОК ========== */
+@media (max-width: 768px) {
+    /* Забороняємо перенос усередині елементів дати та ночей */
+    .new_r-item-from,
+    .new_r-item-date {
+        white-space: nowrap !important;
+    }
 }
 </style>
 <script>

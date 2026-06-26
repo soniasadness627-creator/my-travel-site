@@ -22,7 +22,7 @@
                     <p class="card-text">{{ item.text|truncatechars:120 }}</p>
                     <div class="mt-auto">
                         <p class="text-muted small mb-2">{{ item.created_at|date:"d.m.Y" }}</p>
-                        <a href="{% if agent_site %}{% url 'agent_news_detail' agent_site.slug item.pk %}{% else %}/news/{{ item.pk }}/{% endif %}" class="btn btn-outline-primary btn-sm">Детальніше</a>
+<a href="/news/{{ item.pk }}/" class="btn btn-outline-primary btn-sm">Детальніше</a>
                     </div>
                 </div>
             </div>

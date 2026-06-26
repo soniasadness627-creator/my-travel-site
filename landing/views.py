@@ -23,9 +23,10 @@ def index(request):
 
 
 def privacy_policy(request):
-    """Сторінка політики конфіденційності для лендингу"""
-    return render(request, 'landing/privacy_policy.html')
-
+    context = {
+        'agent_site': getattr(request, 'current_agent_site', None),
+    }
+    return render(request, 'landing/privacy_policy.html', context)
 
 def terms_of_service(request):
     """Сторінка правил надання послуг для лендингу"""

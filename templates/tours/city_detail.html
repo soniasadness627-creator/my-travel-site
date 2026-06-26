@@ -7,7 +7,8 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% if agent_site %}{% url 'agent_home' agent_site.slug %}{% else %}{% url 'home' %}{% endif %}">Головна</a></li>
-<li class="breadcrumb-item"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/?country={{ city.country|urlencode }}{% else %}/search-otpusk/?country={{ city.country|urlencode }}{% endif %}">{{ city.country }}</a></li>            <li class="breadcrumb-item active" aria-current="page">{{ city.name }}</li>
+            <li class="breadcrumb-item"><a href="{% if agent_site %}/a/{{ agent_site.slug }}/search-otpusk/?country={{ city.country|urlencode }}{% else %}/search-otpusk/?country={{ city.country|urlencode }}{% endif %}">{{ city.country }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ city.name }}</li>
         </ol>
     </nav>
 
@@ -166,7 +167,7 @@
                 </div>
             </div>
             <div class="consultation-form-right">
-                <form id="consultationForm" novalidate>
+                <form id="consultationForm" action="/consultation-ajax/" method="POST" novalidate>
                     {% csrf_token %}
                     <input type="hidden" name="consultation_submit" value="1">
                     <div class="consultation-field">
@@ -190,7 +191,8 @@
                             <input type="tel" name="phone" id="consultationPhone" placeholder="XX XXX XX XX" required>
                         </div>
                     </div>
-                    <button type="button" class="btn w-100" id="submitConsultationBtn" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">Залишити запит</button>
+                    <!-- ЗМІНЕНО: button -> type="button" + onclick -->
+<button type="button" class="btn w-100" id="submitConsultationBtn" onclick="submitConsultationForm()" style="background: var(--primary-color); color: #ffffff; font-weight: 500; height: 45px; border-radius: 6px;">Залишити запит</button>
                 </form>
             </div>
         </div>
@@ -365,40 +367,47 @@
 // ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
 (function() {
     const submitBtn = document.getElementById('submitConsultationBtn');
-    if (!submitBtn) return;
+    if (!submitBtn) {
+        console.log('ℹ️ Кнопка submitConsultationBtn не знайдена на цій сторінці');
+        return;
+    }
+
+    console.log('✅ Кнопка консультації знайдена');
 
     submitBtn.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
 
-        // Збираємо дані з форми
-        const name = document.getElementById('consultationName')?.value || '';
-        const phone = document.getElementById('consultationPhone')?.value || '';
+        const name = document.getElementById('consultationName')?.value?.trim() || '';
+        const phone = document.getElementById('consultationPhone')?.value?.trim() || '';
         const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken');
 
-        // Валідація
-        if (!name.trim()) {
-            console.log('Введіть ім\'я');
+        if (!name) {
+            alert("Будь ласка, введіть ваше ім'я");
+            document.getElementById('consultationName').focus();
             return;
         }
-        if (!phone.trim()) {
-            console.log('Введіть телефон');
+        if (!phone) {
+            alert("Будь ласка, введіть номер телефону");
+            document.getElementById('consultationPhone').focus();
             return;
         }
 
-        // Визначаємо URL
-        let ajaxUrl = '/consultation-ajax/';
-        {% if agent_site %}
-        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
-        {% endif %}
+        // Завжди використовуємо /consultation-ajax/
+        const ajaxUrl = '/consultation-ajax/';
+        console.log(`📡 Відправка на ${ajaxUrl}`);
 
-        // Відправляємо
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Відправка...';
+        submitBtn.disabled = true;
+
         fetch(ajaxUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': csrfToken
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
             },
             body: new URLSearchParams({
                 'name': name,
@@ -407,19 +416,44 @@
                 'consultation_submit': '1'
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
+            console.log('📦 Відповідь:', data);
             if (data.success) {
-                // Очищуємо форму
                 document.getElementById('consultationName').value = '';
                 document.getElementById('consultationPhone').value = '';
-                console.log('Заявка відправлена');
+                alert('✅ Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом.');
+            } else {
+                alert('❌ ' + (data.error || 'Сталася помилка. Спробуйте пізніше.'));
             }
         })
         .catch(error => {
-            console.error('Помилка:', error);
+            console.error('❌ Помилка:', error);
+            alert('❌ Помилка з\'єднання. Спробуйте пізніше.');
+        })
+        .finally(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
         });
     });
+
+    function getCookie(name) {
+        let value = null;
+        if (document.cookie && document.cookie !== '') {
+            document.cookie.split(';').forEach(cookie => {
+                const parts = cookie.trim().split('=');
+                if (parts[0] === name) {
+                    value = decodeURIComponent(parts[1]);
+                }
+            });
+        }
+        return value;
+    }
 })();
 </script>
 
@@ -730,4 +764,5 @@
         if (cardBody) cardBody.style.backgroundColor = 'transparent';
     }
 </script>
+
 {% endblock %}

@@ -507,10 +507,7 @@
         }
 
         // Визначаємо URL
-        let ajaxUrl = '/consultation-ajax/';
-        {% if agent_site %}
-        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
-        {% endif %}
+        const ajaxUrl = '/consultation-ajax/';
 
         // Відправляємо
         fetch(ajaxUrl, {

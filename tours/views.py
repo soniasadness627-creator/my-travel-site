@@ -515,8 +515,11 @@ def get_popular_hotels_api(request, slug=None):
     return JsonResponse({'hotels': data})
 
 
-# ========== ОСНОВНІ VIEWS ==========
 def home(request):
+    print("=" * 60)
+    print("🔥🔥🔥 ВИКЛИКАНО home() З tours/views.py")
+    print(f"🔍 request.current_agent_site: {getattr(request, 'current_agent_site', None)}")
+    print("=" * 60)
     agent_site = getattr(request, 'current_agent_site', None)
 
     if not agent_site and request.user.is_authenticated and request.user.is_superuser:
@@ -540,15 +543,50 @@ def home(request):
 
         agent_site = FakeAgentSite(request.user)
 
-    blocks_order = getattr(request, 'blocks_order', [])
-    active_blocks = getattr(request, 'active_blocks', [])
+    # ========== ОСНОВНА ЛОГІКА ДЛЯ АГЕНТІВ ==========
+    from constructor.models import AgentBlockSettings
 
-    if not blocks_order:
+    # Визначаємо, чи це запит від агента
+    is_agent = hasattr(request, 'current_agent_site') and request.current_agent_site
+
+    # Отримуємо банери (для всіх випадків)
+    banners = []
+
+    if is_agent:
+        # Для агентів - читаємо налаштування з БД
+        try:
+            agent_settings = AgentBlockSettings.objects.get(agent=request.current_agent_site.user)
+            agent_settings.refresh_from_db()  # ПРИМУСОВО ОНОВЛЮЄМО
+            blocks_order = agent_settings.blocks_order if agent_settings.blocks_order else [
+                'price_calendar', 'popular_destinations', 'consultation',
+                'consultation_promo', 'tours_from_city', 'about_us',
+                'popular_hotels', 'hot_tours', 'banners'
+            ]
+            active_blocks = agent_settings.active_blocks if agent_settings.active_blocks else blocks_order
+            banners = agent_settings.banners or []  # ← ОТРИМУЄМО БАНЕРИ
+
+            print(f"🔴 АГЕНТ: active_blocks = {active_blocks}")
+            print(f"🔴 АГЕНТ: banners = {len(banners)} банерів")
+        except:
+            # Якщо помилка - стандартні значення
+            blocks_order = [
+                'price_calendar', 'popular_destinations', 'consultation',
+                'consultation_promo', 'tours_from_city', 'about_us',
+                'popular_hotels', 'hot_tours', 'banners'
+            ]
+            active_blocks = blocks_order
+            banners = []
+    else:
+        # Для головного сайту - стандартні значення
         blocks_order = [
             'price_calendar', 'popular_destinations', 'consultation',
-            'tours_from_city', 'about_us', 'popular_hotels', 'banners'
+            'consultation_promo', 'tours_from_city', 'about_us',
+            'popular_hotels', 'hot_tours', 'banners'
         ]
+        active_blocks = blocks_order
+        banners = []
 
+    # Фільтруємо активні блоки
     if active_blocks:
         ordered_active_blocks = [b for b in blocks_order if b in active_blocks]
     else:
@@ -559,10 +597,9 @@ def home(request):
         'random_agent': get_random_agent(),
         'active_blocks': ordered_active_blocks,
         'blocks_order': blocks_order,
-        'banners': getattr(request, 'banners', []),
+        'banners': banners,  # ← ДОДАЄМО БАНЕРИ В КОНТЕКСТ
     }
     return render(request, 'tours/home.html', context)
-
 
 def tour_detail(request, pk=None, slug=None):
     hid = request.GET.get('hid')
@@ -630,11 +667,11 @@ def news_detail(request, pk):
     news_item = get_object_or_404(News, pk=pk)
     recommended = News.objects.exclude(pk=pk).order_by('-created_at')[:4]
 
+    # Простий контекст без складних URL
     context = {
         'news_item': news_item,
         'recommended': recommended,
-        'agent_site': getattr(request, 'current_agent_site', None),  # ← ЦЕЙ РЯДОК МАЄ БУТИ
-        'random_agent': get_random_agent(),
+        'agent_site': getattr(request, 'current_agent_site', None),
     }
     return render(request, 'tours/news_detail.html', context)
 
@@ -827,6 +864,20 @@ def booking_ajax(request, slug=None):
             tour=None, name=name, phone=full_phone,
             email=email, message=full_message
         )
+        if hasattr(request, 'current_agent_site') and request.current_agent_site:
+            booking.agent = request.current_agent_site.user
+            booking.save(update_fields=['agent'])
+            print(f"✅ Агент призначений для бронювання: {request.current_agent_site.user.email}")
+        elif slug:
+            try:
+                from constructor.models.agent_site import AgentSite
+                agent_site = AgentSite.objects.filter(slug=slug).first()
+                if agent_site:
+                    booking.agent = agent_site.user
+                    booking.save(update_fields=['agent'])
+                    print(f"✅ Агент призначений для бронювання (з slug): {agent_site.user.email}")
+            except:
+                pass
         return JsonResponse({'success': True, 'message': 'Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом.'})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
@@ -835,6 +886,13 @@ def booking_ajax(request, slug=None):
 @csrf_exempt
 @require_http_methods(["POST"])
 def consultation_ajax(request, slug=None):
+    print("="*60)
+    print("📞 consultation_ajax ВИКЛИКАНО")
+    print(f"🔹 Slug: {slug}")
+    print(f"🔹 POST: {request.POST}")
+    print(f"🔹 current_agent_site: {getattr(request, 'current_agent_site', None)}")
+    print("="*60)
+
     try:
         name = request.POST.get('name', '').strip()
         phone = request.POST.get('phone', '').strip()
@@ -848,15 +906,25 @@ def consultation_ajax(request, slug=None):
 
         phone_clean = re.sub(r'[^0-9]', '', phone)
         if len(phone_clean) < 9:
-            return JsonResponse({'success': False, 'error': "Введіть коректний номер телефону (мінімум 9 цифр)"})
+            return JsonResponse({'success': False, 'error': "Введіть коректний номер (мін. 9 цифр)"})
 
         full_phone = f"{country_code}{phone_clean}"
 
-        consultation = Consultation.objects.create(name=name, phone=full_phone, comment=comment)
+        # --- СТВОРЮЄМО ЗАПИС ---
+        consultation = Consultation.objects.create(
+            name=name,
+            phone=full_phone,
+            comment=comment
+        )
+        print(f"✅ Створено Consultation ID: {consultation.id}")
 
+        # --- ПРИЗНАЧАЄМО АГЕНТА ---
+        agent_assigned = False
         if hasattr(request, 'current_agent_site') and request.current_agent_site:
             consultation.agent = request.current_agent_site.user
             consultation.save()
+            agent_assigned = True
+            print(f"✅ Агент призначений: {request.current_agent_site.user.email}")
         elif slug:
             try:
                 from constructor.models.agent_site import AgentSite
@@ -864,13 +932,25 @@ def consultation_ajax(request, slug=None):
                 if agent_site:
                     consultation.agent = agent_site.user
                     consultation.save()
-            except:
-                pass
+                    agent_assigned = True
+                    print(f"✅ Агент призначений (з slug): {agent_site.user.email}")
+            except Exception as e:
+                print(f"❌ Помилка призначення агента з slug: {e}")
 
-        return JsonResponse({'success': True, 'message': 'Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом.'})
+        if not agent_assigned:
+            print("⚠️ Агент НЕ призначений (але запис створено)")
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом.',
+            'consultation_id': consultation.id
+        })
+
     except Exception as e:
+        print(f"❌ КРИТИЧНА ПОМИЛКА: {e}")
+        import traceback
+        traceback.print_exc()
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
-
 
 # ========== КЛАСИ ДЛЯ РОБОТИ З НОВИНАМИ ==========
 class NewsListView(ListView):

@@ -67,8 +67,8 @@
 </head>
 <body class="font-sans antialiased bg-slate-50">
     <div class="container-wide mx-auto px-6 md:px-12 py-12">
-        <a href="/" class="back-link">
-            <i class="fa-solid fa-arrow-left"></i> Повернутися на головну
+<a href="{% if agent_site %}/home/{% else %}/{% endif %}" class="back-link">
+    <i class="fa-solid fa-arrow-left"></i> Повернутися на головну
         </a>
 
         <div class="legal-content">

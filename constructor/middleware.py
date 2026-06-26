@@ -1,7 +1,23 @@
 from django.utils.deprecation import MiddlewareMixin
 from django.db import connection
 from django.urls import reverse
+from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
 from .models import AgentSite
+
+
+class RestrictAdminAccessMiddleware(MiddlewareMixin):
+    """Забороняє агентам доступ до /admin/, перенаправляє на /a/admin/"""
+
+    def process_request(self, request):
+        # Перевіряємо чи запит до /admin/ або /admin/constructor/
+        if request.path.startswith('/admin/'):
+            # Якщо користувач авторизований і є агентом (але не суперадміном)
+            if request.user.is_authenticated and hasattr(request.user,
+                                                         'is_agent') and request.user.is_agent and not request.user.is_superuser:
+                # Перенаправляємо на агентську адмінку
+                return HttpResponseRedirect('/a/admin/')
+        return None
 
 
 class AgentSiteMiddleware(MiddlewareMixin):
@@ -18,7 +34,7 @@ class AgentSiteMiddleware(MiddlewareMixin):
             if len(parts) >= 2:
                 slug = parts[1]
                 try:
-                    agent_site = AgentSite.objects.select_related('user').get(slug=slug)
+                    agent_site = AgentSite.objects.select_related('user').get(slug__iexact=slug)
                     request.current_agent_site = agent_site
                     print(f"✅ AgentSiteMiddleware: знайдено сайт для slug={slug}")
                 except AgentSite.DoesNotExist:
@@ -57,16 +73,15 @@ class SubdomainMiddleware(MiddlewareMixin):
                 return None
 
             # 2. ІГНОРУЄМО ВАШ ОСОБИСТИЙ ПІДДОМЕН (sonias22)
-            #    Він не повинен показувати лендінг чи щось інше.
             if subdomain == 'sonias22':
                 print(f"🚫 SubdomainMiddleware: субдомен {subdomain} заблоковано для показу сайту.")
                 request.current_agent_site = None
                 request.is_agent_subdomain = False
                 return None
 
-            # 3. ШУКАЄМО ЗВИЧАЙНОГО АГЕНТА
+            # 3. ШУКАЄМО ЗВИЧАЙНОГО АГЕНТА (БЕЗ ВРАХУВАННЯ РЕГІСТРУ)
             try:
-                agent_site = AgentSite.objects.select_related('user').get(slug=subdomain)
+                agent_site = AgentSite.objects.select_related('user').get(slug__iexact=subdomain)
                 request.current_agent_site = agent_site
                 request.is_agent_subdomain = True
                 request.agent_subdomain = subdomain
@@ -78,6 +93,46 @@ class SubdomainMiddleware(MiddlewareMixin):
         else:
             request.current_agent_site = None
             request.is_agent_subdomain = False
+
+        return None
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        """Обробляє URL перед викликом view"""
+
+        # Якщо це запит до /landing/ на субдомені - перенаправляємо на головний домен
+        if request.path.startswith('/landing/'):
+            host = request.get_host().split(':')[0]
+            # Перевіряємо, чи це не головний домен
+            if host not in ['clubdatour.com.ua', 'www.clubdatour.com.ua', '209.38.199.98']:
+                print(f"🔄 SubdomainMiddleware: перенаправлення з {host}/landing/ на clubdatour.com.ua/landing/")
+                return redirect('https://clubdatour.com.ua/landing/')
+
+        # Якщо це запит до кореня субдомену (без /home/) - додаємо /home/
+        if hasattr(request, 'is_agent_subdomain') and request.is_agent_subdomain:
+            if request.path == '/' or request.path == '':
+                slug = request.agent_subdomain
+                print(f"🔄 SubdomainMiddleware: перенаправлення з {slug}.clubdatour.com.ua/ на /home/")
+                return redirect('/home/')
+
+        # ========== ВИПРАВЛЕННЯ: ПРИБИРАЄМО /a/slug/ З URL НА СУБДОМЕНІ ==========
+        # Якщо це субдомен і шлях починається з /a/, видаляємо цю частину
+        if hasattr(request, 'is_agent_subdomain') and request.is_agent_subdomain:
+            if request.path.startswith('/a/'):
+                # Перевіряємо, чи це не адмінка агента (/a/admin/)
+                if not request.path.startswith('/a/admin/'):
+                    # Видаляємо /a/slug/ з початку шляху
+                    parts = request.path.split('/')
+                    if len(parts) >= 3:
+                        # Беремо частину після /a/slug/
+                        new_path = '/' + '/'.join(parts[3:])
+                        if not new_path:
+                            new_path = '/'
+                        # Додаємо параметри запиту, якщо вони є
+                        query_string = request.META.get('QUERY_STRING', '')
+                        if query_string:
+                            new_path += '?' + query_string
+                        print(f"🔄 SubdomainMiddleware: виправляємо URL з {request.path} на {new_path}")
+                        return redirect(new_path)
 
         return None
 
@@ -129,6 +184,7 @@ class AgentColorsMiddleware(MiddlewareMixin):
 
 class DatabaseConnectionMiddleware(MiddlewareMixin):
     """Автоматично перевіряє та відновлює з'єднання з БД перед кожним запитом"""
+
     def process_request(self, request):
         try:
             connection.ensure_connection()
@@ -138,4 +194,18 @@ class DatabaseConnectionMiddleware(MiddlewareMixin):
                 connection.ensure_connection()
             except Exception:
                 pass
+        return None
+
+
+class LandingRedirectMiddleware(MiddlewareMixin):
+    """Перенаправляє запити до /landing/ на субдоменах на головний домен"""
+
+    def process_request(self, request):
+        # Якщо шлях починається з /landing/
+        if request.path.startswith('/landing/'):
+            host = request.get_host().split(':')[0]
+            # Якщо це субдомен (не головний домен)
+            if host not in ['clubdatour.com.ua', 'www.clubdatour.com.ua', '209.38.199.98']:
+                print(f"🔄 LandingRedirectMiddleware: {host}/landing/ -> clubdatour.com.ua/landing/")
+                return redirect('https://clubdatour.com.ua/landing/')
         return None

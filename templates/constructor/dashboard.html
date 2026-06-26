@@ -11,7 +11,7 @@
                 <p class="text-slate-500 text-base mt-1 opacity-80">Налаштуйте свій сайт за допомогою конструктора</p>
             </div>
             <div class="flex gap-3">
-                <a href="/a/{{ agent_site.slug }}/" target="_blank" class="btn-outline-custom">
+                <a href="https://{{ agent_site.slug }}.clubdatour.com.ua/home/" target="_blank" class="btn-outline-custom">
                     <i class="fa-solid fa-globe mr-1"></i> Відкрити сайт
                 </a>
                 <button type="submit" form="site-form" class="btn-primary-custom">
@@ -232,7 +232,7 @@
                 <div class="active-blocks-list" style="max-height: 300px; overflow-y: auto;">
                     {% for block_id, block_name in all_blocks.items %}
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" name="active_blocks" value="{{ block_id }}" id="block_{{ block_id }}" {% if block_id in active_blocks %}checked{% endif %}>
+<input class="form-check-input" type="checkbox" name="active_blocks" value="{{ block_id }}" id="block_{{ block_id }}" {% if block_id in active_blocks %}checked="checked"{% endif %}>
                             <label class="form-check-label" for="block_{{ block_id }}">{{ block_name }}</label>
                         </div>
                     {% endfor %}
@@ -1084,9 +1084,6 @@
 </style>
 
 <script>
-// ========== ОСНОВНІ ЗМІННІ ==========
-let textBlockCount = 1;
-
 // ========== ПЕРЕМИКАННЯ ТАБІВ ==========
 document.querySelectorAll('.tab-trigger').forEach(trigger => {
     trigger.addEventListener('click', () => {
@@ -1098,74 +1095,14 @@ document.querySelectorAll('.tab-trigger').forEach(trigger => {
     });
 });
 
-// ========== HERO ФОН ==========
-const heroInput = document.getElementById('id_hero_background');
-const heroDisplay = document.getElementById('hero_file_name');
-const heroPreviewContainer = document.getElementById('hero_preview_container');
-const heroPreview = document.getElementById('hero_preview');
-const clearHeroBtn = document.getElementById('clearHeroBtn');
-
-if (heroInput) {
-    heroInput.addEventListener('change', function(e) {
-        if (this.files && this.files[0]) {
-            heroDisplay.textContent = this.files[0].name;
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                if (heroPreview) heroPreview.src = ev.target.result;
-                if (heroPreviewContainer) heroPreviewContainer.style.display = 'block';
-            };
-            reader.readAsDataURL(this.files[0]);
-        }
-    });
-}
-
-if (clearHeroBtn) {
-    clearHeroBtn.addEventListener('click', function() {
-        heroInput.value = '';
-        heroDisplay.textContent = 'Файл не вибрано';
-        if (heroPreviewContainer) heroPreviewContainer.style.display = 'none';
-        let cf = document.querySelector('input[name="hero_background-clear"]');
-        if (!cf) {
-            cf = document.createElement('input');
-            cf.type = 'hidden';
-            cf.name = 'hero_background-clear';
-            cf.value = 'on';
-            heroInput.parentNode.appendChild(cf);
-        } else {
-            cf.value = 'on';
-        }
-    });
-}
-
-// ========== ЛОГОТИПИ ==========
-document.querySelectorAll('.clear-logo-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const field = this.dataset.field;
-        const input = document.getElementById(`id_${field}`);
-        const span = document.getElementById(`${field}_display`);
-        if (input) {
-            input.value = '';
-            span.textContent = 'Файл не вибрано';
-            this.style.display = 'none';
-            let cf = document.querySelector(`input[name="${field}-clear"]`);
-            if (!cf) {
-                cf = document.createElement('input');
-                cf.type = 'hidden';
-                cf.name = `${field}-clear`;
-                cf.value = 'on';
-                input.parentNode.parentNode.appendChild(cf);
-            } else {
-                cf.value = 'on';
-            }
-        }
-    });
-});
-
-// ========== ПОРЯДОК БЛОКІВ ==========
+// ========== КЛІКАБЕЛЬНИЙ ПОРЯДОК БЛОКІВ ==========
 function updateBlocksOrder() {
     const items = document.querySelectorAll('#blocks-order-container .block-order-item');
     const form = document.getElementById('site-form');
+    if (!form) return;
+
     form.querySelectorAll('input[name="blocks_order"]').forEach(el => el.remove());
+
     items.forEach((item, idx) => {
         const input = document.createElement('input');
         input.type = 'hidden';
@@ -1173,27 +1110,19 @@ function updateBlocksOrder() {
         input.value = item.dataset.block;
         form.appendChild(input);
     });
+    console.log('✅ Порядок блоків оновлено');
 }
 
-function updateActiveBlocks() {
-    const form = document.getElementById('site-form');
-    form.querySelectorAll('input[name="active_blocks"]').forEach(el => el.remove());
-    document.querySelectorAll('.active-blocks-list input[type="checkbox"]:checked').forEach(cb => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'active_blocks';
-        input.value = cb.value;
-        form.appendChild(input);
-    });
-}
-
+// Переміщення блоків
 document.querySelectorAll('.move-up').forEach(btn => {
     btn.addEventListener('click', function(e) {
         e.preventDefault();
         const item = this.closest('.block-order-item');
         const prev = item.previousElementSibling;
-        if (prev) item.parentNode.insertBefore(item, prev);
-        updateBlocksOrder();
+        if (prev) {
+            item.parentNode.insertBefore(item, prev);
+            updateBlocksOrder();
+        }
     });
 });
 
@@ -1202,18 +1131,23 @@ document.querySelectorAll('.move-down').forEach(btn => {
         e.preventDefault();
         const item = this.closest('.block-order-item');
         const next = item.nextElementSibling;
-        if (next) item.parentNode.insertBefore(next, item);
-        updateBlocksOrder();
+        if (next) {
+            item.parentNode.insertBefore(next, item);
+            updateBlocksOrder();
+        }
     });
 });
 
-// ========== ФУНКЦІЇ ДЛЯ БАНЕРІВ ==========
+// ========== ФУНКЦІЇ ДЛЯ ТЕКСТОВИХ БЛОКІВ БАНЕРІВ ==========
+let textBlockCount = 1;
+
 function updatePreview() {
     const previewContent = document.getElementById('previewContent');
     const overlayOpacity = document.getElementById('overlayOpacity')?.value || 0.4;
     const previewOverlay = document.getElementById('previewOverlay');
     if (previewOverlay) previewOverlay.style.backgroundColor = `rgba(0,0,0,${overlayOpacity})`;
-    document.getElementById('opacityValue')?.setAttribute('value', overlayOpacity);
+    const opacitySpan = document.getElementById('opacityValue');
+    if (opacitySpan) opacitySpan.textContent = overlayOpacity;
     if (!previewContent) return;
     previewContent.innerHTML = '';
 
@@ -1225,6 +1159,7 @@ function updatePreview() {
         const position = block.querySelector('[name^="position_"]')?.value || 'center';
         const buttonText = block.querySelector('[name^="button_text_"]')?.value || '';
         const buttonColor = block.querySelector('[name^="button_color_"]')?.value || '#086745';
+        const buttonLink = block.querySelector('[name^="button_link_"]')?.value || '';
 
         const div = document.createElement('div');
         div.style.position = 'absolute';
@@ -1262,6 +1197,11 @@ function updatePreview() {
             const btn = document.createElement('button');
             btn.textContent = buttonText;
             btn.style.cssText = `background:${buttonColor};color:white;border:none;padding:6px 16px;border-radius:20px;margin-top:10px;cursor:pointer`;
+            if (buttonLink) {
+                btn.addEventListener('click', function() {
+                    window.open(buttonLink, '_blank');
+                });
+            }
             div.appendChild(btn);
         }
         previewContent.appendChild(div);
@@ -1287,9 +1227,15 @@ function addTextBlock() {
                 <div class="col-md-6">
                     <label>Позиція</label>
                     <select name="position_${id}" class="form-control">
-                        <option value="top-left">Вгорі зліва</option><option value="top-center">Вгорі по центру</option><option value="top-right">Вгорі справа</option>
-                        <option value="center-left">По центру зліва</option><option value="center">По центру</option><option value="center-right">По центру справа</option>
-                        <option value="bottom-left">Внизу зліва</option><option value="bottom-center">Внизу по центру</option><option value="bottom-right">Внизу справа</option>
+                        <option value="top-left">Вгорі зліва</option>
+                        <option value="top-center">Вгорі по центру</option>
+                        <option value="top-right">Вгорі справа</option>
+                        <option value="center-left">По центру зліва</option>
+                        <option value="center">По центру</option>
+                        <option value="center-right">По центру справа</option>
+                        <option value="bottom-left">Внизу зліва</option>
+                        <option value="bottom-center">Внизу по центру</option>
+                        <option value="bottom-right">Внизу справа</option>
                     </select>
                 </div>
             </div>
@@ -1302,6 +1248,26 @@ function addTextBlock() {
     `;
     document.getElementById('textBlocksContainer').insertAdjacentHTML('beforeend', html);
     updatePreview();
+
+    // Додаємо обробник для видалення
+    const newBlock = document.querySelector(`.text-block-item[data-block-id="${id}"]`);
+    const removeBtn = newBlock.querySelector('.remove-text-block');
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function() {
+            if (document.querySelectorAll('.text-block-item').length > 1) {
+                newBlock.remove();
+                updatePreview();
+            } else {
+                alert('Повинен бути хоча б один текстовий блок');
+            }
+        });
+    }
+
+    // Додаємо обробники для змін
+    newBlock.querySelectorAll('input, select, textarea').forEach(input => {
+        input.addEventListener('input', updatePreview);
+        input.addEventListener('change', updatePreview);
+    });
 }
 
 function addTextBlockWithData(data, id) {
@@ -1341,15 +1307,55 @@ function addTextBlockWithData(data, id) {
         </div>
     `;
     document.getElementById('textBlocksContainer').insertAdjacentHTML('beforeend', html);
+
+    const newBlock = document.querySelector(`.text-block-item[data-block-id="${id}"]`);
+    const removeBtn = newBlock.querySelector('.remove-text-block');
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function() {
+            if (document.querySelectorAll('.text-block-item').length > 1) {
+                newBlock.remove();
+                updatePreview();
+            } else {
+                alert('Повинен бути хоча б один текстовий блок');
+            }
+        });
+    }
+
+    newBlock.querySelectorAll('input, select, textarea').forEach(input => {
+        input.addEventListener('input', updatePreview);
+        input.addEventListener('change', updatePreview);
+    });
+
     updatePreview();
 }
 
-// ========== РЕДАГУВАННЯ БАНЕРА ==========
+// ========== ФУНКЦІЇ ДЛЯ БАНЕРІВ ==========
+
+// Отримуємо CSRF токен
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+// Редагування банера
 function editBanner(index) {
     console.log('Редагуємо банер індекс:', index);
     fetch(`/constructor/banner/get/${index}/`, {
         method: 'GET',
-        headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}' }
+        headers: {
+            'X-CSRFToken': csrftoken,
+        }
     })
     .then(response => response.json())
     .then(data => {
@@ -1360,6 +1366,7 @@ function editBanner(index) {
             document.getElementById('bannerLink').value = b.link || '';
             document.getElementById('bannerPosition').value = b.position || 'full';
             document.getElementById('overlayOpacity').value = b.overlay_opacity || 0.4;
+            document.getElementById('opacityValue').textContent = b.overlay_opacity || 0.4;
 
             const container = document.getElementById('textBlocksContainer');
             container.innerHTML = '';
@@ -1381,16 +1388,24 @@ function editBanner(index) {
                 bp.style.backgroundImage = `url(${b.image})`;
                 bp.style.backgroundSize = 'cover';
                 bp.style.backgroundPosition = 'center';
+            } else {
+                document.getElementById('imagePreview').style.display = 'none';
+                document.getElementById('bannerPreview').style.backgroundImage = '';
             }
 
             document.getElementById('bannerModal').style.display = 'block';
             updatePreview();
+        } else {
+            alert('Помилка завантаження банера: ' + (data.error || 'Невідома помилка'));
         }
     })
-    .catch(error => console.error('Помилка:', error));
+    .catch(error => {
+        console.error('Помилка:', error);
+        alert('Помилка завантаження банера');
+    });
 }
 
-// ========== ЗБЕРЕЖЕННЯ БАНЕРА ==========
+// Збереження банера
 function saveBanner() {
     const form = document.getElementById('bannerForm');
     const formData = new FormData(form);
@@ -1408,7 +1423,9 @@ function saveBanner() {
 
     fetch('/constructor/banner/create/', {
         method: 'POST',
-        headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}' },
+        headers: {
+            'X-CSRFToken': csrftoken,
+        },
         body: formData
     })
     .then(response => response.json())
@@ -1416,7 +1433,7 @@ function saveBanner() {
         if (data.success) {
             location.reload();
         } else {
-            alert(data.error || 'Помилка');
+            alert(data.error || 'Помилка збереження');
             saveBtn.disabled = false;
             saveBtn.innerHTML = 'Зберегти';
         }
@@ -1429,81 +1446,118 @@ function saveBanner() {
     });
 }
 
-// ========== ОСНОВНА ІНІЦІАЛІЗАЦІЯ З ДІАГНОСТИКОЮ ==========
+// Видалення банера
+function deleteBanner(index) {
+    if (!confirm('Видалити банер?')) return;
+
+    console.log('Видаляємо банер індекс:', index);
+    fetch(`/constructor/banner/delete/${index}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Помилка видалення');
+        }
+    })
+    .catch(error => {
+        console.error('Помилка:', error);
+        alert('Помилка сервера');
+    });
+}
+
+// ========== ГОЛОВНИЙ СКРИПТ ДЛЯ ЗБЕРЕЖЕННЯ БЛОКІВ ==========
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔧 Ініціалізація конструктора...');
+
+    const form = document.getElementById('site-form');
+    if (!form) {
+        console.error('❌ Форма не знайдена!');
+        return;
+    }
+
+    // Створюємо приховане поле для JSON
+    let jsonInput = document.getElementById('active_blocks_json');
+    if (!jsonInput) {
+        jsonInput = document.createElement('input');
+        jsonInput.type = 'hidden';
+        jsonInput.name = 'active_blocks_json';
+        jsonInput.id = 'active_blocks_json';
+        form.appendChild(jsonInput);
+        console.log('✅ Створено приховане поле active_blocks_json');
+    }
+
+    // Функція для оновлення JSON з чекбоксів
+    function updateActiveBlocksJson() {
+        const selectedBlocks = [];
+        document.querySelectorAll('.active-blocks-list input[type="checkbox"]:checked').forEach(cb => {
+            selectedBlocks.push(cb.value);
+        });
+        jsonInput.value = JSON.stringify(selectedBlocks);
+        console.log('📋 Оновлено вибрані блоки:', selectedBlocks);
+        return selectedBlocks;
+    }
+
+    // Додаємо обробники на всі чекбокси
+    const checkboxes = document.querySelectorAll('.active-blocks-list input[type="checkbox"]');
+    console.log(`📦 Знайдено чекбоксів: ${checkboxes.length}`);
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', function() {
+            updateActiveBlocksJson();
+        });
+    });
+
+    // Додаємо обробник на відправку форми
+    form.addEventListener('submit', function(e) {
+        const selectedBlocks = updateActiveBlocksJson();
+        console.log('🚀 Відправка форми з блоками:', selectedBlocks);
+
+        // Додатково створюємо поля для активних блоків
+        selectedBlocks.forEach(block => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'active_blocks';
+            input.value = block;
+            form.appendChild(input);
+        });
+
+        // Оновлюємо порядок блоків перед відправкою
+        updateBlocksOrder();
+
+        console.log('✅ Форма відправляється');
+    });
+
+    // Ініціалізуємо JSON з початковими значеннями
+    updateActiveBlocksJson();
+    updateBlocksOrder();
+    console.log('✅ Конструктор ініціалізовано');
+
+    // ========== ІНІЦІАЛІЗАЦІЯ ДЛЯ БАНЕРІВ ==========
+
     // Кнопка додавання текстового блоку
-    const addBtn = document.getElementById('addTextBlockBtn');
-    if (addBtn) addBtn.onclick = addTextBlock;
-
-    // Затемнення
-    const opacity = document.getElementById('overlayOpacity');
-    if (opacity) opacity.oninput = updatePreview;
-
-    // Збереження банера
-    const saveBtn = document.getElementById('saveBannerBtn');
-    if (saveBtn) saveBtn.onclick = saveBanner;
-
-    // Кнопки редагування банерів
-    document.querySelectorAll('.edit-banner').forEach(btn => {
-        btn.onclick = function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const index = this.getAttribute('data-index');
-            editBanner(index);
-        };
-    });
-
-    // Кнопки видалення банерів
-    document.querySelectorAll('.delete-banner').forEach(btn => {
-        btn.onclick = function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (confirm('Видалити банер?')) {
-                const index = this.getAttribute('data-index');
-                fetch(`/constructor/banner/delete/${index}/`, {
-                    method: 'POST',
-                    headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}' }
-                }).then(() => location.reload());
-            }
-        };
-    });
-
-    // Відкриття модального вікна (Додати банер)
-    const openBtn = document.getElementById('openBannerModalBtn');
-    const modal = document.getElementById('bannerModal');
-    if (openBtn && modal) {
-        openBtn.onclick = function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            document.getElementById('bannerModalTitle').innerHTML = 'Додати банер';
-            document.getElementById('editBannerId').value = '';
-            document.getElementById('bannerForm').reset();
-            document.getElementById('overlayOpacity').value = 0.4;
-            document.getElementById('textBlocksContainer').innerHTML = '';
-            textBlockCount = 0;
+    const addTextBlockBtn = document.getElementById('addTextBlockBtn');
+    if (addTextBlockBtn) {
+        addTextBlockBtn.addEventListener('click', function() {
             addTextBlock();
-            document.getElementById('imagePreview').style.display = 'none';
-            document.getElementById('bannerPreview').style.backgroundImage = '';
-            modal.style.display = 'block';
-        };
+        });
     }
 
-    // Закриття модального вікна
-    document.querySelectorAll('.close-banner-modal').forEach(btn => {
-        btn.onclick = function() {
-            if (modal) modal.style.display = 'none';
-        };
-    });
-    if (modal) {
-        modal.onclick = function(e) {
-            if (e.target === modal) modal.style.display = 'none';
-        };
+    // Обробник для затемнення
+    const overlayOpacity = document.getElementById('overlayOpacity');
+    if (overlayOpacity) {
+        overlayOpacity.addEventListener('input', updatePreview);
     }
 
-    // Прев'ю зображення
-    const imgInput = document.getElementById('bannerImageInput');
-    if (imgInput) {
-        imgInput.onchange = function() {
+    // Обробник для зображення
+    const bannerImageInput = document.getElementById('bannerImageInput');
+    if (bannerImageInput) {
+        bannerImageInput.addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(ev) {
@@ -1516,177 +1570,120 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
                 reader.readAsDataURL(this.files[0]);
             }
-        };
-    }
-
-    // Видалення текстових блоків (делегування)
-    const container = document.getElementById('textBlocksContainer');
-    if (container) {
-        container.addEventListener('click', function(e) {
-            const btn = e.target.closest('.remove-text-block');
-            if (btn) {
-                const block = btn.closest('.text-block-item');
-                if (block && document.querySelectorAll('.text-block-item').length > 1) {
-                    block.remove();
-                    updatePreview();
-                } else if (block) {
-                    alert('Повинен бути хоча б один текстовий блок');
-                }
-            }
-        });
-        container.addEventListener('input', updatePreview);
-        container.addEventListener('change', updatePreview);
-    }
-
-    // Очищення фото "Про нас"
-    const clearAboutUsBtn = document.getElementById('clearAboutUsImageBtn');
-    if (clearAboutUsBtn) {
-        clearAboutUsBtn.addEventListener('click', function() {
-            const input = document.querySelector('input[name="about_us_image"]');
-            if (input) input.value = '';
-            let clearField = document.querySelector('input[name="about_us_image-clear"]');
-            if (!clearField) {
-                clearField = document.createElement('input');
-                clearField.type = 'hidden';
-                clearField.name = 'about_us_image-clear';
-                clearField.value = 'on';
-                clearAboutUsBtn.parentNode.appendChild(clearField);
-            } else {
-                clearField.value = 'on';
-            }
-            const img = this.closest('.border').querySelector('img');
-            if (img) img.remove();
-            this.style.display = 'none';
         });
     }
 
-    updatePreview();
+    // Кнопка збереження банера
+    const saveBannerBtn = document.getElementById('saveBannerBtn');
+    if (saveBannerBtn) {
+        saveBannerBtn.addEventListener('click', saveBanner);
+    }
 
-    // ========== ДІАГНОСТИКА ==========
-    console.log('=== ДІАГНОСТИКА КОНСТРУКТОРА ===');
-    const checkboxes = document.querySelectorAll('.active-blocks-list input[type="checkbox"]');
-    console.log('Всього чекбоксів:', checkboxes.length);
-    const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-    console.log('Початково вибрані блоки:', selected);
-
-    // ========== ОБРОБКА ВІДПРАВКИ ФОРМИ ==========
-const form = document.getElementById('site-form');
-if (form) {
-    // ВИДАЛЯЄМО СТАРИЙ ОБРОБНИК, ЯКЩО ВІН Є
-    const oldSubmitHandler = form.getAttribute('data-listener');
-
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        console.log('🔍 ПОЧАТОК ВІДПРАВКИ ФОРМИ');
-
-        // 1. Перевіряємо, які чекбокси вибрані
-        const checkedBoxes = document.querySelectorAll('.active-blocks-list input[type="checkbox"]:checked');
-        const checkedValues = Array.from(checkedBoxes).map(cb => cb.value);
-        console.log('📌 Вибрані чекбокси:', checkedValues);
-
-        // 2. Видаляємо старі hidden поля
-        const oldHidden = form.querySelectorAll('input[name="active_blocks"][type="hidden"]');
-        console.log('🗑️ Видаляємо старих hidden полів:', oldHidden.length);
-        oldHidden.forEach(el => el.remove());
-
-        // 3. Створюємо нові hidden поля
-        checkedBoxes.forEach(cb => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'active_blocks';
-            input.value = cb.value;
-            form.appendChild(input);
-            console.log('✅ Додано hidden field:', cb.value);
+    // Кнопка відкриття модального вікна
+    const openBannerModalBtn = document.getElementById('openBannerModalBtn');
+    const bannerModal = document.getElementById('bannerModal');
+    if (openBannerModalBtn && bannerModal) {
+        openBannerModalBtn.addEventListener('click', function() {
+            document.getElementById('bannerModalTitle').innerHTML = 'Додати банер';
+            document.getElementById('editBannerId').value = '';
+            document.getElementById('bannerForm').reset();
+            document.getElementById('overlayOpacity').value = 0.4;
+            document.getElementById('textBlocksContainer').innerHTML = '';
+            textBlockCount = 0;
+            addTextBlock();
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('bannerPreview').style.backgroundImage = '';
+            bannerModal.style.display = 'block';
         });
+    }
 
-        // 4. Перевіряємо, чи створилися hidden поля
-        const newHidden = form.querySelectorAll('input[name="active_blocks"][type="hidden"]');
-        console.log('📦 Нових hidden полів:', newHidden.length);
-
-        // 5. Копіюємо значення hero_title та hero_subtitle у резервні поля
-        const heroTitleInput = document.querySelector('input[name="hero_title"]');
-        const heroSubtitleInput = document.querySelector('input[name="hero_subtitle"]');
-        const heroTitleBackup = document.getElementById('hero_title_backup');
-        const heroSubtitleBackup = document.getElementById('hero_subtitle_backup');
-        if (heroTitleInput && heroTitleBackup) heroTitleBackup.value = heroTitleInput.value;
-        if (heroSubtitleInput && heroSubtitleBackup) heroSubtitleBackup.value = heroSubtitleInput.value;
-        console.log('📝 Резервні поля заповнено:', heroTitleBackup?.value, heroSubtitleBackup?.value);
-
-        // 6. Збираємо всі дані форми для відправки
-        const formData = new FormData(form);
-        const allActiveBlocks = formData.getAll('active_blocks');
-        console.log('🚀 ВІДПРАВЛЯЄМО active_blocks:', allActiveBlocks);
-
-       // 7. Відправляємо форму
-        console.log('📤 Відправляємо форму...');
-
-        // Окреме збереження hero_title та hero_subtitle через AJAX
-        
-                // Окреме збереження hero_title та hero_subtitle через AJAX (використовує вже оголошені змінні)
-        if (heroTitleInput && (heroTitleInput.value !== '{{ agent_site.hero_title|escapejs }}' ||
-            heroSubtitleInput.value !== '{{ agent_site.hero_subtitle|escapejs }}')) {
-            fetch('/constructor/save-hero-ajax/', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    'hero_title': heroTitleInput.value,
-                    'hero_subtitle': heroSubtitleInput.value,
-                })
-            }).then(r => r.json()).then(data => {
-                if (data.success) console.log('✅ Hero збережено окремим запитом');
-            }).catch(e => console.error('Помилка hero-ajax:', e));
-        }
-
-        form.submit();
+    // Закриття модального вікна
+    document.querySelectorAll('.close-banner-modal').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (bannerModal) bannerModal.style.display = 'none';
+        });
     });
-}
+    if (bannerModal) {
+        bannerModal.addEventListener('click', function(e) {
+            if (e.target === bannerModal) bannerModal.style.display = 'none';
+        });
+    }
+
+    // Кнопки редагування банерів
+    document.querySelectorAll('.edit-banner').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const index = this.getAttribute('data-index');
+            editBanner(index);
+        });
+    });
+
+    // Кнопки видалення банерів
+    document.querySelectorAll('.delete-banner').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const index = this.getAttribute('data-index');
+            deleteBanner(index);
+        });
+    });
+
+    // Ініціалізуємо preview
+    updatePreview();
 });
 
-// ========== ГЕНЕРАЦІЯ ШІ ==========
-const generateBtn = document.getElementById('generateAiBtn');
-if (generateBtn) {
-    generateBtn.addEventListener('click', function(e) {
-        e.preventDefault();
 
-        const btn = this;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '🔄 Генерую...';
-        btn.disabled = true;
 
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
-        fetch('/constructor/generate-image/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrfToken,
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => {
-            if (response.redirected) {
-                window.location.href = response.url;
-            } else {
+    // ========== ГЕНЕРАЦІЯ ФОНОВОГО ЗОБРАЖЕННЯ ЧЕРЕЗ ШІ ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const generateBtn = document.getElementById('generateAiBtn');
+    if (generateBtn) {
+        generateBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Зберігаємо оригінальний текст кнопки
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Генерація...';
+            this.disabled = true;
+
+            // Отримуємо CSRF токен
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+            // Відправляємо запит на генерацію
+            fetch('/constructor/generate-image/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 return response.json();
-            }
-        })
-        .then(data => {
-            if (data && data.error) {
-                alert('Помилка: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Помилка:', error);
-            alert('Помилка при генерації. Спробуйте ще раз.');
-        })
-        .finally(() => {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
+            })
+            .then(data => {
+                if (data.success) {
+                    // Оновлюємо сторінку, щоб показати нове зображення
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Помилка генерації зображення');
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Помилка:', error);
+                alert('Помилка з\'єднання. Спробуйте ще раз.');
+                this.innerHTML = originalText;
+                this.disabled = false;
+            });
         });
-    });
-}
+    }
+});
 </script>
+
 {% endblock %}

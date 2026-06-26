@@ -641,7 +641,8 @@ class MassEmailAdminSite(AdminSite):
 
     def send_mass_email(self, request):
         if not request.user.is_superuser:
-            return JsonResponse({'error': 'Access denied'}, status=403)
+            messages.error(request, 'Доступ заборонено')
+            return redirect('/admin/mass-email/')
 
         if request.method == 'POST':
             subject = request.POST.get('subject', '')
@@ -656,18 +657,22 @@ class MassEmailAdminSite(AdminSite):
                               .exclude(email='')
                               .values_list('email', flat=True))
             elif recipient_type == 'upload_file' and uploaded_file:
-                content = uploaded_file.read().decode('utf-8')
-                if uploaded_file.name.endswith('.csv'):
-                    import csv
-                    import io
-                    reader = csv.reader(io.StringIO(content))
-                    for row in reader:
-                        if row and '@' in row[0]:
-                            emails.append(row[0].strip())
-                else:
-                    for line in content.splitlines():
-                        if '@' in line:
-                            emails.append(line.strip())
+                try:
+                    content = uploaded_file.read().decode('utf-8')
+                    if uploaded_file.name.endswith('.csv'):
+                        import csv
+                        import io
+                        reader = csv.reader(io.StringIO(content))
+                        for row in reader:
+                            if row and '@' in row[0]:
+                                emails.append(row[0].strip())
+                    else:
+                        for line in content.splitlines():
+                            if '@' in line:
+                                emails.append(line.strip())
+                except Exception as e:
+                    messages.error(request, f'Помилка читання файлу: {str(e)}')
+                    return redirect('/admin/mass-email/')
 
             if not emails:
                 messages.error(request, 'Не знайдено email для розсилки')
@@ -675,22 +680,35 @@ class MassEmailAdminSite(AdminSite):
 
             success_count = 0
             fail_count = 0
-
-            import time  # Додаємо імпорт time
+            failed_emails = []
 
             for email in emails:
-                result = self.send_via_sendgrid(email, subject, message)
-                if result:
-                    success_count += 1
-                else:
+                try:
+                    result = self.send_via_sendgrid(email, subject, message)
+                    if result:
+                        success_count += 1
+                        print(f"✅ Відправлено: {email}")
+                    else:
+                        fail_count += 1
+                        failed_emails.append(email)
+                        print(f"❌ Помилка: {email}")
+                except Exception as e:
                     fail_count += 1
-                time.sleep(1)  # Пауза 0.5 секунди між листами (120 листів/хвилину)
+                    failed_emails.append(email)
+                    print(f"❌ Помилка {email}: {e}")
 
-                # Для дуже великих розсилок (1000+) можна додати індикатор прогресу
-                if (success_count + fail_count) % 50 == 0:
-                    print(f"Прогрес: {success_count + fail_count}/{len(emails)}")
+                # Невелика затримка між листами
+                import time
+                time.sleep(0.5)
 
-            messages.success(request, f'Відправлено {success_count} листів, помилок: {fail_count}')
+            # Формуємо повідомлення про результат
+            result_message = f"✅ Відправлено: {success_count} | ❌ Помилок: {fail_count}"
+            if failed_emails and len(failed_emails) <= 10:
+                result_message += f"\nНевдалі email: {', '.join(failed_emails)}"
+            elif failed_emails:
+                result_message += f"\nПерші 10 невдалих: {', '.join(failed_emails[:10])}"
+
+            messages.success(request, result_message)
             return redirect('/admin/mass-email/')
 
         return redirect('/admin/mass-email/')
@@ -707,10 +725,14 @@ class MassEmailAdminSite(AdminSite):
             sg = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
             from_email = settings.DEFAULT_FROM_EMAIL
 
+            # Важливо: переконуємось, що message - це текст
+            plain_text = message.replace('<br>', '\n').replace('</p>', '\n').replace('<p>', '')
+
             mail = Mail(
                 from_email=from_email,
                 to_emails=to_email,
                 subject=subject,
+                plain_text_content=plain_text,
                 html_content=message.replace('\n', '<br>')
             )
 
@@ -718,7 +740,7 @@ class MassEmailAdminSite(AdminSite):
             print(f"SendGrid response: {response.status_code}")
             return response.status_code == 202
         except Exception as e:
-            print(f"Помилка SendGrid: {e}")
+            print(f"Помилка SendGrid для {to_email}: {e}")
             return False
 
 

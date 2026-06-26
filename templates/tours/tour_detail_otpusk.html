@@ -1005,21 +1005,28 @@ document.addEventListener('DOMContentLoaded', function() {
             const tourUrl = window.location.href;
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-            if (!name) return showMessage('Будь ласка, введіть ваше ім\'я', 'danger');
-            if (!phone) return showMessage('Будь ласка, введіть номер телефону', 'danger');
+            if (!name) {
+                showMessage('Будь ласка, введіть ваше ім\'я', 'danger');
+                document.getElementById('bookingName').focus();
+                return;
+            }
+            if (!phone) {
+                showMessage('Будь ласка, введіть номер телефону', 'danger');
+                document.getElementById('bookingPhone').focus();
+                return;
+            }
 
             const btn = submitBtn;
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fa-regular fa-spinner fa-spin me-2"></i> Відправка...';
             btn.disabled = true;
 
-            // Визначаємо правильний URL для API бронювання
-let bookingUrl = '/constructor/api/booking/';
+            // ========== ВИПРАВЛЕНО: УНІВЕРСАЛЬНИЙ URL ДЛЯ КОЖНОГО АГЕНТА ==========
 const pathParts = window.location.pathname.split('/');
+let bookingUrl = '/booking-ajax/';
 for (let i = 0; i < pathParts.length; i++) {
     if (pathParts[i] === 'a' && pathParts[i + 1]) {
-        // ВАЖЛИВО: без /constructor/ в шляху!
-        bookingUrl = `/a/${pathParts[i + 1]}/api/booking/`;
+        bookingUrl = `/a/${pathParts[i + 1]}/booking-ajax/`;
         break;
     }
 }
@@ -1047,20 +1054,23 @@ console.log('📡 URL для бронювання:', bookingUrl);
                 })
             })
             .then(response => {
-                if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
                 return response.json();
             })
             .then(data => {
+                console.log('📦 Відповідь:', data);
                 if (data.success) {
-                    showMessage(data.message, 'success');
+                    showMessage(data.message || '✅ Заявку на бронювання успішно відправлено!', 'success');
                     document.getElementById('bookingForm').reset();
                 } else {
-                    showMessage(data.error || 'Сталася помилка. Спробуйте пізніше.', 'danger');
+                    showMessage(data.error || '❌ Сталася помилка. Спробуйте пізніше.', 'danger');
                 }
             })
             .catch(error => {
-                console.error('Fetch error:', error);
-                showMessage('Помилка з\'єднання. Спробуйте пізніше.', 'danger');
+                console.error('❌ Помилка:', error);
+                showMessage('❌ Помилка з\'єднання. Спробуйте пізніше.', 'danger');
             })
             .finally(() => {
                 btn.innerHTML = originalText;

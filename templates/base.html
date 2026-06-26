@@ -427,8 +427,8 @@
                 {% if '/constructor/' not in request.path %}
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% if agent_site %}{{ agent_site.get_absolute_url }}{% else %}/{% endif %}">Головна</a>
-                    </li>
+    <a class="nav-link" href="{% url 'home' %}">Головна</a>
+</li>
 
                     {% if not agent_site or agent_site.show_news %}
                     <li class="nav-item">
@@ -439,7 +439,7 @@
                     {% if user.is_authenticated %}
                         {% if user.is_agent and user.agent_site.slug %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'constructor:dashboard' %}">Відкрити конструктор</a>
+<a class="nav-link" href="https://clubdatour.com.ua/constructor/dashboard/">Відкрити конструктор</a>
                             </li>
                         {% endif %}
                         {% if user.is_superuser %}
@@ -465,7 +465,7 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-<a class="nav-link" href="{% if agent_site %}/a/{{ agent_site.slug }}/login/{% else %}/constructor/agent-login-redirect/{% endif %}">Вхід</a>
+                            <a class="nav-link" href="/constructor/agent-login-redirect/">Вхід</a>
                         </li>
                     {% endif %}
 
@@ -493,14 +493,21 @@
                         <div class="row">
                             <div class="col-md-6 mb-4 mb-md-0 d-flex flex-column">
                                 <div class="mb-3 text-center text-md-start">
-                                    {% if not agent_site.hide_logo %}
-                                        {% if agent_site and agent_site.bottom_logo %}
-                                            <img src="{{ agent_site.bottom_logo.url }}" alt="Logo" style="height: 50px; width: auto; filter: brightness(0) invert(1);">
-                                        {% else %}
-                                            <img src="{% static 'images/HORIZONTAL.png' %}" alt="Logo" style="height: 50px; width: auto; filter: brightness(0) invert(1);">
-                                        {% endif %}
-                                    {% endif %}
-                                </div>
+    {% if not agent_site.hide_logo %}
+        {% if agent_site and agent_site.bottom_logo %}
+            {# Перевіряємо, чи це PNG з прозорістю #}
+            {% if agent_site.bottom_logo.url|lower|slice:"-4:" == ".png" %}
+                {# Для PNG з прозорістю - без фільтрів #}
+                <img src="{{ agent_site.bottom_logo.url }}" alt="Logo" style="height: 50px; width: auto; max-width: 200px; object-fit: contain;">
+            {% else %}
+                {# Для JPG/JPEG - з фільтрами #}
+                <img src="{{ agent_site.bottom_logo.url }}" alt="Logo" style="height: 50px; width: auto; max-width: 200px; object-fit: contain; filter: brightness(0) invert(1);">
+            {% endif %}
+        {% else %}
+            <img src="{% static 'images/HORIZONTAL.png' %}" alt="Logo" style="height: 50px; width: auto; filter: brightness(0) invert(1);">
+        {% endif %}
+    {% endif %}
+</div>
                                 <p class="text-white-50" style="font-size: 0.9rem; max-width: 90%;">
                                     Обирайте тури від провідних туроператорів – бронюйте онлайн або в офісі.
                                     Найширший вибір, індивідуальний підхід та гарантія найкращої ціни.
@@ -737,6 +744,142 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+</script>
+<script>
+// ========== ГЛОБАЛЬНА ОБРОБКА ФОРМИ КОНСУЛЬТАЦІЇ ==========
+(function() {
+    // Функція для отримання CSRF-токена з cookie
+    function getCookie(name) {
+        let value = null;
+        if (document.cookie && document.cookie !== '') {
+            document.cookie.split(';').forEach(cookie => {
+                const parts = cookie.trim().split('=');
+                if (parts[0] === name) {
+                    value = decodeURIComponent(parts[1]);
+                }
+            });
+        }
+        return value;
+    }
+
+    // Функція для відправки форми
+    function submitConsultationForm(e) {
+        // Якщо викликано з кнопки, e може бути подією; якщо з onclick – e відсутнє
+        if (e && e.preventDefault) {
+            e.preventDefault();
+        }
+
+        console.log('🔄 submitConsultationForm викликано');
+
+        const form = document.getElementById('consultationForm');
+        if (!form) {
+            console.error('❌ Форма consultationForm не знайдена');
+            return;
+        }
+
+        const nameInput = document.getElementById('consultationName');
+        const phoneInput = document.getElementById('consultationPhone');
+        const countryCodeSelect = document.querySelector('select[name="country_code"]');
+
+        const name = nameInput?.value?.trim() || '';
+        const phone = phoneInput?.value?.trim() || '';
+        const countryCode = countryCodeSelect?.value || '+380';
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken');
+
+        console.log(`📝 Ім'я: ${name}, Телефон: ${phone}`);
+        console.log(`🔑 CSRF: ${csrfToken ? 'є' : 'немає'}`);
+
+        if (!name) {
+            alert("Будь ласка, введіть ваше ім'я");
+            nameInput?.focus();
+            return;
+        }
+        if (!phone) {
+            alert("Будь ласка, введіть номер телефону");
+            phoneInput?.focus();
+            return;
+        }
+
+        const ajaxUrl = '/consultation-ajax/';
+        console.log(`📡 Відправка на ${ajaxUrl}`);
+
+        const submitBtn = document.getElementById('submitConsultationBtn');
+        const originalText = submitBtn?.innerHTML || 'Залишити запит';
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Відправка...';
+            submitBtn.disabled = true;
+        }
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams({
+                'name': name,
+                'phone': phone,
+                'country_code': countryCode,
+                'consultation_submit': '1'
+            })
+        })
+        .then(response => {
+            console.log(`📬 Статус: ${response.status}`);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('📦 Відповідь:', data);
+            if (data.success) {
+                if (nameInput) nameInput.value = '';
+                if (phoneInput) phoneInput.value = '';
+                alert('✅ Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом.');
+            } else {
+                alert('❌ ' + (data.error || 'Сталася помилка. Спробуйте пізніше.'));
+            }
+        })
+        .catch(error => {
+            console.error('❌ Помилка:', error);
+            alert('❌ Помилка з\'єднання. Спробуйте пізніше.');
+        })
+        .finally(() => {
+            if (submitBtn) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
+
+    // Після завантаження DOM додаємо обробники подій
+    document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById('submitConsultationBtn');
+        if (btn) {
+            // Видаляємо попередні обробники, щоб уникнути дублювання
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            // Додаємо обробник через addEventListener
+            newBtn.addEventListener('click', submitConsultationForm);
+            console.log('✅ Обробник додано до кнопки submitConsultationBtn');
+        } else {
+            console.log('ℹ️ Кнопка submitConsultationBtn не знайдена на цій сторінці');
+        }
+
+        // Також обробляємо відправку форми, якщо хтось натисне Enter
+        const form = document.getElementById('consultationForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitConsultationForm(e);
+            });
+        }
+    });
+
+    // Робимо функцію глобальною, щоб її можна було викликати з onclick
+    window.submitConsultationForm = submitConsultationForm;
+})();
 </script>
 </body>
 </html>

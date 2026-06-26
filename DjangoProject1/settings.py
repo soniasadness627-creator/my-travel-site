@@ -16,41 +16,30 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-# Завантажуємо .env файл
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ========== ПЕРЕВІРКА НАЯВНОСТІ ОБОВ'ЯЗКОВИХ ЗМІННИХ ==========
-required_env_vars = [
-    'SECRET_KEY',
-    'CLOUDINARY_CLOUD_NAME',
-    'CLOUDINARY_API_KEY',
-    'CLOUDINARY_API_SECRET',
-    'DATABASE_URL',
-]
-
-missing_vars = [var for var in required_env_vars if not os.getenv(var)]
-if missing_vars:
-    raise ValueError(f"❌ Відсутні обов'язкові змінні в .env: {', '.join(missing_vars)}")
-
-# ========== НАЛАШТУВАННЯ CLOUDINARY ==========
 cloudinary.config(
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.getenv('CLOUDINARY_API_KEY'),
-    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME', ''),
+    api_key=os.getenv('CLOUDINARY_API_KEY', ''),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET', ''),
     secure=True
 )
 
-# ========== БЕЗПЕЧНІ НАЛАШТУВАННЯ ==========
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', '')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# Отримуємо ALLOWED_HOSTS з .env
-ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '').split(',') if host.strip()]
-# Додаємо базові хоcти для локальної розробки
-if DEBUG:
-    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
+ALLOWED_HOSTS = [
+    'my-travel-site.onrender.com',
+    'localhost',
+    '127.0.0.1',
+    '.onrender.com',
+    'clubdatour.com.ua',
+    'www.clubdatour.com.ua',
+    '209.38.199.98',
+    '.clubdatour.com.ua',  # Дозволяє всі субдомени (*.clubdatour.com.ua)
+]
 
 # Application definition
 INSTALLED_APPS = [
@@ -67,9 +56,10 @@ INSTALLED_APPS = [
     'landing',
     'cloudinary',
     'cloudinary_storage',
+    'django.contrib.sitemaps',
 ]
 
-SITE_URL = os.getenv('SITE_URL', 'https://clubdatour.com.ua')
+SITE_URL = os.getenv('SITE_URL', 'https://my-travel-site.onrender.com')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -82,9 +72,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'constructor.middleware.AgentSiteMiddleware',
     'constructor.middleware.SubdomainMiddleware',
+    'constructor.middleware.LandingRedirectMiddleware',
     'constructor.middleware.AgentColorsMiddleware',
     'tours.middleware.TourTrackingMiddleware',
     'constructor.middleware.DatabaseConnectionMiddleware',
+    'constructor.middleware.RestrictAdminAccessMiddleware',
 ]
 
 ROOT_URLCONF = 'DjangoProject1.urls'
@@ -103,14 +95,14 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'DjangoProject1.context_processors.add_user_to_context',
             ],
-            'debug': DEBUG,
+            'debug': True,
         },
     },
 ]
 
 WSGI_APPLICATION = 'DjangoProject1.wsgi.application'
 
-# ========== БАЗА ДАНИХ ==========
+# ========== БАЗА ДАНИХ – ЛОКАЛЬНО SQLite, НА СЕРВЕРІ PostgreSQL ==========
 IS_LOCAL_COMMAND = any(x in sys.argv for x in ['runserver', 'migrate', 'makemigrations'])
 
 if IS_LOCAL_COMMAND:
@@ -134,9 +126,15 @@ else:
         }
         print(f"✅ Сервер: використовується PostgreSQL")
     else:
-        raise ValueError("❌ DATABASE_URL не знайдено в .env для серверного режиму!")
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+        print("⚠️ Сервер: DATABASE_URL не знайдено, використовується SQLite")
 
-# ========== НАЛАШТУВАННЯ KEEPALIVE ДЛЯ БАЗИ ДАНИХ ==========
+# ========== НАЛАШТУВАННЯ KEEPALIVE ДЛЯ БАЗИ ДАНИХ (виправлення помилки SSL) ==========
 def activate_keepalive(sender, connection, **kwargs):
     """Встановлює keepalive параметри для PostgreSQL з'єднання"""
     if connection.vendor == 'postgresql':
@@ -174,9 +172,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ========== МЕДІА ФАЙЛИ (CLOUDINARY) ==========
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', ''),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY', ''),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', ''),
 }
 
 STORAGES = {
@@ -191,25 +189,33 @@ STORAGES = {
 MEDIA_URL = '/media/'
 APPEND_SLASH = True
 
-# ========== НАЛАШТУВАННЯ ДЛЯ RENDER ТА CLOUDFLARE ==========
+# ========== НАЛАШТУВАННЯ ДЛЯ RENDER ==========
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
-USE_X_FORWARDED_PORT = True
 SECURE_SSL_REDIRECT = False
+
+# ========== НАЛАШТУВАННЯ ДЛЯ СЕСІЙ ТА CSRF (ВИПРАВЛЕНО) ==========
+# Не встановлюємо SESSION_COOKIE_DOMAIN та CSRF_COOKIE_DOMAIN,
+# щоб уникнути помилки 400 на мобільних та субдоменах
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False
 SECURE_REFERRER_POLICY = 'unsafe-url'
 
-# Довірені origin для CSRF (важливо для Cloudflare)
+# ========== ДОВІРЕНІ ДЖЕРЕЛА ДЛЯ CSRF ==========
 CSRF_TRUSTED_ORIGINS = [
     'https://clubdatour.com.ua',
     'https://www.clubdatour.com.ua',
+    'http://clubdatour.com.ua',
+    'http://www.clubdatour.com.ua',
+    'https://*.clubdatour.com.ua',
+    'http://*.clubdatour.com.ua',
+    'http://209.38.199.98',
+    'https://209.38.199.98',
 ]
-# Додаємо всі піддомени
-for host in ALLOWED_HOSTS:
-    if host.startswith('.'):
-        CSRF_TRUSTED_ORIGINS.append(f'https://{host[1:]}')
 
+# ========== HSTS (тільки якщо не DEBUG) ==========
 if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -218,13 +224,22 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
 
-# API ключі
+# ========== API КЛЮЧІ ==========
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', '')
 
 PORT = os.getenv('PORT', '10000')
 
-# ========== ЛОГУВАННЯ ==========
+# Діагностика для Gunicorn
+if 'gunicorn' in sys.argv[0]:
+    print("=== ДІАГНОСТИКА GUNICORN ===")
+    print(f"GMAIL_USER: {os.getenv('GMAIL_USER', 'Не знайдено!')}")
+    print(f"GMAIL_PASSWORD: {'Знайдено' if os.getenv('GMAIL_PASSWORD') else 'Не знайдено!'}")
+    print(f"DATABASE_URL: {'Знайдено' if os.getenv('DATABASE_URL') else 'Не знайдено!'}")
+    print(f"PORT: {os.getenv('PORT', 'Не знайдено!')}")
+    print("===========================")
+
+# Логування
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -232,28 +247,17 @@ LOGGING = {
         'console': {
             'class': 'logging.StreamHandler',
         },
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'errors.log',
-        },
     },
     'root': {
         'handlers': ['console'],
-        'level': 'INFO' if not DEBUG else 'DEBUG',
+        'level': 'DEBUG',
     },
     'loggers': {
         'django': {'handlers': ['console'], 'level': 'INFO'},
-        'django.request': {'handlers': ['console', 'file'], 'level': 'ERROR', 'propagate': False},
+        'django.request': {'handlers': ['console'], 'level': 'DEBUG', 'propagate': False},
     },
 }
 
-# Створюємо директорію для логів
-LOGS_DIR = BASE_DIR / 'logs'
-if not LOGS_DIR.exists():
-    LOGS_DIR.mkdir(parents=True, exist_ok=True)
-
-# ========== КЕШУВАННЯ ==========
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -261,29 +265,44 @@ CACHES = {
     }
 }
 
-# ========== TELEGRAM БОТ ==========
+# ========== НАЛАШТУВАННЯ TELEGRAM БОТА ДЛЯ СПОВІЩЕНЬ ==========
+
+# Токен Telegram бота (береться з .env)
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '')
+
+# ID адміністраторів Telegram бота (береться з .env)
 TELEGRAM_ADMIN_IDS_STR = os.getenv('TELEGRAM_ADMIN_IDS', '')
-TELEGRAM_ADMIN_IDS = []
 if TELEGRAM_ADMIN_IDS_STR:
     TELEGRAM_ADMIN_IDS = [int(x.strip()) for x in TELEGRAM_ADMIN_IDS_STR.split(',') if x.strip()]
+else:
+    TELEGRAM_ADMIN_IDS = []
 
-# ========== EMAIL НАЛАШТУВАННЯ ==========
-USE_SENDGRID = os.getenv('USE_SENDGRID', 'True') == 'True'
-USE_AWS_SES = os.getenv('USE_AWS_SES', 'False') == 'True'
+# ========== КІНЕЦЬ НАЛАШТУВАНЬ TELEGRAM ==========
+print("✅ Cloudinary ініціалізовано")
+print(f"✅ Telegram бот налаштовано. Адмінів: {len(TELEGRAM_ADMIN_IDS)}")
+
+# ==============================================
+# ========== EMAIL НАЛАШТУВАННЯ (SENDGRID) ==========
+# ==============================================
+
+# Використовуємо SendGrid замість Mailgun
+USE_SENDGRID = True
 
 if USE_SENDGRID:
+    # ========== ВСІ ЛИСТИ ЧЕРЕЗ SENDGRID ==========
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.sendgrid.net'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = 'apikey'
     EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_API_KEY', '')
-    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'ClubDatour <info@clubdatour.com.ua>')
+    DEFAULT_FROM_EMAIL = 'ClubDatour <info@clubdatour.com.ua>'
+    # SendGrid API ключ для масової розсилки
     SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
-    print("✅ ВСІ листи надсилаються через SENDGRID")
+    print("✅ ВСІ листи надсилаються через SENDGRID (ClubDatour)")
 
 elif USE_AWS_SES:
+    # ========== AWS SES ==========
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = os.getenv('AWS_SES_HOST', 'email-smtp.eu-north-1.amazonaws.com')
     EMAIL_PORT = 587
@@ -294,8 +313,9 @@ elif USE_AWS_SES:
     print("✅ AWS SES для відправки email")
 
 else:
+    # ========== GMAIL (СТАРИЙ ВАРІАНТ) ==========
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST = 'smtpф.gmail.com'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = os.getenv('GMAIL_USER', '')
@@ -303,11 +323,11 @@ else:
     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
     print("✅ Gmail для відправки email")
 
-# Mailgun для масових розсилок (опціонально)
+# ========== MAILGUN API НАЛАШТУВАННЯ (ДЛЯ МАСОВОЇ РОЗСИЛКИ) ==========
 MAILGUN_API_KEY = os.getenv('MAILGUN_API_KEY', '')
-MAILGUN_DOMAIN = os.getenv('MAILGUN_DOMAIN', '')
-MAILGUN_FROM_EMAIL = os.getenv('MAILGUN_FROM_EMAIL', '')
+MAILGUN_DOMAIN = os.getenv('MAILGUN_DOMAIN', 'clubdatour.com.ua')
+MAILGUN_FROM_EMAIL = os.getenv('MAILGUN_FROM_EMAIL', 'postmaster@clubdatour.com.ua')
 
-print("✅ Cloudinary ініціалізовано")
-if TELEGRAM_ADMIN_IDS:
-    print(f"✅ Telegram бот налаштовано. Адмінів: {len(TELEGRAM_ADMIN_IDS)}")
+# ========== МАКСИМАЛЬНИЙ РОЗМІР ЗАВАНТАЖЕННЯ ==========
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # 50MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # 50MB

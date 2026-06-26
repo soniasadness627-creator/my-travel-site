@@ -9,10 +9,10 @@
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <a href="{% if agent_site %}/a/{{ agent_site.slug }}/{% else %}/{% endif %}">Головна</a>
+<a href="{% if agent_site %}/home/{% else %}/home/{% endif %}">Головна</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{% if agent_site %}/a/{{ agent_site.slug }}/news/{% else %}/news/{% endif %}">Новини</a>
+<a href="/news/">Новини</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">{{ news_item.title }}</li>
                 </ol>
@@ -280,61 +280,105 @@
             </style>
 
             <script>
-                // ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ ==========
-                (function() {
-                    const submitBtn = document.getElementById('submitConsultationBtn');
-                    if (!submitBtn) return;
+// ========== AJAX ВІДПРАВЛЕННЯ ФОРМИ КОНСУЛЬТАЦІЇ (ВИПРАВЛЕНО) ==========
+(function() {
+    const submitBtn = document.getElementById('submitConsultationBtn');
+    if (!submitBtn) {
+        console.log('❌ Кнопка submitConsultationBtn не знайдена');
+        return;
+    }
 
-                    submitBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
+    console.log('✅ Кнопка консультації знайдена');
 
-                        const name = document.getElementById('consultationName')?.value || '';
-                        const phone = document.getElementById('consultationPhone')?.value || '';
-                        const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
-                        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
 
-                        if (!name.trim()) {
-                            console.log('Введіть ім\'я');
-                            return;
-                        }
-                        if (!phone.trim()) {
-                            console.log('Введіть телефон');
-                            return;
-                        }
+        console.log('🔄 Клік по кнопці');
 
-                        let ajaxUrl = '/consultation-ajax/';
-                        {% if agent_site %}
-                        ajaxUrl = '/a/{{ agent_site.slug }}/consultation-ajax/';
-                        {% endif %}
+        const name = document.getElementById('consultationName')?.value?.trim() || '';
+        const phone = document.getElementById('consultationPhone')?.value?.trim() || '';
+        const countryCode = document.querySelector('select[name="country_code"]')?.value || '+380';
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken');
 
-                        fetch(ajaxUrl, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                                'X-CSRFToken': csrfToken
-                            },
-                            body: new URLSearchParams({
-                                'name': name,
-                                'phone': phone,
-                                'country_code': countryCode,
-                                'consultation_submit': '1'
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                document.getElementById('consultationName').value = '';
-                                document.getElementById('consultationPhone').value = '';
-                                console.log('Заявка відправлена');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Помилка:', error);
-                        });
-                    });
-                })();
-            </script>
+        console.log(`📝 Ім'я: ${name}, Телефон: ${phone}`);
+        console.log(`🔑 CSRF: ${csrfToken ? 'є' : 'немає'}`);
+
+        if (!name) {
+            alert("Будь ласка, введіть ваше ім'я");
+            document.getElementById('consultationName').focus();
+            return;
+        }
+        if (!phone) {
+            alert("Будь ласка, введіть номер телефону");
+            document.getElementById('consultationPhone').focus();
+            return;
+        }
+
+        // ВИПРАВЛЕНО: Завжди використовуємо /consultation-ajax/ без slug
+        // Оскільки агент визначається через субдомен (SubdomainMiddleware)
+        const ajaxUrl = '/consultation-ajax/';
+        console.log(`📡 Відправка на ${ajaxUrl}`);
+
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Відправка...';
+        submitBtn.disabled = true;
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams({
+                'name': name,
+                'phone': phone,
+                'country_code': countryCode,
+                'consultation_submit': '1'
+            })
+        })
+        .then(response => {
+            console.log(`📬 Статус: ${response.status}`);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('📦 Відповідь:', data);
+            if (data.success) {
+                document.getElementById('consultationName').value = '';
+                document.getElementById('consultationPhone').value = '';
+                alert('✅ Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом.');
+            } else {
+                alert('❌ ' + (data.error || 'Сталася помилка. Спробуйте пізніше.'));
+            }
+        })
+        .catch(error => {
+            console.error('❌ Помилка:', error);
+            alert('❌ Помилка з\'єднання. Спробуйте пізніше.');
+        })
+        .finally(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        });
+    });
+
+    function getCookie(name) {
+        let value = null;
+        if (document.cookie && document.cookie !== '') {
+            document.cookie.split(';').forEach(cookie => {
+                const parts = cookie.trim().split('=');
+                if (parts[0] === name) {
+                    value = decodeURIComponent(parts[1]);
+                }
+            });
+        }
+        return value;
+    }
+})();
+</script>
 
             <!-- Рекомендовані статті (карусель) -->
             {% if recommended %}
@@ -362,7 +406,7 @@
                                                 <i class="fa-regular fa-calendar me-1"></i> {{ rec.created_at|date:"d.m.Y" }}
                                             </p>
                                             <div class="mt-auto pt-2">
-                                                <a href="{% if agent_site %}/a/{{ agent_site.slug }}/news/{{ rec.pk }}/{% else %}/news/{{ rec.pk }}/{% endif %}" class="btn btn-outline-primary btn-sm w-100 rounded-pill" style="border-color: var(--primary-color); color: var(--primary-color);">Читати</a>
+<a href="/news/{{ rec.pk }}/" class="btn btn-outline-primary btn-sm w-100 rounded-pill">Читати</a>
                                             </div>
                                         </div>
                                     </div>
@@ -379,7 +423,7 @@
 
             <!-- КНОПКА "ПОВЕРНУТИСЯ ДО НОВИН" -->
             <div class="d-flex justify-content-center my-5">
-                <a href="{% if agent_site %}/a/{{ agent_site.slug }}/news/{% else %}/news/{% endif %}" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
+<a href="/news/" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
                     <i class="fa-solid fa-arrow-left me-2"></i> Повернутися до новин
                 </a>
             </div>
@@ -480,11 +524,23 @@
         height: 100%;
         display: flex;
         flex-direction: column;
-        transition: transform 0.2s ease;
+        transition: box-shadow 0.3s ease;
+        border: 1px solid #000000 !important;
+        border-radius: 16px !important;
+        overflow: hidden;
     }
 
     .recommended-news-block .card:hover {
-        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .recommended-news-block .card:hover img {
+        transform: scale(1.05);
+        transition: transform 0.4s ease-out;
+    }
+
+    .recommended-news-block .card img {
+        transition: transform 0.4s ease-out;
     }
 
     .recommended-news-block .card-title {
@@ -607,48 +663,6 @@
             right: 0px;
         }
     }
-    /* Тоненька чорна рамка для карток рекомендованих статей */
-.recommended-news-block .card {
-    border: 1px solid #000000 !important;
-    border-radius: 16px !important;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.recommended-news-block .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-}
-    /* Рекомендовані статті - без підйому при наведенні */
-.recommended-news-block .card {
-    border: 1px solid #000000 !important;
-    border-radius: 16px !important;
-    overflow: hidden;
-    transition: box-shadow 0.3s ease;
-}
-
-.recommended-news-block .card:hover {
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-    /* transform: translateY(-5px); - ВИДАЛЕНО! */
-}
-
-/* Плавне збільшення фото при наведенні */
-.recommended-news-block .card:hover img {
-    transform: scale(1.05);
-    transition: transform 0.4s ease-out;
-}
-
-.recommended-news-block .card img {
-    transition: transform 0.4s ease-out;
-}
-
-/* Контейнер для фото */
-.recommended-news-block .card-img-top {
-    overflow: hidden;
-    height: 160px;
-    object-fit: cover;
-    width: 100%;
-}
-
 </style>
 
 <script>

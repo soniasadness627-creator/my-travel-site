@@ -11,7 +11,7 @@ class AgentSite(models.Model):
     slug = models.SlugField(
         max_length=50,
         unique=True,
-        validators=[MinLengthValidator(3), RegexValidator(r'^[a-z0-9-]+$', 'Лише малі літери, цифри та дефіс')],
+        validators=[MinLengthValidator(3), RegexValidator(r'^[a-zA-Z0-9-]+$', 'Лише латинські літери (великі та малі), цифри та дефіс')],
         verbose_name="Адреса сайту"
     )
     agency_name = models.CharField(max_length=200, blank=True, verbose_name="Назва турагенції")
