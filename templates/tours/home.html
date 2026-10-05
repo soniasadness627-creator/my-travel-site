@@ -41,9 +41,9 @@
     <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/form.css" type="text/css" />
     <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/result.css" type="text/css" />
     <link rel="Stylesheet" href="https://export.otpusk.com/os/onsite/tour.css" type="text/css" />
-    <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca"></script>
-    <script src="https://export.otpusk.com/js/onsite/"></script>
-    <script src="https://export.otpusk.com/js/order"></script>
+    <script src="https://api.otpusk.com/api/2.4/session?access_token=3f94b-e4ff8-a72a7-4755f-da9ca" defer></script>
+<script src="https://export.otpusk.com/js/onsite/" defer></script>
+<script src="https://export.otpusk.com/js/order" defer></script>
 </div>
 
 <!-- ========== ВСІ БЛОКИ В ПОРЯДКУ (згідно з налаштуваннями конструктора) ========== -->
@@ -645,7 +645,7 @@
                 {% if agent_site.about_us_image %}
                 <div class="col-md-6">
                     <div class="about-us-image-wrapper">
-                        <img src="{{ agent_site.about_us_image.url }}" alt="{{ title }}" class="img-fluid" loading="lazy">
+                        <img src="{{ agent_site.about_us_image.url }}" alt="{{ title }}" class="about-us-img" loading="lazy">
                     </div>
                 </div>
                 {% endif %}
@@ -661,32 +661,138 @@
     </div>
     {% endwith %}
 
-        <style>
-        .about-us-section { padding: 50px 0; background-color: #f8f9fa; border-radius: 28px; margin: 30px 0; position: relative; }
-        .about-us-section .row { align-items: center; }
-        .about-us-image-wrapper { overflow: hidden; border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
-        .about-us-image-wrapper img { width: 100%; height: 100%; min-height: 320px; object-fit: cover; }
-        .about-us-image-wrapper:hover { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); }
-        .about-us-content { padding: 20px 0 20px 30px; }
-        .about-us-subtitle { font-size: 0.9rem; font-style: italic; color: #bf9b30; display: block; margin-bottom: 10px; letter-spacing: 1px; }
-        .about-us-title { font-size: 2rem; font-weight: 600; color: #000000; margin-bottom: 25px; position: relative; padding-bottom: 15px; display: inline-block; }
-        .about-us-title::after { content: ''; position: absolute; bottom: 0; left: 0; width: 60px; height: 3px; background: var(--primary-color); border-radius: 3px; transition: width 0.3s ease; }
-        .about-us-section:hover .about-us-title::after { width: 100px; }
-        .about-us-text { color: #475569; line-height: 1.8; font-size: 1rem; }
-        .about-us-text strong { color: var(--primary-color); font-weight: 600; }
-        @media (max-width: 768px) {
-            .about-us-section { padding: 30px 0; margin: 20px 0; border-radius: 20px; }
-            .about-us-subtitle { text-align: center; }
-            .about-us-title { font-size: 1.6rem; text-align: center; display: block; margin-bottom: 20px; }
-            .about-us-title::after { left: 50%; transform: translateX(-50%); width: 50px; }
-            .about-us-section:hover .about-us-title::after { width: 80px; left: 50%; transform: translateX(-50%); }
-            .about-us-content { text-align: center; padding: 20px 15px; }
-            .about-us-image-wrapper { margin-bottom: 20px; margin-top: 0; }
-            .about-us-image-wrapper img { min-height: 220px; }
-            .about-us-text { font-size: 0.95rem; text-align: center; }
+    <style>
+        .about-us-section {
+            padding: 50px 0;
+            background-color: #f8f9fa;
+            border-radius: 28px;
+            margin: 30px 0;
+            position: relative;
         }
-        .about-us-section::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100vw; height: 100%; background-color: #f8f9fa; z-index: -1; border-radius: 28px; }
-        </style>
+        .about-us-section .row {
+            align-items: center;
+        }
+        /* ========== ОБМЕЖЕННЯ ДЛЯ ФОТО ========== */
+        .about-us-image-wrapper {
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            max-width: 100%;
+            max-height: 400px;
+            position: relative;
+        }
+        .about-us-image-wrapper:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        .about-us-img {
+            width: 100%;
+            height: 100%;
+            max-height: 400px;
+            min-height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+        /* ========== КІНЕЦЬ ОБМЕЖЕНЬ ========== */
+        .about-us-content {
+            padding: 20px 0 20px 30px;
+        }
+        .about-us-subtitle {
+            font-size: 0.9rem;
+            font-style: italic;
+            color: #bf9b30;
+            display: block;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .about-us-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 15px;
+            display: inline-block;
+        }
+        .about-us-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        .about-us-section:hover .about-us-title::after {
+            width: 100px;
+        }
+        .about-us-text {
+            color: #475569;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+        .about-us-text strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        @media (max-width: 768px) {
+            .about-us-section {
+                padding: 30px 0;
+                margin: 20px 0;
+                border-radius: 20px;
+            }
+            .about-us-subtitle {
+                text-align: center;
+            }
+            .about-us-title {
+                font-size: 1.6rem;
+                text-align: center;
+                display: block;
+                margin-bottom: 20px;
+            }
+            .about-us-title::after {
+                left: 50%;
+                transform: translateX(-50%);
+                width: 50px;
+            }
+            .about-us-section:hover .about-us-title::after {
+                width: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .about-us-content {
+                text-align: center;
+                padding: 20px 15px;
+            }
+            .about-us-image-wrapper {
+                margin-bottom: 20px;
+                margin-top: 0;
+                max-height: 300px;
+            }
+            .about-us-img {
+                max-height: 300px;
+                min-height: 180px;
+            }
+            .about-us-text {
+                font-size: 0.95rem;
+                text-align: center;
+            }
+        }
+        .about-us-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 100%;
+            background-color: #f8f9fa;
+            z-index: -1;
+            border-radius: 28px;
+        }
+    </style>
 
         {% elif block == 'popular_hotels' %}
     <!-- Популярні готелі -->
@@ -936,6 +1042,459 @@
         fetchPopularHotels().then(hotels => renderHotels(hotels));
     });
     </script>
+        {% elif block == 'contacts' %}
+    <!-- Блок Контакти та зв'язок -->
+    <div class="container my-5">
+        <section class="contacts-section">
+            <div class="contacts-container">
+                <!-- Ліва частина - інформація -->
+                <div class="contacts-info">
+                    <span class="contacts-badge">📱 Зв'язок з нами</span>
+                    <h2 class="contacts-title">Залишилися питання?</h2>
+                    <p class="contacts-subtitle">
+                        Зв'язатися з нами легко. Наші менеджери готові надати консультацію та допомогти вам.
+                    </p>
+
+                                        <!-- Менеджери (динамічні з конструктора) -->
+                    <div class="contacts-agents">
+                        {% if agent_site.managers %}
+                            {% for manager in agent_site.managers %}
+                            <div class="contacts-agent">
+                                <div class="contacts-agent-avatar">
+                                    <img src="https://ui-avatars.com/api/?name={{ manager.name|default:'Менеджер'|urlencode }}&background=a31f1f&color=fff&size=70" alt="{{ manager.name|default:'Менеджер' }}">
+                                </div>
+                                <div class="contacts-agent-info">
+                                    <h4>{{ manager.name|default:"Менеджер" }}</h4>
+                                    <p>{{ manager.position|default:"Консультант" }}</p>
+                                    <div class="contacts-agent-contacts">
+                                        {% if manager.phone %}
+                                        <a href="tel:{{ manager.phone|cut:' '|cut:'('|cut:')'|cut:'-' }}"><i class="fa-solid fa-phone"></i> {{ manager.phone }}</a>
+                                        {% endif %}
+                                        {% if manager.telegram %}
+                                        <a href="https://t.me/{{ manager.telegram }}" target="_blank"><i class="fa-brands fa-telegram"></i></a>
+                                        {% endif %}
+                                        {% if manager.whatsapp %}
+                                        <a href="https://wa.me/{{ manager.whatsapp }}" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                                        {% endif %}
+                                        {% if manager.email %}
+                                        <a href="mailto:{{ manager.email }}"><i class="fa-regular fa-envelope"></i></a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="contacts-agent">
+                                <div class="contacts-agent-info">
+                                    <p class="text-muted" style="color: #94a3b8 !important;">
+                                        Менеджери ще не додані. Перейдіть у <a href="/constructor/dashboard/" style="color: #60a5fa;">конструктор</a>, щоб додати.
+                                    </p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Права частина - форма -->
+                <div class="contacts-form-wrapper">
+                    <div class="contacts-form-card">
+                        <h3 class="contacts-form-title">Замовити дзвінок</h3>
+                        <p class="contacts-form-subtitle">Заповніть форму і ми передзвонимо вам протягом 15 хвилин</p>
+                        <form id="contactsForm" class="contacts-form" novalidate>
+                            {% csrf_token %}
+                            <input type="hidden" name="consultation_submit" value="1">
+                            <div class="contacts-form-group">
+                                <input type="text" name="name" id="contactsName" placeholder="Ваше ім'я" required>
+                            </div>
+                            <div class="contacts-form-group">
+                                <input type="tel" name="phone" id="contactsPhone" placeholder="Номер телефону" required>
+                            </div>
+                            <div class="contacts-form-group">
+                                <textarea name="message" id="contactsMessage" placeholder="Ваші побажання (необов'язково)" rows="3"></textarea>
+                            </div>
+                            <button type="button" class="contacts-submit-btn" id="submitContactsBtn">
+                                <i class="fa-regular fa-paper-plane me-2"></i> Зв'язатися зі мною
+                            </button>
+                        </form>
+                        <div class="contacts-form-footer">
+                            <small><i class="fa-solid fa-lock me-1"></i> Ваші дані захищені</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <style>
+    /* ========== СТИЛІ ДЛЯ БЛОКУ КОНТАКТІВ ========== */
+    .contacts-section {
+        padding: 20px 0;
+        background: transparent;
+    }
+    .contacts-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        gap: 60px;
+        align-items: stretch;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        background: linear-gradient(145deg, #0f172a, #1a2332);
+        border-radius: 32px;
+        padding: 50px 60px;
+        border: 1px solid rgba(255,255,255,0.05);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .contacts-info {
+        flex: 1;
+        min-width: 320px;
+        color: #fff;
+    }
+    .contacts-badge {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #60a5fa;
+        background: rgba(96, 165, 250, 0.15);
+        padding: 6px 16px;
+        border-radius: 30px;
+        margin-bottom: 16px;
+    }
+    .contacts-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 12px;
+        line-height: 1.2;
+    }
+    .contacts-subtitle {
+        color: #94a3b8;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        max-width: 90%;
+    }
+    .contacts-agents {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .contacts-agent {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 20px;
+        background: rgba(255,255,255,0.04);
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.06);
+        transition: all 0.3s ease;
+    }
+    .contacts-agent:hover {
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(255,255,255,0.12);
+        transform: translateX(4px);
+    }
+    .contacts-agent-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: rgba(255,255,255,0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .contacts-agent-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .contacts-agent-avatar i {
+        font-size: 24px;
+        color: #60a5fa;
+    }
+    .contacts-agent-info h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #ffffff;
+        margin: 0 0 2px 0;
+    }
+    .contacts-agent-info p {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin: 0 0 6px 0;
+    }
+    .contacts-agent-contacts {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .contacts-agent-contacts a {
+        color: #60a5fa;
+        text-decoration: none;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: color 0.2s;
+    }
+    .contacts-agent-contacts a:hover {
+        color: #93bbfc;
+    }
+    .contacts-agent-contacts a i {
+        font-size: 16px;
+    }
+    .contacts-email .contacts-agent-avatar {
+        background: rgba(96, 165, 250, 0.12);
+    }
+    .contacts-email .contacts-agent-avatar i {
+        font-size: 22px;
+    }
+
+    /* ========== ПРАВА ЧАСТИНА - ФОРМА ========== */
+    .contacts-form-wrapper {
+        flex: 1;
+        min-width: 320px;
+        display: flex;
+        align-items: stretch;
+    }
+    .contacts-form-card {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 24px;
+        padding: 40px 36px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    .contacts-form-card:hover {
+        border-color: rgba(255,255,255,0.15);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .contacts-form-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 8px;
+    }
+    .contacts-form-subtitle {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+    }
+    .contacts-form {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+    .contacts-form-group input,
+    .contacts-form-group textarea {
+        width: 100%;
+        padding: 14px 18px;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        background: rgba(255,255,255,0.06);
+        color: #ffffff;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        outline: none;
+        font-family: inherit;
+    }
+    .contacts-form-group input::placeholder,
+    .contacts-form-group textarea::placeholder {
+        color: #64748b;
+    }
+    .contacts-form-group input:focus,
+    .contacts-form-group textarea:focus {
+        border-color: #60a5fa;
+        background: rgba(255,255,255,0.08);
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+    }
+    .contacts-form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+    .contacts-submit-btn {
+        width: 100%;
+        padding: 16px;
+        border: none;
+        border-radius: 12px;
+        background: var(--primary-color, #a31f1f);
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    .contacts-submit-btn:hover {
+        background: var(--primary-dark, #7a1818);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(163, 31, 31, 0.3);
+    }
+    .contacts-submit-btn:active {
+        transform: translateY(0);
+    }
+    .contacts-submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    .contacts-form-footer {
+        margin-top: 16px;
+        text-align: center;
+        color: #64748b;
+        font-size: 0.8rem;
+    }
+    .contacts-form-footer i {
+        color: #60a5fa;
+    }
+
+    /* ========== АДАПТИВ ========== */
+    @media (max-width: 992px) {
+        .contacts-container {
+            flex-direction: column;
+            padding: 30px 30px;
+            gap: 40px;
+        }
+        .contacts-title {
+            font-size: 1.8rem;
+        }
+        .contacts-subtitle {
+            max-width: 100%;
+        }
+    }
+    @media (max-width: 768px) {
+        .contacts-container {
+            padding: 24px 20px;
+            border-radius: 24px;
+        }
+        .contacts-info {
+            min-width: auto;
+        }
+        .contacts-title {
+            font-size: 1.5rem;
+        }
+        .contacts-form-wrapper {
+            min-width: auto;
+        }
+        .contacts-form-card {
+            padding: 28px 20px;
+        }
+        .contacts-agent {
+            padding: 14px 16px;
+            flex-wrap: wrap;
+        }
+        .contacts-agent-contacts {
+            flex-wrap: wrap;
+        }
+    }
+    @media (max-width: 480px) {
+        .contacts-container {
+            padding: 20px 16px;
+        }
+        .contacts-form-title {
+            font-size: 1.3rem;
+        }
+        .contacts-agent {
+            flex-direction: column;
+            text-align: center;
+        }
+        .contacts-agent-contacts {
+            justify-content: center;
+        }
+    }
+    </style>
+
+    <script>
+    // ========== ВІДПРАВЛЕННЯ ФОРМИ КОНТАКТІВ ==========
+    (function() {
+        const submitBtn = document.getElementById('submitContactsBtn');
+        if (!submitBtn) return;
+
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const name = document.getElementById('contactsName')?.value?.trim() || '';
+            const phone = document.getElementById('contactsPhone')?.value?.trim() || '';
+            const message = document.getElementById('contactsMessage')?.value?.trim() || '';
+            const csrfToken = document.querySelector('#contactsForm [name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken');
+
+            if (!name) {
+                alert("Будь ласка, введіть ваше ім'я");
+                document.getElementById('contactsName').focus();
+                return;
+            }
+            if (!phone) {
+                alert("Будь ласка, введіть номер телефону");
+                document.getElementById('contactsPhone').focus();
+                return;
+            }
+
+            const ajaxUrl = '/consultation-ajax/';
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Відправка...';
+            submitBtn.disabled = true;
+
+            fetch(ajaxUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new URLSearchParams({
+                    'name': name,
+                    'phone': phone,
+                    'comment': message,
+                    'consultation_submit': '1'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('contactsName').value = '';
+                    document.getElementById('contactsPhone').value = '';
+                    document.getElementById('contactsMessage').value = '';
+                    alert('✅ Дякуємо! Наш менеджер зв\'яжеться з вами найближчим часом.');
+                } else {
+                    alert('❌ ' + (data.error || 'Сталася помилка. Спробуйте пізніше.'));
+                }
+            })
+            .catch(error => {
+                console.error('❌ Помилка:', error);
+                alert('❌ Помилка з\'єднання. Спробуйте пізніше.');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+
+        function getCookie(name) {
+            let value = null;
+            if (document.cookie && document.cookie !== '') {
+                document.cookie.split(';').forEach(cookie => {
+                    const parts = cookie.trim().split('=');
+                    if (parts[0] === name) {
+                        value = decodeURIComponent(parts[1]);
+                    }
+                });
+            }
+            return value;
+        }
+    })();
+    </script>
+
 
         {% elif block == 'banners' %}
     <!-- Блок банерів -->
@@ -945,8 +1504,12 @@
                 {% for banner in banners %}
                     {% if banner.active %}
                     <div class="banner-wrapper mb-4" data-position="{{ banner.position|default:'full' }}">
-                        <div class="banner-container position-relative rounded-4 overflow-hidden" style="background-image: url('{{ banner.image }}'); background-size: cover; background-position: center; min-height: 250px;">
-                            <div class="banner-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, {{ banner.overlay_opacity|default:0.4 }}); z-index: 1;"></div>
+                        <div class="banner-container position-relative rounded-4 overflow-hidden" style="min-height: 250px; overflow: hidden; position: relative; width: 100%; background: #f0f0f0;">
+                            <!-- Зображення банеру -->
+                            <div class="banner-image-wrapper" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; background-image: url('{{ banner.image }}'); background-size: cover; background-position: center; background-repeat: no-repeat; transform: rotate({{ banner.rotation|default:0 }}deg); transform-origin: center center;"></div>
+                            <!-- ========== ШАР ЗАТЕМНЕННЯ ========== -->
+<div class="banner-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, {{ banner.overlay_opacity|default:0.6|stringformat:"s"|cut:"," }}); z-index: 1;"></div>
+                        <!-- Контент (текст і кнопки) - БЕЗ ПОВОРОТУ -->
                             <div class="banner-content position-relative" style="z-index: 2; min-height: 250px; display: flex; flex-direction: column; justify-content: center; padding: 2rem; text-align: center;">
                                 {% for text_block in banner.text_blocks %}
                                     {% if text_block.heading %}
@@ -967,7 +1530,7 @@
             {% else %}
                 <!-- Якщо банерів немає -->
                 <div class="banner-wrapper mb-4">
-                    <div class="banner-container position-relative rounded-4 overflow-hidden" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); min-height: 200px;">
+                    <div class="banner-container position-relative rounded-4 overflow-hidden" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); min-height: 200px; width: 100%;">
                         <div class="banner-content position-relative" style="z-index: 2; min-height: 200px; display: flex; flex-direction: column; justify-content: center; padding: 2rem; text-align: center;">
                             <h2 class="banner-heading" style="color: #ffffff; font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">🎯 Додайте свої банери</h2>
                             <p class="banner-text" style="color: #ffffff; font-size: 0.95rem; margin-bottom: 1rem;">Перейдіть у конструктор, щоб додати рекламні банери для вашого сайту</p>
@@ -985,30 +1548,54 @@
             min-height: 250px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             border-radius: 16px;
+            overflow: hidden;
+            background: #f0f0f0;
+            width: 100% !important;
         }
         .banner-container:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
-        .banner-wrapper[data-position="full"] .banner-container { width: 100%; }
-        .banner-wrapper[data-position="left"] .banner-container { width: 75%; margin-right: auto; }
-        .banner-wrapper[data-position="center"] .banner-container { width: 85%; margin-left: auto; margin-right: auto; }
-        .banner-wrapper[data-position="right"] .banner-container { width: 75%; margin-left: auto; }
+        .banner-image-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+        }
+        /* ========== СТИЛІ ДЛЯ ЗАТЕМНЕННЯ ========== */
+        .banner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            transition: background-color 0.3s ease;
+        }
+        .banner-wrapper[data-position="full"] .banner-container { width: 100% !important; }
+        .banner-wrapper[data-position="left"] .banner-container { width: 75% !important; margin-right: auto; }
+        .banner-wrapper[data-position="center"] .banner-container { width: 85% !important; margin-left: auto; margin-right: auto; }
+        .banner-wrapper[data-position="right"] .banner-container { width: 75% !important; margin-left: auto; }
         .banner-heading { font-size: 1.8rem; font-weight: bold; }
         .banner-text { font-size: 1rem; }
         .banner-btn { transition: all 0.3s ease; }
         .banner-btn:hover { transform: scale(1.05); opacity: 0.9; }
+
         @media (max-width: 768px) {
             .banner-heading { font-size: 1.3rem; }
             .banner-text { font-size: 0.8rem; }
             .banner-content { padding: 1.5rem 1rem !important; min-height: 180px !important; }
             .banner-wrapper[data-position="left"] .banner-container,
-            .banner-wrapper[data-position="right"] .banner-container { width: 100%; }
-            .banner-wrapper[data-position="center"] .banner-container { width: 95%; }
+            .banner-wrapper[data-position="right"] .banner-container { width: 100% !important; }
+            .banner-wrapper[data-position="center"] .banner-container { width: 95% !important; }
         }
     </style>
-
-    {% endif %}
+{% endif %}
 {% endfor %}
 
 <script>
@@ -1056,7 +1643,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     let currentCountry = '';
     let currentMonth = new Date();
-    currentMonth.setMonth(4);
+    currentMonth.setMonth(currentMonth.getMonth() + 1);
     let currentDeparture = 'Кишинів';
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -1366,4 +1953,1281 @@ document.addEventListener('DOMContentLoaded', function() {
 .new_f-dropdown-item.selected, .new_f-dropdown-item:hover { background: var(--primary-color) !important; color: #ffffff !important; }
 </style>
 
+<!-- ========== ФІКС ФІЛЬТРІВ OTPUSK (ВИПРАВЛЕНО) ========== -->
+<style>
+/* ========== ВИПРАВЛЕННЯ ПОЗИЦІОНУВАННЯ ВИПАДАЮЧИХ ВІКОН ========== */
+
+/* Прибираємо всі глобальні фікси, які заважають */
+.new_t-modal-wrap,
+.new_f-modal-wrap,
+.ui-dialog,
+.ui-datepicker,
+.ui-autocomplete,
+.ui-menu,
+.ui-widget,
+.ui-widget-content,
+.new_f-dropdown-body {
+    position: absolute !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    z-index: 999999 !important;
+    background: white !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+    border: 1px solid #e2e8f0 !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+}
+
+/* Спеціальний фікс для випадаючих списків */
+.new_f-dropdown-body {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    margin-top: 4px !important;
+    z-index: 999999 !important;
+    min-width: 100% !important;
+}
+
+/* Для поля "Країна" */
+#location + .ui-autocomplete,
+.ui-autocomplete:has(#location) {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    margin-top: 4px !important;
+    z-index: 999999 !important;
+    min-width: 400px !important;
+}
+
+/* Для поля "Звідки" */
+#new_os-from .new_f-dropdown-body {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    margin-top: 4px !important;
+    z-index: 999999 !important;
+    min-width: 280px !important;
+    }
+
+/* Для поля "Курорт" */
+.ui-autocomplete:has(#resort),
+#resort + .ui-autocomplete {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    margin-top: 4px !important;
+    z-index: 999999 !important;
+    min-width: 380px !important;
+}
+
+/* Контейнер фільтрів */
+#otpusk-search-module .new_f-ext-container {
+    min-width: 500px !important;
+    padding: 24px !important;
+    background: #ffffff !important;
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important;
+    z-index: 99999 !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+}
+/* ========== ВИПРАВЛЕННЯ ВІДОБРАЖЕННЯ ФІЛЬТРІВ ========== */
+
+/* Кожен блок фільтрів */
+#otpusk-search-module .new_f-ext-bl {
+    margin-bottom: 14px !important;
+    width: 100% !important;
+}
+
+/* Заголовки фільтрів */
+#otpusk-search-module .new_f-ext-bl-title {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #1a202c !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+}
+/* ===== ЗАГАЛЬНІ СТИЛІ ДЛЯ ТІЛА ФІЛЬТРІВ ===== */
+#otpusk-search-module .new_f-ext-bl-body {
+    padding: 6px 10px !important;
+    background: #f8fafc !important;
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 4px 8px !important;
+}
+
+/* Лейбли чекбоксів - компактні */
+#otpusk-search-module .new_f-ext-bl-body label {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 4px 8px !important;
+    font-size: 13px !important;
+    color: #334155 !important;
+    cursor: pointer !important;
+    background: white !important;
+    border-radius: 6px !important;
+    border: 1px solid #e2e8f0 !important;
+    transition: all 0.2s ease !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+}
+#otpusk-search-module .new_f-ext-bl-body label:hover {
+    background: #f1f5f9 !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Чекбокси */
+#otpusk-search-module .new_f-ext-bl-body input[type="checkbox"],
+#otpusk-search-module .new_f-ext-bl-body input[type="radio"] {
+    width: 14px !important;
+    height: 14px !important;
+    accent-color: var(--primary-color) !important;
+    flex-shrink: 0 !important;
+    cursor: pointer !important;
+    margin: 0 !important;
+}
+
+/* ===== КАТЕГОРІЯ ГОТЕЛЮ ТА ХАРЧУВАННЯ - В РЯДОК ===== */
+#otpusk-search-module .new_f-ext-bl-cat .new_f-ext-bl-body,
+#otpusk-search-module .new_f-ext-bl-food .new_f-ext-bl-body {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 4px 6px !important;
+    padding: 6px 8px !important;
+}
+/* ===== ОЦІНКИ ГОТЕЛЮ - В РЯДОК, АЛЕ ВУЖЧЕ ===== */
+#otpusk-search-module .new_f-ext-bl-rat .new_f-ext-bl-body {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 3px 4px !important;
+    padding: 6px 8px !important;
+}
+
+/* Оцінки - кожна цифра як окрема кнопка, меншого розміру */
+#otpusk-search-module .new_f-ext-bl-rat .new_f-ext-bl-body label {
+    padding: 3px 8px !important;
+    font-size: 12px !important;
+    min-width: 32px !important;
+    justify-content: center !important;
+}
+
+/* ===== ЦІНА - СЛАЙДЕР, З ВІДСТУПОМ ===== */
+#otpusk-search-module .new_f-ext-bl-price .new_f-ext-bl-body {
+    display: block !important;
+    padding: 10px 12px !important;
+    margin-top: 4px !important;
+}
+
+#otpusk-search-module .new_f-ext-scale {
+    padding: 4px 0 !important;
+    width: 100% !important;
+}
+#otpusk-search-module .new_f-ext-scale input[type="range"] {
+    width: 100% !important;
+    height: 6px !important;
+    -webkit-appearance: none !important;
+    background: #e2e8f0 !important;
+    border-radius: 3px !important;
+    cursor: pointer !important;
+}
+
+#otpusk-search-module .new_f-ext-scale input[type="range"]::-webkit-slider-thumb>
+    -webkit-appearance: none !important;
+    width: 18px !important;
+    height: 18px !important;
+    border-radius: 50% !important;
+    background: var(--primary-color) !important;
+    cursor: pointer !important;
+}
+#otpusk-search-module .new_f-ext-scale input[type="range"]::-moz-range-thumb {
+    width: 18px !important;
+    height: 18px !important;
+    border-radius: 50% !important;
+    background: var(--primary-color) !important;
+    cursor: pointer !important;
+    border: none !important;
+}
+
+#otpusk-search-module .new_f-ext-scale-item {
+    display: flex !important;
+    justify-content: space-between !important;
+    font-size: 12px !important;
+    color: #64748b !important;
+    margin-top: 4px !important;
+}
+/* ===== ТРАНСПОРТ - В РЯДОК ===== */
+#otpusk-search-module .new_f-ext-bl-transp .new_f-ext-bl-body {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 4px 6px !important;
+    padding: 6px 8px !important;
+}
+
+/* ===== ГОСТЕЛІ З РЕКОМЕНДАЦІЄЮ ===== */
+#otpusk-search-module .new_f-ext-bl-recommend .new_f-ext-bl-body {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 4px 6px !important;
+    padding: 6px 8px !important;
+}
+
+/* ===== ПОСЛУГИ ===== */
+#otpusk-search-module .new_f-ext-bl-services .new_f-ext-bl-body {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 4px 6px !important;
+    padding: 6px 8px !important;
+}
+
+/* ===== ДОДАТКОВИЙ ВІДСТУП МІЖ ОЦІНКАМИ ТА ЦІНОЮ ===== */
+#otpusk-search-module .new_f-ext-bl-rat {
+    margin-bottom: 8px !important;
+}
+#otpusk-search-module .new_f-ext-bl-price {
+    margin-top: 4px !important;
+    margin-bottom: 14px !important;
+}
+
+/* Роздільник між оцінками та ціною */
+#otpusk-search-module .new_f-ext-bl-price .new_f-ext-bl-title {
+    padding-top: 4px !important;
+}
+
+/* КНОПКИ ВНИЗУ ФІЛЬТРІВ */
+#otpusk-search-module .new_f-dropdown-body-bottom {
+    display: flex !important;
+    gap: 12px !important;
+    padding: 16px 0 0 0 !important;
+    margin-top: 16px !important;
+    border-top: 1px solid #e2e8f0 !important;
+    justify-content: flex-end !important;
+    width: 100% !important;
+}
+#otpusk-search-module .new_f-dropdown-btn-apply,
+#otpusk-search-module .new_f-dropdown-btn-cancel {
+    padding: 10px 24px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    border: none !important;
+    display: inline-block !important;
+    min-width: 120px !important;
+    text-align: center !important;
+}
+
+#otpusk-search-module .new_f-dropdown-btn-apply {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+#otpusk-search-module .new_f-dropdown-btn-apply:hover {
+    background: var(--primary-dark) !important;
+}
+
+#otpusk-search-module .new_f-dropdown-btn-cancel {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+}
+
+#otpusk-search-module .new_f-dropdown-btn-cancel:hover {
+    background: #e2e8f0 !important;
+}
+/* Кнопка "Очистити фільтри" */
+#otpusk-search-module .new_f-ext-clear-btn {
+    color: var(--primary-color) !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    padding: 6px 16px !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    background: transparent !important;
+    transition: all 0.2s ease !important;
+    display: inline-block !important;
+    margin-right: auto !important;
+}
+
+#otpusk-search-module .new_f-ext-clear-btn:hover {
+    background: #f1f5f9 !important;
+}
+
+/* Кнопка "Розширений пошук" */
+#otpusk-search-module .new_f-ext-btn-container {
+    position: relative !important;
+    display: inline-block !important;
+}
+
+#otpusk-search-module .new_f-ext-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 10px 20px !important;
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 30px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+#otpusk-search-module .new_f-ext-btn:hover {
+    background: var(--primary-dark) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* ========== МОБІЛЬНА ВЕРСІЯ ========== */
+@media (max-width: 768px) {
+    #otpusk-search-module .new_f-ext-container {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 20px !important;
+        background: #ffffff !important;
+        border-radius: 20px 20px 0 0 !important;
+        border: none !important;
+        box-shadow: 0 -8px 32px rgba(0,0,0,0.15) !important;
+        z-index: 999999 !important;
+        max-height: 80vh !important;
+        overflow-y: auto !important;
+        transform: translateY(100%) !important;
+        transition: transform 0.3s ease !important;
+        min-width: auto !important;
+    }
+
+    #otpusk-search-module .new_f-ext-container.open {
+        transform: translateY(0) !important;
+    }
+
+    #otpusk-search-module .new_f-ext-container .new_f-dropdown-body-top {
+        display: block !important;
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        color: #1a202c !important;
+        padding: 0 0 16px 0 !important;
+        margin-bottom: 16px !important;
+        border-bottom: 2px solid #e2e8f0 !important;
+    }
+
+    /* На мобільних - елементи в стовпчик */
+    #otpusk-search-module .new_f-ext-bl-body label {
+        display: flex !important;
+        width: 100% !important;
+        padding: 8px 12px !important;
+        white-space: normal !important;
+    }
+
+    #otpusk-search-module .new_f-ext-bl-body {
+        display: block !important;
+    }
+
+    #otpusk-search-module .new_f-dropdown-body-bottom {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    #otpusk-search-module .new_f-dropdown-btn-apply,
+    #otpusk-search-module .new_f-dropdown-btn-cancel {
+        width: 100% !important;
+        padding: 14px !important;
+        font-size: 16px !important;
+        min-height: 50px !important;
+    }
+
+    #otpusk-search-module .new_f-ext-btn {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 14px !important;
+        font-size: 16px !important;
+        min-height: 50px !important;
+        }
+
+    #otpusk-search-module .new_f-ext-clear-btn {
+        width: 100% !important;
+        text-align: center !important;
+        margin-right: 0 !important;
+        margin-bottom: 8px !important;
+    }
+
+    .new_t-modal-wrap,
+    .new_f-dropdown-body,
+    .ui-autocomplete {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 92% !important;
+        max-width: 400px !important;
+        max-height: 85vh !important;
+        border-radius: 16px !important;
+        z-index: 9999999 !important;
+    }
+
+    .ui-datepicker {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 92% !important;
+        max-width: 350px !important;
+        z-index: 9999999 !important;
+    }
+}
+/* ========== ПК - ПРИБИРАЄМО ОБМЕЖЕННЯ ШИРИНИ ========== */
+@media (min-width: 769px) {
+    .ui-autocomplete,
+    .ui-menu,
+    .ui-widget,
+    .ui-widget-content,
+    .ui-autocomplete:has(#location),
+    #location + .ui-autocomplete,
+    .ui-autocomplete:has(#resort),
+    #resort + .ui-autocomplete,
+    #new_os-from .new_f-dropdown-body {
+        width: auto !important;
+        min-width: 320px !important;
+        max-width: none !important;
+    }
+
+    .ui-autocomplete:has(#location) {
+        min-width: 400px !important;
+    }
+
+    .ui-autocomplete:has(#resort) {
+        min-width: 380px !important;
+    }
+}
+</style>
+
+<!-- ========== ФІКС ДЛЯ МОДАЛЬНИХ ВІКОН ========== -->
+<style>
+.new_t-modal-wrap,
+.new_f-modal-wrap,
+.ui-dialog,
+.ui-datepicker,
+.ui-autocomplete {
+    z-index: 9999999 !important;
+}
+
+.new_t-modal-overlay,
+.ui-widget-overlay {
+    z-index: 9999998 !important;
+}
+
+.new_t-modal-body .new_f-dropdown-btn-apply,
+.new_f-dropdown-btn-apply {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 24px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+}
+
+.new_t-modal-body .new_f-dropdown-btn-apply:hover,
+.new_f-dropdown-btn-apply:hover {
+    background: var(--primary-dark) !important;
+}
+
+.new_t-modal-body .new_f-dropdown-btn-cancel,
+.new_f-dropdown-btn-cancel {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    border: none !important;
+    padding: 10px 24px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+}
+
+.new_t-modal-body .new_f-dropdown-btn-cancel:hover,
+.new_f-dropdown-btn-cancel:hover {
+    background: #e2e8f0 !important;
+}
+</style>
+
+<!-- ========== ФІКС ВИПАДАЮЧИХ СПИСКІВ (КРАЇНА, КУРОРТ, ГОТЕЛЬ) ========== -->
+<style>
+/* ========== МІНІМАЛЬНІ ВИПРАВЛЕННЯ ДЛЯ ВИПАДАЮЧИХ СПИСКІВ ========== */
+
+/* Основний контейнер випадаючого списку - тільки базові стилі */
+.ui-autocomplete,
+.ui-menu,
+.ui-widget,
+.ui-widget-content,
+.new_f-dropdown-body {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    margin-top: 4px !important;
+    z-index: 999999 !important;
+    background: white !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+    border: 1px solid #e2e8f0 !important;
+    max-height: 400px !important;
+    overflow-y: auto !important;
+    /* ВАЖЛИВО: дозволяємо розширюватися вправо */
+    min-width: 200px !important;
+    width: auto !important;
+    max-width: none !important;
+}
+
+/* Спеціально для списку КУРОРТІВ - більша ширина */
+.ui-autocomplete:has(#resort),
+#resort + .ui-autocomplete {
+    min-width: 280px !important;
+    max-width: none !important;
+    width: auto !important;
+}
+
+/* Для поля "Країна" - стандартна ширина */
+#location + .ui-autocomplete {
+    min-width: 200px !important;
+    max-width: none !important;
+    width: auto !important;
+}
+
+/* Для поля "Готель" */
+#hotel + .ui-autocomplete {
+    min-width: 250px !important;
+    max-width: none !important;
+    width: auto !important;
+}
+
+/* Для поля "Звідки" (місто вильоту) */
+#new_os-from .new_f-dropdown-body {
+    min-width: 200px !important;
+    max-width: none !important;
+    width: auto !important;
+}
+
+/* ===== СТИЛІ ДЛЯ ЕЛЕМЕНТІВ СПИСКУ ===== */
+.ui-menu-item,
+.ui-autocomplete .ui-menu-item {
+    padding: 8px 16px !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    color: #1a202c !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    min-height: 36px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.ui-menu-item:last-child {
+    border-bottom: none !important;
+}
+
+.ui-menu-item:hover {
+    background: #f1f5f9 !important;
+    color: var(--primary-color) !important;
+}
+
+.ui-menu-item .ui-state-active {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    margin: 0 !important;
+}
+
+/* ===== ФІКС ДЛЯ РОЗШИРЕНОГО ПОШУКУ ===== */
+/* Переконуємось, що фільтри не ламаються */
+#otpusk-search-module .new_f-ext-container .ui-autocomplete,
+#otpusk-search-module .new_f-ext-container .ui-menu {
+    position: absolute !important;
+    z-index: 9999999 !important;
+    min-width: 200px !important;
+    max-width: none !important;
+    width: auto !important;
+}
+
+/* ===== МОБІЛЬНА ВЕРСІЯ - ВИПАДАЮЧІ СПИСКИ ПІД ПОЛЯМИ ===== */
+@media (max-width: 768px) {
+    /* ВАЖЛИВО: на мобільних випадаючі списки залишаються під полями */
+    .ui-autocomplete,
+    .ui-menu,
+    .ui-widget,
+    .ui-widget-content,
+    .ui-autocomplete:has(#location),
+    #location + .ui-autocomplete,
+    .ui-autocomplete:has(#resort),
+    #resort + .ui-autocomplete,
+    .ui-autocomplete:has(#hotel),
+    #hotel + .ui-autocomplete {
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        margin-top: 4px !important;
+        width: auto !important;
+        max-width: 320px !important;
+        min-width: 200px !important;
+        max-height: 300px !important;
+        border-radius: 12px !important;
+        z-index: 9999999 !important;
+        overflow-x: hidden !important;
+        transform: none !important;
+    }
+
+    /* Для поля "Країна" - ширина під поле */
+    #location + .ui-autocomplete {
+        min-width: 200px !important;
+        max-width: 300px !important;
+    }
+
+    /* Для поля "Курорт" - ширина під поле */
+    #resort + .ui-autocomplete {
+        min-width: 200px !important;
+        max-width: 300px !important;
+    }
+
+    /* Для поля "Готель" */
+    #hotel + .ui-autocomplete {
+        min-width: 200px !important;
+        max-width: 300px !important;
+    }
+
+    .ui-menu-item {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        padding: 10px 16px !important;
+        font-size: 14px !important;
+    }
+
+    /* Фікс для контейнера фільтрів - щоб не заважав випадаючим спискам */
+    #otpusk-search-module .new_f-ext-container {
+        overflow: visible !important;
+    }
+
+    /* Кнопка "Розширений пошук" - залишаємо на місці */
+    #otpusk-search-module .new_f-ext-btn {
+        position: relative !important;
+        z-index: 10 !important;
+    }
+}
+</style>
+<!-- ========== ФІКС БЛОКУ "ОЦІНКИ ГОТЕЛЮ" ТА СЛАЙДЕРІВ ========== -->
+<style>
+/* ========== СТИЛІ ДЛЯ БЛОКУ ОЦІНКИ ГОТЕЛЮ ========== */
+
+/* Основний блок */
+.new_f-ext-bl-rat {
+    margin-bottom: 12px !important;
+    padding-bottom: 4px !important;
+}
+
+/* Заголовок */
+.new_f-ext-bl-rat .new_f-ext-bl-title {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #1a202c !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+}
+
+.new_f-ext-bl-rat .new_f-ext-bl-title span {
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    color: #64748b !important;
+    display: block !important;
+    margin-top: 1px !important;
+}
+
+/* Тіло блоку */
+.new_f-ext-bl-rat .new_f-ext-bl-body {
+    padding: 8px 12px !important;
+    background: #f8fafc !important;
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+    width: 100% !important;
+    display: block !important;
+}
+
+/* Контейнер слайдера */
+.new_f-ext-bl-rat .slider-container {
+    width: 280px !important;
+    max-width: 280px !important;
+}
+
+/* ===== СЛАЙДЕР ===== */
+.new_f-ext-bl-rat .ui-slider,
+.new_f-ext-bl-rat .ui-slider-horizontal {
+    width: 280px !important;
+    max-width: 280px !important;
+    min-width: 200px !important;
+    height: 8px !important;
+    background: #CDD4E0 !important;
+    border: none !important;
+    border-radius: 4px !important;
+    margin: 8px 0 4px 0 !important;
+    position: relative !important;
+}
+
+/* Заповнена частина слайдера */
+.new_f-ext-bl-rat .ui-slider-range {
+    background: var(--primary-color) !important;
+    height: 8px !important;
+    border-radius: 4px !important;
+    border: none !important;
+}
+
+/* ===== КРУГЛА РУЧКА СЛАЙДЕРА - ПІДНЯТА ВГОРУ ===== */
+.new_f-ext-bl-rat .ui-slider-handle {
+    width: 18px !important;
+    height: 18px !important;
+    border-radius: 50% !important;
+    background: var(--primary-color) !important;
+    border: 2px solid white !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
+    cursor: pointer !important;
+    position: absolute !important;
+    top: -8px !important;
+    margin-left: -9px !important;
+    z-index: 2 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.new_f-ext-bl-rat .ui-slider-handle:hover {
+    transform: scale(1.1) !important;
+    background: var(--primary-dark) !important;
+}
+
+/* ===== ЦИФРИ ОЦІНОК (4-10) - ГОРИЗОНТАЛЬНО ===== */
+.new_f-ext-bl-rat .new_f-ext-scale {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    width: 280px !important;
+    max-width: 280px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+}
+
+.new_f-ext-bl-rat .new_f-ext-scale-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+    color: #475569 !important;
+    cursor: pointer !important;
+    padding: 2px 0 !important;
+    margin: 0 !important;
+    min-width: 24px !important;
+    text-align: center !important;
+    transition: all 0.2s ease !important;
+    border-radius: 4px !important;
+    flex: 0 0 auto !important;
+    user-select: none !important;
+}
+
+.new_f-ext-bl-rat .new_f-ext-scale-item:hover {
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+    background: rgba(153, 36, 79, 0.08) !important;
+}
+
+.new_f-ext-bl-rat .new_f-ext-scale-item.active,
+.new_f-ext-bl-rat .new_f-ext-scale-item.selected {
+    color: var(--primary-color) !important;
+    font-weight: 700 !important;
+    background: rgba(153, 36, 79, 0.15) !important;
+    border-radius: 4px !important;
+}
+
+/* ===== ЦІНА ===== */
+.new_f-ext-bl-price .new_f-ext-bl-body {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 8px 12px !important;
+    gap: 2px !important;
+    background: #f8fafc !important;
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+    width: 100% !important;
+}
+
+.new_f-ext-bl-price .slider-container {
+    width: 280px !important;
+    max-width: 280px !important;
+}
+
+/* Слайдер для ЦІНИ */
+.new_f-ext-bl-price .ui-slider,
+.new_f-ext-bl-price .ui-slider-horizontal {
+    width: 280px !important;
+    max-width: 280px !important;
+    min-width: 200px !important;
+    height: 8px !important;
+    background: #CDD4E0 !important;
+    border: none !important;
+    border-radius: 4px !important;
+    margin: 8px 0 4px 0 !important;
+    position: relative !important;
+}
+
+.new_f-ext-bl-price .ui-slider-range {
+    background: var(--primary-color) !important;
+    height: 8px !important;
+    border-radius: 4px !important;
+    border: none !important;
+}
+
+.new_f-ext-bl-price .ui-slider-handle {
+    width: 18px !important;
+    height: 18px !important;
+    border-radius: 50% !important;
+    background: var(--primary-color) !important;
+    border: 2px solid white !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
+    cursor: pointer !important;
+    position: absolute !important;
+    top: -5px !important;
+    margin-left: -9px !important;
+    z-index: 2 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.new_f-ext-bl-price .ui-slider-handle:hover {
+    transform: scale(1.1) !important;
+    background: var(--primary-dark) !important;
+}
+
+/* Значення ціни */
+.new_f-ext-bl-price .new_f-ext-scale {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    width: 280px !important;
+    max-width: 280px !important;
+    padding: 0 !important;
+    margin: 2px 0 0 0 !important;
+}
+
+.new_f-ext-bl-price .new_f-ext-scale-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+    color: #475569 !important;
+    padding: 2px 0 !important;
+    margin: 0 !important;
+    min-width: 40px !important;
+    text-align: center !important;
+    flex: 0 0 auto !important;
+}
+
+.new_f-ext-bl-price .new_f-ext-scale-item:first-child {
+    justify-content: flex-start !important;
+}
+
+.new_f-ext-bl-price .new_f-ext-scale-item:last-child {
+    justify-content: flex-end !important;
+}
+
+/* ===== ВІДСТУПИ МІЖ БЛОКАМИ ===== */
+.new_f-ext-bl-rat {
+    margin-bottom: 12px !important;
+}
+
+.new_f-ext-bl-price {
+    margin-top: 12px !important;
+}
+
+/* ===== ПРИБИРАЄМО ЗАЙВІ СТИЛІ ===== */
+.new_f-ext-bl-rat .new_f-ext-scale .clearfix,
+.new_f-ext-bl-price .new_f-ext-scale .clearfix {
+    display: none !important;
+}
+
+.new_f-ext-bl-rat .new_f-ext-scale-item,
+.new_f-ext-bl-price .new_f-ext-scale-item {
+    float: none !important;
+    clear: none !important;
+}
+
+/* ===== АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ ===== */
+@media (max-width: 768px) {
+    .new_f-ext-bl-rat .ui-slider,
+    .new_f-ext-bl-rat .ui-slider-horizontal,
+    .new_f-ext-bl-price .ui-slider,
+    .new_f-ext-bl-price .ui-slider-horizontal {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: auto !important;
+    }
+
+    .new_f-ext-bl-rat .slider-container,
+    .new_f-ext-bl-price .slider-container {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .new_f-ext-bl-rat .new_f-ext-scale,
+    .new_f-ext-bl-price .new_f-ext-scale {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+</style>
+<!-- ========== МОБІЛЬНІ ФІЛЬТРИ - ВИПРАВЛЕННЯ ========== -->
+<style>
+/* ========== ФІКС ДЛЯ МОБІЛЬНИХ ФІЛЬТРІВ ========== */
+@media (max-width: 768px) {
+    /* Кнопка "Розширений пошук" - видима і клікабельна */
+    #otpusk-search-module .new_f-ext-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        padding: 12px 20px !important;
+        background: var(--primary-color) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 16px !important;
+        cursor: pointer !important;
+        min-height: 48px !important;
+        width: 100% !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        position: relative !important;
+        z-index: 10 !important;
+    }
+
+    #otpusk-search-module .new_f-ext-btn:hover {
+        background: var(--primary-dark) !important;
+        transform: scale(1.02) !important;
+    }
+
+    /* Контейнер фільтрів - виїжджає знизу */
+    #otpusk-search-module .new_f-ext-container {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 20px !important;
+        padding-bottom: 30px !important;
+        background: #ffffff !important;
+        border-radius: 20px 20px 0 0 !important;
+        border: none !important;
+        box-shadow: 0 -8px 32px rgba(0,0,0,0.15) !important;
+        z-index: 999999 !important;
+        max-height: 80vh !important;
+        overflow-y: auto !important;
+        transform: translateY(100%) !important;
+        transition: transform 0.3s ease !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        min-width: auto !important;
+    }
+
+    #otpusk-search-module .new_f-ext-container.open {
+        transform: translateY(0) !important;
+    }
+
+    /* Заголовок фільтрів */
+    #otpusk-search-module .new_f-ext-container .new_f-dropdown-body-top {
+        display: block !important;
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        color: #1a202c !important;
+        padding: 0 0 16px 0 !important;
+        margin-bottom: 16px !important;
+        border-bottom: 2px solid #e2e8f0 !important;
+        position: sticky !important;
+        top: 0 !important;
+        background: white !important;
+        z-index: 10 !important;
+    }
+
+    /* Хрестик закриття */
+    .filters-close-icon {
+        float: right !important;
+        font-size: 28px !important;
+        cursor: pointer !important;
+        color: #64748b !important;
+        line-height: 1 !important;
+    }
+
+    .filters-close-icon:hover {
+        color: var(--primary-color) !important;
+    }
+
+    /* Блоки фільтрів */
+    #otpusk-search-module .new_f-ext-bl {
+        margin-bottom: 14px !important;
+        width: 100% !important;
+    }
+
+    #otpusk-search-module .new_f-ext-bl-title {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: #1a202c !important;
+        margin-bottom: 6px !important;
+        display: block !important;
+    }
+
+    #otpusk-search-module .new_f-ext-bl-body {
+        padding: 8px 12px !important;
+        background: #f8fafc !important;
+        border-radius: 8px !important;
+        border: 1px solid #e2e8f0 !important;
+        width: 100% !important;
+    }
+
+    #otpusk-search-module .new_f-ext-bl-body label {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        padding: 8px 0 !important;
+        font-size: 15px !important;
+        color: #334155 !important;
+        cursor: pointer !important;
+        width: 100% !important;
+        min-height: 44px !important;
+    }
+
+    #otpusk-search-module .new_f-ext-bl-body input[type="checkbox"],
+    #otpusk-search-module .new_f-ext-bl-body input[type="radio"] {
+        width: 22px !important;
+        height: 22px !important;
+        accent-color: var(--primary-color) !important;
+        flex-shrink: 0 !important;
+        cursor: pointer !important;
+    }
+
+    /* КНОПКИ ВНИЗУ */
+    #otpusk-search-module .new_f-dropdown-body-bottom {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        padding: 16px 0 8px 0 !important;
+        margin-top: 16px !important;
+        border-top: 1px solid #e2e8f0 !important;
+        width: 100% !important;
+        position: sticky !important;
+        bottom: 0 !important;
+        background: white !important;
+        padding-bottom: 20px !important;
+        z-index: 10 !important;
+    }
+
+    #otpusk-search-module .new_f-dropdown-btn-apply,
+    #otpusk-search-module .new_f-dropdown-btn-cancel {
+        width: 100% !important;
+        padding: 14px !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 16px !important;
+        cursor: pointer !important;
+        border: none !important;
+        text-align: center !important;
+        min-height: 50px !important;
+    }
+
+    #otpusk-search-module .new_f-dropdown-btn-apply {
+        background: var(--primary-color) !important;
+        color: white !important;
+        order: 1 !important;
+    }
+
+    #otpusk-search-module .new_f-dropdown-btn-cancel {
+        background: #f1f5f9 !important;
+        color: #475569 !important;
+        order: 2 !important;
+    }
+
+    /* Затемнення фону */
+    body.filters-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 999998;
+        pointer-events: none;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* Фікс для випадаючих списків на мобільних */
+    .ui-autocomplete,
+    .ui-menu,
+    .ui-widget,
+    .ui-widget-content {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 92% !important;
+        max-width: 400px !important;
+        max-height: 60vh !important;
+        border-radius: 16px !important;
+        z-index: 9999999 !important;
+        overflow-x: hidden !important;
+    }
+
+    .ui-menu-item {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        padding: 10px 16px !important;
+    }
+}
+</style>
+
+<!-- ========== СКРИПТ ДЛЯ КЕРУВАННЯ ФІЛЬТРАМИ (МОБІЛЬНИЙ) ========== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Функція для налаштування фільтрів
+    function setupFilters() {
+        const btn = document.querySelector('.new_f-ext-btn');
+        const container = document.querySelector('.new_f-ext-container');
+
+        if (!btn || !container) {
+            console.log('⏳ Фільтри ще не завантажились');
+            setTimeout(setupFilters, 500);
+            return;
+        }
+
+        console.log('✅ Фільтри знайдено, налаштовуємо...');
+
+        // Додаємо заголовок на мобільних
+        if (window.innerWidth <= 768 && !container.querySelector('.new_f-dropdown-body-top')) {
+            const header = document.createElement('div');
+            header.className = 'new_f-dropdown-body-top';
+            header.innerHTML = '🔍 Розширений пошук <span class="filters-close-icon">×</span>';
+            container.insertBefore(header, container.firstChild);
+        }
+
+        // Відкриття/закриття по кліку на кнопку
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const isOpen = container.classList.contains('open');
+
+            if (isOpen) {
+                container.classList.remove('open');
+                document.body.classList.remove('filters-open');
+                btn.innerHTML = '🔍 Розширений пошук';
+            } else {
+                container.classList.add('open');
+                document.body.classList.add('filters-open');
+                btn.innerHTML = '✕ Закрити фільтри';
+            }
+        });
+
+        // Закриття по хрестику
+        const closeIcon = container.querySelector('.filters-close-icon');
+        if (closeIcon) {
+            closeIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                container.classList.remove('open');
+                document.body.classList.remove('filters-open');
+                btn.innerHTML = '🔍 Розширений пошук';
+            });
+        }
+
+        // Закриття по "Скасувати"
+        const cancelBtn = container.querySelector('.new_f-dropdown-btn-cancel');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                container.classList.remove('open');
+                document.body.classList.remove('filters-open');
+                btn.innerHTML = '🔍 Розширений пошук';
+            });
+        }
+
+        // Закриття по "Застосувати" (з затримкою)
+        const applyBtn = container.querySelector('.new_f-dropdown-btn-apply');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', function() {
+                setTimeout(function() {
+                    container.classList.remove('open');
+                    document.body.classList.remove('filters-open');
+                    btn.innerHTML = '🔍 Розширений пошук';
+                }, 500);
+            });
+        }
+
+        // Закриття при кліку на затемнення або поза фільтром
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                const isInside = container.contains(e.target);
+                const isOnBtn = btn.contains(e.target);
+                if (!isInside && !isOnBtn && container.classList.contains('open')) {
+                    container.classList.remove('open');
+                    document.body.classList.remove('filters-open');
+                    btn.innerHTML = '🔍 Розширений пошук';
+                }
+            }
+        });
+
+        console.log('✅ Мобільні фільтри налаштовано!');
+    }
+
+    // Запускаємо з затримками
+    setTimeout(setupFilters, 500);
+    setTimeout(setupFilters, 1000);
+    setTimeout(setupFilters, 2000);
+    setTimeout(setupFilters, 3000);
+
+    // Спостерігаємо за появою кнопки (якщо віджет завантажується пізніше)
+    const observer = new MutationObserver(function() {
+        const btn = document.querySelector('.new_f-ext-btn');
+        if (btn) {
+            observer.disconnect();
+            setupFilters();
+        }
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // Зупиняємо спостерігач через 10 секунд
+    setTimeout(function() {
+        observer.disconnect();
+    }, 10000);
+});
+</script>
 {% endblock %}

@@ -48,6 +48,7 @@ class SubdomainMiddleware(MiddlewareMixin):
     def process_request(self, request):
         # Отримуємо домен без порту
         host = request.get_host().split(':')[0]
+        print(f"🔍 SubdomainMiddleware: host = {host}")
 
         # СПИСОК ГОЛОВНИХ ДОМЕНІВ (НЕ ПІДДОМЕНИ)
         MAIN_DOMAINS = ['clubdatour.com.ua', 'www.clubdatour.com.ua', '209.38.199.98']
@@ -61,10 +62,12 @@ class SubdomainMiddleware(MiddlewareMixin):
 
         # Розділяємо на частини
         parts = host.split('.')
+        print(f"🔍 parts = {parts}")
 
         # Якщо це субдомен (більше 2 частин)
         if len(parts) >= 3:
-            subdomain = parts[0]  # stank23565vdf або sonias22
+            subdomain = parts[0]
+            print(f"🔍 subdomain = {subdomain}")
 
             # Перевіряємо, чи не це службовий субдомен
             if subdomain in ['www', 'mail', 'email', 'smtp', 'pop', 'imap']:
@@ -72,20 +75,21 @@ class SubdomainMiddleware(MiddlewareMixin):
                 request.is_agent_subdomain = False
                 return None
 
-            # 2. ІГНОРУЄМО ВАШ ОСОБИСТИЙ ПІДДОМЕН (sonias22)
+            # ІГНОРУЄМО ВАШ ОСОБИСТИЙ ПІДДОМЕН (sonias22)
             if subdomain == 'sonias22':
                 print(f"🚫 SubdomainMiddleware: субдомен {subdomain} заблоковано для показу сайту.")
                 request.current_agent_site = None
                 request.is_agent_subdomain = False
                 return None
 
-            # 3. ШУКАЄМО ЗВИЧАЙНОГО АГЕНТА (БЕЗ ВРАХУВАННЯ РЕГІСТРУ)
+            # ШУКАЄМО АГЕНТА (БЕЗ ВРАХУВАННЯ РЕГІСТРУ)
             try:
                 agent_site = AgentSite.objects.select_related('user').get(slug__iexact=subdomain)
                 request.current_agent_site = agent_site
                 request.is_agent_subdomain = True
                 request.agent_subdomain = subdomain
                 print(f"✅ SubdomainMiddleware: знайдено агента для субдомену {subdomain}")
+                print(f"📧 Email агента: {agent_site.user.email}")
             except AgentSite.DoesNotExist:
                 print(f"❌ SubdomainMiddleware: агент для субдомену {subdomain} не знайдено")
                 request.current_agent_site = None
@@ -93,6 +97,40 @@ class SubdomainMiddleware(MiddlewareMixin):
         else:
             request.current_agent_site = None
             request.is_agent_subdomain = False
+
+        return None
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        """Обробляє URL перед викликом view"""
+
+        # Якщо це запит до /landing/ на субдомені - перенаправляємо на головний домен
+        if request.path.startswith('/landing/'):
+            host = request.get_host().split(':')[0]
+            if host not in ['clubdatour.com.ua', 'www.clubdatour.com.ua', '209.38.199.98']:
+                print(f"🔄 SubdomainMiddleware: перенаправлення з {host}/landing/ на clubdatour.com.ua/landing/")
+                return redirect('https://clubdatour.com.ua/landing/')
+
+        # Якщо це запит до кореня субдомену (без /home/) - додаємо /home/
+        if hasattr(request, 'is_agent_subdomain') and request.is_agent_subdomain:
+            if request.path == '/' or request.path == '':
+                slug = request.agent_subdomain
+                print(f"🔄 SubdomainMiddleware: перенаправлення з {slug}.clubdatour.com.ua/ на /home/")
+                return redirect('/home/')
+
+        # ВИПРАВЛЕННЯ: ПРИБИРАЄМО /a/slug/ З URL НА СУБДОМЕНІ
+        if hasattr(request, 'is_agent_subdomain') and request.is_agent_subdomain:
+            if request.path.startswith('/a/'):
+                if not request.path.startswith('/a/admin/'):
+                    parts = request.path.split('/')
+                    if len(parts) >= 3:
+                        new_path = '/' + '/'.join(parts[3:])
+                        if not new_path:
+                            new_path = '/'
+                        query_string = request.META.get('QUERY_STRING', '')
+                        if query_string:
+                            new_path += '?' + query_string
+                        print(f"🔄 SubdomainMiddleware: виправляємо URL з {request.path} на {new_path}")
+                        return redirect(new_path)
 
         return None
 
@@ -208,4 +246,33 @@ class LandingRedirectMiddleware(MiddlewareMixin):
             if host not in ['clubdatour.com.ua', 'www.clubdatour.com.ua', '209.38.199.98']:
                 print(f"🔄 LandingRedirectMiddleware: {host}/landing/ -> clubdatour.com.ua/landing/")
                 return redirect('https://clubdatour.com.ua/landing/')
+        return None
+
+
+class RemoveHomeMiddleware(MiddlewareMixin):
+    """
+    Прибирає /home/ з URL для агентських сайтів.
+    ТІЛЬКИ для GET-запитів, щоб уникнути циклу.
+    """
+
+    def process_request(self, request):
+        # Тільки для GET-запитів
+        if request.method != 'GET':
+            return None
+
+        # Перевіряємо, чи це субдомен агента
+        if hasattr(request, 'is_agent_subdomain') and request.is_agent_subdomain:
+            # Якщо шлях починається з /home/
+            if request.path.startswith('/home/'):
+                # Замінюємо /home/ на / (прибираємо)
+                new_path = request.path.replace('/home/', '/', 1)
+                # Якщо після заміни залишився тільки / - це корінь
+                if new_path == '':
+                    new_path = '/'
+                # Додаємо параметри запиту
+                query_string = request.META.get('QUERY_STRING', '')
+                if query_string:
+                    new_path += '?' + query_string
+                print(f"🔄 RemoveHomeMiddleware: {request.path} → {new_path}")
+                return redirect(new_path)
         return None

@@ -48,6 +48,28 @@
                                 <label for="{{ form.agency_name.id_for_label }}">Назва тур агенції</label>
                                 {{ form.agency_name }}
                             </div>
+                            <!-- ========== TELEGRAM СПОВІЩЕННЯ ========== -->
+<div class="border rounded p-3 mb-4">
+    <h6 class="fw-bold mb-3">
+        <i class="fa-brands fa-telegram me-2"></i>
+        Telegram сповіщення
+    </h6>
+    <div class="mb-3">
+        <label class="form-label small fw-bold">Telegram Chat ID</label>
+        {{ form.telegram_chat_id }}
+        <div class="form-text text-muted small">
+            <i class="fa-regular fa-circle-info me-1"></i>
+            Отримайте ваш Chat ID у бота <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a>.
+            Якщо не вказано - заявки будуть тільки в адмінку.
+        </div>
+        <div class="alert alert-info mt-2" style="font-size: 13px; padding: 10px 15px; border-radius: 8px; background: #e8f4fd; border: 1px solid #b8d4e8; color: #1a5276;">
+            <i class="fa-regular fa-circle-check me-2"></i>
+            <strong>Важливо!</strong> Після того як додасте свій ID через бот <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a>,
+            перейдіть на наш Telegram бот <a href="https://t.me/ClubDatourAgentBot" target="_blank">ClubDatourAgentBot</a>
+            для отримання заявок та натисніть <strong>/start</strong> для початку.
+        </div>
+    </div>
+</div>
                         </div>
                     </div>
                 </div>
@@ -118,42 +140,162 @@
     </div>
 </div>
 <!-- ========== КІНЕЦЬ БЛОКУ "БЕЗ ЛОГОТИПУ" ========== -->
-<!-- ========== БЛОК СОЦІАЛЬНИХ МЕРЕЖ (ДОДАНО ПІСЛЯ БЕЗ ЛОГОТИПУ) ========== -->
+<!-- ========== БЛОК СОЦІАЛЬНИХ МЕРЕЖ (РОЗШИРЕНИЙ) ========== -->
 <div class="pt-3 border-top">
     <label class="fw-bold mb-2">Соціальні мережі</label>
     <p class="text-muted small mb-3">Додайте посилання на ваші соціальні мережі. Вони відображатимуться у футері сайту.</p>
 
-    <div class="mb-3">
-        <label class="form-label small fw-bold"><i class="fa-brands fa-youtube me-1"></i> YouTube</label>
-        {{ form.social_youtube }}
-        <div class="form-text text-muted small">{{ form.social_youtube.help_text }}</div>
-    </div>
+    <div class="row">
+        <!-- Колонка 1 -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-youtube me-1"></i> YouTube</label>
+                {{ form.social_youtube }}
+                <div class="form-text text-muted small">{{ form.social_youtube.help_text }}</div>
+            </div>
 
-    <div class="mb-3">
-        <label class="form-label small fw-bold"><i class="fa-brands fa-tiktok me-1"></i> TikTok</label>
-        {{ form.social_tiktok }}
-        <div class="form-text text-muted small">{{ form.social_tiktok.help_text }}</div>
-    </div>
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-tiktok me-1"></i> TikTok</label>
+                {{ form.social_tiktok }}
+                <div class="form-text text-muted small">{{ form.social_tiktok.help_text }}</div>
+            </div>
 
-    <div class="mb-3">
-        <label class="form-label small fw-bold"><i class="fa-brands fa-instagram me-1"></i> Instagram</label>
-        {{ form.social_instagram }}
-        <div class="form-text text-muted small">{{ form.social_instagram.help_text }}</div>
-    </div>
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-instagram me-1"></i> Instagram</label>
+                {{ form.social_instagram }}
+                <div class="form-text text-muted small">{{ form.social_instagram.help_text }}</div>
+            </div>
 
-    <div class="mb-3">
-        <label class="form-label small fw-bold"><i class="fa-brands fa-facebook me-1"></i> Facebook</label>
-        {{ form.social_facebook }}
-        <div class="form-text text-muted small">{{ form.social_facebook.help_text }}</div>
-    </div>
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-facebook me-1"></i> Facebook</label>
+                {{ form.social_facebook }}
+                <div class="form-text text-muted small">{{ form.social_facebook.help_text }}</div>
+            </div>
 
-    <div class="mb-3">
-        <label class="form-label small fw-bold"><i class="fa-brands fa-telegram me-1"></i> Telegram</label>
-        {{ form.social_telegram }}
-        <div class="form-text text-muted small">{{ form.social_telegram.help_text }}</div>
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-telegram me-1"></i> Telegram</label>
+                {{ form.social_telegram }}
+                <div class="form-text text-muted small">{{ form.social_telegram.help_text }}</div>
+            </div>
+        </div>
+
+        <!-- Колонка 2 -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-whatsapp me-1"></i> WhatsApp</label>
+                {{ form.social_whatsapp }}
+                <div class="form-text text-muted small">{{ form.social_whatsapp.help_text }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-viber me-1"></i> Viber</label>
+                {{ form.social_viber }}
+                <div class="form-text text-muted small">{{ form.social_viber.help_text }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-threads me-1"></i> Threads</label>
+                {{ form.social_threads }}
+                <div class="form-text text-muted small">{{ form.social_threads.help_text }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-linkedin me-1"></i> LinkedIn</label>
+                {{ form.social_linkedin }}
+                <div class="form-text text-muted small">{{ form.social_linkedin.help_text }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-x-twitter me-1"></i> X (Twitter)</label>
+                {{ form.social_x }}
+                <div class="form-text text-muted small">{{ form.social_x.help_text }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-pinterest me-1"></i> Pinterest</label>
+                {{ form.social_pinterest }}
+                <div class="form-text text-muted small">{{ form.social_pinterest.help_text }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-snapchat me-1"></i> Snapchat</label>
+                {{ form.social_snapchat }}
+                <div class="form-text text-muted small">{{ form.social_snapchat.help_text }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-twitch me-1"></i> Twitch</label>
+                {{ form.social_twitch }}
+                <div class="form-text text-muted small">{{ form.social_twitch.help_text }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-brands fa-discord me-1"></i> Discord</label>
+                {{ form.social_discord }}
+                <div class="form-text text-muted small">{{ form.social_discord.help_text }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-solid fa-signal me-1"></i> Signal</label>
+                {{ form.social_signal }}
+                <div class="form-text text-muted small">{{ form.social_signal.help_text }}</div>
+            </div>
+        </div>
     </div>
 </div>
 <!-- ========== КІНЕЦЬ БЛОКУ СОЦІАЛЬНИХ МЕРЕЖ ========== -->
+
+          <!-- ========== БЛОК МЕНЕДЖЕРІВ (ДИНАМІЧНИЙ) ========== -->
+<div class="pt-3 border-top">
+    <label class="fw-bold mb-3">Контактна інформація для блоку "Контакти"</label>
+    <p class="text-muted small mb-3">
+        Додайте контактні дані ваших менеджерів. Вони відображатимуться в блоці "Контакти" на сайті.
+    </p>
+
+    <div id="managersContainer">
+        <!-- Сюди JS буде рендерити картки менеджерів -->
+    </div>
+
+    <button type="button" id="addManagerBtn" class="btn btn-outline-primary btn-sm mt-2">
+        <i class="fa-solid fa-plus me-1"></i> Додати менеджера
+    </button>
+
+    <!-- Приховане поле для зберігання JSON -->
+    <input type="hidden" name="managers" id="id_managers_json" value="">
+</div>
+<!-- ========== КІНЕЦЬ БЛОКУ МЕНЕДЖЕРІВ ========== -->
+<!-- ========== БЛОК НАЛАШТУВАНЬ ФУТЕРА ========== -->
+<div class="pt-3 border-top">
+    <label class="fw-bold mb-3">Налаштування футера</label>
+    <p class="text-muted small mb-3">Додайте контактну інформацію, яка відображатиметься у футері вашого сайту.</p>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label small fw-bold"><i class="fa-solid fa-phone me-1"></i> Телефон</label>
+            {{ form.footer_phone }}
+            <div class="form-text text-muted small">{{ form.footer_phone.help_text }}</div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label small fw-bold"><i class="fa-regular fa-envelope me-1"></i> Email</label>
+            {{ form.footer_email }}
+            <div class="form-text text-muted small">{{ form.footer_email.help_text }}</div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label small fw-bold"><i class="fa-solid fa-location-dot me-1"></i> Адреса офісу</label>
+        {{ form.footer_address }}
+        <div class="form-text text-muted small">{{ form.footer_address.help_text }}</div>
+    </div>
+
+    <div class="mt-2">
+        {{ form.footer_show_contact }}
+        <label for="{{ form.footer_show_contact.id_for_label }}" class="fw-semibold ms-1">Показувати контакти у футері</label>
+        <div class="form-text text-muted small">{{ form.footer_show_contact.help_text }}</div>
+    </div>
+</div>
+<!-- ========== КІНЕЦЬ БЛОКУ НАЛАШТУВАНЬ ФУТЕРА ========== -->
+
             <div class="pt-3 border-top">
                 <label>Кольорова схема</label>
                 <div class="mt-2">
@@ -232,7 +374,7 @@
                 <div class="active-blocks-list" style="max-height: 300px; overflow-y: auto;">
                     {% for block_id, block_name in all_blocks.items %}
                         <div class="form-check mb-2">
-<input class="form-check-input" type="checkbox" name="active_blocks" value="{{ block_id }}" id="block_{{ block_id }}" {% if block_id in active_blocks %}checked="checked"{% endif %}>
+                            <input class="form-check-input" type="checkbox" name="active_blocks" value="{{ block_id }}" id="block_{{ block_id }}" {% if block_id in active_blocks %}checked="checked"{% endif %}>
                             <label class="form-check-label" for="block_{{ block_id }}">{{ block_name }}</label>
                         </div>
                     {% endfor %}
@@ -244,57 +386,58 @@
             </div>
 
             <!-- 2. Порядок блоків -->
-<div class="border rounded p-3 mb-4">
-    <h6 class="fw-bold mb-3">
-        <i class="fa-solid fa-arrow-up-wide-short me-2"></i>
-        Порядок блоків:
-    </h6>
-    <div class="blocks-order-list" id="blocks-order-container">
-        {% for block_id in blocks_order %}
-            <div class="block-order-item mb-2 p-2 border rounded d-flex justify-content-between align-items-center" data-block="{{ block_id }}">
-    <div class="d-flex align-items-center">
-        <i class="
-            {% if block_id == 'price_calendar' %}fa-regular fa-calendar me-2
-            {% elif block_id == 'popular_destinations' %}fa-regular fa-compass me-2
-            {% elif block_id == 'consultation' %}fa-regular fa-message me-2
-            {% elif block_id == 'tours_from_city' %}fa-regular fa-city me-2
-            {% elif block_id == 'about_us' %}fa-regular fa-circle-info me-2
-            {% elif block_id == 'popular_hotels' %}fa-regular fa-building me-2
-            {% elif block_id == 'banners' %}fa-regular fa-image me-2
-            {% elif block_id == 'consultation_promo' %}fa-regular fa-bullhorn me-2
-            {% elif block_id == 'hot_tours' %}fa-regular fa-fire-flame-curved me-2
-            {% else %}fa-regular fa-square me-2
-            {% endif %}"></i>
-        <strong>
-            {% if block_id == 'price_calendar' %} 📅 Календар низьких цін
-            {% elif block_id == 'popular_destinations' %} 🌍 Популярні напрямки
-            {% elif block_id == 'consultation' %} 📞 Консультація
-            {% elif block_id == 'tours_from_city' %} 🏙️ Тури з вашого міста
-            {% elif block_id == 'about_us' %} ℹ️ Про нас
-            {% elif block_id == 'popular_hotels' %} 🏨 Популярні готелі
-            {% elif block_id == 'banners' %} 🎯 Мої банери
-            {% elif block_id == 'consultation_promo' %} 🎯 Промо-блок консультації
-            {% elif block_id == 'hot_tours' %} 🔥 Гарячі тури
-            {% else %}{{ block_id }}
-            {% endif %}
-        </strong>
-    </div>
-                <div class="btn-group" style="gap: 5px;">
-                    <button type="button" class="move-up btn btn-sm btn-outline-secondary" style="width: 32px;" title="Перемістити вгору">
-                        <i class="fa-solid fa-chevron-up"></i>
-                    </button>
-                    <button type="button" class="move-down btn btn-sm btn-outline-secondary" style="width: 32px;" title="Перемістити вниз">
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
+            <div class="border rounded p-3 mb-4">
+                <h6 class="fw-bold mb-3">
+                    <i class="fa-solid fa-arrow-up-wide-short me-2"></i>
+                    Порядок блоків:
+                </h6>
+                <div class="blocks-order-list" id="blocks-order-container">
+                    {% for block_id in blocks_order %}
+                        <div class="block-order-item mb-2 p-2 border rounded d-flex justify-content-between align-items-center" data-block="{{ block_id }}">
+                            <div class="d-flex align-items-center">
+                                <i class="
+                                    {% if block_id == 'price_calendar' %}fa-regular fa-calendar me-2
+                                    {% elif block_id == 'popular_destinations' %}fa-regular fa-compass me-2
+                                    {% elif block_id == 'consultation' %}fa-regular fa-message me-2
+                                    {% elif block_id == 'tours_from_city' %}fa-regular fa-city me-2
+                                    {% elif block_id == 'about_us' %}fa-regular fa-circle-info me-2
+                                    {% elif block_id == 'popular_hotels' %}fa-regular fa-building me-2
+                                    {% elif block_id == 'banners' %}fa-regular fa-image me-2
+                                    {% elif block_id == 'consultation_promo' %}fa-regular fa-bullhorn me-2
+                                    {% elif block_id == 'hot_tours' %}fa-regular fa-fire-flame-curved me-2
+                                    {% else %}fa-regular fa-square me-2
+                                    {% endif %}"></i>
+                                <strong>
+                                    {% if block_id == 'price_calendar' %} 📅 Календар низьких цін
+                                    {% elif block_id == 'popular_destinations' %} 🌍 Популярні напрямки
+                                    {% elif block_id == 'consultation' %} 📞 Консультація
+                                    {% elif block_id == 'tours_from_city' %} 🏙️ Тури з вашого міста
+                                    {% elif block_id == 'about_us' %} ℹ️ Про нас
+                                    {% elif block_id == 'popular_hotels' %} 🏨 Популярні готелі
+                                    {% elif block_id == 'banners' %} 🎯 Мої банери
+                                    {% elif block_id == 'consultation_promo' %} 🎯 Промо-блок консультації
+                                    {% elif block_id == 'hot_tours' %} 🔥 Гарячі тури
+                                    {% else %}{{ block_id }}
+                                    {% endif %}
+                                </strong>
+                            </div>
+                            <div class="btn-group" style="gap: 5px;">
+                                <button type="button" class="move-up btn btn-sm btn-outline-secondary" style="width: 32px;" title="Перемістити вгору">
+                                    <i class="fa-solid fa-chevron-up"></i>
+                                </button>
+                                <button type="button" class="move-down btn btn-sm btn-outline-secondary" style="width: 32px;" title="Перемістити вниз">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
+                <small class="text-muted mt-2 d-block">
+                    <i class="fa-solid fa-arrow-up me-1"></i> <i class="fa-solid fa-arrow-down me-1"></i>
+                    Використовуйте кнопки для зміни порядку відображення блоків на вашому сайті
+                </small>
             </div>
-        {% endfor %}
-    </div>
-    <small class="text-muted mt-2 d-block">
-        <i class="fa-solid fa-arrow-up me-1"></i> <i class="fa-solid fa-arrow-down me-1"></i>
-        Використовуйте кнопки для зміни порядку відображення блоків на вашому сайті
-    </small>
-</div>
+
             <!-- 3. Мої банери -->
             <div class="border rounded p-3 mb-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -335,6 +478,8 @@
                 </div>
             </div>
 
+
+
             <!-- 4. Блок "Про нас" -->
             <div class="border rounded p-3">
                 <h6 class="fw-bold mb-3">
@@ -362,9 +507,8 @@
                 </div>
             </div>
         </div>
-
-                    </div>
-                </div>
+    </div>
+</div>
                             <!-- Резервні поля для hero_title та hero_subtitle -->
             <input type="hidden" name="hero_title_backup" id="hero_title_backup" value="">
             <input type="hidden" name="hero_subtitle_backup" id="hero_subtitle_backup" value="">
@@ -377,10 +521,19 @@
 <!-- Модальне вікно для банерів -->
 <div id="bannerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10000;">
     <div style="background:white; max-width:700px; margin:50px auto; padding:20px; border-radius:10px;">
-        <div style="display:flex; justify-content:space-between;">
-            <h3 id="bannerModalTitle">Додати банер</h3>
-            <button class="close-banner-modal">&times;</button>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 id="bannerModalTitle" class="mb-0">Додати банер</h3>
+            <button class="close-banner-modal" style="font-size:28px; background:none; border:none; cursor:pointer;">&times;</button>
         </div>
+
+        <!-- ПОПЕРЕДЖЕННЯ ПРО ФОРМАТ ФОТО -->
+        <div class="alert alert-warning mt-3 mb-3" style="font-size: 14px; padding: 10px 15px; border-radius: 8px; background: #fff3cd; border: 1px solid #ffc107;">
+            <i class="fa-solid fa-triangle-exclamation me-2" style="color: #856404;"></i>
+            <strong style="color: #856404;">Важливо!</strong>
+            <span style="color: #856404;">Для банерів використовуйте фото з <strong>горизонтальним</strong> форматом
+            (ширина більша за висоту). Рекомендоване співвідношення: <strong>16:9</strong> (наприклад, 1920×1080).</span>
+        </div>
+
         <form id="bannerForm" enctype="multipart/form-data">
             <input type="hidden" name="banner_id" id="editBannerId">
 
@@ -406,8 +559,8 @@
             </div>
 
             <div class="mb-2">
-                <label>Затемнення: <span id="opacityValue">0.4</span></label>
-                <input type="range" name="overlay_opacity" min="0" max="0.8" step="0.05" value="0.4" id="overlayOpacity">
+<label>Затемнення: <span id="opacityValue">0.7</span></label>
+                <input type="range" name="overlay_opacity" min="0" max="1" step="0.05" value="0.7" id="overlayOpacity">
             </div>
 
             <hr>
@@ -417,10 +570,31 @@
 
             <hr>
             <h5>Попередній перегляд</h5>
-            <div id="bannerPreview" style="height:200px; background:#ccc; position:relative; border-radius:8px; background-size:cover;">
-                <div id="previewOverlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.4); border-radius:8px;"></div>
-                <div id="previewContent" style="position:relative; height:100%;"></div>
-            </div>
+            <div class="position-relative" style="background: #f0f0f0; border-radius: 8px; padding: 10px; margin-bottom: 15px;">
+    <div id="bannerPreview" style="height:200px; background:#e9ecef; position:relative; border-radius:8px; background-size:contain; background-position:center; background-repeat:no-repeat; transition: transform 0.3s ease; overflow: hidden;">
+        <!-- ШАР ЗАТЕМНЕННЯ ДЛЯ ПРЕВ'Ю -->
+        <div id="previewOverlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7); border-radius:8px; pointer-events:none; transition: background-color 0.2s ease; z-index:1;"></div>
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#999; font-size:14px; text-align:center; z-index:2;">
+            <i class="fa-regular fa-image fa-3x d-block mb-2"></i>
+            Попередній перегляд
+        </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mt-2 flex-wrap gap-2">
+        <div>
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="rotateBanner('left')">
+                <i class="fa-solid fa-rotate-left"></i> Вліво
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="rotateBanner('right')">
+                <i class="fa-solid fa-rotate-right"></i> Вправо
+            </button>
+            <span class="ms-2 text-muted small" id="rotationAngle">0°</span>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-danger" onclick="resetBannerRotation()">
+            <i class="fa-solid fa-undo"></i> Скинути
+        </button>
+    </div>
+    <input type="hidden" name="rotation" id="bannerRotation" value="0">
+</div>
 
             <div class="mt-3">
                 <button type="button" id="saveBannerBtn" class="btn btn-primary">Зберегти</button>
@@ -1207,7 +1381,23 @@ function updatePreview() {
         previewContent.appendChild(div);
     });
 }
+// Оновлення затемнення в прев'ю
+function updateOverlayPreview() {
+    const overlayOpacity = document.getElementById('overlayOpacity')?.value || 0.4;
+    const overlay = document.getElementById('previewOverlay');
+    if (overlay) {
+        overlay.style.backgroundColor = `rgba(0, 0, 0, ${overlayOpacity})`;
+    }
+    document.getElementById('opacityValue').textContent = overlayOpacity;
+}
 
+// Додаємо обробник на зміну повзунка
+document.addEventListener('DOMContentLoaded', function() {
+    const overlayOpacity = document.getElementById('overlayOpacity');
+    if (overlayOpacity) {
+        overlayOpacity.addEventListener('input', updateOverlayPreview);
+    }
+});
 function addTextBlock() {
     textBlockCount++;
     const id = textBlockCount;
@@ -1405,7 +1595,7 @@ function editBanner(index) {
     });
 }
 
-// Збереження банера
+/// Збереження банера
 function saveBanner() {
     const form = document.getElementById('bannerForm');
     const formData = new FormData(form);
@@ -1417,14 +1607,20 @@ function saveBanner() {
         return;
     }
 
+    const overlayOpacity = document.getElementById('overlayOpacity')?.value || 0.4;
+    console.log('📊 Збереження затемнення:', overlayOpacity);  // ← ДОДАЙТЕ ЦЕЙ РЯДОК
+    formData.set('overlay_opacity', overlayOpacity);
+
     const saveBtn = document.getElementById('saveBannerBtn');
     saveBtn.disabled = true;
     saveBtn.innerHTML = 'Збереження...';
 
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
     fetch('/constructor/banner/create/', {
         method: 'POST',
         headers: {
-            'X-CSRFToken': csrftoken,
+            'X-CSRFToken': csrfToken,
         },
         body: formData
     })
@@ -1451,23 +1647,35 @@ function deleteBanner(index) {
     if (!confirm('Видалити банер?')) return;
 
     console.log('Видаляємо банер індекс:', index);
+
+    // Отримуємо CSRF токен з форми
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
     fetch(`/constructor/banner/delete/${index}/`, {
         method: 'POST',
         headers: {
-            'X-CSRFToken': csrftoken,
-        }
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ index: index })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
+            // Оновлюємо сторінку тільки після успішного видалення
             location.reload();
         } else {
-            alert('Помилка видалення');
+            alert('Помилка видалення: ' + (data.error || 'Невідома помилка'));
         }
     })
     .catch(error => {
         console.error('Помилка:', error);
-        alert('Помилка сервера');
+        alert('Помилка сервера при видаленні банера');
     });
 }
 
@@ -1684,6 +1892,275 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+    // ========== ПОВОРОТ БАНЕРА ==========
+let currentRotation = parseInt(document.getElementById('bannerRotation')?.value || 0);
+
+function rotateBanner(direction) {
+    const preview = document.getElementById('bannerPreview');
+    if (!preview) return;
+
+    if (direction === 'left') {
+        currentRotation -= 90;
+    } else {
+        currentRotation += 90;
+    }
+
+    // Зберігаємо в межах 0-360
+    if (currentRotation >= 360) currentRotation = 0;
+    if (currentRotation < 0) currentRotation = 270;
+
+    preview.style.transform = `rotate(${currentRotation}deg)`;
+    document.getElementById('rotationAngle').textContent = `${currentRotation}°`;
+    document.getElementById('bannerRotation').value = currentRotation;
+}
+
+function resetBannerRotation() {
+    currentRotation = 0;
+    const preview = document.getElementById('bannerPreview');
+    if (preview) {
+        preview.style.transform = 'rotate(0deg)';
+    }
+    document.getElementById('rotationAngle').textContent = '0°';
+    document.getElementById('bannerRotation').value = '0';
+}
+
+// Скидаємо при закритті модалки
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('bannerModal');
+    if (modal) {
+        const observer = new MutationObserver(function() {
+            if (modal.style.display === 'none') {
+                resetBannerRotation();
+            }
+        });
+        observer.observe(modal, { attributes: true, attributeFilter: ['style'] });
+    }
+
+    // Оновлюємо прев'ю при виборі файлу
+    const imageInput = document.getElementById('bannerImageInput');
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('bannerPreview');
+                    if (preview) {
+                        preview.style.backgroundImage = `url(${event.target.result})`;
+                        preview.style.backgroundSize = 'contain';
+                        preview.style.backgroundPosition = 'center';
+                        preview.style.backgroundRepeat = 'no-repeat';
+                        // Ховаємо текст "Попередній перегляд"
+                        const placeholder = preview.querySelector('div');
+                        if (placeholder) placeholder.style.display = 'none';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+        // ========== АВТОМАТИЧНЕ ОНОВЛЕННЯ НАЗВ ФАЙЛІВ ПРИ ВИБОРІ ==========
+
+    // Функція для оновлення відображення назви файлу
+    function updateFileName(inputElement, displayElementId) {
+        const displayElement = document.getElementById(displayElementId);
+        if (!displayElement) return;
+
+        if (inputElement.files && inputElement.files.length > 0) {
+            // Показуємо назву вибраного файлу
+            const fileName = inputElement.files[0].name;
+            displayElement.textContent = fileName;
+            displayElement.style.color = '#086745';
+            displayElement.style.fontWeight = '500';
+        } else {
+            // Якщо файл не вибрано - показуємо стандартний текст
+            const defaultText = displayElement.getAttribute('data-default') || 'Файл не вибрано';
+            displayElement.textContent = defaultText;
+            displayElement.style.color = '';
+            displayElement.style.fontWeight = '';
+        }
+    }
+
+    // ====== ВЕРХНІЙ ЛОГОТИП ======
+    const topLogoInput = document.getElementById('id_top_logo');
+    if (topLogoInput) {
+        topLogoInput.addEventListener('change', function() {
+            updateFileName(this, 'top_logo_display');
+        });
+    }
+
+    // ====== НИЖНІЙ ЛОГОТИП ======
+    const bottomLogoInput = document.getElementById('id_bottom_logo');
+    if (bottomLogoInput) {
+        bottomLogoInput.addEventListener('change', function() {
+            updateFileName(this, 'bottom_logo_display');
+        });
+    }
+
+    // ====== FAVICON ======
+    const faviconInput = document.getElementById('id_favicon');
+    if (faviconInput) {
+        faviconInput.addEventListener('change', function() {
+            updateFileName(this, 'favicon_display');
+        });
+    }
+
+    // ====== ФОНОВЕ ЗОБРАЖЕННЯ (HERO) ======
+    const heroInput = document.getElementById('id_hero_background');
+    if (heroInput) {
+        heroInput.addEventListener('change', function() {
+            updateFileName(this, 'hero_file_name');
+
+            // Показуємо прев'ю фото
+            const previewContainer = document.getElementById('hero_preview_container');
+            const previewImg = document.getElementById('hero_preview');
+            if (previewContainer && previewImg && this.files && this.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+
+    // ====== ЗОБРАЖЕННЯ "ПРО НАС" ======
+    const aboutUsInput = document.querySelector('input[name="about_us_image"]');
+    if (aboutUsInput) {
+        aboutUsInput.addEventListener('change', function() {
+            // Якщо є елемент для відображення назви - оновлюємо
+            const displaySpan = this.parentElement?.querySelector('.file-name-display');
+            if (displaySpan && this.files && this.files.length > 0) {
+                displaySpan.textContent = this.files[0].name;
+                displaySpan.style.color = '#086745';
+            }
+        });
+    }
+
+    console.log('✅ Автоматичне оновлення назв файлів активовано!');
+// ========== ДИНАМІЧНЕ УПРАВЛІННЯ МЕНЕДЖЕРАМИ ==========
+(function() {
+    const container = document.getElementById('managersContainer');
+    const addBtn = document.getElementById('addManagerBtn');
+    const hiddenInput = document.getElementById('id_managers_json');
+    if (!container || !addBtn || !hiddenInput) {
+        console.warn('⚠️ Менеджери: не знайдено елементів');
+        return;
+    }
+
+    // Початкові дані з Django
+    let managers = [];
+    try {
+        const initial = '{{ managers_json|default:"[]"|escapejs }}';
+        managers = JSON.parse(initial) || [];
+    } catch(e) {
+        console.warn('⚠️ Помилка парсингу managers_json:', e);
+        managers = [];
+    }
+
+    // Якщо порожньо — показуємо одну пусту картку
+    if (!Array.isArray(managers) || managers.length === 0) {
+        managers = [{ name:'', position:'', phone:'', email:'', telegram:'', whatsapp:'' }];
+    }
+
+    function escapeHtml(s) {
+        if (s === null || s === undefined) return '';
+        return String(s).replace(/[&<>"']/g, c => ({
+            '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+        }[c]));
+    }
+
+    function renderManagers() {
+        container.innerHTML = '';
+        managers.forEach((m, idx) => {
+            const card = document.createElement('div');
+            card.className = 'manager-card border rounded p-3 mb-3';
+            card.dataset.index = idx;
+            card.style.background = '#f8fafc';
+            card.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold mb-0">Менеджер ${idx + 1}</h6>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-manager-btn" ${managers.length <= 1 ? 'disabled title="Потрібен хоча б один менеджер"' : ''}>
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label small fw-bold">Ім'я</label>
+                        <input type="text" class="form-control manager-field" data-field="name" value="${escapeHtml(m.name)}" placeholder="Олена Коваль">
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label small fw-bold">Посада</label>
+                        <input type="text" class="form-control manager-field" data-field="position" value="${escapeHtml(m.position)}" placeholder="Менеджер з роботи з клієнтами">
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label small fw-bold">Телефон</label>
+                        <input type="text" class="form-control manager-field" data-field="phone" value="${escapeHtml(m.phone)}" placeholder="+38 (099) 123-45-67">
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label small fw-bold">Email</label>
+                        <input type="email" class="form-control manager-field" data-field="email" value="${escapeHtml(m.email)}" placeholder="info@example.com">
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label small fw-bold">Telegram (username)</label>
+                        <input type="text" class="form-control manager-field" data-field="telegram" value="${escapeHtml(m.telegram)}" placeholder="olena_koval">
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label small fw-bold">WhatsApp (номер)</label>
+                        <input type="text" class="form-control manager-field" data-field="whatsapp" value="${escapeHtml(m.whatsapp)}" placeholder="380991234567">
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+        syncHidden();
+    }
+
+    function syncHidden() {
+        hiddenInput.value = JSON.stringify(managers);
+    }
+
+    // Оновлення даних при вводі
+    container.addEventListener('input', function(e) {
+        if (!e.target.classList.contains('manager-field')) return;
+        const card = e.target.closest('.manager-card');
+        if (!card) return;
+        const idx = parseInt(card.dataset.index, 10);
+        const field = e.target.dataset.field;
+        if (managers[idx]) {
+            managers[idx][field] = e.target.value;
+            syncHidden();
+        }
+    });
+
+    // Видалення менеджера
+    container.addEventListener('click', function(e) {
+        const btn = e.target.closest('.remove-manager-btn');
+        if (!btn) return;
+        if (managers.length <= 1) return;
+        const card = btn.closest('.manager-card');
+        if (!card) return;
+        const idx = parseInt(card.dataset.index, 10);
+        managers.splice(idx, 1);
+        renderManagers();
+    });
+
+    // Додавання менеджера
+    addBtn.addEventListener('click', function() {
+        if (managers.length >= 20) {
+            alert('Максимум 20 менеджерів');
+            return;
+        }
+        managers.push({ name:'', position:'', phone:'', email:'', telegram:'', whatsapp:'' });
+        renderManagers();
+    });
+
+    // Початковий рендер
+    renderManagers();
+    console.log('✅ Менеджери ініціалізовано. Кількість:', managers.length);
+})();
 </script>
 
 {% endblock %}

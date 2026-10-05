@@ -39,10 +39,16 @@ from tours.models import News
 
 # ========== ФУНКЦІЯ ДЛЯ ВІДПРАВКИ EMAIL ЧЕРЕЗ SENDGRID API ==========
 def send_email_sendgrid(to_email, subject, body):
-    """Відправка email через SendGrid Web API (обходить SMTP блокування)"""
+    """Відправка email через SendGrid Web API"""
     try:
         sg = sendgrid.SendGridAPIClient(api_key=os.getenv('SENDGRID_API_KEY'))
-        from_email = os.getenv('DEFAULT_FROM_EMAIL', 'info@clubdatour.com.ua')
+        # ========== ВИКОРИСТОВУЄМО ТІЛЬКИ ПІДТВЕРДЖЕНУ АДРЕСУ ==========
+        # Ця адреса ПОВИННА бути підтверджена в SendGrid
+        from_email = 'ClubDatour <info@clubdatour.com.ua>'
+
+        print(f"📧 Відправка від: {from_email}")
+        print(f"📧 Кому: {to_email}")
+        print(f"📧 Тема: {subject}")
 
         message = Mail(
             from_email=from_email,
@@ -52,11 +58,12 @@ def send_email_sendgrid(to_email, subject, body):
         )
 
         response = sg.send(message)
-        print(f"SendGrid API response: {response.status_code}")
-        return response.status_code == 202  # 202 означає успіх
+        print(f"✅ Статус: {response.status_code}")
+        return response.status_code == 202
     except Exception as e:
-        print(f"SendGrid API помилка: {e}")
+        print(f"❌ Помилка: {e}")
         return False
+
 from django.http import HttpResponse
 
 # А потім в функції generate_image додайте:
@@ -541,6 +548,8 @@ def constructor_dashboard(request):
         'banners': block_settings.banners,
         'custom_css': block_settings.custom_css,
         'custom_js': block_settings.custom_js,
+        # ========== ДОДАНО: JSON менеджерів ==========
+        'managers_json': __import__('json').dumps(agent_site.managers or [], ensure_ascii=False),
     }
     return render(request, 'constructor/dashboard.html', context)
 
@@ -1109,6 +1118,14 @@ def banner_create(request):
         banner_id = request.POST.get('banner_id')
         is_edit = banner_id and banner_id.isdigit() and int(banner_id) < len(banners)
 
+        # ========== ОТРИМУЄМО КУТ ПОВОРОТУ ==========
+        rotation = request.POST.get('rotation', 0)
+        try:
+            rotation = int(rotation)
+        except ValueError:
+            rotation = 0
+        print(f"🔄 Кут повороту: {rotation}°")
+
         image_file = request.FILES.get('image_file')
         image_url = None
 
@@ -1163,6 +1180,7 @@ def banner_create(request):
                 text_blocks.append(text_block)
             block_index += 1
 
+        # ========== ЗБЕРІГАЄМО КУТ ПОВОРОТУ В БАНЕР ==========
         if is_edit:
             banner_index = int(banner_id)
             new_banner = {
@@ -1174,6 +1192,7 @@ def banner_create(request):
                 'active': True,
                 'overlay_opacity': float(request.POST.get('overlay_opacity', 0.4)),
                 'text_blocks': text_blocks,
+                'rotation': rotation,  # ← ДОДАНО!
             }
             banners[banner_index] = new_banner
         else:
@@ -1186,6 +1205,7 @@ def banner_create(request):
                 'active': True,
                 'overlay_opacity': float(request.POST.get('overlay_opacity', 0.4)),
                 'text_blocks': text_blocks,
+                'rotation': rotation,  # ← ДОДАНО!
             }
             banners.append(new_banner)
 
@@ -1342,3 +1362,54 @@ def agent_logout(request, slug):
     auth_logout(request)
     messages.success(request, 'Ви вийшли з системи.')
     return redirect(f'/a/{slug}/login/')
+
+
+# ========== АВТОМАТИЧНЕ СТВОРЕННЯ АГЕНТА ДЛЯ НОВИХ СУБДОМЕНІВ ==========
+def create_agent_for_subdomain(request, slug):
+    """
+    Автоматично створює агента, якщо субдомен існує, але агента немає в БД.
+    Використовується для швидкого створення тестових агентів.
+    """
+    # Перевіряємо, чи існує агент з таким slug
+    agent_site = AgentSite.objects.filter(slug=slug).first()
+
+    if agent_site:
+        # Якщо агент вже існує - перенаправляємо на його сторінку
+        return redirect(f'https://{slug}.clubdatour.com.ua/home/')
+
+    # Якщо агента немає - створюємо
+    from users.models import User
+
+    # Шукаємо суперадміна або першого користувача
+    admin_user = User.objects.filter(is_superuser=True).first()
+    if not admin_user:
+        admin_user = User.objects.first()
+
+    if not admin_user:
+        # Якщо немає жодного користувача - створюємо
+        admin_user = User.objects.create_user(
+            username='agent_' + slug,
+            email=f'{slug}@clubdatour.com.ua',
+            password='agent12345',
+            is_agent=True,
+            is_staff=True
+        )
+
+    # Створюємо AgentSite
+    agent_site = AgentSite.objects.create(
+        user=admin_user,
+        slug=slug,
+        agency_name=f"Агент {slug}",
+        hero_title="Ваша подорож починається тут",
+        hero_subtitle="Знайдіть ідеальний тур за лічені хвилини",
+        show_news=True,
+        show_operator_logos=False,
+        show_superadmin_tours=True,
+        primary_color="#086745",
+        secondary_color="#02432c"
+    )
+
+    print(f"✅ Автоматично створено агента: {slug} (ID: {agent_site.id})")
+
+    # Перенаправляємо на сторінку агента
+    return redirect(f'https://{slug}.clubdatour.com.ua/home/')
