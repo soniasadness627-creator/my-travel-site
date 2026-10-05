@@ -100,6 +100,114 @@ class AgentSite(models.Model):
         verbose_name="Telegram",
         help_text="Посилання на Telegram канал або чат"
     )
+    # ========== СОЦІАЛЬНІ МЕРЕЖІ (ДОДАТКОВІ) ==========
+    social_whatsapp = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="WhatsApp",
+        help_text="Посилання на WhatsApp (наприклад: https://wa.me/380991234567)"
+    )
+    social_viber = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Viber",
+        help_text="Посилання на Viber (наприклад: viber://chat?number=380991234567)"
+    )
+    social_threads = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Threads",
+        help_text="Посилання на Threads"
+    )
+    social_linkedin = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="LinkedIn",
+        help_text="Посилання на LinkedIn"
+    )
+    social_x = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="X (Twitter)",
+        help_text="Посилання на X/Twitter"
+    )
+    social_pinterest = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Pinterest",
+        help_text="Посилання на Pinterest"
+    )
+    social_snapchat = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Snapchat",
+        help_text="Посилання на Snapchat"
+    )
+    social_twitch = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Twitch",
+        help_text="Посилання на Twitch"
+    )
+    social_discord = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Discord",
+        help_text="Посилання на Discord"
+    )
+    social_signal = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Signal",
+        help_text="Посилання на Signal"
+    )
+
+    # ========== КОНТАКТНА ІНФОРМАЦІЯ ДЛЯ БЛОКУ "КОНТАКТИ" ==========
+    # Динамічний список менеджерів (JSON)
+    # Формат: [{'name': 'Олена', 'position': 'Менеджер', 'phone': '+380...', 'email': '...', 'telegram': '...', 'whatsapp': '...'}, ...]
+    managers = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name="Менеджери",
+        help_text="Список менеджерів у форматі JSON"
+    )
+
+    # ========== КОНТАКТНА ІНФОРМАЦІЯ ДЛЯ ФУТЕРА ==========
+    footer_phone = models.CharField(
+        max_length=20,
+        blank=True,
+        default="",
+        verbose_name="Телефон у футері",
+        help_text="Номер телефону для відображення у футері (наприклад: +38 (099) 123-45-67)"
+    )
+    footer_address = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        verbose_name="Адреса офісу у футері",
+        help_text="Адреса для відображення у футері (наприклад: м. Київ, вул. Хрещатик, 1)"
+    )
+    footer_email = models.EmailField(
+        max_length=100,
+        blank=True,
+        default="",
+        verbose_name="Email у футері",
+        help_text="Email для відображення у футері"
+    )
+    footer_show_contact = models.BooleanField(
+        default=True,
+        verbose_name="Показувати контакти у футері",
+        help_text="Відображати блок з контактною інформацією у футері"
+    )
+
+    # ========== TELEGRAM ДЛЯ СПОВІЩЕНЬ ==========
+    telegram_chat_id = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name="Telegram Chat ID для сповіщень",
+        help_text="Отримайте у бота @userinfobot. Якщо не вказано - сповіщення не будуть приходити в Telegram."
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
