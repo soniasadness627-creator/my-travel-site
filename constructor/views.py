@@ -515,6 +515,48 @@ def constructor_dashboard(request):
             saved_site = form.save()
             print(f"✅ Після form.save(): hero_title='{saved_site.hero_title}', hero_subtitle='{saved_site.hero_subtitle}'")
 
+            # ========== ЗБЕРЕЖЕННЯ ДИНАМІЧНИХ МЕНЕДЖЕРІВ ==========
+            manager_keys = [
+                key for key in request.POST.keys()
+                if key.startswith('manager_name_')
+            ]
+
+            if manager_keys:
+                import re
+
+                manager_indexes = []
+                for key in manager_keys:
+                    match = re.match(r'manager_name_(\d+)$', key)
+                    if match:
+                        manager_indexes.append(int(match.group(1)))
+
+                manager_indexes = sorted(set(manager_indexes))
+
+                # Видаляємо старий список тільки якщо нові менеджери
+                # реально були передані у POST
+                ContactManager.objects.filter(agent_site=saved_site).delete()
+
+                for order, index in enumerate(manager_indexes):
+                    manager = ContactManager.objects.create(
+                        agent_site=saved_site,
+                        name=request.POST.get(f'manager_name_{index}', '').strip(),
+                        position=request.POST.get(f'manager_position_{index}', '').strip(),
+                        phone=request.POST.get(f'manager_phone_{index}', '').strip(),
+                        telegram=request.POST.get(f'manager_telegram_{index}', '').strip(),
+                        whatsapp=request.POST.get(f'manager_whatsapp_{index}', '').strip(),
+                        email=request.POST.get(f'manager_email_{index}', '').strip(),
+                        order=order,
+                    )
+
+                    print(
+                        f"✅ Збережено менеджера #{order + 1}: "
+                        f"{manager.name or '(без імені)'}"
+                    )
+
+                print(
+                    f"✅ Всього динамічних менеджерів: "
+                    f"{len(manager_indexes)}"
+                )
             # ========== ПЕРЕВІРКА ЗМІНИ SLUG (ВИПРАВЛЕНО) ==========
             new_slug = form.cleaned_data.get('slug')
             if old_slug and new_slug and old_slug != new_slug:
